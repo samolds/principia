@@ -1,0 +1,93 @@
+\documentclass[pdftex,11pt,a4paper]{article}
+
+\usepackage[a4paper, total={6.5in, 9.5in}]{geometry}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\usepackage[explicit]{titlesec}
+\usepackage{ulem}
+\usepackage[pdftex]{graphicx}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5 mm}}
+
+\begin{document}
+
+% Title Page
+\input{title.tex}
+
+\section{Physics Toolset}
+\subsection{Idea}
+This project would entail developing a website that allows users to manipulate components that model a physical system. The website could be used by students and educators to explore how various parameters affect the system's behavior. The website should support various independent modules (e.g. kinematics, statics) with the ability to save and load systems. The end goal would be developing a web service that can be used to experiment with and solve the problems typically encountered by first-year physics students in a high school or college setting.
+
+\subsection{Components}
+\subsubsection{Hosted Website with UI/UX}
+A website with a custom URL hosted on Amazon Web Services, Google App Engine, or Heroku. It will be a visually appealing and website that embraces the principles of modern design.
+
+\subsubsection{Sandbox Window}
+A window within the main web page that allows the user to drag and drop different physics objects with no knowledge of the underlying model
+
+\subsubsection{Model}
+The underlying model that controls how the system behaves and fires events to update the visual components of the site
+
+\subsubsection{Physics API}
+An endpoint that a front end JavaScript framework can hit to get accurate information relating to the position of various objects within the sandbox
+
+\subsubsection{Module Design}
+The website will divide different physics topics into modules that control what options are available to users within the work area
+
+\subsection{Team Responsibilities}
+\subsubsection{Sam}
+Set up GitHub repository, deploy web server, get it hosted and tied with our custom domain.
+
+\subsubsection{Danny}
+Focus on front-end development and the Sandbox Window.
+
+\subsubsection{Matthew}
+Work on underlying models and module design.
+
+\subsubsection{Dalton}
+Focus on front-end development, the API, and any components involving a database.
+
+\clearpage
+
+\section{Virtual Map}
+\subsection{Idea}
+This project would be a platform that allows users to upload and share positioning data that will be usable with a ``Monocle" mobile application. The mobile app will use this positioning data to create a virtual reality experience. The mobile application will leverage the built in cameras, GPS coordinates, and accelerometer and orientation sensors to overlay labels onto landmarks detected in the image. The landmarks detected and labeled can range anywhere from campus buildings, mountain peaks, hiking trails, skiing trails, and maybe more. The user would be able to hold their mobile device up and view virtual labels overlaid above the real time image.
+
+\subsection{Components}
+\subsubsection{Website}
+A page that allows for users to upload and download JSON files of positioning data
+
+\subsubsection{Database}
+A database to store all of the data
+
+\subsubsection{Mobile Application Logic}
+This would be the bulk of the work. The app would allow for positioning data to be downloaded beforehand and used when somewhere without Internet access.
+
+\subsubsection{Mobile Application UI/UX}
+This component would involve developing the visual aspects of the app and how it can be interacted with.
+
+\subsection{Team Responsibilities}
+\subsubsection{Sam}
+Set up GitHub repo, deploy web server, get it hosted and tied with our custom domain. Mobile app logic
+
+\subsubsection{Danny}
+Mobile app UI/UX
+
+\subsubsection{Matthew}
+Mobile app logic, work on databases
+
+\subsubsection{Dalton}
+Mobile app logic, work on databases
+\clearpage
+\section{Potential Project with Ardusat}
+\subsection{Idea}
+Sam has been in talks with a local startup company called \href{http://www.ardusat.com}{Ardusat}. They are interested in giving us a project and working with us, but there has yet to be a project decided on.
+
+\end{document}
