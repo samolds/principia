@@ -31,13 +31,13 @@ to further explore concepts in a visually exciting way.
 
 
 ### Deploying Changes
+View information about the app in the [Developer's Console](https://console.developers.google.com/project/theprincipiaxyz).
+
 This is how you will push changes to the live site. Obviously, use care to make sure what is being deployed
 is thorougly tested and isn't going to break anything. This command will push all of the code you have
 locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultimately
 [theprincipia.xyz](theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
 branch.
-
-View information about the app in the [Developer's Console](https://console.developers.google.com/project/theprincipiaxyz).
 
 *Warning* - *Caution* - *Be Careful*
 * Be at the root of the project
@@ -49,18 +49,18 @@ View information about the app in the [Developer's Console](https://console.deve
 
 ```
 /principia
-    app.yaml    -    Used for basic project settings with Google App Engine
-    controllers/    -    All of the business logic for web pages
-    misc/    -    Random project files not actually necessary for web app
-    models.go    -    The schema for the database
-    routes.go    -    What urls point to which controllers
+    app.yaml       -    Used for basic project settings with Google App Engine
+    controllers/   -    All of the business logic for web pages
+    misc/          -    Random project files not actually necessary for web app
+    models.go      -    The schema for the database
+    routes.go      -    What urls point to which controllers
     settings.go    -    Useful global app configurations
-    static/    -    Static HTML resources
-        css/    -    All CSS stuff goes here
-        fonts/    -    All font related stuff goes here
-        img/    -    All images used go here
-        js/    -    All Javascript goes here
-    views/    -    The HTML pages that are rendered by the controllers
+    static/        -    Static HTML resources
+        css/       -    All CSS stuff goes here
+        fonts/     -    All font related stuff goes here
+        img/       -    All images used go here
+        js/        -    All Javascript goes here
+    views/         -    The HTML pages that are rendered by the controllers
 ```
 
 
