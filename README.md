@@ -22,7 +22,7 @@ to further explore concepts in a visually exciting way.
     * Note: The Go SDK depends on Python 2.7, so make sure you have python 2.7 installed
     * Here's what I did on my Mac:
         * Download the zip file of the SDK and extract it.
-        * I moved the extracted folder `go_appengine` to `/usr/local/`
+        * I moved the extracted folder, `go_appengine`, to `/usr/local/`
         * I added `export PATH="/usr/local/go_appengine:${PATH}"` to the bottom `~/.bash_profile`
         * Restart Terminal for changes to take effect
 * If everything is working right, run `goapp serve` from the root of the principia directory and the go
@@ -37,19 +37,17 @@ locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultim
 [theprincipia.xyz](theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
 branch.
 
+View information about the app in the [Developer's Console](https://console.developers.google.com/project/theprincipiaxyz).
+
 *Warning* - *Caution* - *Be Careful*
 * Be at the root of the project
 * make sure `git branch` says `production`
 * make sure `git status` returns no known changes
 * `goapp deploy`
 
-If it is the first time the app is being deployed:
-* Be in principia's parent directory
-* `goapp deploy -application theprincipiaxyz principia/`
-
-View information about the app in the [Developer's Console](https://console.developers.google.com/project/theprincipiaxyz).
-
 ### Project Structure
+
+```
 /principia
     app.yaml    -    Used for basic project settings with Google App Engine
     controllers/    -    All of the business logic for web pages
@@ -63,6 +61,7 @@ View information about the app in the [Developer's Console](https://console.deve
         img/    -    All images used go here
         js/    -    All Javascript goes here
     views/    -    The HTML pages that are rendered by the controllers
+```
 
 
 ### Useful Links:
