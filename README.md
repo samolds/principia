@@ -25,18 +25,23 @@ to further explore concepts in a visually exciting way.
         * I moved the extracted folder, `go_appengine`, to `/usr/local/`
         * I added `export PATH="/usr/local/go_appengine:${PATH}"` to the bottom `~/.bash_profile`
         * Restart Terminal for changes to take effect
-* If everything is working right, run `goapp serve` from the root of the principia directory and the go
-  to [localhost:8080](localhost:8080) to see development server running
-* Use `Ctrl-C` to kill the server
+* If already have this git repository cloned, navigate to the root principia directory:
+    * `git pull`
+* Otherwise:
+    * `git clone http://github.com/samolds/principia.git` to wherever you want this source code
+* If everything is working right, run `goapp serve` from the root of the principia directory and then go
+  to localhost:8080 to see the development server running
+* Use `Ctrl-C` to kill the server when you're done
 
 
 ### Deploying Changes
-View information about the app in the [Developer's Console](https://console.developers.google.com/project/theprincipiaxyz).
+View information about the app in the [Developer's Console](https://console.developers.google.com/project/),
+then select "theprincipiaxyz" from the dropdown.
 
 This is how you will push changes to the live site. Obviously, use care to make sure what is being deployed
 is thorougly tested and isn't going to break anything. This command will push all of the code you have
 locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultimately
-[theprincipia.xyz](theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
+[theprincipia.xyz](http://theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
 branch.
 
 *Warning* - *Caution* - *Be Careful*

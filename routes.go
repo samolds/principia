@@ -1,14 +1,16 @@
 package principia
 
 import (
-	"fmt"
 	"net/http"
+
+  "controllers"
 )
 
 func init() {
-	http.HandleFunc("/", handle)
-}
-
-func handle(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Principia coming soon")
+  http.HandleFunc("/", controllers.HomeHandler)
+  http.HandleFunc("/simulator", controllers.SimulatorHandler)
+  http.HandleFunc("/about", controllers.AboutHandler)
+  http.HandleFunc("/faqs", controllers.FaqsHandler)
+  http.HandleFunc("/feedback", controllers.FeedbackHandler)
+  http.HandleFunc("/login", controllers.LoginHandler)
 }

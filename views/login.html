@@ -1,0 +1,25 @@
+{{ define "title"}} - Login{{ end }}
+
+{{ define "content" }}
+<div class="container narrow">
+  <h1 class="page-header">Login to MyPrincipia</h1>
+  <p>
+    Already have an account with Google? Just login using your existing account!
+    Otherwise, create a <a href="http://accounts.google.com">Google Account</a>
+    and then come on back!
+  </p>
+
+
+  <form>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" placeholder="Username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-default">Sign In!</button>
+  </form>
+</div>
+{{ end }}

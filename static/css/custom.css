@@ -1,0 +1,22 @@
+html, body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.container .narrow {
+  max-width: 600px;
+}
+
+.carousel-inner {
+  background-color: #555;
+}
+
+.carousel-inner .item p {
+  padding: 200px 150px;
+  text-align: center;
+  color: #fff;
+}
+
+.navbar-header .navbar-toggle.warning {
+  border-color: #eea236;
+  background-color: #f0ad4e;
+}
