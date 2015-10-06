@@ -12,6 +12,7 @@ var base = tmplDir + baseName + ".html"
 
 var homeTmpl = template.Must(template.New("home").ParseFiles(base, tmplDir + "home.html"))
 var simulatorTmpl = template.Must(template.New("simulations").ParseFiles(base, tmplDir + "simulator.html"))
+var browseTmpl = template.Must(template.New("browse").ParseFiles(base, tmplDir + "browse.html"))
 var aboutTmpl = template.Must(template.New("about").ParseFiles(base, tmplDir + "about.html"))
 var faqsTmpl = template.Must(template.New("faqs").ParseFiles(base, tmplDir + "faqs.html"))
 var feedbackTmpl = template.Must(template.New("feedback").ParseFiles(base, tmplDir + "feedback.html"))
@@ -24,6 +25,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 func SimulatorHandler(w http.ResponseWriter, r *http.Request) {
   simulatorTmpl.ExecuteTemplate(w, baseName, nil)
+}
+
+func BrowseHandler(w http.ResponseWriter, r *http.Request) {
+  browseTmpl.ExecuteTemplate(w, baseName, nil)
 }
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {

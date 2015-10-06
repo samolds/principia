@@ -61,3 +61,13 @@ a.glyphicon-rating .glyphicon {
 a.glyphicon-rating:hover .glyphicon {
   color: #880;
 }
+
+.browse-thumbnail {
+  padding: 80px 40px;
+  border: 1px solid #aaa;
+  background-color: #eee;
+}
+
+.pad-bottom {
+  padding-bottom: 30px;
+}
