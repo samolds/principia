@@ -20,3 +20,44 @@ html, body {
   border-color: #eea236;
   background-color: #f0ad4e;
 }
+
+.pad-sides {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+span.glyphicon.big-icon {
+  font-size: 1.4em;
+}
+
+a span.glyphicon {
+  color: #888;
+}
+
+a span.glyphicon:hover {
+  color: #000;
+}
+
+a span.glyphicon-star, a span.glyphicon-star-empty {
+  color: #dd0;
+}
+
+a span.glyphicon-star:hover, a span.glyphicon-star-empty:hover {
+  color: #880;
+}
+
+a span.glyphicon-heart, a span.glyphicon-heart-empty {
+  color: #faa;
+}
+
+a span.glyphicon-heart:hover, a span.glyphicon-heart-empty:hover {
+  color: #f44;
+}
+
+a.glyphicon-rating .glyphicon {
+  color: #dd0;
+}
+
+a.glyphicon-rating:hover .glyphicon {
+  color: #880;
+}
