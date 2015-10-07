@@ -68,6 +68,10 @@ a.glyphicon-rating:hover .glyphicon {
   background-color: #eee;
 }
 
+.pad-top {
+  padding-top: 30px;
+}
+
 .pad-bottom {
   padding-bottom: 30px;
 }
