@@ -75,3 +75,4 @@ branch.
 * [Google App Engine with Go](https://cloud.google.com/appengine/docs/go)
 * [Google App Engine with Go Tutorial](https://cloud.google.com/appengine/docs/go/gettingstarted/introduction)
 * [Google App Engine Go App Config](https://cloud.google.com/appengine/docs/go/config/appconfig)
+* [Slack Channel](http://madadasa.slack.com)
