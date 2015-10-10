@@ -1,0 +1,48 @@
+\documentclass{article}
+
+% Packages
+\usepackage{cite}
+\usepackage[pdftex]{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage[a4paper, headheight=14pt, total={7.37in, 8in}]{geometry}
+
+% Settings
+\setlength{\parskip}{1em}
+\setlength{\parindent}{4em}
+
+% Commands
+\newcommand{\HRule}{\rule{\linewidth}{0.5 mm}}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+\begin{document}
+\input{title.tex}
+
+% page 1
+\thispagestyle{fancy}
+\fancyhf{}
+\lhead{Principia}
+\rhead{Madadasa}
+\rfoot{\circled{\thepage}}
+
+% EXECUTIVE SUMMARY:
+\input{exec_summary.tex}
+% ---
+
+% page2
+\newpage
+\thispagestyle{fancy}
+\fancyhf{}
+\lhead{Principia}
+\rhead{Madadasa}
+\rfoot{\circled{\thepage}}
+
+% BACKGROUND:
+\input{background.tex}
+% ---
+
+\end{document}

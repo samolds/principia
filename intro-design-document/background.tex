@@ -1,0 +1,77 @@
+\section{Background}
+\iffalse
+The background section should be one to three pages long.
+\fi
+
+% ----------------- Idea Space -----------------
+\subsection{Idea Space}
+\iffalse
+Why is your project needed? What problems does it solve? Who would use it?
+\fi
+
+The most exciting Physics lessons come with a demonstration to help visualize a concept. The popular Physics lecturers are the ones who come to class ready with an example. However, students don't always have the means to recreate the demonstrations to get a better understanding of the underlying concepts at play. Students should be able to easily build their own simulations of the in-class demonstrations so they could tweak components to see how those changes affect the end result. This would make learning physics more visual and interactive, and ultimately more fun!
+
+This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios. A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their browser. Then the simulation can be run to see the elements interact with each other over time, with the ability to pause the simulation at any point and query the state of an element. Users can save their simulations and share them with others in the community. Special privileges are available for instructor accounts to manage a classroom, including the ability to incorporate quizzes or assignments into their physics system.
+
+Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students to further explore concepts in a visually exciting way.
+
+% ----------------- Similar Ideas -----------------
+\subsection{Similar Ideas}
+\iffalse
+List and describe other programs that do things like what you want to do. Why is your idea different or better?
+\fi
+
+While we assert that there is significant room for innovation and improvement in the area of physics education, we acknowledge several existing educational offerings:
+
+\subsubsection{Smart Physics}
+
+Arguably the most prominent offering on the market currently,  Smart Physics provides students with additional examples and resources to help solidify concepts learned in the classroom.  In our experience with Smart Physics we have found it lacking interactivity, relegating users to exploring fixed systems created in advance.  Our goal with Principia is to provide an new level of interactivity, allowing users to explore concepts and ideas specific to their needs.
+
+\subsubsection{PhET}
+
+PhET is an open-source collaboration developed by a group of researchers from UC Boulder.  The project aims to provide "fun, free, interactive, research-based science and mathematics simulations".  While PhET offers a measure of interactivity, the number of physics topics taught is relatively limited.  We would like to improve upon this idea by providing additional resources to help users understand many areas of physics. Our simulator will also offer users a less restrictive environment, allowing them to place objects and observe their behavior in any scenario.
+
+\subsubsection{Web Assign}
+
+Web Assign allows educators to set up online environments designed to test student knowledge and offer additional instruction.  Principia would expand upon this idea by not only providing an environment for instructors to engage their students but also allow students to query their classmates with specific questions and concerns.  In addition, we feel that Principia would provide more freedom when creating quizzes or exams.  For example, with Principia teachers could pose questions that would require students to modify a specific portion of a simulation and explain how their change affected the simulations outcome.  
+
+While current market offerings provide value, we retain that Principia will improve online physics education in a myriad of ways.
+
+% ----------------- Required Technology -----------------
+\subsection{Required Technology}
+\iffalse
+List and describe the software technologies that you will either need to implement or utilize to realize your project goals.
+\fi
+
+This Web Application will require the following:
+\begin{itemize}
+\item A web server where the application can be hosted.
+\item A database to hold information about users and their saved simulations.
+\item A simulation window nested in an HTML page that allows for interactivity.
+\item A physics 'engine' that will accurately update the visualizations in the simulator.
+\end{itemize}
+
+% ----------------- Assets and Engines -----------------
+\subsection{Assets and Engines}
+\iffalse
+How much will you be building from scratch? What resources/assets will you leverage? Where will they come from?
+\fi
+
+To attempt to not "rebuild the wheel" for every component, we will be using the following languages, services, and libraries.
+\begin{itemize}
+\item Go will be the language used on the server and back end.
+\item Google App Engine will host this web app.
+\item HTML, CSS, and JavaScript will all be languages used on the front end.
+\item The HTML {\textless}canvas{\textgreater} element will be used for the simulator window.
+\item To help with some of the difficult Physics components, a JavaScript library called PhysicsJS will be used. This will allow us to spend more time to make the simulation window accurately visualize the Physical concepts.
+\item To help provide a consistent theme and feel across browsers, Twitter's Bootstrap CSS library will be used.
+\item AngularJS might be used to make the front end more user friendly and responsive.
+\end{itemize}
+
+% ----------------- Software Requirements -----------------
+\subsection{Software Requirements}
+\iffalse
+List and describe what hardware and/or software you will need to successfully install and use your software.
+\fi
+
+In order to fully use this system, the user will need a computer with access to the Internet and a Web Browser. We plan to support Google Chrome, Apple's Safari, Mozilla Firefox, and (maybe) Internet Explorer. Because it is a web application, the site will be available on mobile devices; however, we don't plan to explicitly support mobile devices and give no guarantees that it will work.
