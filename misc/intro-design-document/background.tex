@@ -8,47 +8,85 @@ The background section should be one to three pages long.
 \iffalse
 Why is your project needed? What problems does it solve? Who would use it?
 \fi
+\BgThispage
+We believe that the most memorable physics lessons were the ones with demonstrations. The best lecturers came to class with props and experiments used to reinforce the lesson's material. However, students don't always have the means to recreate the demonstrations to get a better understanding of the underlying concepts. Furthermore, not every instructor has the resources or time to prepare practical demos.
 
-The most exciting Physics lessons come with a demonstration to help visualize a concept. The popular Physics lecturers are the ones who come to class ready with an example. However, students don't always have the means to recreate the demonstrations to get a better understanding of the underlying concepts at play. Students should be able to easily build their own simulations of the in-class demonstrations so they could tweak components to see how those changes affect the end result. This would make learning physics more visual and interactive, and ultimately more fun!
+Principia would solve both of these problems. Students would be able to easily build their own simulations of the in-class demonstrations and tweak components to see how their changes affect the end result. This would make learning physics more visual and interactive, and ultimately more fun! Instructors would also be able to share simulations, eliminating the need to purchase special equipment or to spend precious class time setting up an experiment. 
 
-This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios. A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their browser. Then the simulation can be run to see the elements interact with each other over time, with the ability to pause the simulation at any point and query the state of an element. Users can save their simulations and share them with others in the community. Special privileges are available for instructor accounts to manage a classroom, including the ability to incorporate quizzes or assignments into their physics system.
+The fundamental problem we wish to address, however, is the poor state of physics education itself. Dr. John W. Brelsford studied the effects of virtual reality specifically within the context of physics education. His found that ``As a training method, virtual reality was superior to the [lecture-based] control condition at the four-week retention period. Such a finding supports cognitive theorists who argue that the lack of opportunities for hands-on, manipulation of objects in the physical world is one of the reasons children are often poor at intuitive physics. Virtual reality provides them the opportunity to develop manipulational skills they did not previously possess'' \cite{Brelsford}.
 
-Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students to further explore concepts in a visually exciting way.
+Principia's sandbox is precisely the kind of tool that improved physics knowledge retention in Dr. Brelsford's study. The addition of support from an online community will make for even better software. Principia will improve the state of physics education on a worldwide scale.
+
+%A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their browser. Then the simulation can be run to see the elements interact with each other over time, with the ability to pause the simulation at any point and query the state of an element. Users can save their simulations and share them with others in the community. Special privileges are available for instructor accounts to manage a classroom, including the ability to incorporate quizzes or assignments into their physics system.
 
 % ----------------- Similar Ideas -----------------
 \subsection{Similar Ideas}
 \iffalse
 List and describe other programs that do things like what you want to do. Why is your idea different or better?
 \fi
+\noindent
+While we assert that there is significant room for innovation and improvement in the area of physics education, we acknowledge several existing educational offerings.
 
-While we assert that there is significant room for innovation and improvement in the area of physics education, we acknowledge several existing educational offerings:
 
-\subsubsection{Smart Physics}
+\subsubsection{Commercial Software}
+There is a wide array of commercial software for physics. Some are focused on a very specific domain for professionals, such as molecular dynamics or high-energy physics. This kind of software would not be useful to the audience we are targeting. Other examples that do focus on high school or college physics, like Stewart Software's Creative Physics\textup{\textregistered} 5.0, cost as much as \$149.99 for a single-user license \cite{CreativePhysics}. We want to provide software that has a lower barrier for entry and that puts improving the state of physics education above financial gain.
 
-Arguably the most prominent offering on the market currently,  Smart Physics provides students with additional examples and resources to help solidify concepts learned in the classroom.  In our experience with Smart Physics we have found it lacking interactivity, relegating users to exploring fixed systems created in advance.  Our goal with Principia is to provide an new level of interactivity, allowing users to explore concepts and ideas specific to their needs.
+\subsubsection{Physion}
+Physion is the closest existing software to what we want to provide. It is highly interactive, free, and has a modest online community. However, we believe we can improve on it by having Principia's sandbox run in-browser instead of as a separately downloaded executable and by providing greater support for getting quantitative data out of the simulation.
+
+\clearpage
+\BgThispage
+\subsubsection{smartPhysics}
+Arguably the most prominent offering on the current market,  smartPhysics provides students with additional examples and resources to help solidify concepts learned in the classroom. This is primarily accomplished through online ``pre-lectures'' and homework material.  In our experience with smartPhysics, we have found that it lacks interactivity, relegating users to working on practice problems involving systems that the smartPhysics developers have already created. For instance, the following figure is a sample image of a checkpoint concerning simple harmonic motion. This checkpoint will always involve a single spring attached to a single mass. The practice problem can be varied by adjusting the values associated with the amount of mass or the spring constant, but there is no way to see the system in motion or to experiment with how additional components like a second spring or surface friction would affect its behavior.
+
+smartPhysics is a great way of introducing concepts, but it is possible to do much more. Our goal with Principia is to provide a new level of interactivity, allowing a user to explore concepts and ideas specific to her needs by building her own systems or modifying existing ones rather than being limited to ``canned'' systems as in this example.
+
+\begin{figure}[H]
+	\centering
+	\fbox{\includegraphics[scale=0.6]{img/SmartPhysics}}
+    \caption{Smart Physics checkpoint \cite{smartPhysics}}
+\end{figure}
 
 \subsubsection{PhET}
 
-PhET is an open-source collaboration developed by a group of researchers from UC Boulder.  The project aims to provide "fun, free, interactive, research-based science and mathematics simulations".  While PhET offers a measure of interactivity, the number of physics topics taught is relatively limited.  We would like to improve upon this idea by providing additional resources to help users understand many areas of physics. Our simulator will also offer users a less restrictive environment, allowing them to place objects and observe their behavior in any scenario.
+PhET is an open-source collaboration developed by a group of researchers from UC Boulder. The project aims to provide ``fun, free, interactive, research-based science and mathematics simulations''.  While PhET offers a measure of interactivity, the number of physics topics it covers is relatively limited. It is more dynamic than smartPhysics, as should be apparent in the following figure, but it is still limited by the fact that users are tweaking the properties of an existing system instead of building their own in a less restrictive environment.
 
-\subsubsection{Web Assign}
+\clearpage
+\BgThispage
 
-Web Assign allows educators to set up online environments designed to test student knowledge and offer additional instruction.  Principia would expand upon this idea by not only providing an environment for instructors to engage their students but also allow students to query their classmates with specific questions and concerns.  In addition, we feel that Principia would provide more freedom when creating quizzes or exams.  For example, with Principia teachers could pose questions that would require students to modify a specific portion of a simulation and explain how their change affected the simulations outcome.  
 
-While current market offerings provide value, we retain that Principia will improve online physics education in a myriad of ways.
+\begin{figure}[H]
+	\centering
+	\fbox{\includegraphics[scale=0.55]{img/phet}}
+    \caption{Projectile motion in PhET \cite{PhET}}
+\end{figure}
 
+\subsubsection{WebAssign}
+
+WebAssign allows educators to set up online environments designed to test student knowledge and offer additional instruction.  Principia would expand upon this idea by not only providing an environment for instructors to engage their students but also allow students to query their classmates with specific questions and concerns.  In addition, we feel that Principia would provide more freedom when creating quizzes or exams.  For example, with Principia teachers could pose questions that would require students to modify a specific portion of a simulation and explain how their change affected the simulation's outcome.  
+
+\begin{figure}[H]
+	\centering
+	\fbox{\includegraphics[scale=0.55]{img/WebAssign}}
+    \caption{Active figure in WebAssign \cite{WebAssign}}
+\end{figure}
+
+
+
+\clearpage
+\BgThispage
 % ----------------- Required Technology -----------------
 \subsection{Required Technology}
 \iffalse
 List and describe the software technologies that you will either need to implement or utilize to realize your project goals.
 \fi
-
-This Web Application will require the following:
+\noindent
+Principia will require the following technologies:
 \begin{itemize}
 \item A web server where the application can be hosted.
 \item A database to hold information about users and their saved simulations.
 \item A simulation window nested in an HTML page that allows for interactivity.
-\item A physics 'engine' that will accurately update the visualizations in the simulator.
+\item A physics engine that will accurately update the simulator's physics model and render the results.
 \end{itemize}
 
 % ----------------- Assets and Engines -----------------
@@ -56,16 +94,16 @@ This Web Application will require the following:
 \iffalse
 How much will you be building from scratch? What resources/assets will you leverage? Where will they come from?
 \fi
-
-To attempt to not "rebuild the wheel" for every component, we will be using the following languages, services, and libraries.
+\noindent
+To avoid rebuilding the wheel for every component, we will be using the following languages, services, and libraries:
 \begin{itemize}
 \item Go will be the language used on the server and back end.
-\item Google App Engine will host this web app.
+\item Google App Engine will be used to host the web application.
 \item HTML, CSS, and JavaScript will all be languages used on the front end.
 \item The HTML {\textless}canvas{\textgreater} element will be used for the simulator window.
-\item To help with some of the difficult Physics components, a JavaScript library called PhysicsJS will be used. This will allow us to spend more time to make the simulation window accurately visualize the Physical concepts.
+\item To help with some of the difficult physics components, we will utilize the open source JavaScript library, PhysicsJS. It has in-built support for rendering into an HTML canvas and will allow us to write high-level code for the physics model instead of creating it from scratch.
 \item To help provide a consistent theme and feel across browsers, Twitter's Bootstrap CSS library will be used.
-\item AngularJS might be used to make the front end more user friendly and responsive.
+\item AngularJS will be used to make the front end more user friendly and responsive.
 \end{itemize}
 
 % ----------------- Software Requirements -----------------
@@ -74,4 +112,4 @@ To attempt to not "rebuild the wheel" for every component, we will be using the 
 List and describe what hardware and/or software you will need to successfully install and use your software.
 \fi
 
-In order to fully use this system, the user will need a computer with access to the Internet and a Web Browser. We plan to support Google Chrome, Apple's Safari, Mozilla Firefox, and (maybe) Internet Explorer. Because it is a web application, the site will be available on mobile devices; however, we don't plan to explicitly support mobile devices and give no guarantees that it will work.
+In order to fully use Principia, the user will need a computer with access to the Internet and a web browser. We plan to support all of the mainstream browsers, including Google Chrome, Safari, Mozilla Firefox, and Internet Explorer. Since it is a web application, the site will be available on mobile devices; however, we don't plan to explicitly support mobile devices. We will make a ``best-effort'' approach analogous to ``best-effort'' packet delivery, i.e. we make no functional guarantees! No separate download or special hardware will be required to use the simulator. It will be easier to build a community around our project if it has a low barrier for entry.
