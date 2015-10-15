@@ -34,6 +34,13 @@ to further explore concepts in a visually exciting way.
 * Use `Ctrl-C` to kill the server when you're done
 
 
+### Development Best Practices
+* Before committing, run `gofmt -w .` to format all Go files to standard (only necessary if working with Go files).
+* Make sure to leave Commit message
+* When working on a new feature make sure to work, commit, and push on a new branch. When finished, submit a
+  [Pull Request](https://github.com/samolds/principia/pulls) to merge changes back into `master`
+
+
 ### Deploying Changes
 View information about the app in the [Developer's Console](https://console.developers.google.com/project/),
 then select "theprincipiaxyz" from the dropdown.
@@ -44,11 +51,18 @@ locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultim
 [theprincipia.xyz](http://theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
 branch.
 
+To merge everything currently on `master` to `production` before deploying
+* `git checkout master`
+* `git pull`
+* `git checkout production`
+* `git rebase master`
+
 *Warning* - *Caution* - *Be Careful*
 * Be at the root of the project
 * make sure `git branch` says `production`
 * make sure `git status` returns no known changes
 * `goapp deploy`
+
 
 ### Project Structure
 
@@ -57,7 +71,7 @@ branch.
     app.yaml       -    Used for basic project settings with Google App Engine
     controllers/   -    All of the business logic for web pages
     misc/          -    Random project files not actually necessary for web app
-    models.go      -    The schema for the database
+    models/        -    The schemas for the database
     routes.go      -    What urls point to which controllers
     settings.go    -    Useful global app configurations
     static/        -    Static HTML resources

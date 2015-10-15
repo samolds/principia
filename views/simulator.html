@@ -80,16 +80,17 @@
       </li>
       <li class="list-group-item" style="padding: 20px 30px;">
         <p>
+          {{ .User.Name }}
           <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
           <span class="pad-sides"></span>
-          Dynamic Comment: "{{ .dyn }}"
+          Dynamic Comment: "{{ .Data.dyn }}"
         </p>
       </li>
       <li class="list-group-item" style="padding: 20px 30px;">
         <p>
           <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
           <span class="pad-sides"></span>
-          Struct with multiple fields: "{{ .stVal.X }}", and "{{ .stVal.Y }}"
+          Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"
         </p>
       </li>
     </ul>
