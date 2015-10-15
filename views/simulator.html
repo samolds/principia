@@ -1,4 +1,4 @@
-{{ define "title"}} - Simulator{{ end }}
+{{ define "title" }} - Simulator{{ end }}
 
 {{ define "content" }}
 <h1 class="page-header">Simulator</h1>
@@ -76,6 +76,20 @@
           <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
           <span class="pad-sides"></span>
           Psh! This isn't even a simulation. It's a GIF!
+        </p>
+      </li>
+      <li class="list-group-item" style="padding: 20px 30px;">
+        <p>
+          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          <span class="pad-sides"></span>
+          Dynamic Comment: "{{ .dyn }}"
+        </p>
+      </li>
+      <li class="list-group-item" style="padding: 20px 30px;">
+        <p>
+          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          <span class="pad-sides"></span>
+          Struct with multiple fields: "{{ .stVal.X }}", and "{{ .stVal.Y }}"
         </p>
       </li>
     </ul>

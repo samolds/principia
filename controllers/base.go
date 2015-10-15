@@ -5,44 +5,49 @@ import (
   "net/http"
 )
 
-var tmplDir = "views/"
-var baseName = "base"
-var base = tmplDir + baseName + ".html"
+
+var (
+  tmplDir = "views/"
+  baseName = "base"
+  base = tmplDir + baseName + ".html"
+
+  templates = map[string]*template.Template{
+    "home": template.Must(template.ParseFiles(base, tmplDir + "home.html")),
+    "simulator": template.Must(template.ParseFiles(base, tmplDir + "simulator.html")),
+    "browse": template.Must(template.ParseFiles(base, tmplDir + "browse.html")),
+    "about": template.Must(template.ParseFiles(base, tmplDir + "about.html")),
+    "faqs": template.Must(template.ParseFiles(base, tmplDir + "faqs.html")),
+    "feedback": template.Must(template.ParseFiles(base, tmplDir + "feedback.html")),
+    "login": template.Must(template.ParseFiles(base, tmplDir + "login.html")),
+  }
+)
 
 
-var homeTmpl = template.Must(template.New("home").ParseFiles(base, tmplDir + "home.html"))
-var simulatorTmpl = template.Must(template.New("simulations").ParseFiles(base, tmplDir + "simulator.html"))
-var browseTmpl = template.Must(template.New("browse").ParseFiles(base, tmplDir + "browse.html"))
-var aboutTmpl = template.Must(template.New("about").ParseFiles(base, tmplDir + "about.html"))
-var faqsTmpl = template.Must(template.New("faqs").ParseFiles(base, tmplDir + "faqs.html"))
-var feedbackTmpl = template.Must(template.New("feedback").ParseFiles(base, tmplDir + "feedback.html"))
-var loginTmpl = template.Must(template.New("login").ParseFiles(base, tmplDir + "login.html"))
-
-
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-  homeTmpl.ExecuteTemplate(w, baseName, nil)
+func validPath(path string, name string) bool {
+  if path == "/" && name == "home" {
+    return true
+  } else {
+    _, ok := templates[name]
+    return ok && path == "/" + name
+  }
 }
 
-func SimulatorHandler(w http.ResponseWriter, r *http.Request) {
-  simulatorTmpl.ExecuteTemplate(w, baseName, nil)
+
+func errorHandler(w http.ResponseWriter, r *http.Request, status int, err string) {
+  w.WriteHeader(status)
+  http.Error(w, err, status)
 }
 
-func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-  browseTmpl.ExecuteTemplate(w, baseName, nil)
-}
 
-func AboutHandler(w http.ResponseWriter, r *http.Request) {
-  aboutTmpl.ExecuteTemplate(w, baseName, nil)
-}
+func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[string]interface{}) {
+  if !validPath(r.URL.Path, templ) {
+    errorHandler(w, r, http.StatusNotFound, "Not Found!")
+    return
+  }
 
-func FaqsHandler(w http.ResponseWriter, r *http.Request) {
-  faqsTmpl.ExecuteTemplate(w, baseName, nil)
-}
-
-func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
-  feedbackTmpl.ExecuteTemplate(w, baseName, nil)
-}
-
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-  loginTmpl.ExecuteTemplate(w, baseName, nil)
+  err := templates[templ].ExecuteTemplate(w, baseName, data)
+  if err != nil {
+    errorHandler(w, r, http.StatusInternalServerError, err.Error())
+    return
+  }
 }
