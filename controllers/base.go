@@ -11,13 +11,10 @@ var (
 	base     = tmplDir + baseName + ".html"
 
 	templates = map[string]*template.Template{
-		"home":      template.Must(template.ParseFiles(base, tmplDir+"home.html")),
 		"simulator": template.Must(template.ParseFiles(base, tmplDir+"simulator.html")),
-		"browse":    template.Must(template.ParseFiles(base, tmplDir+"browse.html")),
 		"about":     template.Must(template.ParseFiles(base, tmplDir+"about.html")),
 		"faqs":      template.Must(template.ParseFiles(base, tmplDir+"faqs.html")),
 		"feedback":  template.Must(template.ParseFiles(base, tmplDir+"feedback.html")),
-		"login":     template.Must(template.ParseFiles(base, tmplDir+"login.html")),
 	}
 )
 
@@ -32,8 +29,10 @@ type PageData struct {
 }
 
 func validPath(path string, name string) bool {
-	if path == "/" && name == "home" {
+	if path == "/" { // && name == "home" {
 		return true
+	} else if path == "/simulator" { // temporary while simulator IS home page
+		return false
 	} else {
 		_, ok := templates[name]
 		return ok && path == "/"+name

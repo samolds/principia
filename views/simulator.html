@@ -93,6 +93,15 @@
           Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"
         </p>
       </li>
+      {{ range $value := .Data.slice }}
+        <li class="list-group-item" style="padding: 20px 30px;">
+          <p>
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+            <span class="pad-sides"></span>
+            Looping through slice. Value: {{ $value }}
+          </p>
+        </li>
+      {{ end }}
     </ul>
   </div>
 </div>

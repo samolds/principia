@@ -28,6 +28,7 @@ func SimulatorHandler(w http.ResponseWriter, r *http.Request) {
 	cont := &Cont{X: "hello", Y: 1234}
 
 	data := map[string]interface{}{
+		"slice": dynPossibles,
 		"dyn":   dyn,
 		"stVal": cont,
 	}

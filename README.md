@@ -1,5 +1,5 @@
 # Principia
-An educational physics playground emphasizing visualizations.
+An educational physics playground emphasizing visualizations and interactability.
 
 This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios.
 A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their
