@@ -90,3 +90,4 @@ To merge everything currently on `master` to `production` before deploying
 * [Google App Engine with Go Tutorial](https://cloud.google.com/appengine/docs/go/gettingstarted/introduction)
 * [Google App Engine Go App Config](https://cloud.google.com/appengine/docs/go/config/appconfig)
 * [Slack Channel](http://madadasa.slack.com)
+* [PhysicsJS](http://wellcaffeinated.net/PhysicsJS)

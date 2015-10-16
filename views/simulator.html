@@ -1,108 +1,32 @@
 {{ define "title" }} - Simulator{{ end }}
 
-{{ define "content" }}
-<h1 class="page-header">Simulator</h1>
-<div class="row">
-  <div class="col-md-2">
-    <ul class="nav nav-pills nav-stacked">
-      <li role="presentation" class="active"><a href="#">Kinematics</a></li>
-      <li role="presentation"><a href="#">Statics</a></li>
-      <li role="presentation"><a href="#">Work</a></li>
-      <li role="presentation"><a href="#">Force</a></li>
-    </ul>
-  </div>
-  <div class="col-md-9" style="border-radius: 5px; border: 1px solid #888;">
-    <img style="padding: 10px 10px;" width="700" src="/static/img/simulatorexample.gif" />
-  </div>
-</div>
-<div style="padding: 5px;"></div>
-<div class="row">
-  <div class="col-md-offset-2 col-md-9">
-    <div class="pull-right">
-      <a class="glyphicon-rating" href="#">
-        <span class="big-icon glyphicon glyphicon-star" aria-hidden="true"></span>
-        <span class="big-icon glyphicon glyphicon-star" aria-hidden="true"></span>
-        <span class="big-icon glyphicon glyphicon-star" aria-hidden="true"></span>
-        <span class="big-icon glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-        <span class="big-icon glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-      </a>
+{{ define "scripts" }}
+<script src="/static/js/physicsjs/physicsjs-full.min.js"></script>
+<script src="/static/js/simulator/kinematics.js"></script>
+{{ end }}
 
-      <span class="pad-sides"></span>
-      <a href="#"><span class="big-icon glyphicon glyphicon-heart-empty" aria-hidden="true"></span></a>
-      <span class="pad-sides"></span>
-      <a href="#"><span class="big-icon glyphicon glyphicon-save" aria-hidden="true"></span></a>
-      <a href="#"><span class="big-icon glyphicon glyphicon-share-alt" aria-hidden="true"></span></a>
-      <span class="pad-sides"></span>
-      <a href="#"><span class="big-icon glyphicon glyphicon-question-sign" aria-hidden="true"></span></a>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-offset-2 col-md-9">
-    <h3>Comments <span class="glyphicon glyphicon-comment" aria-hidden="true"></span></h3>
-    <ul class="list-group">
-      <li class="list-group-item" style="padding: 20px 30px;">
-        </p>
-          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-          <span class="pad-sides"></span>
-          Why does it do this?
-        </p>
-        <ul class="list-group">
-          <li class="list-group-item" style="padding: 20px 30px;">
-            <p>
-              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-              <span class="pad-sides"></span>
-              Because, science!
-            </p>
-          </li>
-          <li class="list-group-item" style="padding: 20px 30px;">
-            <p>
-              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-              <span class="pad-sides"></span>
-              Yeah! Gravity!
-            </p>
-          </li>
-        </ul>
-      </li>
-      <li class="list-group-item" style="padding: 20px 30px;">
-        <p>
-          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-          <span class="pad-sides"></span>
-          Wow, this is so neat!
-        </p>
-      </li>
-      <li class="list-group-item" style="padding: 20px 30px;">
-        <p>
-          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-          <span class="pad-sides"></span>
-          Psh! This isn't even a simulation. It's a GIF!
-        </p>
-      </li>
-      <li class="list-group-item" style="padding: 20px 30px;">
-        <p>
-          {{ .User.Name }}
-          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-          <span class="pad-sides"></span>
-          Dynamic Comment: "{{ .Data.dyn }}"
-        </p>
-      </li>
-      <li class="list-group-item" style="padding: 20px 30px;">
-        <p>
-          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-          <span class="pad-sides"></span>
-          Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"
-        </p>
-      </li>
+{{ define "content" }}
+<div class="container narrow">
+  <h1 class="page-header">Kinematics Simulator</h1>
+
+  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+  <div style="height: 500px; border: 1px solid #aaa;" id="viewport"></div>
+
+  <!--
+    <img src="/static/img/simulatorexample.gif" />
+  -->
+
+  <!-- This all works. Just looks messy - ->
+    <h3>Template Testing</h3>
+    <p>Username: "{{ .User.Name }}:</p>
+    <p>Dynamic Comment: "{{ .Data.dyn }}"</p>
+    <p>Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"</p>
+
+    <p>Loop:
       {{ range $value := .Data.slice }}
-        <li class="list-group-item" style="padding: 20px 30px;">
-          <p>
-            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-            <span class="pad-sides"></span>
-            Looping through slice. Value: {{ $value }}
-          </p>
-        </li>
+        <p>Looping through slice. Value: {{ $value }}</p>
       {{ end }}
-    </ul>
-  </div>
+    </p>
+  -->
 </div>
 {{ end }}
