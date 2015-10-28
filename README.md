@@ -37,6 +37,7 @@ to further explore concepts in a visually exciting way.
 ### Development Best Practices
 * Before committing, run `gofmt -w .` to format all Go files to standard (only necessary if working with Go files).
 * Make sure to leave Commit message
+* Frequent, small commits are preferred over large commits
 * When working on a new feature make sure to work, commit, and push on a new branch. When finished, submit a
   [Pull Request](https://github.com/samolds/principia/pulls) to merge changes back into `master`
 

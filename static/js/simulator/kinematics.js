@@ -2,7 +2,7 @@
 // Simple example of bouncing balls
 Physics(function (world) {
     // bounds of the window
-    var viewportBounds = Physics.aabb(0, 0, 570, 500)
+    var viewportBounds = Physics.aabb(0, 0, 1140, 500)
         ,edgeBounce
         ,renderer
         ;

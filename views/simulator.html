@@ -6,27 +6,25 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="container narrow">
-  <h1 class="page-header">Kinematics Simulator</h1>
+<h1 class="page-header">Kinematics Simulator</h1>
 
-  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport"></div>
+<!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+<div style="height: 500px; border: 1px solid #aaa;" id="viewport"></div>
 
-  <!--
-    <img src="/static/img/simulatorexample.gif" />
-  -->
+<!--
+  <img src="/static/img/simulatorexample.gif" />
+-->
 
-  <!-- This all works. Just looks messy - ->
-    <h3>Template Testing</h3>
-    <p>Username: "{{ .User.Name }}:</p>
-    <p>Dynamic Comment: "{{ .Data.dyn }}"</p>
-    <p>Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"</p>
+<!-- This all works. Just looks messy - ->
+  <h3>Template Testing</h3>
+  <p>Username: "{{ .User.Name }}:</p>
+  <p>Dynamic Comment: "{{ .Data.dyn }}"</p>
+  <p>Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"</p>
 
-    <p>Loop:
-      {{ range $value := .Data.slice }}
-        <p>Looping through slice. Value: {{ $value }}</p>
-      {{ end }}
-    </p>
-  -->
-</div>
+  <p>Loop:
+    {{ range $value := .Data.slice }}
+      <p>Looping through slice. Value: {{ $value }}</p>
+    {{ end }}
+  </p>
+-->
 {{ end }}
