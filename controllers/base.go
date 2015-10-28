@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"bytes"
 	"html/template"
+	"io"
 	"net/http"
 )
 
@@ -15,6 +17,7 @@ var (
 		"about":     template.Must(template.ParseFiles(base, tmplDir+"about.html")),
 		"faqs":      template.Must(template.ParseFiles(base, tmplDir+"faqs.html")),
 		"feedback":  template.Must(template.ParseFiles(base, tmplDir+"feedback.html")),
+		"error":     template.Must(template.ParseFiles(base, tmplDir+"error.html")),
 	}
 )
 
@@ -39,14 +42,29 @@ func validPath(path string, name string) bool {
 	}
 }
 
-func errorHandler(w http.ResponseWriter, r *http.Request, status int, err string) {
+func errorHandler(w http.ResponseWriter, buffer *bytes.Buffer, errMsg string, status int) {
+	buffer.Reset()
 	w.WriteHeader(status)
-	http.Error(w, err, status)
+
+	data := map[string]interface{}{
+		"title":  status,
+		"errMsg": errMsg,
+	}
+	err := templates["error"].ExecuteTemplate(buffer, baseName, data)
+
+	if err != nil {
+		buffer.Reset()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	io.Copy(w, buffer)
 }
 
 func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[string]interface{}) {
+	var buffer bytes.Buffer
+
 	if !validPath(r.URL.Path, templ) {
-		errorHandler(w, r, http.StatusNotFound, "Not Found!")
+		errorHandler(w, &buffer, "Not Found!", http.StatusNotFound)
 		return
 	}
 
@@ -55,9 +73,11 @@ func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		Data: data,
 	}
 
-	err := templates[templ].ExecuteTemplate(w, baseName, pageData)
+	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
 	if err != nil {
-		errorHandler(w, r, http.StatusInternalServerError, err.Error())
+		errorHandler(w, &buffer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	io.Copy(w, &buffer)
 }
