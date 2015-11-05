@@ -3,28 +3,54 @@
 {{ define "scripts" }}
 <script src="/static/js/physicsjs/physicsjs-full.min.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
+<script src="/static/js/simulator/base.js"></script>
 {{ end }}
 
 {{ define "content" }}
 <h1 class="page-header">Kinematics Simulator</h1>
 
   <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport"></div>
+  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
 
-  <!--
-    <img src="/static/img/simulatorexample.gif" />
-  -->
+  <div id="toolbox">
+	<img src="/static/img/logo/logo.png" class="img-responsive" alt="Responsive image" id="kinematics1D-mass" draggable="true" ondragstart="drag(event)">
+	<img src="/static/img/logo/logo.png" class="img-responsive" alt="Responsive image" id="kinematics1D-spring" draggable="true" ondragstart="drag(event)">	
+  </div>
+  
+  
+  
+<form>
+	 <div class="radio">
+		<label><input type="radio" name="orient">Vertical</label>
+	</div>
+	
+	<div class="form-group">
+		<label for="comment">Gravity (m/s/s):</label>
+		<textarea class="form-control" rows="1" id="gravity"></textarea>
+	</div>
+	<div class="radio">
+		<label><input type="radio" name="orient" checked>Horizontal</label>
+	</div>		
+	<div class="radio">
+		<label><input type="radio" name="mode" checked>Standard</label>
+	</div>
+	
+	<div class="form-group">
+		<label for="comment">Number of Frames:</label>
+		<textarea class="form-control" rows="1" id="numFrames"></textarea>
+	</div>
+	<div class="form-group">
+		<label for="comment">Time per Frame:</label>
+		<textarea class="form-control" rows="1" id="dt"></textarea>
+	</div>
+	
+	
+	<div class="radio">
+		<label><input type="radio" name="mode">Keyframe</label>
+	</div>
+		
+	<input type="submit" class="btn btn-info" value="Submit Button">	
+</form>
+    
 
-  <!-- This all works. Just looks messy - ->
-  <h3>Template Testing</h3>
-  <p>Username: "{{ .User.Name }}:</p>
-  <p>Dynamic Comment: "{{ .Data.dyn }}"</p>
-  <p>Struct with multiple fields: "{{ .Data.stVal.X }}", and "{{ .Data.stVal.Y }}"</p>
-
-  <p>Loop:
-    {{ range $value := .Data.slice }}
-      <p>Looping through slice. Value: {{ $value }}</p>
-    {{ end }}
-  </p>
--->
 {{ end }}

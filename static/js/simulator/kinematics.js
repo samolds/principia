@@ -1,6 +1,6 @@
 // Copy and pasted from http://wellcaffeinated.net/PhysicsJS/
 // Simple example of bouncing balls
-Physics(function (world) {
+var world = Physics(function (world) {
     // bounds of the window
     var viewportBounds = Physics.aabb(0, 0, document.getElementById("viewport").clientWidth, document.getElementById("viewport").clientHeight)
         ,edgeBounce
@@ -18,7 +18,22 @@ Physics(function (world) {
     world.on('step', function () {
         world.render();
     });
-
+	
+	world.on('addComponent', function(data) {				
+		console.log(data.x);
+		console.log(data.y);
+		world.add( Physics.body('circle', {
+        x: data.x
+        ,y: data.y
+        ,vx: -0.3
+        ,radius: 20
+        ,styles: {
+            fillStyle: '#6c71c4'
+            ,angleIndicator: '#3b3e6b'
+        }
+    }));
+	});
+	
     // constrain objects to these bounds
     edgeBounce = Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds
@@ -26,6 +41,8 @@ Physics(function (world) {
         ,cof: 0.8
     });
 
+	
+	
     // resize events
     window.addEventListener('resize', function () {
 
