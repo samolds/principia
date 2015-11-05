@@ -1,37 +1,39 @@
 // Copy and pasted from http://wellcaffeinated.net/PhysicsJS/
 // Simple example of bouncing balls
-var world = Physics(function (world) {
-    // bounds of the window
+function initWorld()
+{
+
+if(world != undefined)
+	world.destroy();
+	
+return Physics(function (world) {
+    
+	world.timestep(1); // TODO: should base timestep on dt
+	
+	// bounds of the window
     var viewportBounds = Physics.aabb(0, 0, document.getElementById("viewport").clientWidth, document.getElementById("viewport").clientHeight)
         ,edgeBounce
         ,renderer
         ;
 
     // create a renderer
-    renderer = Physics.renderer('canvas', {
-        el: 'viewport'
-    });
+    renderer = Physics.renderer('canvas', { el: 'viewport'});
 
     // add the renderer
     world.add(renderer);
-    // render on each step
-    world.on('step', function () {
-        world.render();
-    });
-	
+    	
 	world.on('addComponent', function(data) {				
 		console.log(data.x);
 		console.log(data.y);
 		world.add( Physics.body('circle', {
-        x: data.x
-        ,y: data.y
-        ,vx: -0.3
-        ,radius: 20
-        ,styles: {
-            fillStyle: '#6c71c4'
-            ,angleIndicator: '#3b3e6b'
-        }
-    }));
+			x: data.x
+			,y: data.y			
+			,radius: 20
+			,styles: {
+				fillStyle: '#6c71c4'
+				,angleIndicator: '#3b3e6b'
+			}
+		}));
 	});
 	
     // constrain objects to these bounds
@@ -39,9 +41,7 @@ var world = Physics(function (world) {
         aabb: viewportBounds
         ,restitution: 0.99
         ,cof: 0.8
-    });
-
-	
+    });	
 	
     // resize events
     window.addEventListener('resize', function () {
@@ -53,18 +53,7 @@ var world = Physics(function (world) {
 
     }, true);
 
-    // create some bodies
-    world.add( Physics.body('circle', {
-        x: renderer.width * 0.4
-        ,y: renderer.height * 0.3
-        ,vx: 0.3
-        ,radius: 80
-        ,styles: {
-            fillStyle: '#cb4b16'
-            ,angleIndicator: '#72240d'
-        }
-    }));
-
+    // create some bodies    
     world.add( Physics.body('circle', {
         x: renderer.width * 0.7
         ,y: renderer.height * 0.3
@@ -75,37 +64,21 @@ var world = Physics(function (world) {
             ,angleIndicator: '#3b3e6b'
         }
     }));
-
-    // add some fun interaction
-    var attractor = Physics.behavior('attractor', {
-        order: 0,
-        strength: 0.002
-    });
-    world.on({
-        'interact:poke': function( pos ){
-            world.wakeUpAll();
-            attractor.position( pos );
-            world.add( attractor );
-        }
-        ,'interact:move': function( pos ){
-            attractor.position( pos );
-        }
-        ,'interact:release': function(){
-            world.wakeUpAll();
-            world.remove( attractor );
-        }
-    });
-
+    
     // add things to the world
     world.add([
         Physics.behavior('interactive', { el: renderer.container })
         ,Physics.behavior('constant-acceleration')
         ,Physics.behavior('body-impulse-response')
         ,edgeBounce
-    ]);
+    ]);   
+});	
 
-    // subscribe to ticker to advance the simulation
-    Physics.util.ticker.on(function( time ) {
-        world.step( time );
-    });
+} // end initWorld
+
+$( document ).ready(function() {
+    console.log( "ready!" );
+	world = initWorld();
+	simulate();
+	drawSimulator(0);
 });

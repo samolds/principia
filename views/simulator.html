@@ -1,7 +1,7 @@
 {{ define "title" }} - Simulator{{ end }}
 
 {{ define "scripts" }}
-<script src="/static/js/physicsjs/physicsjs-full.min.js"></script>
+<script src="/static/js/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/simulator/base.js"></script>
 {{ end }}
@@ -10,31 +10,54 @@
 <h1 class="page-header">Kinematics Simulator</h1>
 
   <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="droppable"></div>
 
-  <div id="toolbox">
-	<img src="/static/img/logo/logo.png" class="img-responsive" alt="Responsive image" id="kinematics1D-mass" draggable="true" ondragstart="drag(event)">
-	<img src="/static/img/logo/logo.png" class="img-responsive" alt="Responsive image" id="kinematics1D-spring" draggable="true" ondragstart="drag(event)">	
+  <div id="playback">
+	<button type="button" class="btn" onclick="toggleSimulator()" id="playpause">
+		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+	</button>
+	<input type="range" min="0" max="999" step="1" value="0" id="simulatorFrameRange" onchange="updateRange()" />
   </div>
   
+  <!-- Toolbox contains drag and droppable components based on current simulator page -->
+  <!-- TODO: Decide whether to have separate html page for each simulator type, or dynamically populate this based on use choice -->
+  <div id="toolbox">
+	<img src="/static/img/logo/logo.png" class="draggable" id="kinematics1D-mass">
+	<img src="/static/img/logo/logo.png" class="draggable" id="kinematics1D-spring">	
+  </div>
   
-  
+<!-- Global Settings for 1D kinematics -->
+<!-- TODO: Make this a popup dialog upon clicking settings button -->
 <form>
+
+	<!--
+	Select orientation:
+	Vertical - Can apply gravity, equations in terms of y
+	Horizontal - No gravity, equations in terms of x
+	-->
 	 <div class="radio">
 		<label><input type="radio" name="orient">Vertical</label>
-	</div>
-	
+	</div>	
+	<!-- TODO: This should be hidden unless Verticle mode is checked" -->
 	<div class="form-group">
 		<label for="comment">Gravity (m/s/s):</label>
 		<textarea class="form-control" rows="1" id="gravity"></textarea>
 	</div>
+	
 	<div class="radio">
 		<label><input type="radio" name="orient" checked>Horizontal</label>
 	</div>		
+	
+	<!-- 
+	Select frame mode: 
+	Standard - One initial state
+	Keyframe - Multiple states, solve for what happens in between
+	-->
+	
 	<div class="radio">
 		<label><input type="radio" name="mode" checked>Standard</label>
-	</div>
-	
+	</div>	
+	<!-- TODO: These should be hidden unless standard mode is checked" -->
 	<div class="form-group">
 		<label for="comment">Number of Frames:</label>
 		<textarea class="form-control" rows="1" id="numFrames"></textarea>
@@ -42,9 +65,7 @@
 	<div class="form-group">
 		<label for="comment">Time per Frame:</label>
 		<textarea class="form-control" rows="1" id="dt"></textarea>
-	</div>
-	
-	
+	</div>	
 	<div class="radio">
 		<label><input type="radio" name="mode">Keyframe</label>
 	</div>
