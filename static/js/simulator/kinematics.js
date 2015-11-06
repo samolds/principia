@@ -1,7 +1,10 @@
 // Copy and pasted from http://wellcaffeinated.net/PhysicsJS/
 // Simple example of bouncing balls
-function initWorld()
-{
+
+function Kinematics1DModule( ){
+	
+var initWorld = 
+function initWorld(){
 
 if(world != undefined)
 	world.destroy();
@@ -22,18 +25,45 @@ return Physics(function (world) {
     // add the renderer
     world.add(renderer);
     	
-	world.on('addComponent', function(data) {				
-		console.log(data.x);
-		console.log(data.y);
-		world.add( Physics.body('circle', {
-			x: data.x
-			,y: data.y			
-			,radius: 20
-			,styles: {
-				fillStyle: '#6c71c4'
-				,angleIndicator: '#3b3e6b'
-			}
-		}));
+	world.on('addComponent', function(data) {
+		var component;
+		console.log(data.x +"," + data.y);
+		switch(data.type)
+		{
+			case "kinematics1D-spring":
+				component = Physics.body('circle', {
+					 x: data.x
+					,y: data.y			
+					,radius: 20
+					,mass: 3
+					,styles: {
+							fillStyle: '#6c71c4'
+							,angleIndicator: '#3b3e6b'
+						}
+					});
+			break;
+			
+			
+			case "kinematics1D-mass":
+				component = Physics.body('circle', {
+					 x: data.x
+					,y: data.y		
+					,radius: 10
+					,mass: 3
+					,styles: {
+							fillStyle: '#716cc4'
+							,angleIndicator: '#3b3e6b'
+						}
+					});
+			break;
+		}
+		
+		world.add(component);
+		initStates.push(cloneState(component.state));
+		
+		// Resimulate using newly added component
+		simulate();
+		drawSimulator(0);
 	});
 	
     // constrain objects to these bounds
@@ -44,27 +74,15 @@ return Physics(function (world) {
     });	
 	
     // resize events
-    window.addEventListener('resize', function () {
-
+    window.addEventListener('resize', function () {	
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
         viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);
         // update the boundaries
         edgeBounce.setAABB(viewportBounds);
-
+		
+		drawSimulator(frame);
     }, true);
-
-    // create some bodies    
-    world.add( Physics.body('circle', {
-        x: renderer.width * 0.7
-        ,y: renderer.height * 0.3
-        ,vx: -0.3
-        ,radius: 40
-        ,styles: {
-            fillStyle: '#6c71c4'
-            ,angleIndicator: '#3b3e6b'
-        }
-    }));
-    
+	
     // add things to the world
     world.add([
         Physics.behavior('interactive', { el: renderer.container })
@@ -76,9 +94,14 @@ return Physics(function (world) {
 
 } // end initWorld
 
-$( document ).ready(function() {
-    console.log( "ready!" );
+var initModule = 
+function initModule(){
 	world = initWorld();
 	simulate();
 	drawSimulator(0);
-});
+}
+
+return {initWorld, initModule};
+}
+
+var Kinematics1D = Kinematics1DModule();

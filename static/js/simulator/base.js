@@ -5,16 +5,18 @@ var frame = 0;
 var delay = 1;
 var anim;
 var running = false;
+var initStates = [];
 
-function updateRange()
-{
-	frame = $("#simulatorFrameRange").val();	
+/* Scrubs to selected frame */
+function onRangeUpdate(){
+	frame = $("#simulatorFrameRange").val();
 	drawSimulator(frame);
 }
 
-
-function toggleSimulator()
-{
+/*
+Toggles the state of the simulator between running and paused
+*/
+function toggleSimulator(){
 	var span = $("#playpause").children()[0];
 	running = !running;
 	if(running){
@@ -39,74 +41,106 @@ function drawLoop()
 	frame++;
 }
 
-function drawSimulator(i)
+
+/*
+Draw the simulator at frame n 
+*/
+function drawSimulator(n)
 {
-	for(var j=0; j<world.getBodies().length; j++)
-		world.getBodies()[j].state = states[j][i];
+	for(var i=0; i<world.getBodies().length; i++)	
+		world.getBodies()[i].state = states[i][n];
+	
 	world.render();	
 }
 
+
+function cloneState(state)
+{
+	var acc = state.acc.clone();
+	var vel = state.vel.clone();
+	var pos = state.pos.clone();
+	var ang = {"acc": state.angular.acc,"vel": state.angular.vel,"pos": state.angular.pos};
+	var clone = {"acc": acc,"vel": vel,"pos": pos,"angular": ang};
+	return clone;
+}
+
 function simulate(){
+	frame = 0;
+	if(running) toggleSimulator();
+	$("#simulatorFrameRange").val(0); // Reset range
+	
+	
 	states = [];	// Clear states global
+	world._animTime = undefined;
+	world._lastTime = undefined;
+	world._time = 0;
+
+	var old = {pos: new Physics.vector(),vel: new Physics.vector(),acc: new Physics.vector(),angular: {pos: 0.0,vel: 0.0,acc: 0.0}};	
 	world.step();	// Calling step once required for initialization?
 	
-	// For each body in the simulation
+	// Restore objects to their initial state
+	for(var j=0; j<world.getBodies().length; j++){
+		world.getBodies()[j].state = cloneState(initStates[j]);
+		world.getBodies()[j].state["old"] = cloneState(old);
+		world.getBodies()[j]._started = undefined;
+	}
+	
+	// Every object gets its own sequence of states
 	for(var j=0; j<world.getBodies().length; j++)
-	{
-		// Create a new state object
 		states[j] = [];
-		
-		// For each frame
-		for(var i=0; i<1000; i++)
-		{
+	
+	// For each body in the simulation
+	// For each frame
+	for(var i=0; i<1000; i++)
+	{
+		for(var j=0; j<world.getBodies().length; j++)
+		{	
 			// Clone the state information for the current body
 			var curState = world.getBodies()[j].state;
-			var acc = curState.acc.clone();
-			var vel = curState.vel.clone();
-			var pos = curState.pos.clone();
-			var ang = {"acc": curState.angular.acc,"vel": curState.angular.vel,"pos": curState.angular.pos};
-			var saveState = {"acc": acc,"vel": vel,"pos": pos,"angular": ang};
-			
+			var saveState = cloneState(curState);
+			if(i != 0) saveState["old"] = states[j][i-1];
 			// Save state information and advance the simulator
 			states[j].push(saveState);
-			world.step();
 		}
+		world.step();
 	}
 }
 
-function allowDrop(ev) { ev.preventDefault();}
 
-function drag(ev){ 
-	ev.dataTransfer.setData("id", ev.target.id);	
-	ev.dataTransfer.setData("x", ev.clientX);	
-	ev.dataTransfer.setData("y", ev.clientY);	
+$(".draggable").draggable({
+    cursor: 'move',
+    containment: $("viewport"),
+	scroll: false,
+	stop: handleDragStop,
+    helper: 'clone'
+});
+
+function handleDragStop(event, ui)
+{  	      
+	var type = ui.helper[0].getAttribute("component");
+	
+	// Left and top of helper img
+	var left = ui.offset.left;
+	var top = ui.offset.top;		
+	
+	var width = event.target.width;
+	var height = event.target.height;
+	
+	var cx = left + width/2;
+	var cy = top + height/2;
+	
+	// Left and top of viewport
+	var vleft = $("#viewport").position().left;
+	var vtop = $("#viewport").position().top;
+	
+	console.log(left + " " + top) 	
+	
+	var data = {'type':type,'x':cx-vleft,'y':cy-vtop};
+	
+	world.emit('addComponent', data);
 }
 
-function drop(ev){	
-	ev.preventDefault();
-	var canvas = $( "canvas:first" );
-	var position = canvas.position();
-	var data = {'id':ev.dataTransfer.getData("id"),
-				'x':ev.dataTransfer.getData("x") - position.left,
-				'y':ev.dataTransfer.getData("y")};
-	
-	console.log(data.x);
-	console.log(data.y);
-		
-	world.emit('addComponent', data);
-	
-	//console.log(ev.clientX - position.left); //NOTE: this works at 100% scale, but clientX changes based on zoom
-};
 
-/*
-$(".draggable").draggable({
-	drag: function( event, ui ) { console.log("a ha ha ha");}
+$( document ).ready(function() {
+	Kinematics1D.initModule();    
 });
-
-$(".droppable").droppable({
-    scope: "items",
-    drop: function (event, ui) {
-        console.log("I am droppable");
-    }
-});
-*/

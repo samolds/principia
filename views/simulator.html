@@ -1,6 +1,7 @@
 {{ define "title" }} - Simulator{{ end }}
 
 {{ define "scripts" }}
+<script src="/static/js/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
 <script src="/static/js/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/simulator/base.js"></script>
@@ -9,23 +10,24 @@
 {{ define "content" }}
 <h1 class="page-header">Kinematics Simulator</h1>
 
-  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="droppable"></div>
+<!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+<div style="height: 400px; border: 1px solid #aaa;" id="viewport"></div>
 
-  <div id="playback">
-	<button type="button" class="btn" onclick="toggleSimulator()" id="playpause">
-		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-	</button>
-	<input type="range" min="0" max="999" step="1" value="0" id="simulatorFrameRange" onchange="updateRange()" />
-  </div>
-  
-  <!-- Toolbox contains drag and droppable components based on current simulator page -->
-  <!-- TODO: Decide whether to have separate html page for each simulator type, or dynamically populate this based on use choice -->
-  <div id="toolbox">
-	<img src="/static/img/logo/logo.png" class="draggable" id="kinematics1D-mass">
-	<img src="/static/img/logo/logo.png" class="draggable" id="kinematics1D-spring">	
-  </div>
-  
+<!-- Toolbox contains drag and droppable components based on current simulator page -->
+<!-- TODO: Decide whether to have separate html page for each simulator type, or dynamically populate this based on use choice -->
+<div id="toolbox">
+<img src="/static/img/logo/logo.png" class="draggable" component="kinematics1D-mass">
+<img src="/static/img/logo/logo.png" class="draggable" component="kinematics1D-spring">	
+</div>
+
+<!-- Scrub through simulation frames with playback -->
+<div id="playback">
+<button type="button" class="btn" onclick="toggleSimulator()" id="playpause">
+	<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+</button>
+<input type="range" min="0" max="999" step="1" value="0" id="simulatorFrameRange" onchange="onRangeUpdate()" />
+</div>
+
 <!-- Global Settings for 1D kinematics -->
 <!-- TODO: Make this a popup dialog upon clicking settings button -->
 <form>
@@ -73,5 +75,4 @@
 	<input type="submit" class="btn btn-info" value="Submit Button">	
 </form>
     
-
 {{ end }}
