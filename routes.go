@@ -11,4 +11,5 @@ func init() {
 	http.HandleFunc("/about", controllers.AboutHandler)
 	http.HandleFunc("/faqs", controllers.FaqsHandler)
 	http.HandleFunc("/feedback", controllers.FeedbackHandler)
+	http.HandleFunc("/comment", controllers.CommentHandler)
 }

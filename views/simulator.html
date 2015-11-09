@@ -5,6 +5,32 @@
 <script src="/static/js/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/simulator/base.js"></script>
+
+<script type="text/javascript">
+
+	$( "#myForm" ).submit(function( event ) {
+	  event.preventDefault();
+	  //var data = JSON.stringify($("#myForm").serializeArray());
+	  var data = $("#myForm").serialize();
+	  alert(data);
+	  SubForm(data);
+	});
+
+
+	function SubForm (data){
+        $.ajax({
+            url:'/comment',
+            type:'post',
+            data: data,
+            //dataType: 'json',
+            success:function(){
+                alert("worked");
+            }
+        });
+    }
+
+</script>
+
 {{ end }}
 
 {{ define "content" }}
@@ -74,5 +100,11 @@
 		
 	<input type="submit" class="btn btn-info" value="Submit Button">	
 </form>
-    
+
+
+<form id="myForm">
+    Comment:<input type="text" name="Content">
+    <input type="submit" value="Submit" >
+</form>
+
 {{ end }}
