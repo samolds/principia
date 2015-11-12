@@ -95,15 +95,10 @@ To merge everything currently on `master` to `production` before deploying
 
 
 ### Reviews:
-> JavaScript is a weiner.
+"JavaScript is a weiner."
+* DW
 
-DW
-
-
-> No Results for principia. Suggestions for improving the results:
-> > Try a larger search area.
-> > Try a different location.
-> > Check the spelling or try alternate spellings.
-> > Try a more general search. e.g. "pizza" instead of "pepperoni"
-
-Yelp
+"No Results for principia. Suggestions for improving the results: Try a larger search area.
+Try a different location. Check the spelling or try alternate spellings. Try a more general
+search. e.g. 'pizza' instead of 'pepperoni'"
+* Yelp
