@@ -49,7 +49,7 @@ then select "theprincipiaxyz" from the dropdown.
 This is how you will push changes to the live site. Obviously, use care to make sure what is being deployed
 is thorougly tested and isn't going to break anything. This command will push all of the code you have
 locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultimately
-[theprincipia.xyz](http://theprincipia.xyz). For best practice, make sure to only deploy when on the `production`
+[principia.cc](http://principia.cc). For best practice, make sure to only deploy when on the `production`
 branch.
 
 To merge everything currently on `master` to `production` before deploying
