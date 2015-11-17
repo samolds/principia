@@ -75,3 +75,11 @@ a.glyphicon-rating:hover .glyphicon {
 .pad-bottom {
   padding-bottom: 30px;
 }
+
+.principia-blue-bg {
+  background-color: #0071bc;
+}
+
+.principia-blue-fade-bg {
+  background-color: #cce2f1;
+}
