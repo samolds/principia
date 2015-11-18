@@ -3,12 +3,14 @@ var Globals = {
   world: {},
   states: [],
   frame: 0,
-  delay: 1,
+  delay: 10,
   anim: {},
   running: false,
   initStates: [],
   totalFrames: 4000,
-  canvasId: "viewport"
+  canvasId: "viewport",
+  didMove: false,
+  selectedBody: false
 };
 
 
@@ -52,6 +54,15 @@ function drawSimulator(n) {
     Globals.world.getBodies()[i].state = Globals.states[i][n];
   }
   Globals.world.render();
+  if(Globals.selectedBody){
+	var state = Globals.selectedBody.state;
+	$('#properties').html(
+			"Properties:<br>" +
+			"POS: " + state.pos  + "<br>" +
+			"VEL: " + state.vel  + "<br>" +
+			"ACC: " + state.acc  + "<br>"
+			);
+  }
 }
 
 
@@ -86,8 +97,8 @@ function simulate() {
   $("#simulatorFrameRange").val(0); // Reset range
 
   Globals.states = [];	// Clear states global
-  Globals.world._animTime = undefined;
-  Globals.world._lastTime = undefined;
+  //Globals.world._animTime = undefined;
+  //Globals.world._lastTime = undefined; // Unnecessary?
   Globals.world._time = 0;
 
   var old = {
@@ -101,8 +112,7 @@ function simulate() {
     }
   };
 
-  Globals.world.step();	// Calling step once required for initialization?
-
+  
   // Restore objects to their initial state
   for (i = 0; i < Globals.world.getBodies().length; i++) {
     Globals.world.getBodies()[i].state = cloneState(Globals.initStates[i]);
@@ -110,7 +120,9 @@ function simulate() {
     Globals.world.getBodies()[i]._started = undefined;
     Globals.states[i] = [];
   }
-
+  
+Globals.world.step();	// Calling step once required for initialization?
+  
   // For each frame
   for (i = 0; i < Globals.totalFrames; i++) {
     // For each body in the simulation
@@ -136,7 +148,6 @@ $(".draggable").draggable({
   stop: handleDragStop,
   helper: 'clone'
 });
-
 
 function handleDragStop(event, ui) {
   var type = ui.helper[0].getAttribute("component");
@@ -164,6 +175,44 @@ function handleDragStop(event, ui) {
   Globals.world.emit('addComponent', data);
 }
 
+Physics.integrator('my-integrator', function( parent ){
+
+    return {
+
+        integrateVelocities: function( bodies, dt ){
+			for ( var i = 0, l = bodies.length; i < l; ++i ){
+
+                var body = bodies[i];
+                var state = body.state;	
+				state.old = cloneState(body.state);
+				state.vel.x += state.acc.x * dt;
+				state.vel.y += state.acc.y * dt;
+				state.angular.vel += state.angular.acc;
+			}
+            // update the velocities of all bodies according to timestep dt
+            // store previous velocities in .state.old.vel
+            // and .state.old.angular.vel
+        },
+
+        integratePositions: function( bodies, dt ){
+			for ( var i = 0, l = bodies.length; i < l; ++i ){
+                var body = bodies[ i ];
+                var state = body.state;
+				var temp = cloneState(body.state);
+				state.pos.x += state.old.vel.x * dt + state.acc.x * 0.5 * dt*dt;
+				state.pos.y += state.old.vel.y * dt + state.acc.y * 0.5 * dt*dt;
+				state.angular.pos += state.angular.vel;
+				state.old = temp;
+				state.acc.zero();
+				state.angular.acc = 0.0;
+			}
+            // update the positions of all bodies according to timestep dt
+            // store the previous positions in .state.old.pos
+            // and .state.old.angular.pos
+            // also set the accelerations to zero
+        }
+    };
+});
 
 $(document).ready(function() {
   Kinematics1D.initModule();

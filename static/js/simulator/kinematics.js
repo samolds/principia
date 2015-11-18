@@ -1,20 +1,25 @@
 function Kinematics1DModule() {
-  var initWorld = function initWorld() {
+  function initWorld() {
     return Physics(function (world) {
       var canvasId = "viewport";
       var canvasEl = document.getElementById(canvasId);
-      world.timestep(3); // TODO: should base timestep on dt
-
-      // bounds of the window
-      var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);
+      var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);// bounds of the window
       var edgeBounce;
       var renderer;
+	  var integrator;	  
+	  world.timestep(1); // TODO: should base timestep on dt option
 
+            
       // create a renderer
       renderer = Physics.renderer('canvas', {el: canvasId});
 
       // add the renderer
       world.add(renderer);
+	  
+	  //
+	  integrator = Physics.integrator('my-integrator', {});
+	  world.add(integrator);
+	  	  
 
       world.on('addComponent', function(data) {
         var component;
@@ -53,7 +58,9 @@ function Kinematics1DModule() {
             break;
         }
         world.add(component);
-        Globals.initStates.push(cloneState(component.state));
+        
+		// Must enforce invariant: Index of body in initStates must match index of body in world.getBodies()
+		Globals.initStates.push(cloneState(component.state));
 
         // Resimulate using newly added component
         simulate();
@@ -77,27 +84,75 @@ function Kinematics1DModule() {
         drawSimulator(Globals.frame);
       }, true);
 
+	world.on('interact:grab', function( data ){
+		console.log("grab");
+		if(data.body)
+		{
+			// Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator		
+			var idx = Globals.world.getBodies().indexOf(Globals.world.findOne( function(body){ return body.isGrabbed; }))
+			var state = Globals.states[idx][Globals.frame];
+			Globals.selectedBody = data.body;
+			$('#properties').html(
+			"Properties:<br>" +
+			"POS: " + state.pos  + "<br>" +
+			"VEL: " + state.vel  + "<br>" +
+			"ACC: " + state.acc  + "<br>"
+			);
+		}
+	});
+	world.on('interact:move', function( data ){
+		if(data.body) {
+			if(Globals.running) toggleSimulator();
+			data.body.state.pos.x = data.x;
+			data.body.state.pos.y = data.y;
+			Globals.world.render();
+			Globals.didMove = true;
+		}
+	});
+	
+	world.on('interact:release', function( data ){
+		//data.x; // the x coord
+		//data.y; // the y coord
+		//data.body; // the body that was grabbed
+		// Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
+		if(data.body){						
+			if(Globals.didMove) {
+				var i = Globals.world.getBodies().indexOf(data.body);
+				Globals.initStates[i].pos.x = data.x;
+				Globals.initStates[i].pos.y = data.y;
+				Globals.didMove = false;
+				simulate();
+				drawSimulator(0);	
+			}			
+		}
+	});
+	
+	world.on('interact:poke', function( data ){
+		console.log("poke: " + data.x + "," + data.y);
+	});
+	
+	  
       // add things to the world
       world.add([
         Physics.behavior('interactive', {el: renderer.container}),
         Physics.behavior('constant-acceleration'),
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune'),
+		Physics.behavior('sweep-prune'),
         edgeBounce
       ]);
     });
   } // end initWorld
 
-  var initModule = function initModule() {
+  function initModule() {
     Globals.world = initWorld();
     simulate();
     drawSimulator(0);
   }
 
   return {
-    initWorld,
-    initModule
+    initWorld:  initWorld,
+    initModule: initModule
   };
 }
 

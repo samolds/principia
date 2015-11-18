@@ -5651,6 +5651,13 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          **/
         step: function( now ){
 
+			// Modified by MADADASA to do bare minimum
+			// iterate by one timestep			
+			this._time += this._dt;                    
+            this.iterate( this._dt );
+			this.emit('step', {});
+			return this;
+		/*
             var time = this._time
                 ,warp = this._warp
                 ,invWarp = 1 / warp
@@ -5717,6 +5724,7 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
 
             this.emit('step', meta);
             return this;
+			*/
         },
 
         /**
@@ -8441,8 +8449,8 @@ Physics.behavior('interactive', function( parent ){
                             // we're trying to grab a body
 
                             // fix the body in place
-                            body.state.vel.zero();
-                            body.state.angular.vel = 0;
+                            //body.state.vel.zero();		// Don't fix the body for fixed discrete sim, modified by MADADASA
+                            //body.state.angular.vel = 0;
                             body.isGrabbed = true;
                             // remember the currently grabbed bodies
                             data = self.bodyData[touchId] || {};
@@ -8566,10 +8574,10 @@ Physics.behavior('interactive', function( parent ){
 
                             dt = Math.max(Physics.util.ticker.now() - data.time, self.options.moveThrottle);
                             body.treatment = data.treatment;
-                            // calculate the release velocity
-                            body.state.vel.clone( data.pos ).vsub( data.oldPos ).mult( 1 / dt );
+                            // calculate the release velocity -> Not anymore. Modified by MADADASA.
+                            //body.state.vel.clone( data.pos ).vsub( data.oldPos ).mult( 1 / dt );
                             // make sure it's not too big
-                            body.state.vel.clamp( self.options.minVel, self.options.maxVel );
+                            //body.state.vel.clamp( self.options.minVel, self.options.maxVel );
 
                             body.isGrabbed = false;
                             pos.body = body;
@@ -8652,12 +8660,13 @@ Physics.behavior('interactive', function( parent ){
 
             // if we have one or more bodies grabbed, we need to move them to the new mouse/finger positions.
             // we'll do this by adjusting the velocity so they get there at the next step
-            for ( var touchId in self.bodyData ) {
-                d = self.bodyData[touchId];
-                body = d.body;
-                state = body.state;
-                state.vel.clone( d.pos ).vsub( d.offset ).vsub( state.pos ).mult( 1 / dt );
-            }
+            //for ( var touchId in self.bodyData ) {
+                // Modified by MADADASA: Require move handler to adjust position instead.
+				//d = self.bodyData[touchId];
+                //body = d.body;
+                //state = body.state;
+                //state.vel.clone( d.pos ).vsub( d.offset ).vsub( state.pos ).mult( 1 / dt );
+            //}
         }
     };
 });
