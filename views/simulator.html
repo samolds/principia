@@ -3,107 +3,43 @@
 {{ define "scripts" }}
 <script src="/static/js/lib/jquery-ui.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
-<script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/simulator/base.js"></script>
-
-<script type="text/javascript">
-
-	$( "#myForm" ).submit(function( event ) {
-	  event.preventDefault();
-	  //var data = JSON.stringify($("#myForm").serializeArray());
-	  var data = $("#myForm").serialize();
-	  alert(data);
-	  SubForm(data);
-	});
-
-
-	function SubForm (data){
-        $.ajax({
-            url:'/comment',
-            type:'post',
-            data: data,
-            //dataType: 'json',
-            success:function(){
-                alert("worked");
-            }
-        });
-    }
-
-</script>
-
+<script src="/static/js/simulator/kinematics.js"></script>
 {{ end }}
 
 {{ define "content" }}
 <h1 class="page-header">Kinematics Simulator</h1>
 
 <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-<div style="height: 400px; border: 1px solid #aaa;" id="viewport"></div>
-
-<!-- Toolbox contains drag and droppable components based on current simulator page -->
-<!-- TODO: Decide whether to have separate html page for each simulator type, or dynamically populate this based on use choice -->
-<div id="toolbox">
-<img src="/static/img/logo/logo.png" class="draggable" component="kinematics1D-mass">
-<img src="/static/img/logo/logo.png" class="draggable" component="kinematics1D-spring">	
-</div>
+<div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></div>
 
 <!-- Scrub through simulation frames with playback -->
-<div id="playback">
-<button type="button" class="btn" onclick="toggleSimulator()" id="playpause">
-	<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-</button>
-<input type="range" min="0" max="999" step="1" value="0" id="simulatorFrameRange" onchange="onRangeUpdate()" />
+<div class="row" id="playback">
+  <div class="col-md-1">
+    <button type="button" class="btn btn-default btn-lg" onclick="toggleSimulator()" id="playpause">
+      <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Go!
+    </button>
+  </div>
+  <div class="col-md-11">
+    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+  </div>
 </div>
 
-<!-- Global Settings for 1D kinematics -->
-<!-- TODO: Make this a popup dialog upon clicking settings button -->
-<form>
+<h2>Toolbox:</h2>
+<hr />
 
-	<!--
-	Select orientation:
-	Vertical - Can apply gravity, equations in terms of y
-	Horizontal - No gravity, equations in terms of x
-	-->
-	 <div class="radio">
-		<label><input type="radio" name="orient">Vertical</label>
-	</div>	
-	<!-- TODO: This should be hidden unless Verticle mode is checked" -->
-	<div class="form-group">
-		<label for="comment">Gravity (m/s/s):</label>
-		<textarea class="form-control" rows="1" id="gravity"></textarea>
-	</div>
-	
-	<div class="radio">
-		<label><input type="radio" name="orient" checked>Horizontal</label>
-	</div>		
-	
-	<!-- 
-	Select frame mode: 
-	Standard - One initial state
-	Keyframe - Multiple states, solve for what happens in between
-	-->
-	
-	<div class="radio">
-		<label><input type="radio" name="mode" checked>Standard</label>
-	</div>	
-	<!-- TODO: These should be hidden unless standard mode is checked" -->
-	<div class="form-group">
-		<label for="comment">Number of Frames:</label>
-		<textarea class="form-control" rows="1" id="numFrames"></textarea>
-	</div>
-	<div class="form-group">
-		<label for="comment">Time per Frame:</label>
-		<textarea class="form-control" rows="1" id="dt"></textarea>
-	</div>	
-	<div class="radio">
-		<label><input type="radio" name="mode">Keyframe</label>
-	</div>
-		
-	<input type="submit" class="btn btn-info" value="Submit Button">	
-</form>
+<div class="row" id="toolbox">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-2">
+    <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
+  </div>
+  <div class="col-md-2">
+    <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+  </div>
+</div>
 
-<form id="myForm">
-    Comment:<input type="text" name="Content">
-    <input type="submit" value="Submit" >
-</form>
-
+<br />
+<br />
+<br />
 {{ end }}
