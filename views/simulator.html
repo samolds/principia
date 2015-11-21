@@ -5,22 +5,66 @@
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
+<script src="/static/js/lib/forms.js"></script>
 {{ end }}
 
 {{ define "content" }}
 <h1 class="page-header">Kinematics Simulator</h1>
+
+<!-- Show the save bar if a user is logged in -->
+{{ if .CurrentUser}}
+
+  <div class="row" id="save-simulation-bar">
+    <div class="col-xs-10"></div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-default pull-right" onclick="saveSimulation({{.CurrentUser.Email}})">
+        <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+      </button>
+    </div>
+  </div>
+
+  <!-- Save Modal -->
+  <div class="modal fade" id="save-simulation-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Save Simulation</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row" id="save-simulation-bar">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="col-xs-3 control-label">Simulation Name:</label>
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" placeholder="Simulation Name" id="simulation-name-input"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="">Save Simulation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{{else}}                
+{{ end }}
 
 <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
 <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></div>
 
 <!-- Scrub through simulation frames with playback -->
 <div class="row" id="playback">
-  <div class="col-md-1">
+  <div class="col-md-2">
     <button type="button" class="btn btn-default btn-lg" onclick="toggleSimulator()" id="playpause">
       <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Go!
     </button>
   </div>
-  <div class="col-md-11">
+  <div class="col-md-10">
     <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
   </div>
 </div>

@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"appengine"
+	"appengine/user"
 )
 
 var (
@@ -21,13 +23,8 @@ var (
 	}
 )
 
-type UserT struct {
-	ID   int
-	Name string
-}
-
 type PageData struct {
-	User UserT
+	CurrentUser *user.User
 	Data map[string]interface{}
 }
 
@@ -68,8 +65,30 @@ func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		return
 	}
 
+	// USER AUTHENTICATION
+	c := appengine.NewContext(r)
+    u := user.Current(c)
+    var url string
+    var loginMessage string
+
+    if u == nil {
+        tmpURL, _ := user.LoginURL(c, "/")
+        url = tmpURL
+        loginMessage = "Sign In"
+    } else {
+    	tmpURL, _ := user.LogoutURL(c, "/")
+		url = tmpURL
+		loginMessage = "Sign Out"
+    }
+
+    if data == nil {
+    	data = map[string]interface{}{}
+    }
+	data["loginUrl"] = url
+	data["loginMessage"] = loginMessage
+
 	pageData := &PageData{
-		User: UserT{ID: 1, Name: "Test User"},
+		CurrentUser: u,
 		Data: data,
 	}
 
