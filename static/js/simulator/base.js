@@ -7,12 +7,53 @@ var Globals = {
   anim: {},
   running: false,
   initStates: [],
+  finalStaes: [],
   totalFrames: 4000,
   canvasId: "viewport",
   didMove: false,
   selectedBody: false
 };
 
+function onPropertyChanged(property, value){
+	console.log(property + "," + value);
+	
+	var world = Globals.world;
+	var body = Globals.selectedBody;	
+	var initStates = Globals.initStates;
+	
+	switch(property)
+	{		
+		case 'posx':
+			body.state.pos.x = value;
+			initStates[world.getBodies().indexOf(body)].pos.x = body.state.pos.x;
+			break;
+		case 'posy':
+			body.state.pos.y = value;
+			initStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;
+			break;
+		case 'velx':
+			body.state.vel.x = value;
+			initStates[world.getBodies().indexOf(body)].vel.x = body.state.vel.x;
+			break;
+		case 'vely':
+			body.state.vel.y = value;
+			initStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;
+			break;
+		case 'accx':
+			body.state.acc.x = value;
+			initStates[world.getBodies().indexOf(body)].acc.x = body.state.acc.x;
+			break;
+		case 'accy':
+			body.state.acc.y = value;
+			initStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
+			break;
+	}
+	
+	
+	
+	simulate();
+	drawSimulator(0);
+}
 
 /* Scrubs to selected frame */
 function onRangeUpdate(){
@@ -50,38 +91,52 @@ function drawLoop() {
 
 /* Draw the simulator at frame n */
 function drawSimulator(n) {
-  for (var i = 0; i < Globals.world.getBodies().length; i++) {
-    Globals.world.getBodies()[i].state = Globals.states[i][n];
-  }
-  Globals.world.render();
-  if(Globals.selectedBody){
-	var state = Globals.selectedBody.state;
-	$('#properties').html(
-			"Properties:<br>" +
-			"POS: " + state.pos  + "<br>" +
-			"VEL: " + state.vel  + "<br>" +
-			"ACC: " + state.acc  + "<br>"
-			);
-  }
+	var world = Globals.world;
+	var selectedBody = Globals.selectedBody;
+	
+	for (var i = 0; i < Globals.world.getBodies().length; i++) {
+		world.getBodies()[i].state = Globals.states[i][n];
+	}
+	world.render();
+	
+	if(selectedBody){
+		var state = selectedBody.state;
+		$('#properties-position-x').val(state.pos.x);
+		$('#properties-position-y').val(state.pos.y);
+		$('#properties-velocity-x').val(state.vel.x);
+		$('#properties-velocity-y').val(state.vel.y);
+		$('#properties-acceleration-x').val(state.acc.x);
+		$('#properties-acceleration-y').val(state.acc.y);
+		
+		var img = selectedBody.view;
+		var halfw = img["width"]/2;
+		var halfh = img["height"]/2;
+		
+		world.renderer().ctx.strokeStyle = '#ff0000';
+		world.renderer().ctx.lineWidth = 2;
+		
+		world.renderer().ctx.strokeRect(state.pos.x-halfw, state.pos.y-halfh, halfw*2, halfh*2);						
+		/*	
+		world.renderer().ctx.translate((state.pos.x), (state.pos.y));
+		world.renderer().ctx.rotate(45 * Math.PI/180);
+		world.renderer().ctx.strokeRect(state.pos.x, state.pos.y, halfw*2, halfh*2);				
+		world.renderer().ctx.rotate(-45 * Math.PI/180);
+		world.renderer().ctx.translate(-(state.pos.x), -(state.pos.y));
+		
+		world.renderer().ctx.strokeStyle = '#00ff00';		
+		world.renderer().ctx.rotate(-45 * Math.PI/180);
+		world.renderer().ctx.strokeRect(0, 0	, halfw*2, halfh*2);				
+		world.renderer().ctx.rotate(45 * Math.PI/180);
+		*/
+	}
 }
-
 
 function cloneState(state) {
   var acc = state.acc.clone();
   var vel = state.vel.clone();
   var pos = state.pos.clone();
-  var ang = {
-    "acc": state.angular.acc,
-    "vel": state.angular.vel,
-    "pos": state.angular.pos
-  };
-
-  var clone = {
-    "acc": acc,
-    "vel": vel,
-    "pos": pos,
-    "angular": ang
-  };
+  var ang = {"acc": state.angular.acc, "vel": state.angular.vel, "pos": state.angular.pos};
+  var clone = {"acc": acc, "vel": vel, "pos": pos, "angular": ang};
   return clone;
 }
 
@@ -105,11 +160,7 @@ function simulate() {
     pos: new Physics.vector(),
     vel: new Physics.vector(),
     acc: new Physics.vector(),
-    angular: {
-      pos: 0.0,
-      vel: 0.0,
-      acc: 0.0
-    }
+    angular: { pos: 0.0, vel: 0.0, acc: 0.0}
   };
 
   
@@ -121,7 +172,7 @@ function simulate() {
     Globals.states[i] = [];
   }
   
-Globals.world.step();	// Calling step once required for initialization?
+//Globals.world.step();	// Calling step once required for initialization?
   
   // For each frame
   for (i = 0; i < Globals.totalFrames; i++) {
@@ -216,4 +267,12 @@ Physics.integrator('my-integrator', function( parent ){
 
 $(document).ready(function() {
   Kinematics1D.initModule();
+  
+  // Prepare event handling
+  $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 
+  $('#properties-position-y').on("change", function(){ onPropertyChanged('posy', $('#properties-position-y').val()); }); 
+  $('#properties-velocity-x').on("change", function(){ onPropertyChanged('velx', $('#properties-velocity-x').val()); }); 
+  $('#properties-velocity-y').on("change", function(){ onPropertyChanged('vely', $('#properties-velocity-y').val()); }); 
+  $('#properties-acceleration-x').on("change", function(){ onPropertyChanged('accx', $('#properties-acceleration-x').val()); }); 
+  $('#properties-acceleration-y').on("change", function(){ onPropertyChanged('accy', $('#properties-acceleration-y').val()); }); 
 });

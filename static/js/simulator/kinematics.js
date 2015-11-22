@@ -58,8 +58,8 @@ function Kinematics1DModule() {
             break;
         }
         world.add(component);
-        
-		// Must enforce invariant: Index of body in initStates must match index of body in world.getBodies()
+        		
+		// Must enforce invariant: Index of body in initStates must match index of body in world.getBodies()		
 		Globals.initStates.push(cloneState(component.state));
 
         // Resimulate using newly added component
@@ -92,12 +92,13 @@ function Kinematics1DModule() {
 			var idx = Globals.world.getBodies().indexOf(Globals.world.findOne( function(body){ return body.isGrabbed; }))
 			var state = Globals.states[idx][Globals.frame];
 			Globals.selectedBody = data.body;
-			$('#properties').html(
-			"Properties:<br>" +
-			"POS: " + state.pos  + "<br>" +
-			"VEL: " + state.vel  + "<br>" +
-			"ACC: " + state.acc  + "<br>"
-			);
+								
+			$('#properties-position-x').val(state.pos.x + "");
+			$('#properties-position-y').val(state.pos.y + "");
+			$('#properties-acceleration-x').val(state.acc.x + "");
+			$('#properties-acceleration-y').val(state.acc.y + "");
+			$('#properties-velocity-x').val(state.vel.x + "");
+			$('#properties-velocity-y').val(state.vel.y + "");			
 		}
 	});
 	world.on('interact:move', function( data ){
@@ -110,10 +111,7 @@ function Kinematics1DModule() {
 		}
 	});
 	
-	world.on('interact:release', function( data ){
-		//data.x; // the x coord
-		//data.y; // the y coord
-		//data.body; // the body that was grabbed
+	world.on('interact:release', function( data ){		
 		// Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
 		if(data.body){						
 			if(Globals.didMove) {
@@ -128,7 +126,14 @@ function Kinematics1DModule() {
 	});
 	
 	world.on('interact:poke', function( data ){
+		Globals.selectedBody = false;
 		console.log("poke: " + data.x + "," + data.y);
+		$('#properties-position-x').val("");
+		$('#properties-position-y').val("");
+		$('#properties-acceleration-x').val("");
+		$('#properties-acceleration-y').val("");
+		$('#properties-velocity-x').val("");
+		$('#properties-velocity-y').val("");
 	});
 	
 	  
