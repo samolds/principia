@@ -29,14 +29,7 @@ type PageData struct {
 }
 
 func validPath(path string, name string) bool {
-	if path == "/" { // && name == "home" {
-		return true
-	} else if path == "/simulator" { // temporary while simulator IS home page
-		return false
-	} else {
-		_, ok := templates[name]
-		return ok && path == "/"+name
-	}
+	return true
 }
 
 func errorHandler(w http.ResponseWriter, buffer *bytes.Buffer, errMsg string, status int) {
@@ -84,6 +77,7 @@ func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
     if data == nil {
     	data = map[string]interface{}{}
     }
+
 	data["loginUrl"] = url
 	data["loginMessage"] = loginMessage
 
