@@ -7,7 +7,7 @@ var Globals = {
   anim: {},
   running: false,
   initStates: [],
-  finalStaes: [],
+  finalStates: [],
   totalFrames: 4000,
   canvasId: "viewport",
   didMove: false,
@@ -89,6 +89,54 @@ function drawLoop() {
 }
 
 
+/* Shows elements values in html elements */
+function displayElementValues(st) {
+  if (st) {
+    $('#properties-position-x').val(st.pos.x);
+    $('#properties-position-y').val(st.pos.y);
+    $('#properties-velocity-x').val(st.vel.x);
+    $('#properties-velocity-y').val(st.vel.y);
+    $('#properties-acceleration-x').val(st.acc.x);
+    $('#properties-acceleration-y').val(st.acc.y);
+  } else {
+    $('#properties-position-x').val("");
+    $('#properties-position-y').val("");
+    $('#properties-velocity-x').val("");
+    $('#properties-velocity-y').val("");
+    $('#properties-acceleration-x').val("");
+    $('#properties-acceleration-y').val("");
+  }
+}
+
+
+/* Draws highlight box around selected element */
+function highlightSelection(body) {
+  var img = body.view;
+  var halfw = img["width"] / 2;
+  var halfh = img["height"] / 2;
+  var canvas = Globals.world.renderer();
+
+  canvas.ctx.strokeStyle = '#ff0000';
+  canvas.ctx.lineWidth = 2;
+
+  var loc = body.state.pos;
+  Globals.world.render(); // Wipes existing highlight border
+  canvas.ctx.strokeRect(loc.x-halfw, loc.y-halfh, halfw*2, halfh*2);						
+  /*	
+  canvas.ctx.translate((loc.x), (loc.y));
+  canvas.ctx.rotate(45 * Math.PI/180);
+  canvas.ctx.strokeRect(loc.x, loc.y, halfw*2, halfh*2);				
+  canvas.ctx.rotate(-45 * Math.PI/180);
+  canvas.ctx.translate(-(loc.x), -(loc.y));
+
+  canvas.ctx.strokeStyle = '#00ff00';		
+  canvas.ctx.rotate(-45 * Math.PI/180);
+  canvas.ctx.strokeRect(0, 0	, halfw*2, halfh*2);				
+  canvas.ctx.rotate(45 * Math.PI/180);
+  */
+}
+
+
 /* Draw the simulator at frame n */
 function drawSimulator(n) {
 	var world = Globals.world;
@@ -97,39 +145,15 @@ function drawSimulator(n) {
 	for (var i = 0; i < Globals.world.getBodies().length; i++) {
 		world.getBodies()[i].state = Globals.states[i][n];
 	}
+
 	world.render();
 	
-	if(selectedBody){
-		var state = selectedBody.state;
-		$('#properties-position-x').val(state.pos.x);
-		$('#properties-position-y').val(state.pos.y);
-		$('#properties-velocity-x').val(state.vel.x);
-		$('#properties-velocity-y').val(state.vel.y);
-		$('#properties-acceleration-x').val(state.acc.x);
-		$('#properties-acceleration-y').val(state.acc.y);
-		
-		var img = selectedBody.view;
-		var halfw = img["width"]/2;
-		var halfh = img["height"]/2;
-		
-		world.renderer().ctx.strokeStyle = '#ff0000';
-		world.renderer().ctx.lineWidth = 2;
-		
-		world.renderer().ctx.strokeRect(state.pos.x-halfw, state.pos.y-halfh, halfw*2, halfh*2);						
-		/*	
-		world.renderer().ctx.translate((state.pos.x), (state.pos.y));
-		world.renderer().ctx.rotate(45 * Math.PI/180);
-		world.renderer().ctx.strokeRect(state.pos.x, state.pos.y, halfw*2, halfh*2);				
-		world.renderer().ctx.rotate(-45 * Math.PI/180);
-		world.renderer().ctx.translate(-(state.pos.x), -(state.pos.y));
-		
-		world.renderer().ctx.strokeStyle = '#00ff00';		
-		world.renderer().ctx.rotate(-45 * Math.PI/180);
-		world.renderer().ctx.strokeRect(0, 0	, halfw*2, halfh*2);				
-		world.renderer().ctx.rotate(45 * Math.PI/180);
-		*/
-	}
+  displayElementValues(selectedBody.state);
+  if (selectedBody) {
+    highlightSelection(selectedBody);
+  }
 }
+
 
 function cloneState(state) {
   var acc = state.acc.clone();

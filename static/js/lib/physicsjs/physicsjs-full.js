@@ -5651,13 +5651,13 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          **/
         step: function( now ){
 
-			// Modified by MADADASA to do bare minimum
-			// iterate by one timestep			
-			this._time += this._dt;                    
+            // Modified by MADADASA to do bare minimum
+            // iterate by one timestep
+            this._time += this._dt;
             this.iterate( this._dt );
-			this.emit('step', {});
-			return this;
-		/*
+            this.emit('step', {});
+            return this;
+            /*
             var time = this._time
                 ,warp = this._warp
                 ,invWarp = 1 / warp
@@ -8660,13 +8660,15 @@ Physics.behavior('interactive', function( parent ){
 
             // if we have one or more bodies grabbed, we need to move them to the new mouse/finger positions.
             // we'll do this by adjusting the velocity so they get there at the next step
-            //for ( var touchId in self.bodyData ) {
+            /*
+            for ( var touchId in self.bodyData ) {
                 // Modified by MADADASA: Require move handler to adjust position instead.
-				//d = self.bodyData[touchId];
-                //body = d.body;
-                //state = body.state;
-                //state.vel.clone( d.pos ).vsub( d.offset ).vsub( state.pos ).mult( 1 / dt );
-            //}
+                d = self.bodyData[touchId];
+                body = d.body;
+                state = body.state;
+                state.vel.clone( d.pos ).vsub( d.offset ).vsub( state.pos ).mult( 1 / dt );
+            }
+            */
         }
     };
 });

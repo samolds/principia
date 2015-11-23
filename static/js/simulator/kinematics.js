@@ -93,12 +93,8 @@ function Kinematics1DModule() {
 			var state = Globals.states[idx][Globals.frame];
 			Globals.selectedBody = data.body;
 								
-			$('#properties-position-x').val(state.pos.x + "");
-			$('#properties-position-y').val(state.pos.y + "");
-			$('#properties-acceleration-x').val(state.acc.x + "");
-			$('#properties-acceleration-y').val(state.acc.y + "");
-			$('#properties-velocity-x').val(state.vel.x + "");
-			$('#properties-velocity-y').val(state.vel.y + "");			
+      displayElementValues(state);
+      highlightSelection(data.body);
 		}
 	});
 	world.on('interact:move', function( data ){
@@ -128,12 +124,8 @@ function Kinematics1DModule() {
 	world.on('interact:poke', function( data ){
 		Globals.selectedBody = false;
 		console.log("poke: " + data.x + "," + data.y);
-		$('#properties-position-x').val("");
-		$('#properties-position-y').val("");
-		$('#properties-acceleration-x').val("");
-		$('#properties-acceleration-y').val("");
-		$('#properties-velocity-x').val("");
-		$('#properties-velocity-y').val("");
+    displayElementValues(false);
+    Globals.world.render(); // To remove any drawn borders
 	});
 	
 	  
