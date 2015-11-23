@@ -2,12 +2,12 @@ package principia
 
 import (
 	"controllers"
-	"github.com/gorilla/mux"
+	"lib/gorilla/mux"
 	"net/http"
 )
 
 func init() {
-	
+
 	router := mux.NewRouter().StrictSlash(true)
 	http.Handle("/", router)
 

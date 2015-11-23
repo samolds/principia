@@ -1,11 +1,10 @@
 package models
 
-import (
-)
+import ()
 
 type Simulation struct {
-	Name string
-	UserID string
+	Name         string
+	UserID       string
 	SimulationID string
-	Contents string
+	Contents     string
 }
