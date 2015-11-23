@@ -70,10 +70,13 @@ function toggleSimulator() {
     Globals.anim = setInterval(function() {
       drawLoop()
     }, Globals.delay);
-    span.className = "glyphicon glyphicon-pause";
+
+    document.getElementById("play-pause-icon").innerHTML ="pause";
+   // span.className = "glyphicon glyphicon-pause";
   } else {
     clearInterval(Globals.anim);
-    span.className = "glyphicon glyphicon-play";
+    document.getElementById("play-pause-icon").innerHTML ="play_arrow";
+  //  span.className = "glyphicon glyphicon-play";
   }
 }
 

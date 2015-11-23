@@ -3,40 +3,35 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta name="content-type" content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link href="/static/img/favicon.ico" rel="icon" type="image/x-icon">
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link href="/static/css/custom.css" rel="stylesheet" type="text/css">
-    <link href="/static/fonts/roboto.css" rel="stylesheet" type="text/css">
 
     <title>Principia{{ template "title" . }}</title>
   </head>
   <body>
-    <nav class="navbar navbar-default navbar-static-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">Principia</a>
-          <p class="navbar-toggle collapsed warning">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-            This site is not intended for use on mobile
-          </p>
-        </div>
 
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
+    <!-- Dropdown Structure -->
+    <ul id="myPrincipiaDropdown" class="dropdown-content" role="navigation">
+      <li><a href="#!">My Simulations</a></li>
+      <li><a href="#!">My Profile</a></li>
+      <li class="divider"></li>
+      <li><a href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+    </ul>
+
+    <nav id="nav" class="black darken-5-5">
+      <div class="nav-wrapper container">
+          <a id="logo-container" class="brand-logo" href="/">Principia</a>
+          <ul class="right hide-on-med-down">
             <li><a href="/about">About</a></li>
             <li><a href="/faqs">FAQs</a></li>
             <li><a href="/feedback">Feedback</a></li>
+            <li><a class="dropdown-button" href="#!" data-activates="myPrincipiaDropdown">{{ if .CurrentUser }}{{ .CurrentUser.Email }}{{ else }}MyPrincipia{{ end }}<i class="material-icons right">arrow_drop_down</i></a></li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ if .CurrentUser }}{{ .CurrentUser.Email }}{{ else }}MyPrincipia{{ end }}<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
       </div>
     </nav>
 
@@ -45,7 +40,7 @@
     </div>
 
     <script src="/static/js/lib/jquery.min.js"></script>
-    <script src="/static/js/lib/bootstrap.min.js"></script>
+    <script src="/static/js/lib/materialize.min.js"></script>
     {{ template "scripts" . }}
   </body>
 </html>
