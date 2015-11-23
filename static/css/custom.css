@@ -1,14 +1,8 @@
-html, body {
-  font-family: 'Roboto', sans-serif;
-}
-
-#nav li:hover
-{
+#nav li:hover {
   background-color: #00695c;
 }
 
-#nav li.active
-{
+#nav li.active {
   background-color: #00695c;
 }
 
