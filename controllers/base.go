@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"appengine"
+	"appengine/user"
 	"bytes"
 	"html/template"
 	"io"
@@ -21,25 +23,13 @@ var (
 	}
 )
 
-type UserT struct {
-	ID   int
-	Name string
-}
-
 type PageData struct {
-	User UserT
-	Data map[string]interface{}
+	CurrentUser *user.User
+	Data        map[string]interface{}
 }
 
 func validPath(path string, name string) bool {
-	if path == "/" { // && name == "home" {
-		return true
-	} else if path == "/simulator" { // temporary while simulator IS home page
-		return false
-	} else {
-		_, ok := templates[name]
-		return ok && path == "/"+name
-	}
+	return true
 }
 
 func errorHandler(w http.ResponseWriter, buffer *bytes.Buffer, errMsg string, status int) {
@@ -68,9 +58,32 @@ func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		return
 	}
 
+	// USER AUTHENTICATION
+	c := appengine.NewContext(r)
+	u := user.Current(c)
+	var url string
+	var loginMessage string
+
+	if u == nil {
+		tmpURL, _ := user.LoginURL(c, "/")
+		url = tmpURL
+		loginMessage = "Sign In"
+	} else {
+		tmpURL, _ := user.LogoutURL(c, "/")
+		url = tmpURL
+		loginMessage = "Sign Out"
+	}
+
+	if data == nil {
+		data = map[string]interface{}{}
+	}
+
+	data["loginUrl"] = url
+	data["loginMessage"] = loginMessage
+
 	pageData := &PageData{
-		User: UserT{ID: 1, Name: "Test User"},
-		Data: data,
+		CurrentUser: u,
+		Data:        data,
 	}
 
 	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)

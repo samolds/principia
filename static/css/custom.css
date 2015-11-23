@@ -83,3 +83,7 @@ a.glyphicon-rating:hover .glyphicon {
 .principia-blue-fade-bg {
   background-color: #cce2f1;
 }
+
+#save-simulation-bar {
+  margin-bottom: 10px;
+}
