@@ -2,23 +2,9 @@
 
 {{ define "content" }}
 <div class="container narrow">
-  <h1 class="page-header">About</h1>
+  <h1 class="page-header"><img src="/static/img/logo/principia.png" height="100" /></h1>
   <p>
-    This is a Computer Science senior capstone project at the University of Utah by:
-    <ul>
-      <li><a href="http://github.com/samolds">Sam Olds</a></li>
-      <li><a href="http://github.com/dannylp">Danny Petersen</a></li>
-      <li><a href="http://github.com/matthewturnercs">Matthew Turner</a></li>
-      <li><a href="http://github.com/daltonwallace">Dalton Wallace</a></li>
-    </ul>
-
-    It is hosted on Google App Engine using Go, with PhysicsJS on the front end. The source code is available on
-    <a href="http://github.com/samolds/principia">GitHub</a>.
-  </p>
-
-  <h3><img src="/static/img/logo/principia.png" height="80" /></h3>
-  <p>
-    An educational physics playground emphasizing visualizations and interactability.
+    Principia is an educational physics playground emphasizing visualizations and interactability.
   </p>
   <p>
     This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios.
@@ -32,5 +18,34 @@
     Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students
     to further explore concepts in a visually exciting way.
   </p>
+
+  <p>
+    This is a Computer Science senior capstone project at the University of Utah. It is hosted on Google App Engine
+    using Go, with PhysicsJS on the front end. The source code is available on
+    <a href="http://github.com/samolds/principia">GitHub</a>.
+  </p>
+
+  <h3 class="pad-top">The Team</h3>
+  <hr />
+  <div class="row">
+    <div class="col-md-6">
+      <img src="/static/img/team/sam.gif" class="img-responsive img-rounded" />
+      <p class="text-center"><a href="http://github.com/samolds">Sam Olds</a></p>
+    </div>
+    <div class="col-md-6">
+      <img src="/static/img/team/danny.gif" class="img-responsive img-rounded" />
+      <p class="text-center"><a href="http://github.com/dannylp">Danny Petersen</a></p>
+    </div>
+  </div>
+  <div class="row pad-top">
+    <div class="col-md-6">
+      <img src="/static/img/team/matthew.gif" class="img-responsive img-rounded" />
+      <p class="text-center"><a href="http://github.com/matthewturnercs">Matthew Turner</a></p>
+    </div>
+    <div class="col-md-6">
+      <img src="/static/img/team/dalton.gif" class="img-responsive img-rounded" />
+      <p class="text-center"><a href="http://github.com/daltonwallace">Dalton Wallace</a></p>
+    </div>
+  </div>
 </div>
 {{ end }}
