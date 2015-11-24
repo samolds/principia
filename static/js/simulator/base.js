@@ -1,83 +1,109 @@
 // Global Variables:
 var Globals = {
-  world: {},
-  states: [],
+  
+  // Current PhysicJS world
+  world: {},  
+  
+  // Currently selected frame in range
   frame: 0,
+  
+  // Controls speed of frame change while animating
   delay: 10,
+  
+  // Interval event that allows for animation
   anim: {},
+  
+  // Flag for when simulator is currently running
   running: false,
-  initStates: [],
-  finalStates: [],
+    
+  // Saved information for scrubbing through simulation
+  // states[0] will always match initStates
+  states: [],
+  
+  // State at each keyframe (One inner array per keyframe)
+  keyframeStates: [[],[]],
+  
+  // Time associated with each keyframe (false if unknown)
+  keyframeTimes: [0, false],
+  
+  // Index of key frames within state (false if not associated with "real" frame yet)
+  keyframes: [0, false],
+  
+  // Currently selected keyframe or false (no edit)
+  selectedKeyframe: 0,
+  
   totalFrames: 4000,
+  
+  // Id associated with canvas element used for rendering
   canvasId: "viewport",
+  
+  // If a move event is fired after a grab event, raise flag to inform release event
   didMove: false,
-  selectedBody: false
+  
+  // Currently selected body, false if none
+  selectedBody: false,
 };
 
 function onPropertyChanged(property, value){
+	if(!canEdit()) return;
 	console.log(property + "," + value);
 	
 	var world = Globals.world;
 	var body = Globals.selectedBody;	
-	var initStates = Globals.initStates;
+	var kStates = Globals.keyframeStates[Globals.selectedKeyframe];
 	
 	switch(property)
 	{		
 		case 'posx':
 			body.state.pos.x = value;
-			initStates[world.getBodies().indexOf(body)].pos.x = body.state.pos.x;
+			kStates[world.getBodies().indexOf(body)].pos.x = body.state.pos.x;
 			break;
 		case 'posy':
 			body.state.pos.y = value;
-			initStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;
+			kStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;
 			break;
 		case 'velx':
 			body.state.vel.x = value;
-			initStates[world.getBodies().indexOf(body)].vel.x = body.state.vel.x;
+			kStates[world.getBodies().indexOf(body)].vel.x = body.state.vel.x;
 			break;
 		case 'vely':
 			body.state.vel.y = value;
-			initStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;
+			kStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;
 			break;
 		case 'accx':
 			body.state.acc.x = value;
-			initStates[world.getBodies().indexOf(body)].acc.x = body.state.acc.x;
+			kStates[world.getBodies().indexOf(body)].acc.x = body.state.acc.x;
 			break;
 		case 'accy':
 			body.state.acc.y = value;
-			initStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
+			kStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
 			break;
 	}
 
-	simulate();
-	drawSimulator(0);
+	drawKeyframe(Globals.selectedKeyframe);
 }
 
 /* Scrubs to selected frame */
 function onRangeUpdate(){
   Globals.frame = $("#simulatorFrameRange").val();
+  Globals.selectedKeyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? Globals.frame: false;
   drawSimulator(Globals.frame);
 }
-
 
 /* Toggles the state of the simulator between running and paused */
 function toggleSimulator() {
   var span = $("#playpause").children()[0];
   Globals.running = !Globals.running;
   if (Globals.running) {
-    Globals.anim = setInterval(function() {
-      drawLoop()
-    }, Globals.delay);
-
-    document.getElementById("play-pause-icon").innerHTML ="pause";
-   // span.className = "glyphicon glyphicon-pause";
-  } else {
+    Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
+    document.getElementById("play-pause-icon").innerHTML ="pause";   
+	Globals.selectedKeyframe = false;
+  } 
+  else {
     clearInterval(Globals.anim);
     document.getElementById("play-pause-icon").innerHTML ="play_arrow";
-  //  span.className = "glyphicon glyphicon-play";
   }
 }
-
 
 function drawLoop() {
   if (Globals.frame >= Globals.totalFrames) {
@@ -89,8 +115,7 @@ function drawLoop() {
   Globals.frame++;
 }
 
-
-/* Shows elements values in html elements */
+/* Shows component values in html elements */
 function displayElementValues(st) {
   if (st) {
     $('#properties-position-x').val(st.pos.x);
@@ -108,7 +133,6 @@ function displayElementValues(st) {
     $('#properties-acceleration-y').val("");
   }
 }
-
 
 /* Draws highlight box around selected element */
 function highlightSelection(body) {
@@ -148,6 +172,7 @@ function highlightSelection(body) {
 
 /* Draw the simulator at frame n */
 function drawSimulator(n) {
+	if(Globals.states.length == 0) return;
 	var world = Globals.world;
 	var selectedBody = Globals.selectedBody;
 	
@@ -162,6 +187,26 @@ function drawSimulator(n) {
   }
 }
 
+/* Draw the state at keyframe n */
+function drawKeyframe(n) {
+	var world = Globals.world;
+	var selectedBody = Globals.selectedBody;
+	
+	for (var i = 0; i < Globals.world.getBodies().length; i++) {
+		world.getBodies()[i].state = Globals.keyframeStates[n][i];
+	}
+	world.render();
+	
+	var canvas = $('#' + Globals.canvasId)[0].children[0];  
+	var keycanvas = $("#keyframe-" + Globals.selectedKeyframe)[0];  
+	keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
+	$("#keyframe-" + Globals.selectedKeyframe)[0].getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+	
+	displayElementValues(selectedBody.state);
+	if (selectedBody) {
+		highlightSelection(selectedBody);
+	}
+}
 
 function cloneState(state) {
   var acc = state.acc.clone();
@@ -171,7 +216,6 @@ function cloneState(state) {
   var clone = {"acc": acc, "vel": vel, "pos": pos, "angular": ang};
   return clone;
 }
-
 
 function simulate() {
   var i = 0;
@@ -184,8 +228,6 @@ function simulate() {
   $("#simulatorFrameRange").val(0); // Reset range
 
   Globals.states = [];	// Clear states global
-  //Globals.world._animTime = undefined;
-  //Globals.world._lastTime = undefined; // Unnecessary?
   Globals.world._time = 0;
 
   var old = {
@@ -195,17 +237,15 @@ function simulate() {
     angular: { pos: 0.0, vel: 0.0, acc: 0.0}
   };
 
-  
   // Restore objects to their initial state
+  var initStates = Globals.keyframeStates[0];
   for (i = 0; i < Globals.world.getBodies().length; i++) {
-    Globals.world.getBodies()[i].state = cloneState(Globals.initStates[i]);
+    Globals.world.getBodies()[i].state = cloneState(initStates[i]);
     Globals.world.getBodies()[i].state["old"] = cloneState(old);
     Globals.world.getBodies()[i]._started = undefined;
     Globals.states[i] = [];
   }
-  
-//Globals.world.step();	// Calling step once required for initialization?
-  
+    
   // For each frame
   for (i = 0; i < Globals.totalFrames; i++) {
     // For each body in the simulation
@@ -223,7 +263,6 @@ function simulate() {
   }
 }
 
-
 $(".draggable").draggable({
   cursor: 'move',
   containment: $(Globals.canvasId),
@@ -233,15 +272,15 @@ $(".draggable").draggable({
 });
 
 function handleDragStop(event, ui) {
+  if(!canEdit()) return;
   var type = ui.helper[0].getAttribute("component");
 
   // Left and top of helper img
   var left = ui.offset.left;
   var top = ui.offset.top;
-
+  
   var width = event.target.width;
   var height = event.target.height;
-
   var cx = left + width / 2;
   var cy = top + height / 2;
 
@@ -249,19 +288,18 @@ function handleDragStop(event, ui) {
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
 
-  var data = {
-    'type': type,
-    'x': cx-vleft,
-    'y': cy-vtop
-  };
+  var data = { 'type': type, 'x': cx-vleft, 'y': cy-vtop};
 
   Globals.world.emit('addComponent', data);
 }
+
+function canEdit() { return Globals.selectedKeyframe || Globals.selectedKeyframe === 0; }
 
 Physics.integrator('my-integrator', function( parent ){
 
     return {
 
+		// Velocity increases by acceleration * dt
         integrateVelocities: function( bodies, dt ){
 			for ( var i = 0, l = bodies.length; i < l; ++i ){
 
@@ -277,6 +315,7 @@ Physics.integrator('my-integrator', function( parent ){
             // and .state.old.angular.vel
         },
 
+		// Position increases by velocity * dt + 1/2 acceleration * dt**2
         integratePositions: function( bodies, dt ){
 			for ( var i = 0, l = bodies.length; i < l; ++i ){
                 var body = bodies[ i ];
@@ -297,6 +336,12 @@ Physics.integrator('my-integrator', function( parent ){
     };
 });
 
+function selectKeyframe(event) {
+	var frame = event.target.id.split("-")[1];
+	Globals.selectedKeyframe = parseInt(frame);
+	drawKeyframe(frame);
+}
+
 $(document).ready(function() {
   Kinematics1D.initModule();
   
@@ -306,5 +351,9 @@ $(document).ready(function() {
   $('#properties-velocity-x').on("change", function(){ onPropertyChanged('velx', $('#properties-velocity-x').val()); }); 
   $('#properties-velocity-y').on("change", function(){ onPropertyChanged('vely', $('#properties-velocity-y').val()); }); 
   $('#properties-acceleration-x').on("change", function(){ onPropertyChanged('accx', $('#properties-acceleration-x').val()); }); 
-  $('#properties-acceleration-y').on("change", function(){ onPropertyChanged('accy', $('#properties-acceleration-y').val()); }); 
+  $('#properties-acceleration-y').on("change", function(){ onPropertyChanged('accy', $('#properties-acceleration-y').val()); });
+  
+  // MUST name keyframe divs using this format (splits on -)
+  $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
+  $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
 });

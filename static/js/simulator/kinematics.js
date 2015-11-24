@@ -16,10 +16,9 @@ function Kinematics1DModule() {
       // add the renderer
       world.add(renderer);
 	  
-	  //
+	  // add our custom integrator
 	  integrator = Physics.integrator('my-integrator', {});
 	  world.add(integrator);
-	  	  
 
       world.on('addComponent', function(data) {
         var component;
@@ -59,12 +58,11 @@ function Kinematics1DModule() {
         }
         world.add(component);
         		
-		// Must enforce invariant: Index of body in initStates must match index of body in world.getBodies()		
-		Globals.initStates.push(cloneState(component.state));
+		// Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()		
+		Globals.keyframeStates[0].push(cloneState(component.state));
+		Globals.keyframeStates[1].push(cloneState(component.state));
 
-        // Resimulate using newly added component
-        simulate();
-        drawSimulator(0);
+        drawKeyframe(Globals.selectedKeyframe);
       });
 
       // constrain objects to these bounds
@@ -81,7 +79,7 @@ function Kinematics1DModule() {
 
         // update the boundaries
         edgeBounce.setAABB(viewportBounds);
-        drawSimulator(Globals.frame);
+        drawKeyframe(Globals.currentKeyframe);
       }, true);
 
 	world.on('interact:grab', function( data ){
@@ -90,33 +88,35 @@ function Kinematics1DModule() {
 		{
 			// Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator		
 			var idx = Globals.world.getBodies().indexOf(Globals.world.findOne( function(body){ return body.isGrabbed; }))
-			var state = Globals.states[idx][Globals.frame];
+			var state = Globals.selectedKeyframe? Globals.keyframeStates[Globals.selectedKeyframe][idx]: Globals.states[idx][Globals.frame];
 			Globals.selectedBody = data.body;
 								
-      displayElementValues(state);
-      highlightSelection(data.body);
+			displayElementValues(state);
+			highlightSelection(data.body);
 		}
 	});
 	world.on('interact:move', function( data ){
-		if(data.body) {
+		if(data.body && canEdit()) {
 			if(Globals.running) toggleSimulator();
 			data.body.state.pos.x = data.x;
 			data.body.state.pos.y = data.y;
 			Globals.world.render();
+			highlightSelection(Globals.selectedBody);			
 			Globals.didMove = true;
 		}
 	});
 	
 	world.on('interact:release', function( data ){		
 		// Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
-		if(data.body){						
+		if(data.body){
 			if(Globals.didMove) {
+				var kStates = Globals.keyframeStates[Globals.selectedKeyframe];
 				var i = Globals.world.getBodies().indexOf(data.body);
-				Globals.initStates[i].pos.x = data.x;
-				Globals.initStates[i].pos.y = data.y;
+				kStates[i].pos.x = data.x;
+				kStates[i].pos.y = data.y;
 				Globals.didMove = false;
-				simulate();
-				drawSimulator(0);	
+				//simulate();				
+				drawKeyframe(Globals.selectedKeyframe);	
 			}			
 		}
 	});
@@ -124,8 +124,8 @@ function Kinematics1DModule() {
 	world.on('interact:poke', function( data ){
 		Globals.selectedBody = false;
 		console.log("poke: " + data.x + "," + data.y);
-    displayElementValues(false);
-    Globals.world.render(); // To remove any drawn borders
+		displayElementValues(false);
+		Globals.world.render(); // To remove any drawn borders
 	});
 	
 	  
@@ -146,10 +146,15 @@ function Kinematics1DModule() {
     simulate();
     drawSimulator(0);
   }
+  
+  function setDt(dt) {
+	Globals.world.timestep(dt);
+  }
 
   return {
     initWorld:  initWorld,
-    initModule: initModule
+    initModule: initModule,
+	setDt:		setDt
   };
 }
 
