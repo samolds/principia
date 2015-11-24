@@ -21,18 +21,20 @@
   {{ end }}
 </div>
 
-<!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-<div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
+<div class="wide">
+  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
 
-<!-- Scrub through simulation frames with playback -->
-<div class="row" id="playback">
-  <div class="col s1">
-    <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-      <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-    </button>
-  </div>
-  <div class="col s11">
-    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+  <!-- Scrub through simulation frames with playback -->
+  <div class="row" id="playback">
+    <div class="col s1">
+      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+        <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+      </button>
+    </div>
+    <div class="col s11">
+      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+    </div>
   </div>
 </div>
 
@@ -49,7 +51,8 @@
     {{ end }}
 
     <div class="col s6">
-      <h5>Toolbox:</h5>
+      <h5>Toolbox</h5>
+      <small>Just drag an image up and click play!</small>
       <hr />
     </div>
   </div>

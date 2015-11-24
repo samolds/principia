@@ -3,6 +3,11 @@
   padding-right: 10%;
 }
 
+.wide {
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
 .pad-sides {
   padding-left: 10px;
   padding-right: 10px;
@@ -44,13 +49,6 @@
     flex: 1 0 auto;
   }
 /* end sticky footer */
-
-
-/* dropdown hover top */
-  .dropdown-content {
-    margin-top: 64px;
-  }
-/* end dropdown */
 
 
 /* custom form color */
