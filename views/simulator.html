@@ -9,31 +9,25 @@
 {{ end }}
 
 {{ define "content" }}
-<h4 class="page-header">Kinematics Simulator</h4>
-
-<!-- Show the save bar if a user is logged in -->
-{{ if .CurrentUser}}
-  <div class="row" id="save-simulation-bar">
-    <div class="col-xs-10">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Simulation Name" id="simulation-name" Value="{{.Data.sim.Name}}"/>
-      </div>
-    </div>
-    <div class="col-xs-2">
-      <button type="button" class="btn btn-default pull-right" onclick="saveSimulation({{.Data.sim}})">
-        <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
-      </button>
-    </div>
-  </div>
-{{ end }}
+<div class="container">
+  {{ if .CurrentUser }}
+    {{ if .Data.sim.Name }}
+      <h3>{{ .Data.sim.Name }}</h3>
+    {{ else }}
+      <h3>New Simulation!</h3>
+    {{ end }}
+  {{ else }}
+    <h3>Kinematics Simulator</h3>
+  {{ end }}
+</div>
 
 <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-<div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></div>
+<div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
 
 <!-- Scrub through simulation frames with playback -->
-<div class="row pad-top" id="playback">
-  <div class ="col s1">
-    <button type="button" class="waves-effect waves-light btn-floating " onclick="toggleSimulator()" id="playpause">
+<div class="row" id="playback">
+  <div class="col s1">
+    <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
       <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
     </button>
   </div>
@@ -42,42 +36,59 @@
   </div>
 </div>
 
-<h5>Toolbox:</h5>
-<hr />
+<div class="container">
+  <div class="row">
+    {{ if .CurrentUser }}
+    <div class="input-field col s4">
+      <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
+      <label for="simulation-name">Simulation Name</label>
+    </div>
+    <div class="input-field col s2">
+      <a class="waves-effect waves-light btn blue darken-1" onclick="saveSimulation({{.Data.sim}})">Save</a>
+    </div>
+    {{ end }}
 
-<div class="row" id="toolbox">
-  <div class="col 2">
+    <div class="col s6">
+      <h5>Toolbox:</h5>
+      <hr />
+    </div>
   </div>
-  <div class="col 2">
-    <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
+
+  <div class="row" id="toolbox">
+    <div class="col 2 {{ if .CurrentUser }}offset-s6{{ end }}">
+      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
+    </div>
+    <div class="col 2">
+      <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+    </div>
   </div>
-  <div class="col 2">
-    <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+
+  <div class="row hide" id="properties">
+    <h5>Element Properties</h5>
+    <div class="input-field col s2">
+      <input type="text" id="properties-position-x" placeholder=""></input>
+      <label for="properties-position-x">X Position</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-position-y" placeholder=""></input>
+      <label for="properties-position-y">Y Position</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-velocity-x" placeholder=""></input>
+      <label for="properties-velocity-x">X Velocity</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-velocity-y" placeholder=""></input>
+      <label for="properties-velocity-y">Y Velocity</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-acceleration-x" placeholder=""></input>
+      <label for="properties-acceleration-x">X Acceleration</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-acceleration-y" placeholder=""></input>
+      <label for="properties-acceleration-y">Y Acceleration</label>
+    </div>
   </div>
 </div>
-
-<hr />
-
-<div class="row" id="properties">
-  <p>Element Properties:</p>
-  <div class="col-md-4">
-    <p>Position</p>
-    X: <input type="text" id="properties-position-x"></input><br />
-    Y: <input type="text" id="properties-position-y"></input>
-  </div>
-  <div class="col-md-4">
-    <p>Velocity</p>
-    X: <input type="text" id="properties-velocity-x"></input><br />
-    Y: <input type="text" id="properties-velocity-y"></input>
-  </div>
-  <div class="col-md-4">
-    <p>Acceleration</p>
-    X: <input type="text" id="properties-acceleration-x"></input><br />
-    Y: <input type="text" id="properties-acceleration-y"></input>
-  </div>
-</div>
-
-<br />
-<br />
-<br />
 {{ end }}

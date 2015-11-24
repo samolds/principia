@@ -1,5 +1,5 @@
 application: theprincipiaxyz
-version: 1
+version: 0.7
 runtime: go
 api_version: go1
 

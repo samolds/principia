@@ -1,5 +1,5 @@
 # Principia
-An educational physics playground emphasizing visualizations and interactability.
+Principia is an educational physics playground emphasizing visualizations and interactability.
 
 This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios.
 A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their
@@ -69,29 +69,30 @@ To merge everything currently on `master` to `production` before deploying
 
 ```
 /principia
-    app.yaml       -    Used for basic project settings with Google App Engine
-    controllers/   -    All of the business logic for web pages
-    misc/          -    Random project files not actually necessary for web app
-    models/        -    The schemas for the database
-    routes.go      -    What urls point to which controllers
-    settings.go    -    Useful global app configurations
-    static/        -    Static HTML resources
-        css/       -    All CSS stuff goes here
-        fonts/     -    All font related stuff goes here
-        img/       -    All images used go here
-        js/        -    All Javascript goes here
-    views/         -    The HTML pages that are rendered by the controllers
+    app.yaml               -    Used for basic project settings with Google App Engine
+    controllers/           -    All of the business logic for web pages
+    lib/                   -    Any extra go utilities we would like to use
+    misc/                  -    Random project files not actually necessary for web app
+    models/                -    The schemas for the database
+    routes.go              -    What urls point to which controllers
+    settings.go            -    Useful global app configurations
+    static/                -    Static HTML resources
+        css/               -    All CSS stuff goes here
+        font/              -    All font related stuff goes here
+        img/               -    All images used go here
+        js/                -    All Javascript goes here
+            lib/           -    Any Javascript libraries like JQuery and PhysicsJS
+            simulator/     -    All code used to support the Simulator
+    views/                 -    The HTML pages that are rendered by the controllers
 ```
 
 
 ### Useful Links:
-* [Go Tutorial](http://tour.golang.org)
 * [Go Reference](https://gobyexample.com)
 * [Google App Engine with Go](https://cloud.google.com/appengine/docs/go)
-* [Google App Engine with Go Tutorial](https://cloud.google.com/appengine/docs/go/gettingstarted/introduction)
-* [Google App Engine Go App Config](https://cloud.google.com/appengine/docs/go/config/appconfig)
 * [Slack Channel](http://madadasa.slack.com)
 * [PhysicsJS](http://wellcaffeinated.net/PhysicsJS)
+* [Materialize](http://materializecss.com)
 
 
 ### Reviews:
@@ -102,3 +103,6 @@ To merge everything currently on `master` to `production` before deploying
 Try a different location. Check the spelling or try alternate spellings. Try a more general
 search. e.g. 'pizza' instead of 'pepperoni'"
 * Yelp
+
+"Physics is boring."
+* Unknown

@@ -48,9 +48,7 @@ function onPropertyChanged(property, value){
 			initStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
 			break;
 	}
-	
-	
-	
+
 	simulate();
 	drawSimulator(0);
 }
@@ -125,6 +123,7 @@ function highlightSelection(body) {
   var loc = body.state.pos;
   Globals.world.render(); // Wipes existing highlight border
   canvas.ctx.strokeRect(loc.x-halfw, loc.y-halfh, halfw*2, halfh*2);						
+
   /*	
   canvas.ctx.translate((loc.x), (loc.y));
   canvas.ctx.rotate(45 * Math.PI/180);
@@ -137,6 +136,13 @@ function highlightSelection(body) {
   canvas.ctx.strokeRect(0, 0	, halfw*2, halfh*2);				
   canvas.ctx.rotate(45 * Math.PI/180);
   */
+
+  var propWin = $("#properties")[0].classList;
+  if (Globals.selectedBody) {
+    propWin.remove("hide");
+  } else if (!propWin.contains("hide")) {
+    propWin.add("hide");
+  }
 }
 
 
@@ -150,7 +156,6 @@ function drawSimulator(n) {
 	}
 
 	world.render();
-	
   displayElementValues(selectedBody.state);
   if (selectedBody) {
     highlightSelection(selectedBody);

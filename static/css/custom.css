@@ -1,24 +1,11 @@
-#nav li:hover {
-  background-color: #00695c;
-}
-
-#nav li.active {
-  background-color: #00695c;
-}
-
-.container .narrow {
-  max-width: 600px;
+.narrow {
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .pad-sides {
   padding-left: 10px;
   padding-right: 10px;
-}
-
-.browse-thumbnail {
-  padding: 80px 40px;
-  border: 1px solid #aaa;
-  background-color: #eee;
 }
 
 .pad-top {
@@ -29,14 +16,55 @@
   padding-bottom: 30px;
 }
 
-.principia-blue-bg {
+.principia-blue {
   background-color: #b2dfdb;
 }
 
-.principia-blue-fade-bg {
-  background-color: #e0f2f1;
-}
+/* for blue links on about cards */
+  .card-action a.dark-link-blue,
+  .card-action a.dark-link-blue:link,
+  .card-action a.dark-link-blue:visited {
+    color: #039be5;
+  }
 
-#save-simulation-bar {
-  margin-bottom: 10px;
-}
+  .card-action a.dark-link-blue:hover {
+    color: #29b6f6;
+  }
+/* end blue links */
+
+
+/* for sticky footer */
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+/* end sticky footer */
+
+
+/* dropdown hover top */
+  .dropdown-content {
+    margin-top: 64px;
+  }
+/* end dropdown */
+
+
+/* custom form color */
+  /* label focus color */
+  .input-field input[type=text]:focus + label {
+    color: #29b6f6;
+  }
+  /* label underline focus color */
+  .input-field input[type=text]:focus {
+    border-bottom: 1px solid #29b6f6;
+    box-shadow: 0 1px 0 0 #29b6f6;
+  }
+  /* icon prefix focus color */
+  .input-field .prefix.active {
+    color: #29b6f6;
+  }
+/* end custom form */
