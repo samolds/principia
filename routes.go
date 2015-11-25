@@ -15,6 +15,10 @@ func init() {
 	router.HandleFunc("/simulator", controllers.NewSimulatorHandler)
 	router.HandleFunc("/simulator/{simulatorId}", controllers.EditSimulatorHandler)
 
+	// Get all simulataions tied to a specific user
+	router.HandleFunc("/simulator/user/{userId}", controllers.UserSimulatorHandler)
+
+
 	router.HandleFunc("/about", controllers.AboutHandler)
 	router.HandleFunc("/faqs", controllers.FaqsHandler)
 	router.HandleFunc("/feedback", controllers.FeedbackHandler)

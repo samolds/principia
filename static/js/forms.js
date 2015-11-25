@@ -44,9 +44,17 @@ function saveSimulation(simObject)
     simObject.Name = $("#simulation-name").val();  
     simObject.Contents = "TEST CONTENT";
 
-    if(simObject.SimulationID){
-        makeAsyncRequest(window.location.href, "POST", simObject, alert("SUCCESS"));
-    } else {
+    var re = new RegExp('\/simulator$');
+
+    // Is this a new simulation that we're trying to save?
+    if(re.test(window.location.href)){
+        // Creating a new simulation
         post(window.location.href, simObject);
+
+        alert("NEW");
+
+    } else {
+        // Updating an existing simulation
+        makeAsyncRequest(window.location.href, "POST", simObject, alert("EXISTING"));
     } 
 }

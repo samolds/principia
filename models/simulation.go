@@ -1,10 +1,12 @@
 package models
 
-import ()
+import (
+	"appengine/datastore"
+)
 
 type Simulation struct {
 	Name         string
-	UserID       string
-	SimulationID string
 	Contents     string
+	UserID		 string
+	Key      *datastore.Key
 }
