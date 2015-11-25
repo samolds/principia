@@ -131,7 +131,7 @@ func UserSimulatorHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     for i := 0; i < len(simulations); i++ {
-        simulations[i].Key = keys[i]
+        simulations[i].Id = keys[i].IntID()
     }
 
 	data := map[string]interface{}{

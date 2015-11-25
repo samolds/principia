@@ -1,12 +1,11 @@
 package models
 
-import (
-	"appengine/datastore"
-)
+import ()
 
 type Simulation struct {
 	Name         string
 	Contents     string
 	UserID		 string
-	Key      *datastore.Key
+	// Tell datastore to ignore thie field
+	Id 			 int64 `datastore:"-"`
 }
