@@ -50,11 +50,8 @@ function saveSimulation(simObject)
     if(re.test(window.location.href)){
         // Creating a new simulation
         post(window.location.href, simObject);
-
-        alert("NEW");
-
     } else {
         // Updating an existing simulation
-        makeAsyncRequest(window.location.href, "POST", simObject, alert("EXISTING"));
+        makeAsyncRequest(window.location.href, "POST", simObject, null);
     } 
 }
