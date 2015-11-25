@@ -13,31 +13,47 @@
 
     <title>Principia{{ template "title" . }}</title>
   </head>
+
   <body>
-
-    <!-- Dropdown Structure -->
-    <ul id="myPrincipiaDropdown" class="dropdown-content" role="navigation">
-      <li><a href="#!">My Simulations</a></li>
-      <li><a href="#!">My Profile</a></li>
-      <li class="divider"></li>
-      <li><a href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
-    </ul>
-
-    <nav id="nav" class="black darken-5-5">
-      <div class="nav-wrapper container">
+    <header>
+      <nav id="nav" class="grey darken-3" role="navigation">
+        <div class="nav-wrapper container">
           <a id="logo-container" class="brand-logo" href="/">Principia</a>
           <ul class="right hide-on-med-down">
-            <li><a href="/about">About</a></li>
-            <li><a href="/faqs">FAQs</a></li>
-            <li><a href="/feedback">Feedback</a></li>
-            <li><a class="dropdown-button" href="#!" data-activates="myPrincipiaDropdown">{{ if .CurrentUser }}{{ .CurrentUser.Email }}{{ else }}MyPrincipia{{ end }}<i class="material-icons right">arrow_drop_down</i></a></li>
+            <li>
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">{{ if .CurrentUser }}{{ .CurrentUser.Email }}{{ else }}MyPrincipia{{ end }}<i class="material-icons right">arrow_drop_down</i></a>
+            </li>
           </ul>
-      </div>
-    </nav>
+        </div>
+      </nav>
 
-    <div class="container">
+      <!-- Dropdown Structure -->
+      <ul id="myPrincipiaDropdown" class="dropdown-content grey darken-4" role="navigation">
+        {{ if .CurrentUser }}
+          <li class="grey darken-3"><a class="white-text" href="#">My Simulations</a></li>
+          <li class="grey darken-3"><a class="white-text" href="#">My Profile</a></li>
+          <li class="divider grey darken-3 white-text"></li>
+        {{ end }}
+        <li class="grey darken-3"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+      </ul>
+    </header>
+
+    <div class="pad-bottom"></div>
+
+    <main>
       {{ template "content" . }}
-    </div>
+    </main>
+
+    <footer class="page-footer grey darken-3">
+      <div class="container">
+        <div class="row">
+          <span class="pad-sides"><a class="white-text" href="/about">About</a></span>
+          <span class="pad-sides"><a class="white-text" href="/faqs">FAQs</a></span>
+          <span class="pad-sides"><a class="white-text" href="/feedback">Feedback</a></span>
+          <span class="white-text right">&copy; 2015 Principia</span>
+        </div>
+      </div>
+    </footer>
 
     <script src="/static/js/lib/jquery.min.js"></script>
     <script src="/static/js/lib/materialize.min.js"></script>
