@@ -57,8 +57,9 @@ var Globals = {
   // Equation solver for currently loaded module
   // Current approach: Using js-solver library, which uses eval function and map of variables to equations that can be used to solve them
   // Generate frames when there are no unknowns left, gives up if an iteration doesn't update any variables
-  solver: false
+  solver: false,
   
+  globAccel: false,
 };
 
 function updateVariable(body, variable, value){
@@ -86,35 +87,50 @@ function onPropertyChanged(property, value){
 	var body = Globals.selectedBody;	
 	var kStates = Globals.keyframeStates[Globals.selectedKeyframe];
 	
+  var floatVal = parseFloat(value);
 	switch(property)
 	{		
 		case 'posx':
-			if(value != '?') body.state.pos.x = value;
+			if(value != '?') body.state.pos.x = floatVal;
 			kStates[world.getBodies().indexOf(body)].pos.x = body.state.pos.x;
 			updateVariable(body, property, value);
 			break;
 		case 'posy':
-			if(value != '?') body.state.pos.y = value;
+			if(value != '?') body.state.pos.y = floatVal;
 			kStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;			
 			break;
 		case 'velx':
-			if(value != '?') body.state.vel.x = value;
+			if(value != '?') body.state.vel.x = floatVal;
 			kStates[world.getBodies().indexOf(body)].vel.x = body.state.vel.x;
 			updateVariable(body, property, value);
 			break;
 		case 'vely':
-			if(value != '?') body.state.vel.y = value;
+			if(value != '?') body.state.vel.y = floatVal;
 			kStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;			
 			break;
 		case 'accx':
-			if(value != '?') body.state.acc.x = value;
+			if(value != '?') body.state.acc.x = floatVal;
 			kStates[world.getBodies().indexOf(body)].acc.x = body.state.acc.x;
 			updateVariable(body, property, value);
 			break;
 		case 'accy':
-			if(value != '?') body.state.acc.y = value;
+			if(value != '?') body.state.acc.y = floatVal;
 			kStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
 			break;
+    case 'mass':
+      body.mass = floatVal;
+      kStates[world.getBodies().indexOf(body)].mass = body.mass;
+      break;
+    case 'nickname':
+      body.nickname = value;
+      kStates[world.getBodies().indexOf(body)].nickname = body.nickname;
+      break;
+    case 'glob-xaccel':
+      Globals.globAccel._acc.x = floatVal;
+      break;
+    case 'glob-yaccel':
+      Globals.globAccel._acc.y = floatVal;
+      break;
 	}
 
 	drawKeyframe(Globals.selectedKeyframe);
@@ -194,15 +210,22 @@ function displayElementValuesKF(body){
   }
 }
 
-/* Shows component values in html elements */
-function displayElementValues(st) {
-  if (st) {
-    $('#properties-position-x').val(st.pos.x);
-    $('#properties-position-y').val(st.pos.y);
-    $('#properties-velocity-x').val(st.vel.x);
-    $('#properties-velocity-y').val(st.vel.y);
-    $('#properties-acceleration-x').val(st.acc.x);
-    $('#properties-acceleration-y').val(st.acc.y);
+/* Shows elements values in html elements */
+function displayElementValues(bod) {
+  if (bod) {
+    $('#properties-position-x').val(bod.state.pos.x);
+    $('#properties-position-y').val(bod.state.pos.y);
+    $('#properties-velocity-x').val(bod.state.vel.x);
+    $('#properties-velocity-y').val(bod.state.vel.y);
+    $('#properties-acceleration-x').val(bod.state.acc.x);
+    $('#properties-acceleration-y').val(bod.state.acc.y);
+    $('#properties-mass').val(bod.mass);
+    $('#properties-nickname').val(bod.nickname);
+    if (bod.nickname) {
+      $('#properties-nickname-title').text(bod.nickname + " ");
+    } else {
+      $('#properties-nickname-title').text("");
+    }
   } else {
     $('#properties-position-x').val("");
     $('#properties-position-y').val("");
@@ -210,6 +233,30 @@ function displayElementValues(st) {
     $('#properties-velocity-y').val("");
     $('#properties-acceleration-x').val("");
     $('#properties-acceleration-y').val("");
+    $('#properties-mass').val("");
+    $('#properties-name').val("");
+    $('#properties-nickname-title').text("");
+  }
+}
+
+
+function toggleGlobalProp() {
+  var propWin = $("#global-properties")[0].classList;
+  if (propWin.contains("hide")) {
+    propWin.remove("hide");
+  } else {
+    propWin.add("hide");
+  }
+}
+
+
+function renderWorld() {
+  Globals.world.render();
+  var propWin = $("#properties")[0].classList;
+  if (Globals.selectedBody) {
+    propWin.remove("hide");
+  } else if (!propWin.contains("hide")) {
+    propWin.add("hide");
   }
 }
 
@@ -223,6 +270,7 @@ function highlightSelection(body) {
   canvas.ctx.strokeStyle = '#ff0000';
   canvas.ctx.lineWidth = 2;
 
+  renderWorld();
   var loc = body.state.pos;
   canvas.ctx.strokeRect(loc.x-halfw, loc.y-halfh, halfw*2, halfh*2);						
 
@@ -238,13 +286,6 @@ function highlightSelection(body) {
   canvas.ctx.strokeRect(0, 0	, halfw*2, halfh*2);				
   canvas.ctx.rotate(45 * Math.PI/180);
   */
-
-  var propWin = $("#properties")[0].classList;
-  if (Globals.selectedBody) {
-    propWin.remove("hide");
-  } else if (!propWin.contains("hide")) {
-    propWin.add("hide");
-  }
 }
 
 /* Draw the simulator at frame n */
@@ -257,9 +298,11 @@ function drawSimulator(n) {
 		world.getBodies()[i].state = Globals.states[i][n];
 	}
 
-	world.render();
-	displayElementValues(selectedBody.state);
-	if (selectedBody) { highlightSelection(selectedBody); }
+  renderWorld();
+  displayElementValues(selectedBody);
+  if (selectedBody) {
+    highlightSelection(selectedBody);
+  }
 }
 
 /* Draw the state at keyframe n */
@@ -273,7 +316,7 @@ function drawKeyframe(n) {
 	}
 	
 	// Render PhysicsJS components
-	world.render();
+	renderWorld();
 		
 	// Copy global canvas into canvas for keyframe
 	var canvas = $('#' + Globals.canvasId)[0].children[0];  
@@ -285,7 +328,6 @@ function drawKeyframe(n) {
 	displayElementValuesKF(selectedBody);	
 	drawLines();
 	if (selectedBody) { highlightSelection(selectedBody);}
-		
 }
 
 function drawLines(){		
@@ -434,7 +476,6 @@ function simulate() {
     Globals.world.getBodies()[i]._started = undefined;
     Globals.states[i] = [];
   }
-    
   // For each frame
   for (i = 0; i < Globals.totalFrames+1; i++) { // Simulate one extra frame to account for init state
     // For each body in the simulation
@@ -543,6 +584,9 @@ $(document).ready(function() {
   $('#properties-acceleration-x').on("change", function(){ onPropertyChanged('accx', $('#properties-acceleration-x').val()); }); 
   $('#properties-acceleration-y').on("change", function(){ onPropertyChanged('accy', $('#properties-acceleration-y').val()); });
   
+  $('#properties-mass').on("change", function(){ onPropertyChanged('mass', $('#properties-mass').val()); }); 
+  $('#properties-nickname').on("change", function(){ onPropertyChanged('nickname', $('#properties-nickname').val()); }); 
+  
   $('#solve-btn').on('click', function() { attemptSimulation(); });
   
   // MUST name keyframe divs using this format (splits on -)
@@ -550,5 +594,10 @@ $(document).ready(function() {
   $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
   
   $('#keyframe-1-dt').on("change", function(){ Globals.keyframeTimes[1] = $('#keyframe-1-dt').val(); });
+
+  $('#glob-xaccel').val(Globals.globAccel._acc.x);
+  $('#glob-yaccel').val(Globals.globAccel._acc.y);
   
+  $('#glob-xaccel').on("change", function(){ onPropertyChanged('glob-xaccel', $('#glob-xaccel').val()); }); 
+  $('#glob-yaccel').on("change", function(){ onPropertyChanged('glob-yaccel', $('#glob-yaccel').val()); }); 
 });

@@ -6,8 +6,8 @@ function initWorld() {
       var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);// bounds of the window
       var edgeBounce;
       var renderer;
-	  var integrator;	  
-	  world.timestep(1); // TODO: should base timestep on dt option
+      var integrator;	  
+      world.timestep(1); // TODO: should base timestep on dt option
             
       // create a renderer
       renderer = Physics.renderer('canvas', {el: canvasId});
@@ -66,7 +66,6 @@ function initWorld() {
 			
 			// ToDo: Prinicipia mixins
         }
-		
 		console.log("Added at " + data.x + "," + data.y);
         
 		world.add(component);
@@ -143,7 +142,6 @@ function initWorld() {
 				drawKeyframe(frame);
 			else
 				drawSimulator(frame);
-			
 		}
 	});
 	
@@ -152,7 +150,7 @@ function initWorld() {
 			if(Globals.running) toggleSimulator();
 			data.body.state.pos.x = data.x;
 			data.body.state.pos.y = data.y;
-			Globals.world.render();
+      renderWorld();
 			highlightSelection(Globals.selectedBody);			
 			drawLines();
 			Globals.didMove = true;
@@ -186,19 +184,28 @@ function initWorld() {
 			drawKeyframe(frame);
 		else
 			drawSimulator(frame);
+    renderWorld();
 	});
 	
-    // add things to the world
-    world.add([
-		Physics.behavior('interactive', {el: renderer.container}),
-		Physics.behavior('constant-acceleration'),
-		Physics.behavior('body-impulse-response'),
-		Physics.behavior('body-collision-detection'),
-		Physics.behavior('sweep-prune'),
+      // add things to the world
+      world.add([
+        Physics.behavior('interactive', {el: renderer.container}),
+        Physics.behavior('constant-acceleration'),
+        Physics.behavior('body-impulse-response'),
+        Physics.behavior('body-collision-detection'),
+        Physics.behavior('sweep-prune'),
         edgeBounce
-      ]);    
-	});
-} // end initWorld
+      ]);
+
+      var beh = world.getBehaviors();
+      for (var i = 0; i < beh.length; i++) {
+        if (beh[i].name === "constant-acceleration") {
+          Globals.globAccel = beh[i];
+        }
+      }
+
+    });
+  } // end initWorld
 
   function initModule() {
     Globals.world = initWorld();
