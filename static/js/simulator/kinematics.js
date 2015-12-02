@@ -1,5 +1,5 @@
 function Kinematics1DModule() {
-  function initWorld() {
+function initWorld() {
     return Physics(function (world) {
       var canvasId = "viewport";
       var canvasEl = document.getElementById(canvasId);
@@ -8,7 +8,6 @@ function Kinematics1DModule() {
       var renderer;
 	  var integrator;	  
 	  world.timestep(1); // TODO: should base timestep on dt option
-
             
       // create a renderer
       renderer = Physics.renderer('canvas', {el: canvasId});
@@ -26,11 +25,13 @@ function Kinematics1DModule() {
         img.setAttribute("src", "/static/img/logo/logo.png");
         switch(data.type) {
           case "kinematics1D-spring":
+		  case "kinematics1D-spring-end":
             img.setAttribute("width", "70");
             img.setAttribute("height", "70");
             component = Physics.body('circle', {
               x: data.x,
               y: data.y,
+			  ctype: data.type,
               radius: 35,
               mass: 3,
               view: img,
@@ -46,7 +47,8 @@ function Kinematics1DModule() {
             component = Physics.body('circle', {
               x: data.x,
               y: data.y,
-              radius: 20,
+              ctype: data.type,
+			  radius: 20,
               mass: 3,
               view: img,
               styles: {
@@ -59,11 +61,46 @@ function Kinematics1DModule() {
         world.add(component);
         		
 		// Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()		
-		Globals.keyframeStates[0].push(cloneState(component.state));
-		Globals.keyframeStates[1].push(cloneState(component.state));
-
-        drawKeyframe(Globals.selectedKeyframe);
+		for(var i=0; i < Globals.keyframeStates.length; i++){
+			Globals.keyframeStates[i].push(cloneState(component.state));	
+		}
+		    
+		if(data.type == "kinematics1D-spring") {
+			world.emit('addSpring', component);
+		}
+		if(data.type == "kinematics1D-spring-end") {
+			component.parent = data.parent;
+		}	
+		
+		drawKeyframe(1); // Temp: draw all future keyframes
+		drawKeyframe(Globals.selectedKeyframe);		
       });
+	  
+	  world.on('addSpring', function(parent){		
+			Globals.didAddMultiComponent = true;
+			var img = document.createElement("img");
+			img.setAttribute("src", "/static/img/logo/logo.png");
+			img.setAttribute("width", "70");
+			img.setAttribute("component", "kinematics1D-spring-end");
+			$('#toolbox').append(img);
+			$(document).mousemove(function(e) { 
+				$(img).offset({ top: e.pageY, left: e.pageX }); 				
+			});
+			$(document).mouseup(function(e) { 
+				console.log('spring!');
+				img.parentElement.removeChild(img);
+				$(document).unbind('mousemove');
+				$(document).unbind('mouseup');
+				Globals.didAddMultiComponent = false;
+				
+				// Left and top of canvas window
+				var vleft = $("#" + Globals.canvasId).position().left;
+				var vtop = $("#" + Globals.canvasId).position().top;
+
+				var data = { 'type': img.getAttribute("component"), 'x': event.pageX-vleft, 'y': event.pageY-vtop, 'parent': parent};
+				Globals.world.emit("addComponent", data);
+			});
+	  });
 
       // constrain objects to these bounds
       edgeBounce = Physics.behavior('edge-collision-detection', {
@@ -87,14 +124,17 @@ function Kinematics1DModule() {
 		if(data.body)
 		{
 			// Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator		
-			var idx = Globals.world.getBodies().indexOf(Globals.world.findOne( function(body){ return body.isGrabbed; }))
-			var state = Globals.selectedKeyframe? Globals.keyframeStates[Globals.selectedKeyframe][idx]: Globals.states[idx][Globals.frame];
+			//var idx = Globals.world.getBodies().indexOf(Globals.world.findOne( function(body){ return body.isGrabbed; }))
+			var frame = canEdit()? Globals.selectedKeyframe: Globals.frame;
 			Globals.selectedBody = data.body;
-								
-			displayElementValues(state);
-			highlightSelection(data.body);
+			if(canEdit())
+				drawKeyframe(frame);
+			else
+				drawSimulator(frame);
+			
 		}
 	});
+	
 	world.on('interact:move', function( data ){
 		if(data.body && canEdit()) {
 			if(Globals.running) toggleSimulator();
@@ -102,6 +142,7 @@ function Kinematics1DModule() {
 			data.body.state.pos.y = data.y;
 			Globals.world.render();
 			highlightSelection(Globals.selectedBody);			
+			drawLines();
 			Globals.didMove = true;
 		}
 	});
@@ -115,41 +156,38 @@ function Kinematics1DModule() {
 				kStates[i].pos.x = data.x;
 				kStates[i].pos.y = data.y;
 				Globals.didMove = false;
-				//simulate();				
 				drawKeyframe(Globals.selectedKeyframe);	
 			}			
 		}
 	});
 	
 	world.on('interact:poke', function( data ){
+		var frame = canEdit()? Globals.selectedKeyframe: Globals.frame;
 		Globals.selectedBody = false;
-		console.log("poke: " + data.x + "," + data.y);
-		displayElementValues(false);
-		Globals.world.render(); // To remove any drawn borders
+		if(canEdit())
+			drawKeyframe(frame);
+		else
+			drawSimulator(frame);
 	});
 	
-	  
-      // add things to the world
-      world.add([
-        Physics.behavior('interactive', {el: renderer.container}),
-        Physics.behavior('constant-acceleration'),
-        Physics.behavior('body-impulse-response'),
-        Physics.behavior('body-collision-detection'),
+    // add things to the world
+    world.add([
+		Physics.behavior('interactive', {el: renderer.container}),
+		Physics.behavior('constant-acceleration'),
+		Physics.behavior('body-impulse-response'),
+		Physics.behavior('body-collision-detection'),
 		Physics.behavior('sweep-prune'),
         edgeBounce
-      ]);
-    });
-  } // end initWorld
+      ]);    
+	});
+} // end initWorld
 
   function initModule() {
     Globals.world = initWorld();
-    simulate();
-    drawSimulator(0);
+	// TODO: Have this method support loading via JSON string
   }
   
-  function setDt(dt) {
-	Globals.world.timestep(dt);
-  }
+  function setDt(dt) { Globals.world.timestep(dt); }
 
   return {
     initWorld:  initWorld,

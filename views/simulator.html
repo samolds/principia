@@ -27,9 +27,16 @@
   <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
 
   <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-  <div>
-    <canvas id="keyframe-0" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
-    <canvas id="keyframe-1" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
+  <div class="row">
+    <div class="col 2">
+      <canvas id="keyframe-0" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
+      <div>dt: <input type="text" id="keyframe-0-dt" readonly value="0"></input></div>
+    </div>
+
+    <div class="col 2">
+      <canvas id="keyframe-1" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
+      <div>dt: <input type="text" id="keyframe-1-dt" value="?"></input></div>
+    </div>
   </div>
 
   <!-- Scrub through simulation frames with playback -->

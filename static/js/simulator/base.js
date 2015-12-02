@@ -26,7 +26,7 @@ var Globals = {
   // Time associated with each keyframe (false if unknown)
   keyframeTimes: [0, false],
   
-  // Index of key frames within state (false if not associated with "real" frame yet)
+  // Index of key frames within states (false if not associated with "real" frame yet)
   keyframes: [0, false],
   
   // Currently selected keyframe or false (no edit)
@@ -40,8 +40,10 @@ var Globals = {
   // If a move event is fired after a grab event, raise flag to inform release event
   didMove: false,
   
+  didAddMultiComponent: false,
+  
   // Currently selected body, false if none
-  selectedBody: false,
+  selectedBody: false
 };
 
 function onPropertyChanged(property, value){
@@ -145,7 +147,6 @@ function highlightSelection(body) {
   canvas.ctx.lineWidth = 2;
 
   var loc = body.state.pos;
-  Globals.world.render(); // Wipes existing highlight border
   canvas.ctx.strokeRect(loc.x-halfw, loc.y-halfh, halfw*2, halfh*2);						
 
   /*	
@@ -169,7 +170,6 @@ function highlightSelection(body) {
   }
 }
 
-
 /* Draw the simulator at frame n */
 function drawSimulator(n) {
 	if(Globals.states.length == 0) return;
@@ -181,10 +181,8 @@ function drawSimulator(n) {
 	}
 
 	world.render();
-  displayElementValues(selectedBody.state);
-  if (selectedBody) {
-    highlightSelection(selectedBody);
-  }
+	displayElementValues(selectedBody.state);
+	if (selectedBody) { highlightSelection(selectedBody); }
 }
 
 /* Draw the state at keyframe n */
@@ -192,19 +190,79 @@ function drawKeyframe(n) {
 	var world = Globals.world;
 	var selectedBody = Globals.selectedBody;
 	
+	// Set state of the world to match keyframe
 	for (var i = 0; i < Globals.world.getBodies().length; i++) {
 		world.getBodies()[i].state = Globals.keyframeStates[n][i];
 	}
-	world.render();
 	
+	// Render PhysicsJS components
+	world.render();
+		
+	// Copy global canvas into canvas for keyframe
 	var canvas = $('#' + Globals.canvasId)[0].children[0];  
 	var keycanvas = $("#keyframe-" + Globals.selectedKeyframe)[0];  
 	keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
-	$("#keyframe-" + Globals.selectedKeyframe)[0].getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+	$("#keyframe-" + n)[0].getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 	
-	displayElementValues(selectedBody.state);
-	if (selectedBody) {
-		highlightSelection(selectedBody);
+	// Post-processing for global canvas and properties
+	displayElementValues(selectedBody.state);	
+	drawLines();
+	if (selectedBody) { highlightSelection(selectedBody);}
+		
+}
+
+function drawLines()
+{		
+	var bodies = Globals.world.getBodies();
+	for (var i = 0; i < bodies.length; i++) {
+		if(bodies[i].parent){
+			drawLine(bodies[i].parent, bodies[i]);
+		}
+	}
+}
+
+function drawLine(b1, b2)
+{	
+	var canvas = Globals.world.renderer();
+	var ctx = canvas.ctx;
+	
+	ctx.strokeStyle = '#aaaaaa'; // Gray
+	ctx.lineWidth = 3;
+	
+	var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
+	var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
+	
+	var xmin = x1 < x2? x1: x2;
+	var xmax = x1 > x2? x1: x2;
+	
+	var ys = (x1 == xmin)? y1:y2;
+	var ye = (x1 == xmin)? y2:y1;
+	
+	var x = xmin;
+	var y =  ys;	
+	var m = (ye-ys)/(xmax-xmin);
+	// Handle vertical lines here too
+	
+	ctx.beginPath();
+	ctx.moveTo(x,y);
+	
+	var wavelength, amplitude;
+	var dx = xmax-xmin;
+	
+	// Need to play with these values (only affects appearance)
+	if(dx > 300)      { wavelength = 0.25; amplitude = 4; }
+	else if(dx > 250) { wavelength = 0.5;   amplitude = 8; }
+	else if(dx > 200) { wavelength = 1; amplitude = 12; }
+	else if(dx > 150) { wavelength = 1.25;   amplitude = 14; }
+	else              { wavelength = 1.5; amplitude = 20; }
+		
+	var counter = 0;
+	var incr = 10;
+	for(; x<=xmax; x+=incr){
+		ctx.lineTo(x,y);		
+		ctx.stroke();
+		y += (m*incr) + Math.sin(wavelength*counter)*amplitude; // Draws straight line perturbed in y by sine wave. Perturb in x too for better appearance?
+		counter++;
 	}
 }
 
@@ -263,16 +321,9 @@ function simulate() {
   }
 }
 
-$(".draggable").draggable({
-  cursor: 'move',
-  containment: $(Globals.canvasId),
-  scroll: false,
-  stop: handleDragStop,
-  helper: 'clone'
-});
 
 function handleDragStop(event, ui) {
-  if(!canEdit()) return;
+  if(!canAdd()) return;
   var type = ui.helper[0].getAttribute("component");
 
   // Left and top of helper img
@@ -293,7 +344,8 @@ function handleDragStop(event, ui) {
   Globals.world.emit('addComponent', data);
 }
 
-function canEdit() { return Globals.selectedKeyframe || Globals.selectedKeyframe === 0; }
+function canEdit() { return (Globals.selectedKeyframe || Globals.selectedKeyframe === 0) && !Globals.didAddMultiComponent; }
+function canAdd() { return  Globals.selectedKeyframe === 0 && !Globals.didAddMultiComponent; }
 
 Physics.integrator('my-integrator', function( parent ){
 
@@ -342,9 +394,17 @@ function selectKeyframe(event) {
 	drawKeyframe(frame);
 }
 
+$(".draggable").draggable({
+	  cursor: 'move',
+	  containment: $(Globals.canvasId),
+	  scroll: false,
+	  stop: handleDragStop,
+	  helper: 'clone'
+	});
+	
 $(document).ready(function() {
   Kinematics1D.initModule();
-  
+
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ onPropertyChanged('posy', $('#properties-position-y').val()); }); 
