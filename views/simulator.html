@@ -3,7 +3,7 @@
 {{ define "scripts" }}
 <script src="/static/js/lib/jquery-ui.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
-<script src="/static/js/lib/algebra.min.js"></script>
+<script src="/static/js/lib/js-solver.js"></script>
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/forms.js"></script>
@@ -37,6 +37,8 @@
       <canvas id="keyframe-1" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
       <div>dt: <input type="text" id="keyframe-1-dt" value="?"></input></div>
     </div>
+
+    <button id="solve-btn">Solve for Unknowns</button>
   </div>
 
   <!-- Scrub through simulation frames with playback -->

@@ -8,11 +8,14 @@ var Globals = {
   frame: 0,
   
   // Controls speed of frame change while animating
-  delay: 10,
+  delay: 250,
   
   // Interval event that allows for animation
   anim: {},
   
+  // Flag indicating that the timeline is ready for a user to play/pause/scrub
+  timelineReady: false,
+ 
   // Flag for when simulator is currently running
   running: false,
     
@@ -32,6 +35,7 @@ var Globals = {
   // Currently selected keyframe or false (no edit)
   selectedKeyframe: 0,
   
+  // Maximum number of frames to try before giving up on solver
   totalFrames: 4000,
   
   // Id associated with canvas element used for rendering
@@ -43,8 +47,36 @@ var Globals = {
   didAddMultiComponent: false,
   
   // Currently selected body, false if none
-  selectedBody: false
+  selectedBody: false,
+  
+  // Variables associated with each body:
+  // Each body has:
+  // x0, xf, v0, vf, a (for kinematics, need to update later with y values plus other unknowns?)
+  variableMap: [],
+  
+  // Equation solver for currently loaded module
+  // Current approach: Using js-solver library, which uses eval function and map of variables to equations that can be used to solve them
+  // Generate frames when there are no unknowns left, gives up if an iteration doesn't update any variables
+  solver: false
+  
 };
+
+function updateVariable(body, variable, value){
+	var variableMap = Globals.variableMap;
+	var i = Globals.world.getBodies().indexOf(body);
+	value = parseFloat(value);
+	if(isNaN(value)) value = "?";
+	if(Globals.selectedKeyframe == 0){
+		if(variable == "posx") variableMap[i]["x0"] = value;
+		if(variable == "velx") variableMap[i]["v0"] = value;
+	}
+	else {
+		if(variable == "posx") variableMap[i]["xf"] = value;
+		if(variable == "velx") variableMap[i]["vf"] = value;
+	}
+	
+	if(variable == "accx") variableMap[i]["a"] = value;
+}
 
 function onPropertyChanged(property, value){
 	if(!canEdit()) return;
@@ -57,27 +89,30 @@ function onPropertyChanged(property, value){
 	switch(property)
 	{		
 		case 'posx':
-			body.state.pos.x = value;
+			if(value != '?') body.state.pos.x = value;
 			kStates[world.getBodies().indexOf(body)].pos.x = body.state.pos.x;
+			updateVariable(body, property, value);
 			break;
 		case 'posy':
-			body.state.pos.y = value;
-			kStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;
+			if(value != '?') body.state.pos.y = value;
+			kStates[world.getBodies().indexOf(body)].pos.y = body.state.pos.y;			
 			break;
 		case 'velx':
-			body.state.vel.x = value;
+			if(value != '?') body.state.vel.x = value;
 			kStates[world.getBodies().indexOf(body)].vel.x = body.state.vel.x;
+			updateVariable(body, property, value);
 			break;
 		case 'vely':
-			body.state.vel.y = value;
-			kStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;
+			if(value != '?') body.state.vel.y = value;
+			kStates[world.getBodies().indexOf(body)].vel.y = body.state.vel.y;			
 			break;
 		case 'accx':
-			body.state.acc.x = value;
+			if(value != '?') body.state.acc.x = value;
 			kStates[world.getBodies().indexOf(body)].acc.x = body.state.acc.x;
+			updateVariable(body, property, value);
 			break;
 		case 'accy':
-			body.state.acc.y = value;
+			if(value != '?') body.state.acc.y = value;
 			kStates[world.getBodies().indexOf(body)].acc.y = body.state.acc.y;
 			break;
 	}
@@ -87,6 +122,12 @@ function onPropertyChanged(property, value){
 
 /* Scrubs to selected frame */
 function onRangeUpdate(){
+  // Prevent use of timeline until simulation is complete
+  if(!Globals.timelineReady){
+	$("#simulatorFrameRange").val(0)
+	return;
+  }
+  
   Globals.frame = $("#simulatorFrameRange").val();
   Globals.selectedKeyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? Globals.frame: false;
   drawSimulator(Globals.frame);
@@ -94,6 +135,7 @@ function onRangeUpdate(){
 
 /* Toggles the state of the simulator between running and paused */
 function toggleSimulator() {
+  if(!Globals.timelineReady) return;
   var span = $("#playpause").children()[0];
   Globals.running = !Globals.running;
   if (Globals.running) {
@@ -108,13 +150,48 @@ function toggleSimulator() {
 }
 
 function drawLoop() {
-  if (Globals.frame >= Globals.totalFrames) {
-    Globals.frame = 0;
-  }
+  // Reset to beginning after reaching final frame
+  if (Globals.frame > Globals.totalFrames) { Globals.frame = 0;}
 
+  // Update range
   $("#simulatorFrameRange").val(Globals.frame)
+  
+  // Draw simulation at current frame
   drawSimulator(Globals.frame);
+  
+  // Increment frame counter
   Globals.frame++;
+}
+
+function displayElementValuesKF(body){
+	if (body) {
+		var st = body.state;
+		var variables = Globals.variableMap[Globals.world.getBodies().indexOf(body)];
+		
+		if(Globals.selectedKeyframe == 0)
+		{
+			$('#properties-position-x').val(variables["x0"]);
+			$('#properties-velocity-x').val(variables["v0"]);
+			$('#properties-acceleration-x').val(variables["a"]);
+		}
+		else
+		{
+			$('#properties-position-x').val(variables["xf"]);
+			$('#properties-velocity-x').val(variables["vf"]);
+			$('#properties-acceleration-x').val(variables["a"]);
+		}
+		
+		$('#properties-position-y').val(st.pos.y);
+		$('#properties-velocity-y').val(st.vel.y);
+		$('#properties-acceleration-y').val(st.acc.y);
+	} else {
+		$('#properties-position-x').val("");
+		$('#properties-position-y').val("");
+		$('#properties-velocity-x').val("");
+		$('#properties-velocity-y').val("");
+		$('#properties-acceleration-x').val("");
+		$('#properties-acceleration-y').val("");
+  }
 }
 
 /* Shows component values in html elements */
@@ -189,10 +266,10 @@ function drawSimulator(n) {
 function drawKeyframe(n) {
 	var world = Globals.world;
 	var selectedBody = Globals.selectedBody;
-	
+	var bodies = Globals.world.getBodies();
 	// Set state of the world to match keyframe
-	for (var i = 0; i < Globals.world.getBodies().length; i++) {
-		world.getBodies()[i].state = Globals.keyframeStates[n][i];
+	for (var i = 0; i < bodies.length; i++) {
+		bodies[i].state = Globals.keyframeStates[n][i];
 	}
 	
 	// Render PhysicsJS components
@@ -200,19 +277,18 @@ function drawKeyframe(n) {
 		
 	// Copy global canvas into canvas for keyframe
 	var canvas = $('#' + Globals.canvasId)[0].children[0];  
-	var keycanvas = $("#keyframe-" + Globals.selectedKeyframe)[0];  
+	var keycanvas = $("#keyframe-" + n)[0];  
 	keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
-	$("#keyframe-" + n)[0].getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+	keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 	
 	// Post-processing for global canvas and properties
-	displayElementValues(selectedBody.state);	
+	displayElementValuesKF(selectedBody);	
 	drawLines();
 	if (selectedBody) { highlightSelection(selectedBody);}
 		
 }
 
-function drawLines()
-{		
+function drawLines(){		
 	var bodies = Globals.world.getBodies();
 	for (var i = 0; i < bodies.length; i++) {
 		if(bodies[i].parent){
@@ -221,8 +297,7 @@ function drawLines()
 	}
 }
 
-function drawLine(b1, b2)
-{	
+function drawLine(b1, b2){	
 	var canvas = Globals.world.renderer();
 	var ctx = canvas.ctx;
 	
@@ -275,6 +350,62 @@ function cloneState(state) {
   return clone;
 }
 
+function attemptSimulation(){
+	var solver = Globals.solver;
+	var keyframeStates = Globals.keyframeStates;
+	
+	// For 1-body:	
+	var variables = Globals.variableMap[0];
+	removals = [];
+	for(var variable in variables){
+		if(variables[variable] == "?")
+			removals.push(variable);
+	}
+	
+	// Remove unknowns from variable map
+	for(var i=0; i<removals.length; i++){
+		delete variables[removals[i]];
+	}
+	
+	// Add time if known
+	if(Globals.keyframeTimes[1]) // TODO: Generalize this
+		variables["t"] = Globals.keyframeTimes[1];
+	
+	// Solve for unknowns, store results
+	var results = solver.solve(variables);
+	Globals.variableMap[0] = results;
+	
+	// TODO: Check if the results are sound and all variables are known
+	// TODO: Update display of keyframe images to match results
+	
+	if(!Globals.keyframeTimes[1]){
+		Globals.keyframeTimes[1] = results["t"];
+		Globals.totalFrames = results["t"]/Globals.world.timestep();
+	}
+	$('#keyframe-1-dt').val(Globals.keyframeTimes[1]);
+	$('#simulatorFrameRange')[0].max = Globals.totalFrames;
+	
+	// Modify bodies within keyframes to match results	
+	keyframeStates[0][0]["pos"]["x"] = results["x0"];
+	keyframeStates[0][0]["vel"]["x"] = results["v0"];
+	keyframeStates[0][0]["acc"]["x"] = results["a"];
+	
+	keyframeStates[1][0]["pos"]["x"] = results["xf"];
+	keyframeStates[1][0]["vel"]["x"] = results["vf"];
+	keyframeStates[1][0]["acc"]["x"] = results["a"];
+
+	// Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
+	drawKeyframe(1);
+	drawKeyframe(0);
+	
+	
+	// Run the simulation using the solved keyframes
+	simulate();
+	
+	// If results are sound, the user can play the simulation
+	Globals.timelineReady = true;
+}
+
 function simulate() {
   var i = 0;
   var j = 0;
@@ -305,7 +436,7 @@ function simulate() {
   }
     
   // For each frame
-  for (i = 0; i < Globals.totalFrames; i++) {
+  for (i = 0; i < Globals.totalFrames+1; i++) { // Simulate one extra frame to account for init state
     // For each body in the simulation
     for (j = 0; j < Globals.world.getBodies().length; j++) {
       // Clone the state information for the current body
@@ -321,6 +452,13 @@ function simulate() {
   }
 }
 
+$(".draggable").draggable({
+	  cursor: 'move',
+	  containment: $(Globals.canvasId),
+	  scroll: false,
+	  stop: handleDragStop,
+	  helper: 'clone'
+});
 
 function handleDragStop(event, ui) {
   if(!canAdd()) return;
@@ -377,13 +515,13 @@ Physics.integrator('my-integrator', function( parent ){
 				state.pos.y += state.old.vel.y * dt + state.acc.y * 0.5 * dt*dt;
 				state.angular.pos += state.angular.vel;
 				state.old = temp;
-				state.acc.zero();
-				state.angular.acc = 0.0;
+				//state.acc.zero();
+				//state.angular.acc = 0.0;
 			}
             // update the positions of all bodies according to timestep dt
             // store the previous positions in .state.old.pos
             // and .state.old.angular.pos
-            // also set the accelerations to zero
+            // also set the accelerations to zero - NOT doing this now, why is this supposed to be required in the first place?
         }
     };
 });
@@ -393,14 +531,6 @@ function selectKeyframe(event) {
 	Globals.selectedKeyframe = parseInt(frame);
 	drawKeyframe(frame);
 }
-
-$(".draggable").draggable({
-	  cursor: 'move',
-	  containment: $(Globals.canvasId),
-	  scroll: false,
-	  stop: handleDragStop,
-	  helper: 'clone'
-	});
 	
 $(document).ready(function() {
   Kinematics1D.initModule();
@@ -413,7 +543,12 @@ $(document).ready(function() {
   $('#properties-acceleration-x').on("change", function(){ onPropertyChanged('accx', $('#properties-acceleration-x').val()); }); 
   $('#properties-acceleration-y').on("change", function(){ onPropertyChanged('accy', $('#properties-acceleration-y').val()); });
   
+  $('#solve-btn').on('click', function() { attemptSimulation(); });
+  
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
+  
+  $('#keyframe-1-dt').on("change", function(){ Globals.keyframeTimes[1] = $('#keyframe-1-dt').val(); });
+  
 });

@@ -21,45 +21,57 @@ function initWorld() {
 
       world.on('addComponent', function(data) {
         var component;
-        var img = document.createElement("img");
-        img.setAttribute("src", "/static/img/logo/logo.png");
-        switch(data.type) {
-          case "kinematics1D-spring":
-		  case "kinematics1D-spring-end":
-            img.setAttribute("width", "70");
-            img.setAttribute("height", "70");
-            component = Physics.body('circle', {
-              x: data.x,
-              y: data.y,
-			  ctype: data.type,
-              radius: 35,
-              mass: 3,
-              view: img,
-              styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
+        var variableMap = Globals.variableMap;
+		
+		var img = document.createElement("img");
+        img.setAttribute("src", "/static/img/logo/logo.png"); // TODO - unique image for each component
+        
+		switch(data.type) {
+			case "kinematics1D-spring":
+			case "kinematics1D-spring-end":
+				img.setAttribute("width", "70");
+				img.setAttribute("height", "70");
+				component = Physics.body('circle', {
+					x: data.x,
+					y: data.y,
+					ctype: data.type,
+					radius: 35,				
+					view: img,
+					styles: {
+						fillStyle: '#6c71c4',
+						angleIndicator: '#3b3e6b'
+					}
+				});
             break;
-          case "kinematics1D-mass":
-            img.setAttribute("width", "40");
-            img.setAttribute("height", "40");
-            component = Physics.body('circle', {
-              x: data.x,
-              y: data.y,
-              ctype: data.type,
-			  radius: 20,
-              mass: 3,
-              view: img,
-              styles: {
-                fillStyle: '#716cc4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
+			
+			case "kinematics1D-mass":
+				img.setAttribute("width", "40");
+				img.setAttribute("height", "40");
+				component = Physics.body('circle', {
+					x: data.x,
+					y: data.y,
+					ctype: data.type,
+					radius: 20,				
+					view: img,
+					styles: {
+						fillStyle: '#716cc4',
+						angleIndicator: '#3b3e6b'
+					}
+				});
+			
+			// Upon being added, a map of variables associated with this body is added to the globals
+			variableMap.push({x0:data.x, xf: data.x, v0:0, vf:0, a:0});
+			
             break;
+			
+			// ToDo: Prinicipia mixins
         }
-        world.add(component);
-        		
+		
+		console.log("Added at " + data.x + "," + data.y);
+        
+		world.add(component);
+			
+		
 		// Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()		
 		for(var i=0; i < Globals.keyframeStates.length; i++){
 			Globals.keyframeStates[i].push(cloneState(component.state));	
@@ -157,11 +169,17 @@ function initWorld() {
 				kStates[i].pos.y = data.y;
 				Globals.didMove = false;
 				drawKeyframe(Globals.selectedKeyframe);	
+				
+				if(Globals.selectedKeyframe == 0)
+					Globals.variableMap[i]["x0"] = data.x;
+				else
+					Globals.variableMap[i]["xf"] = data.x;
 			}			
 		}
 	});
 	
 	world.on('interact:poke', function( data ){
+		console.log("poke: " + data.x + "," + data.y);
 		var frame = canEdit()? Globals.selectedKeyframe: Globals.frame;
 		Globals.selectedBody = false;
 		if(canEdit())
@@ -185,6 +203,24 @@ function initWorld() {
   function initModule() {
     Globals.world = initWorld();
 	// TODO: Have this method support loading via JSON string
+
+	
+	// How the solver object works:
+	// Try to assign a value to each key using known variables
+	// Repeat until no new values can be assigned
+	// Note that an overconstrained problem could still be solved with this method, leading to unsound results
+	var kinematicsSolver = new Solver(
+	{
+		xf: 'xf || x0 + v0*t + 0.5*a*t^2',
+		vf: 'vf || v0 + a*t',
+		v0: 'v0 || vf-a*t',
+		x0: 'x0 || xf-v0-a*t',
+		t:  't  ||(vf-v0)/a || sqrt((xf-x0-v0*t)*2/a)',
+		a:  'a  ||(vf-v0)/t || (xf-x0-v0)/t'
+	});
+	
+	Globals.solver = kinematicsSolver;
+	
   }
   
   function setDt(dt) { Globals.world.timestep(dt); }
