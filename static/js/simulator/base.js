@@ -179,46 +179,33 @@ function drawLoop() {
   Globals.frame++;
 }
 
-function displayElementValuesKF(body){
-	if (body) {
-		var st = body.state;
-		var variables = Globals.variableMap[Globals.world.getBodies().indexOf(body)];
-		
-		if(Globals.selectedKeyframe == 0)
-		{
-			$('#properties-position-x').val(variables["x0"]);
-			$('#properties-velocity-x').val(variables["v0"]);
-			$('#properties-acceleration-x').val(variables["a"]);
-		}
-		else
-		{
-			$('#properties-position-x').val(variables["xf"]);
-			$('#properties-velocity-x').val(variables["vf"]);
-			$('#properties-acceleration-x').val(variables["a"]);
-		}
-		
-		$('#properties-position-y').val(st.pos.y);
-		$('#properties-velocity-y').val(st.vel.y);
-		$('#properties-acceleration-y').val(st.acc.y);
-	} else {
-		$('#properties-position-x').val("");
-		$('#properties-position-y').val("");
-		$('#properties-velocity-x').val("");
-		$('#properties-velocity-y').val("");
-		$('#properties-acceleration-x').val("");
-		$('#properties-acceleration-y').val("");
+function displayElementValuesKF(body) {
+  var variables = Globals.variableMap[Globals.world.getBodies().indexOf(body)];
+  displayElementValues(body);
+
+  if (variables && body) {
+    if (Globals.selectedKeyframe == 0) {
+      $('#properties-position-x').val(variables["x0"]);
+      $('#properties-velocity-x').val(variables["v0"]);
+      $('#properties-acceleration-x').val(variables["a"]);
+    } else {
+      $('#properties-position-x').val(variables["xf"]);
+      $('#properties-velocity-x').val(variables["vf"]);
+      $('#properties-acceleration-x').val(variables["a"]);
+    }
   }
 }
 
 /* Shows elements values in html elements */
 function displayElementValues(bod) {
   if (bod) {
-    $('#properties-position-x').val(bod.state.pos.x);
-    $('#properties-position-y').val(bod.state.pos.y);
-    $('#properties-velocity-x').val(bod.state.vel.x);
-    $('#properties-velocity-y').val(bod.state.vel.y);
-    $('#properties-acceleration-x').val(bod.state.acc.x);
-    $('#properties-acceleration-y').val(bod.state.acc.y);
+    var st = bod.state;
+    $('#properties-position-x').val(st.pos.x);
+    $('#properties-position-y').val(st.pos.y);
+    $('#properties-velocity-x').val(st.vel.x);
+    $('#properties-velocity-y').val(st.vel.y);
+    $('#properties-acceleration-x').val(st.acc.x);
+    $('#properties-acceleration-y').val(st.acc.y);
     $('#properties-mass').val(bod.mass);
     $('#properties-nickname').val(bod.nickname);
     if (bod.nickname) {
@@ -311,16 +298,18 @@ function drawKeyframe(n) {
 	var selectedBody = Globals.selectedBody;
 	var bodies = Globals.world.getBodies();
 	// Set state of the world to match keyframe
-	for (var i = 0; i < bodies.length; i++) {
-		bodies[i].state = Globals.keyframeStates[n][i];
-	}
+  if (bodies.length > 0) {
+    for (var i = 0; i < bodies.length; i++) {
+      bodies[i].state = Globals.keyframeStates[n][i];
+    }
+  }
 	
 	// Render PhysicsJS components
 	renderWorld();
 		
 	// Copy global canvas into canvas for keyframe
 	var canvas = $('#' + Globals.canvasId)[0].children[0];  
-	var keycanvas = $("#keyframe-" + n)[0];  
+	var keycanvas = $("#keyframe-" + n)[0];
 	keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
 	keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 	
@@ -439,7 +428,6 @@ function attemptSimulation(){
 	// Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
 	drawKeyframe(1);
 	drawKeyframe(0);
-	
 	
 	// Run the simulation using the solved keyframes
 	simulate();

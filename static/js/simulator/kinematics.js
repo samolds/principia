@@ -124,6 +124,7 @@ function initWorld() {
       window.addEventListener('resize', function () {
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
         viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);
+        renderWorld();
 
         // update the boundaries
         edgeBounce.setAABB(viewportBounds);
@@ -168,10 +169,12 @@ function initWorld() {
 				Globals.didMove = false;
 				drawKeyframe(Globals.selectedKeyframe);	
 				
-				if(Globals.selectedKeyframe == 0)
-					Globals.variableMap[i]["x0"] = data.x;
-				else
-					Globals.variableMap[i]["xf"] = data.x;
+        if (Globals.variableMap[i]) {
+          if(Globals.selectedKeyframe == 0)
+            Globals.variableMap[i]["x0"] = data.x;
+          else
+            Globals.variableMap[i]["xf"] = data.x;
+        }
 			}			
 		}
 	});

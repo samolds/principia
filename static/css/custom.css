@@ -81,6 +81,16 @@
 /* end simulator */
 
 
+/* keyframe thumbnails */
+  .keyframe {
+    height: 120px;
+    width: 100%;
+    border: 1px solid #888;
+    background-color: #e3f2fd;
+  }
+/* end keyframe */
+
+
 /* simulator properties window */
   .prop-window {
     position: absolute;

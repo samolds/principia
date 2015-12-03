@@ -93,30 +93,39 @@
   <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
   <div id="viewport" class="simulator"></div>
 
-  <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-  <div class="row">
-    <div class="col 2">
-      <canvas id="keyframe-0" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
-      <div>dt: <input type="text" id="keyframe-0-dt" readonly value="0"></input></div>
-    </div>
-
-    <div class="col 2">
-      <canvas id="keyframe-1" style="height: 100px; width:113px; border: 1px solid #aaa;" id="viewport" class="principia-blue-fade-bg"></canvas>
-      <div>dt: <input type="text" id="keyframe-1-dt" value="?"></input></div>
-    </div>
-
-    <button id="solve-btn">Solve for Unknowns</button>
-  </div>
-
   <!-- Scrub through simulation frames with playback -->
   <div class="row" id="playback">
-    <div class="col s1">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-        <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-      </button>
+    <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+    <div class="col s2">
+      <canvas id="keyframe-0" class="keyframe"></canvas>
     </div>
-    <div class="col s11">
-      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+    <div class="col s2">
+      <canvas id="keyframe-1" class="keyframe"></canvas>
+    </div>
+    <div class="col s8">
+      <div class="row">
+        <div class="col s1">
+          <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+            <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+          </button>
+        </div>
+        <div class="col s11">
+          <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s3">
+          <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+          <label for="keyframe-0-dt">dt</label>
+        </div>
+        <div class="input-field col s3">
+          <input id="keyframe-1-dt" type="text" value="?"></input>
+          <label for="keyframe-1-dt">dt</label>
+        </div>
+        <div class="input-field col s6">
+          <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
