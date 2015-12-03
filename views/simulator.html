@@ -3,6 +3,7 @@
 {{ define "scripts" }}
 <script src="/static/js/lib/jquery-ui.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
+<script src="/static/js/lib/js-solver.js"></script>
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/forms.js"></script>
@@ -22,18 +23,109 @@
 </div>
 
 <div class="wide">
+  <div class="right">
+    <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
+  </div>
+
+  <div class="clear"></div>
+
+  <!-- Hideable global properties window for each element -->
+  <div id="global-properties" class="hide prop-window global-win">
+    <span class="right"><a href="#!" onclick="toggleGlobalProp()"><i class="material-icons">close</i></a></span>
+    <h5 class="pad-sides">Global Properties</h5>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="glob-xaccel" placeholder=""></input>
+        <label for="glob-xaccel">Horizontal Acceleration</label>
+      </div>
+      <div class="input-field col s6">
+        <input type="number" id="glob-yaccel" placeholder=""></input>
+        <label for="glob-yaccel">Vertical Acceleration</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hideable properties window for each element -->
+  <div id="properties" class="hide prop-window element-win">
+    <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="properties-position-x" placeholder=""></input>
+        <label for="properties-position-x">X Position</label>
+      </div>
+      <div class="input-field col s6">
+        <input type="number" id="properties-position-y" placeholder=""></input>
+        <label for="properties-position-y">Y Position</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="properties-velocity-x" placeholder=""></input>
+        <label for="properties-velocity-x">X Velocity</label>
+      </div>
+      <div class="input-field col s6">
+        <input type="number" id="properties-velocity-y" placeholder=""></input>
+        <label for="properties-velocity-y">Y Velocity</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
+        <label for="properties-acceleration-x">X Acceleration</label>
+      </div>
+      <div class="input-field col s6">
+        <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
+        <label for="properties-acceleration-y">Y Acceleration</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="properties-mass" placeholder=""></input>
+        <label for="properties-mass">Mass</label>
+      </div>
+      <div class="input-field col s6">
+        <input type="text" id="properties-nickname" placeholder="Point"></input>
+        <label for="properties-nickname">Nickname</label>
+      </div>
+    </div>
+  </div>
+
   <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
+  <div id="viewport" class="simulator"></div>
 
   <!-- Scrub through simulation frames with playback -->
   <div class="row" id="playback">
-    <div class="col s1">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-        <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-      </button>
+    <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+    <div class="col s2">
+      <canvas id="keyframe-0" class="keyframe"></canvas>
     </div>
-    <div class="col s11">
-      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+    <div class="col s2">
+      <canvas id="keyframe-1" class="keyframe"></canvas>
+    </div>
+    <div class="col s8">
+      <div class="row">
+        <div class="col s1">
+          <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+            <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+          </button>
+        </div>
+        <div class="col s11">
+          <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s3">
+          <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+          <label for="keyframe-0-dt">dt</label>
+        </div>
+        <div class="input-field col s3">
+          <input id="keyframe-1-dt" type="text" value="?"></input>
+          <label for="keyframe-1-dt">dt</label>
+        </div>
+        <div class="input-field col s6">
+          <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -66,7 +158,7 @@
         <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
       </div>
     </div>
-
+    
     <div class="row hide" id="properties">
       <h5>Element Properties</h5>
       <div class="input-field col s2">

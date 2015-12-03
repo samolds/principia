@@ -8,6 +8,10 @@
   padding-right: 2%;
 }
 
+.clear {
+  clear: both;
+}
+
 .pad-sides {
   padding-left: 10px;
   padding-right: 10px;
@@ -66,3 +70,51 @@
     color: #29b6f6;
   }
 /* end custom form */
+
+
+/* simulator canvas */
+  .simulator {
+    height: 500px;
+    border: 2px solid #888;
+    background-color: #e3f2fd;
+  }
+/* end simulator */
+
+
+/* keyframe thumbnails */
+  .keyframe {
+    height: 120px;
+    width: 100%;
+    border: 1px solid #888;
+    background-color: #e3f2fd;
+  }
+/* end keyframe */
+
+
+/* simulator properties window */
+  .prop-window {
+    position: absolute;
+    right: 2%;    /* 1 + padding used in 'wide' class */
+    margin: 2px;
+    width: 300px;
+    height: 450px;
+    background-color: #efefef;
+    border-left: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+  }
+
+  .global-win {
+    z-index: 4;
+  }
+
+  .element-win {
+    z-index: 3;
+  }
+/* end properties */
+
+
+/* hotfix for slider artifact */
+  span.thumb.active {
+    display: none;
+  }
+/* end slider hotfix */
