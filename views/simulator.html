@@ -9,89 +9,119 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="container">
-  {{ if .CurrentUser }}
-    {{ if .Data.sim.Name }}
-      <h3>{{ .Data.sim.Name }}</h3>
-    {{ else }}
-      <h3>New Simulation!</h3>
-    {{ end }}
-  {{ else }}
-    <h3>Kinematics Simulator</h3>
-  {{ end }}
-</div>
+<div class="main-container">
 
-<div class="wide">
-  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div style="height: 500px; border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
-
-  <!-- Scrub through simulation frames with playback -->
-  <div class="row" id="playback">
-    <div class="col s1">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-        <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-      </button>
-    </div>
-    <div class="col s11">
-      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-    </div>
-  </div>
-</div>
-
-<div class="container">
   <div class="row">
-    {{ if .CurrentUser }}
-    <div class="input-field col s4">
-      <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
-      <label for="simulation-name">Simulation Name</label>
-    </div>
-    <div class="input-field col s2">
-      <a class="waves-effect waves-light btn blue darken-1" onclick="saveSimulation({{.Data.sim}})">Save</a>
-    </div>
-    {{ end }}
+    <div class="col s12">
+      <div class="card-panel">
+          <div>
+          {{ if .CurrentUser }}
+              {{ if .Data.sim.Name }}
+              <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+              <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()" onchange="saveSimulation({{.Data.sim}}) "></input>
+              {{ else }}
+              <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+              <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus() " onchange="saveSimulation({{.Data.sim}})"></input>
+              {{ end }}
+          {{ else }}
+              <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+              <input id="simulation-name" type="text" value="Kinematics Simulator" onclick="" onchange=""></input>
+          {{ end }}
+          </div>
 
-    <div class="col s6">
-      <h5>Toolbox</h5>
-      <small>Just drag an image up and click play!</small>
-      <hr />
+          <div >
+            <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+            <div style="height: 500px;  border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
+
+            <!-- Scrub through simulation frames with playback -->
+            <div class="row pad-scrub" id="playback">
+              <div class="col s1">
+                <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+                  <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+                </button>
+              </div>
+              <div class="col s11">
+                <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+              </div>
+            </div>
+          </div>
+         
+
+        <div class="tools" >
+          <div class="row">
+            <div class="col s6">
+              <h6>Toolbox</h6>
+            </div>
+          </div>
+
+          <div class="scrollable-tools">
+            <ul class="toollist">
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="80" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="20" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="33" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="30" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="60" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="44" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="10" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="80" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="20" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="33" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="30" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="60" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="44" component="kinematics1D-spring"></li>
+              <li><img src="/static/img/logo/logo.png" class="draggable" width="10" component="kinematics1D-spring"></li>
+            </ul>
+          </div>
+        </div>
+
+
+      </div>
     </div>
   </div>
 
-  <div class="row" id="toolbox">
-    <div class="col 2 {{ if .CurrentUser }}offset-s6{{ end }}">
-      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
-    </div>
-    <div class="col 2">
-      <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel " >
+        <h6>Comments:</h6>
+              <input id="input-comment" type="text" value="Add a comment about this simulation..." onclick="" onchange=""></input>
+
+      </div>
     </div>
   </div>
 
-  <div class="row hide" id="properties">
-    <h5>Element Properties</h5>
-    <div class="input-field col s2">
-      <input type="text" id="properties-position-x" placeholder=""></input>
-      <label for="properties-position-x">X Position</label>
-    </div>
-    <div class="input-field col s2">
-      <input type="text" id="properties-position-y" placeholder=""></input>
-      <label for="properties-position-y">Y Position</label>
-    </div>
-    <div class="input-field col s2">
-      <input type="text" id="properties-velocity-x" placeholder=""></input>
-      <label for="properties-velocity-x">X Velocity</label>
-    </div>
-    <div class="input-field col s2">
-      <input type="text" id="properties-velocity-y" placeholder=""></input>
-      <label for="properties-velocity-y">Y Velocity</label>
-    </div>
-    <div class="input-field col s2">
-      <input type="text" id="properties-acceleration-x" placeholder=""></input>
-      <label for="properties-acceleration-x">X Acceleration</label>
-    </div>
-    <div class="input-field col s2">
-      <input type="text" id="properties-acceleration-y" placeholder=""></input>
-      <label for="properties-acceleration-y">Y Acceleration</label>
-    </div>
-  </div>
+
+    <!-- <div class="row hide" id="properties">
+      <h5>Element Properties</h5>
+      <div class="input-field col s2">
+        <input type="text" id="properties-position-x" placeholder=""></input>
+        <label for="properties-position-x">X Position</label>
+      </div>
+      <div class="input-field col s2">
+        <input type="text" id="properties-position-y" placeholder=""></input>
+        <label for="properties-position-y">Y Position</label>
+      </div>
+      <div class="input-field col s2">
+        <input type="text" id="properties-velocity-x" placeholder=""></input>
+        <label for="properties-velocity-x">X Velocity</label>
+      </div>
+      <div class="input-field col s2">
+        <input type="text" id="properties-velocity-y" placeholder=""></input>
+        <label for="properties-velocity-y">Y Velocity</label>
+      </div>
+      <div class="input-field col s2">
+        <input type="text" id="properties-acceleration-x" placeholder=""></input>
+        <label for="properties-acceleration-x">X Acceleration</label>
+      </div>
+      <div class="input-field col s2">
+        <input type="text" id="properties-acceleration-y" placeholder=""></input>
+        <label for="properties-acceleration-y">Y Acceleration</label>
+      </div> -->
+
 </div>
 {{ end }}

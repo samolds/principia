@@ -49,4 +49,18 @@ function saveSimulation(simObject)
     } else {
         post(window.location.href, simObject);
     } 
+
+    losefocus();
+}
+
+function getfocus() 
+{
+    document.getElementById("simulation-name").focus();
+
+    document.getElementById("simulation-name-label").style.display = "initial";
+}
+function losefocus() 
+{
+    document.getElementById("simulation-name").blur();
+    document.getElementById("simulation-name-label").style.display = "none";
 }
