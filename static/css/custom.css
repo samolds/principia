@@ -25,6 +25,11 @@
   padding-bottom: 30px;
 }
 
+.principia-logo {
+  width: 430px;
+  max-width: 100%;
+}
+
 .principia-blue {
   background-color: #b2dfdb;
 }
