@@ -149,51 +149,49 @@
     </div>
   {{ end }}
 
-  <!-- Show toolbox if you are the owner (don't have to be logged in) -->
-  {{ if .Data.isOwner }}
-    <div class="row" id="toolbox">
-      <div class="row">
-        <div class="col s6">
-          <h5>Toolbox</h5>
-          <small>Just drag an image up and click play!</small>
-          <hr />
-        </div>
-      </div>
-      <div class="col 2">
-        <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
-      </div>
-      <div class="col 2">
-        <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+  <!-- Always show the toolbox -->
+  <div class="row" id="toolbox">
+    <div class="row">
+      <div class="col s6">
+        <h5>Toolbox</h5>
+        <small>Just drag an image up and click play!</small>
+        <hr />
       </div>
     </div>
-    <div class="row hide" id="properties">
-      <h5>Element Properties</h5>
-      <div class="input-field col s2">
-        <input type="text" id="properties-position-x" placeholder=""></input>
-        <label for="properties-position-x">X Position</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="properties-position-y" placeholder=""></input>
-        <label for="properties-position-y">Y Position</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="properties-velocity-x" placeholder=""></input>
-        <label for="properties-velocity-x">X Velocity</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="properties-velocity-y" placeholder=""></input>
-        <label for="properties-velocity-y">Y Velocity</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="properties-acceleration-x" placeholder=""></input>
-        <label for="properties-acceleration-x">X Acceleration</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="properties-acceleration-y" placeholder=""></input>
-        <label for="properties-acceleration-y">Y Acceleration</label>
-      </div>
+    <div class="col 2">
+      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
     </div>
-  {{ end }}
+    <div class="col 2">
+      <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+    </div>
+  </div>
+  <div class="row hide" id="properties">
+    <h5>Element Properties</h5>
+    <div class="input-field col s2">
+      <input type="text" id="properties-position-x" placeholder=""></input>
+      <label for="properties-position-x">X Position</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-position-y" placeholder=""></input>
+      <label for="properties-position-y">Y Position</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-velocity-x" placeholder=""></input>
+      <label for="properties-velocity-x">X Velocity</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-velocity-y" placeholder=""></input>
+      <label for="properties-velocity-y">Y Velocity</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-acceleration-x" placeholder=""></input>
+      <label for="properties-acceleration-x">X Acceleration</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="properties-acceleration-y" placeholder=""></input>
+      <label for="properties-acceleration-y">Y Acceleration</label>
+    </div>
+  </div>
 
   <!-- Only post a comment if logged in and simulation is saved -->
   {{ if and (.CurrentUser) (.Data.sim.Id) }}

@@ -52,6 +52,7 @@ func NewSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	// If it's a new simulation, you're the owner
 	data := map[string]interface{}{
 		"sim": simulation,
 		"isOwner": true,
