@@ -30,7 +30,7 @@ func NewSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 		// Create the simulation object
 		simulation = models.Simulation{Name: r.FormValue("Name"), UserID: u.ID, Contents: r.FormValue("Contents")}
 
-		// Give it a new incomplete key with the author of the simulation set as the ancestor key
+		// Give it a new incomplete key
 		// Datastore will define a simulation id for us
 		key := datastore.NewIncompleteKey(c, "Simulation", nil)
 
