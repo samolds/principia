@@ -18,7 +18,11 @@
       <h3>New Simulation!</h3>
     {{ end }}
   {{ else }}
-    <h3>Kinematics Simulator</h3>
+    {{ if .Data.sim.Name }}
+      <h3>{{ .Data.sim.Name }}</h3>
+    {{ else }}
+      <h3>Kinematics Simulator</h3>
+    {{ end }}
   {{ end }}
 </div>
 
@@ -132,33 +136,36 @@
 
 <div class="container">
 
-  <!-- Only show editable properties if the user is the owner -->
-  {{ if .Data.isOwner }}
+  <!-- Show Save Simulation only if you are the logged in and the owner-->
+  {{ if and (.Data.isOwner) (.CurrentUser) }}
     <div class="row">
-      <div class="input-field col s4">
-        <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
-        <label for="simulation-name">Simulation Name</label>
-      </div>
-      <div class="input-field col s2">
-        <a class="waves-effect waves-light btn blue darken-1" onclick="saveSimulation()">Save</a>
-      </div>
-      
-      <div class="col s6">
-        <h5>Toolbox</h5>
-        <small>Just drag an image up and click play!</small>
-        <hr />
-      </div>
+        <div class="input-field col s4">
+          <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
+          <label for="simulation-name">Simulation Name</label>
+        </div>
+        <div class="input-field col s2">
+          <a class="waves-effect waves-light btn blue darken-1" onclick="saveSimulation()">Save</a>
+        </div>  
     </div>
+  {{ end }}
 
+  <!-- Show toolbox if you are the owner (don't have to be logged in) -->
+  {{ if .Data.isOwner }}
     <div class="row" id="toolbox">
-      <div class="col 2 {{ if .CurrentUser }}offset-s6{{ end }}">
+      <div class="row">
+        <div class="col s6">
+          <h5>Toolbox</h5>
+          <small>Just drag an image up and click play!</small>
+          <hr />
+        </div>
+      </div>
+      <div class="col 2">
         <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
       </div>
       <div class="col 2">
         <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
       </div>
     </div>
-    
     <div class="row hide" id="properties">
       <h5>Element Properties</h5>
       <div class="input-field col s2">

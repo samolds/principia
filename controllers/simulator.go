@@ -54,6 +54,7 @@ func NewSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"sim": simulation,
+		"isOwner": true,
 	}
 
 	baseHandler(w, r, "simulator", data)
