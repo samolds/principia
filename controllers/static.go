@@ -15,3 +15,7 @@ func FaqsHandler(w http.ResponseWriter, r *http.Request) {
 func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
 	baseHandler(w, r, "feedback", nil)
 }
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	baseHandler(w, r, "home", nil)
+}

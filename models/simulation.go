@@ -3,8 +3,9 @@ package models
 import ()
 
 type Simulation struct {
-	Name         string
-	UserID       string
-	SimulationID string
-	Contents     string
+	Name     string
+	Contents string
+	UserID   string
+	// Tell datastore to ignore thie field
+	Id int64 `datastore:"-"`
 }

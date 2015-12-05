@@ -1,0 +1,13 @@
+{{ define "title" }} - My Simulations{{ end }}
+
+{{ define "content" }}
+<div class="container narrow">
+  <h1 class="page-header">My Simulations</h1>
+
+  {{range $simulation := .Data.sims}}
+    <a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a> 
+    <br/>
+  {{ end }}
+  
+</div>
+{{ end }}

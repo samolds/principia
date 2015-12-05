@@ -30,9 +30,16 @@
   padding-bottom: 30px;
 }
 
+
 .pad-scrub {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.principia-logo {
+  width: 430px;
+  max-width: 100%;
+
 }
 
 .principia-blue {

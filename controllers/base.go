@@ -15,11 +15,13 @@ var (
 	base     = tmplDir + baseName + ".html"
 
 	templates = map[string]*template.Template{
-		"simulator": template.Must(template.ParseFiles(base, tmplDir+"simulator.html")),
-		"about":     template.Must(template.ParseFiles(base, tmplDir+"about.html")),
-		"faqs":      template.Must(template.ParseFiles(base, tmplDir+"faqs.html")),
-		"feedback":  template.Must(template.ParseFiles(base, tmplDir+"feedback.html")),
-		"error":     template.Must(template.ParseFiles(base, tmplDir+"error.html")),
+		"home":            template.Must(template.ParseFiles(base, tmplDir+"home.html")),
+		"usersimulations": template.Must(template.ParseFiles(base, tmplDir+"mysimulations.html")),
+		"simulator":       template.Must(template.ParseFiles(base, tmplDir+"simulator.html")),
+		"about":           template.Must(template.ParseFiles(base, tmplDir+"about.html")),
+		"faqs":            template.Must(template.ParseFiles(base, tmplDir+"faqs.html")),
+		"feedback":        template.Must(template.ParseFiles(base, tmplDir+"feedback.html")),
+		"error":           template.Must(template.ParseFiles(base, tmplDir+"error.html")),
 	}
 )
 
