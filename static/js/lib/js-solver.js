@@ -1,11 +1,12 @@
 var Solver = (function () {
 
-    function Solver(equations) {
-        this.params = Object.keys(equations)
-        this.equations = this.parseEquations(equations)
+    function Solver(input) {
+        this.params = Object.keys(input)
+        this.equations = this.parseEquations(input)
+        this.extras = input;
     }
     
-    Solver.prototype.parseEquations = function(equations){
+    Solver.prototype.parseEquations = function(input){
         var replacements = {
             power : {
                 re: /([\w.]+)\^([\w.]+)/g,
@@ -16,61 +17,77 @@ var Solver = (function () {
                 res: 'Math.pow($1,$2)'
             },
         }
-        for(var key in equations){
-            var eq = equations[key]
+     
+        for(var key in input){
+          for(var i=0; i<input[key].eq.length; i++)
+          {
+            var eq = input[key].eq[i];
             for(var re in replacements){
-                var repl = replacements[re]
-                eq = eq.replace(repl.re, repl.res)
+              var repl = replacements[re];
+              eq = eq.replace(repl.re, repl.res)
             }
-            equations[key] = eq
+            input[key].eq[i] = eq;
+          }
         }
-        return equations;
+        return input;
     }
 
     Solver.prototype.solve = function solve(obj) {
         var out = {};
         var needed = Object.keys(this.equations).length; // Number of variables to solve for
         var solved = 0; // Number of variables solved for
-		var changed = false; // Made an update during the previous iteration
+        var changed = false; // Made an update during the previous iteration
 
-		// Undefine all variables used in this Solver
+        // Undefine all variables used in this Solver
         for (var key = 0; key < this.params.length; key++) {
             eval(this.params[key] + '=undefined')
         }
 
-		// Define variables described by input
+    // Define variables described by input
         for (var key in obj) {
             if (this.params.indexOf(key) != -1 && (obj[key]==0 || obj[key])) {
                 eval(key + '=' + obj[key]);
                 out[key] = obj[key];
-				solved++;
+                solved++;
             }
         }
-		
-		// Attempt to define variables not described by input
-        var equations = JSON.parse(JSON.stringify(this.equations))
-        while (solved != needed) {         
-			changed = false;
+    
+        // Attempt to define variables not described by input
+        var equations = JSON.parse(JSON.stringify(this.equations))        
+        while (solved != needed) {
+            changed = false;
             for (var eq in equations) {
-                with(Math){
-					if(typeof out[eq] == "undefined")
-					{
-						var result = eval(equations[eq]);
-						if (result) {
-							solved++;
-							changed = true;
-							out[eq] = result;
-							eval(eq + '=' + result);							
-						}
-					}
-				}                
+            with(Math){
+              if(typeof out[eq] == "undefined"){
+                for(var i=0; i < equations[eq].eq.length; i++) {
+                  if(!(typeof out[eq] == "undefined")) continue;
+                  var result = eval(equations[eq].eq[i]);
+                  if (result) {
+                    solved++;
+                    // TODO: Fire solved event: which equation was used/what was solved for
+                    var msg = "Solved for " + eq + ", it is " + result + "!\n";
+                    msg += "Try " + this.extras[eq].pretty[i] + ".\n";
+                    msg += "You can use some of the values you already know:\n";
+                    
+                    var variables = this.extras[eq].vars[i];
+                    for(var j=0; j<variables.length; j++)
+                      msg += this.extras[eq].vars[i][j] + " = " + eval(this.extras[eq].vars[i][j]) + "\n";
+                    alert(msg);
+                    
+                    changed = true;
+                    out[eq] = result;
+                    eval(eq + '=' + result);              
+                  }
+                }
+              }
             }
-            
-			// If no variables could be updated during this iteration, stop making attempts
-			if(!changed) break;
         }
-		
-        return out;
+            
+        // If no variables could be updated during this iteration, stop making attempts
+        if(!changed) break;
+      }
+    
+      return [solved == needed, out];
     }
 
     return Solver;
