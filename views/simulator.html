@@ -2,17 +2,19 @@
 
 {{ define "scripts" }}
 <script src="/static/js/lib/jquery-ui.min.js"></script>
+<script src="/static/js/lib/materialize.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/lib/js-solver.js"></script>
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/simulator/kinematics.js"></script>
 <script src="/static/js/forms.js"></script>
+<script src="/static/js/view.js"></script>
 {{ end }}
 
 {{ define "content" }}
-<div class="main-container">
+<div class="container">
   <div class="row">
-    <div class="col s12">
+    <div class="col l12">
       <div class="card-panel">
           <div>
           {{ if .CurrentUser }}
@@ -42,78 +44,105 @@
             </div>
           {{ end }}
 
-
-
           <div class="right">
             <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
           </div>
 
           <div class="clear"></div>
 
-          <!-- Hideable global properties window for each element -->
-          <div id="global-properties" class="hide prop-window global-win">
-            <span class="right"><a href="#!" onclick="toggleGlobalProp()"><i class="material-icons">close</i></a></span>
-            <h5 class="pad-sides">Global Properties</h5>
-            <div class="row">
-              <div class="input-field col s6">
-                <input type="number" id="glob-xaccel" placeholder=""></input>
-                <label for="glob-xaccel">Horizontal Acceleration</label>
-              </div>
-              <div class="input-field col s6">
-                <input type="number" id="glob-yaccel" placeholder=""></input>
-                <label for="glob-yaccel">Vertical Acceleration</label>
-              </div>
-            </div>
-          </div>
+          
 
-          <!-- Hideable properties window for each element -->
-          <div id="properties" class="hide prop-window element-win">
-            <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
-            <div class="row">
-              <div class="input-field col s6">
-                <input type="number" id="properties-position-x" placeholder=""></input>
-                <label for="properties-position-x">X Position</label>
-              </div>
-              <div class="input-field col s6">
-                <input type="number" id="properties-position-y" placeholder=""></input>
-                <label for="properties-position-y">Y Position</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input type="number" id="properties-velocity-x" placeholder=""></input>
-                <label for="properties-velocity-x">X Velocity</label>
-              </div>
-              <div class="input-field col s6">
-                <input type="number" id="properties-velocity-y" placeholder=""></input>
-                <label for="properties-velocity-y">Y Velocity</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
-                <label for="properties-acceleration-x">X Acceleration</label>
-              </div>
-              <div class="input-field col s6">
-                <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
-                <label for="properties-acceleration-y">Y Acceleration</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input type="number" id="properties-mass" placeholder=""></input>
-                <label for="properties-mass">Mass</label>
-              </div>
-              <div class="input-field col s6">
-                <input type="text" id="properties-nickname" placeholder="Point"></input>
-                <label for="properties-nickname">Nickname</label>
-              </div>
-            </div>
-          </div>
+
+
+          
+
+          
 
           <div >
-            <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-            <div style="height: 500px;  border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
+
+          <div class="row">
+            <div class="col s9">
+                <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+                <div style="height: 500px;  border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
+            </div>
+            <div class="col s3">
+              <div class="row">
+                  <div class="col s12">
+                    <ul class="tabs">
+                      <li class="tab col s6"><a href="#globalprops">Global</a></li>
+                      <li class="tab col s6"><a href="#elementprops">Element</a></li>
+                    </ul>
+                  </div>
+
+                  <div id="globalprops" class="col s12">
+                        <!-- Hideable global properties window for each element -->
+                    <div >
+                      <h5 class="pad-sides">Global Properties</h5>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="glob-xaccel" placeholder=""></input>
+                          <label for="glob-xaccel">Horizontal Acceleration</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="glob-yaccel" placeholder=""></input>
+                          <label for="glob-yaccel">Vertical Acceleration</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="elementprops" class="col s12">
+                          <!-- Hideable properties window for each element -->
+                    <div >
+                      <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-position-x" placeholder=""></input>
+                          <label for="properties-position-x">X Position</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-position-y" placeholder=""></input>
+                          <label for="properties-position-y">Y Position</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-velocity-x" placeholder=""></input>
+                          <label for="properties-velocity-x">X Velocity</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-velocity-y" placeholder=""></input>
+                          <label for="properties-velocity-y">Y Velocity</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
+                          <label for="properties-acceleration-x">X Acceleration</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
+                          <label for="properties-acceleration-y">Y Acceleration</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-mass" placeholder=""></input>
+                          <label for="properties-mass">Mass</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="text" id="properties-nickname" placeholder="Point"></input>
+                          <label for="properties-nickname">Nickname</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+            </div>
+
+          </div>
+
 
             <!-- Scrub through simulation frames with playback -->
             <div class="row pad-scrub" id="playback">
