@@ -75,15 +75,19 @@
 #simulation-name
 {
     border-bottom: 0px solid #26a69a;
-    box-shadow: 0 0px 0 0 #26a69a; }
+    box-shadow: 0 0px 0 0 #26a69a; 
 
 }
 #simulation-name:focus
 {
     border-bottom: 10px solid #26a69a;
-    box-shadow: 0 0px 0 0 #26a69a; }
+    box-shadow: 0 0px 0 0 #26a69a; 
 
 }
+
+#simulation-name-label{display: none;}
+
+.properties-label{display: initial;}
 
 /*for scrollable tool list*/
 ul.toollist {
@@ -95,6 +99,7 @@ ul.toollist {
   
   background-color: #29b6f6;
 }
+
 ul.toollist li {
   border: 2px dotted black;
   
@@ -113,7 +118,7 @@ ul.toollist li img{
   
 }
 
-#simulation-name-label{display: none;}
+
 
 .scrollable-tools {
   white-space: nowrap;
@@ -163,6 +168,26 @@ ul.toollist li img{
     background-color: #e3f2fd;
   }
 /* end keyframe */
+
+/*tabs color*/
+/*.tabs li:hover a{
+  background-color: black;
+}*/
+
+/*this is to vertically space tab icons*/
+.tabs li i{
+  margin: 10px;
+}
+
+.row{
+  padding: 0px;
+}
+
+/*for tabs styling */
+.tabs li a:hover i{
+  color: #90caf9;
+}
+
 
 
 /* simulator properties window */

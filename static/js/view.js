@@ -3,3 +3,8 @@
     $('ul.tabs').tabs('select_tab', 'tab_id');
   });
         
+// function tabColor() 
+// {
+//     document.getElementById("simulation-name").blur();
+//     document.getElementById("simulation-name-label").style.display = "none";
+// }
