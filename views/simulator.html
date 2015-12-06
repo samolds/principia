@@ -12,7 +12,7 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="container">
+<div class="main-container">
   <div class="row">
     <div class="col l12">
       <div class="card-panel">
@@ -44,33 +44,27 @@
             </div>
           {{ end }}
 
-          <div class="right">
+          <!-- <div class="right">
             <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
-          </div>
+          </div> -->
 
           <div class="clear"></div>
 
-          
-
-
-
-          
-
-          
 
           <div >
 
           <div class="row">
-            <div class="col s9">
+            <div class="col s8">
                 <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
                 <div style="height: 500px;  border: 1px solid #aaa;" id="viewport" class="blue lighten-5"></div>
             </div>
-            <div class="col s3">
+            <div class="col s4" style="height: 500px;  border: 1px solid #aaa;">
               <div class="row">
                   <div class="col s12">
                     <ul class="tabs">
-                      <li class="tab col s6"><a href="#globalprops">Global</a></li>
-                      <li class="tab col s6"><a href="#elementprops">Element</a></li>
+                      <li class="tab col s6"><a class="blue-text" href="#globalprops">Global</a></li>
+                      <li class="tab col s6"><a class="blue-text" href="#elementprops">Element</a></li>
+                      <div class="indicator blue" style="z-index:1"></div>
                     </ul>
                   </div>
 
@@ -78,6 +72,8 @@
                         <!-- Hideable global properties window for each element -->
                     <div >
                       <h5 class="pad-sides">Global Properties</h5>
+                    </br>
+                  </br>
                       <div class="row">
                         <div class="input-field col s6">
                           <input type="number" id="glob-xaccel" placeholder=""></input>
@@ -94,7 +90,7 @@
                   <div id="elementprops" class="col s12">
                           <!-- Hideable properties window for each element -->
                     <div >
-                      <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
+                      <h5 class="pad-sides"><span id="properties-nickname-title"></span>Element Properties</h5>
                       <div class="row">
                         <div class="input-field col s6">
                           <input type="number" id="properties-position-x" placeholder=""></input>
@@ -146,14 +142,6 @@
 
             <!-- Scrub through simulation frames with playback -->
             <div class="row pad-scrub" id="playback">
-              <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-              <div class="col s2">
-                <canvas id="keyframe-0" class="keyframe"></canvas>
-              </div>
-              <div class="col s2">
-                <canvas id="keyframe-1" class="keyframe"></canvas>
-              </div>
-
               <div class="col s8">
                 <div class="row">
                   <div class="col s1">
@@ -164,56 +152,74 @@
                   <div class="col s11">
                     <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
                   </div>
-                  <div class="row">
-                    <div class="input-field col s3">
-                      <input id="keyframe-0-dt" type="text" readonly value="0"></input>
-                      <label for="keyframe-0-dt">dt</label>
+                  
+                </div>
+              </div>
+
+
+              <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+              <div class="col s4">
+                <div class="row">
+                    <div class="col s6">
+                      <div class= "row">
+                        <canvas id="keyframe-0" class="keyframe"></canvas>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                           <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                           <label for="keyframe-0-dt">dt</label>
+                        </div>
+                      </div>
                     </div>
-                    <div class="input-field col s3">
-                      <input id="keyframe-1-dt" type="text" value="?"></input>
-                      <label for="keyframe-1-dt">dt</label>
+
+                    <div class="col s6">
+                      <div class= "row">
+                        <canvas id="keyframe-1" class="keyframe"></canvas>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                           <input id="keyframe-1-dt" type="text" value="?"></input>
+                           <label for="keyframe-1-dt">dt</label>
+                        </div>
+                      </div>
                     </div>
-                    <div class="input-field col s6">
-                      <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
+                </div>
+                <div class="row">
+                  <div class="col s12">
+                    <div class="input-field col s12" >
+                            <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
                     </div>
                   </div>
                 </div>
-              </div>
+
+            </div>
+
+              <div class="row">
+                <div class="col s8">
+                  <div class="tools" >
+                    <div class="row">
+                      <div class="col s6">
+                        <h6>Toolbox</h6>
+                      </div>
+                    </div>
+
+                    <div class="scrollable-tools">
+                      <ul class="toollist">
+                        <li><img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass"></li>
+                        <li><img src="/static/img/logo/logo.png" class="draggable" width="80" component="kinematics1D-mass"></li>
+                        <li><img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-mass"></li>
+                        <li><img src="/static/img/logo/logo.png" class="draggable" width="10" component="kinematics1D-spring"></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+           
+                </div>
             </div>
           </div>
     
-        <div class="tools" >
-          <div class="row">
-            <div class="col s6">
-              <h6>Toolbox</h6>
-            </div>
-          </div>
 
-          <div class="scrollable-tools">
-            <ul class="toollist">
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="80" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="20" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="33" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="30" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="60" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="44" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="10" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="80" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="20" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="33" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="30" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="60" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="44" component="kinematics1D-mass"></li>
-              <li><img src="/static/img/logo/logo.png" class="draggable" width="10" component="kinematics1D-spring"></li>
-            </ul>
-          </div>
-        </div>
 
       </div>
     </div>
