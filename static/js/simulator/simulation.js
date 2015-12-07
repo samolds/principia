@@ -184,6 +184,21 @@ function onPropertyChanged(property, value, redraw){
     case 'gravityy':
       Globals.gravity[1] = valuef;
       break;
+    case 'image':
+      if (value == "none") {
+        body.view = undefined;
+      } else {
+        var img = document.createElement("img");
+        img.setAttribute("src", value);
+        img.setAttribute("width", "40");
+        img.setAttribute("height", "40");
+        body.view = img;
+      }
+      // I know the drawMaster() function will be called below, but for now it seems
+      // like the image doesn't consistently update if you quickly change the image
+      // multiple times.
+      world.render();
+      break;
     default:
       Globals.bodyConstants[i][property] = value;
       break;

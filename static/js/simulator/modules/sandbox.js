@@ -26,19 +26,14 @@ function initWorld() {
         var variableMap = Globals.variableMap;
         var bodyConstants = Globals.bodyConstants;
     
-        var img = document.createElement("img");
-        img.setAttribute("src", "/static/img/toolbox/logo.png"); // TODO - unique image for each component
         
         switch(data.type){
           case "kinematics1D-spring":         
-            img.setAttribute("width", "70");
-            img.setAttribute("height", "70");
             component = Physics.body('circle', {
               treatment:"static",
               x: data.x,
               y: data.y,           
-              radius: 35,        
-              view: img,
+              radius: 5,
               styles: {
                 fillStyle: '#6c71c4',
                 angleIndicator: '#3b3e6b'
@@ -59,13 +54,15 @@ function initWorld() {
             break;
       
           case "kinematics1D-mass":
+            var img = document.createElement("img");
+            img.setAttribute("src", "/static/img/logo/logo.png");
             img.setAttribute("width", "40");
             img.setAttribute("height", "40");
             component = Physics.body('circle', {
             x: data.x,
             y: data.y,
             radius: 20,        
-            //view: img,
+            view: img,
             styles: {
               fillStyle: '#716cc4',
               angleIndicator: '#3b3e6b'

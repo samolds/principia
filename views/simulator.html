@@ -99,16 +99,16 @@
       </div>
     </div>
     <div class="row">
-      <div>        
-        <select id="properties-img">
+      <div class="input-field col s6">        
+        <select id="properties-img" class="browser-default">
+          <option value="none" disabled>Display As:</option>
           <option value="none">Default</option>
-          <option value="/static/img/logo/logo.png">Logo</option>
+          <option value="/static/img/logo/logo.png" selected="selected">Logo</option>
           <option value="/static/img/toolbox/weight.png">Weight</option>
           <option value="/static/img/toolbox/car.png">Car</option>
           <option value="/static/img/toolbox/mascot.png">Mascot</option>
           <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
         </select>
-        <label for="properties-img">Display As:</label>      
       </div>
     </div>
     
@@ -182,7 +182,7 @@
       <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
     </div>
     <div class="col 2">
-      <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
+      <img src="/static/img/toolbox/spring.png" class="draggable" width="70" component="kinematics1D-spring">	
     </div>
   </div>
   

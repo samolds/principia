@@ -2,24 +2,6 @@ $(document).ready(function() {
   //Kinematics1D.initModule();
   KinematicsSandbox.initModule();
   
-  //$('#properties-img').selectmenu();
-  $('#properties-img').on("change", function(value) {
-    var body = Globals.selectedBody;
-    if(value == "none")
-    {
-      body.view = undefined;
-    }
-    else
-    {
-      var img = document.createElement("img");
-      img.setAttribute("src", value);
-      img.setAttribute("width", "40");
-      img.setAttribute("height", "40");
-      body.view = img;
-    }
-  });
-  
-  
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ onPropertyChanged('posy', $('#properties-position-y').val()); }); 
@@ -30,6 +12,7 @@ $(document).ready(function() {
   
   $('#properties-mass').on("change", function(){ onPropertyChanged('mass', $('#properties-mass').val()); }); 
   $('#properties-nickname').on("change", function(){ onPropertyChanged('nickname', $('#properties-nickname').val()); }); 
+  $('#properties-img').on("change", function(){ onPropertyChanged('image', $('#properties-img option:selected')[0].value); });
   
   $('#solve-btn').on('click', function() { attemptSimulation(); });
   

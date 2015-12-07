@@ -26,46 +26,42 @@ function initWorld() {
         var variableMap = Globals.variableMap;
         var bodyConstants = Globals.bodyConstants;
     
-        var img = document.createElement("img");
-        img.setAttribute("src", "/static/img/logo/logo.png"); // TODO - unique image for each component
-        
         switch(data.type){
-          case "kinematics1D-spring":       
-            treatment:"static",          
-            img.setAttribute("width", "70");
-            img.setAttribute("height", "70");
+          case "kinematics1D-spring":         
             component = Physics.body('circle', {
+              treatment:"static",
               x: data.x,
               y: data.y,           
-              radius: 35,        
-              view: img,
+              radius: 5,
               styles: {
                 fillStyle: '#6c71c4',
                 angleIndicator: '#3b3e6b'
               }
             });
-            componentChild = Physics.body('circle', {
+            componentChild = Physics.body('circle', {              
               treatment:"static",
               x: data.x+120,
               y: data.y,             
-              radius: 5,              
+              radius: 5,                    
               styles: {
                 fillStyle: '#6c71c4',
                 angleIndicator: '#3b3e6b'
               }
-            });                
-          variableMap.push({k:0.001, eq:60});           // Variables associated with spring constants    
-          variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be attached to a mass.
-          break;
+            });
+            variableMap.push({k:0.01, eq:60});           // Variables associated with spring constants    
+            variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be
+            break;
       
           case "kinematics1D-mass":
+            var img = document.createElement("img");
+            img.setAttribute("src", "/static/img/logo/logo.png");
             img.setAttribute("width", "40");
             img.setAttribute("height", "40");
             component = Physics.body('circle', {
             x: data.x,
             y: data.y,
             radius: 20,        
-            //view: img,
+            view: img,
             styles: {
               fillStyle: '#716cc4',
               angleIndicator: '#3b3e6b'
