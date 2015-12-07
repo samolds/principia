@@ -90,11 +90,30 @@ function refreshCommentsList() {
         for(var i = 0; i < json.length; i++) {
             var comment = json[i];
 
-            result += "<div class='row'>";
-            result += "USER ID: " + comment.UserID + "<br/>";
-            result += "Contents: " + comment.Contents + "<br/>";
-            result += "Simulation ID: " + comment.SimulationID + "<br/>";
-            result += "</div>";
+            // result += "<div class='row'>";
+            // result += "USER ID: " + comment.UserID + "<br/>";
+            // result += "Contents: " + comment.Contents + "<br/>";
+            // result += "Simulation ID: " + comment.SimulationID + "<br/>";
+            // result += "</div>";
+
+            result +=  "<div class='row'>";
+            result +=   "<div class='col s2'>";
+            result +=    "<i class='medium material-icons'>account_circle</i>";
+            result +=  "</div>";
+            result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
+            result +=    "<div class='row'>";
+            result +=      "<div class='all-point'></div>";
+            result +=      "<div class='col  s12'>";
+            result +=         "<p class=''>" +comment.Contents+"</p> ";
+                    
+            result +=      "</div></div></div></div>";
+            //     </div>
+            //   </div>
+            // </div>";
+
+
+
+
         }
 
       $( "#comments" ).html( result );
