@@ -281,3 +281,15 @@ ul.toollist li img{
    left:-10px;
    top:12px;
    } 
+
+
+   /*logo stuff*/
+   .logo-img {
+    height: 80px;
+    width: 30px;
+   }
+   #logo{
+    padding: 10px;
+     max-width: 100%;
+    max-height: 100%;
+   }
