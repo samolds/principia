@@ -1,7 +1,4 @@
 $(document).ready(function() {
-  //Kinematics1D.initModule();
-  KinematicsSandbox.initModule();
-  
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ onPropertyChanged('posy', $('#properties-position-y').val()); }); 

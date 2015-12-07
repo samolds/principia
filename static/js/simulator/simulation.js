@@ -194,10 +194,6 @@ function onPropertyChanged(property, value, redraw){
         img.setAttribute("height", "40");
         body.view = img;
       }
-      // I know the drawMaster() function will be called below, but for now it seems
-      // like the image doesn't consistently update if you quickly change the image
-      // multiple times.
-      world.render();
       break;
     default:
       Globals.bodyConstants[i][property] = value;

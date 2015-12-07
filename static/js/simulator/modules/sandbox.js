@@ -107,7 +107,6 @@ function initWorld() {
           if(componentChild) Globals.keyframeStates[i].push(cloneState(componentChild.state));
           setStateKF(i);
           world.render();
-          viewportToKeyCanvas(i);
         }
       
         simulate();
@@ -193,17 +192,6 @@ function initWorld() {
     Globals.canAdd =  function(){ return true; }
     Globals.solver = false;
     Globals.useKeyframes = false;
-    
-    // Hide keyframe/solver material
-    var kflabels = $("#keyframe-labels")[0].classList;
-    if (!kflabels.contains("hide")) { kflabels.add("hide");}
-    
-    var kf0 = $("#keyframe-0")[0].classList;
-    if (!kf0.contains("hide")) { kf0.add("hide");}
-    
-    var kf1 = $("#keyframe-1")[0].classList;
-    if (!kf1.contains("hide")) { kf1.add("hide");}
-    
     
     // timelineReady will always be set to true in sandbox mode
     Globals.timelineReady = true;

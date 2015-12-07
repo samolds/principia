@@ -10,7 +10,11 @@
 <script src="/static/js/simulator/rendering.js"></script>
 <script src="/static/js/simulator/utility.js"></script>
 <script src="/static/js/simulator/modules/kinematics.js"></script>
-<script src="/static/js/simulator/modules/sandbox.js"></script>
+
+<script>
+  Kinematics1D.initModule();
+</script>
+
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/forms.js"></script>
 {{ end }}
@@ -80,11 +84,11 @@
     </div>
     <div class="row">
       <div class="input-field col s6">
-        <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
+        <input type="number" id="properties-acceleration-x" placeholder=""></input>
         <label for="properties-acceleration-x">X Acceleration</label>
       </div>
       <div class="input-field col s6">
-        <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
+        <input type="number" id="properties-acceleration-y" placeholder=""></input>
         <label for="properties-acceleration-y">Y Acceleration</label>
       </div>
     </div>
