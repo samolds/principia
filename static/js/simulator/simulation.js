@@ -185,14 +185,13 @@ function onPropertyChanged(property, value, redraw){
       Globals.gravity[1] = valuef;
       break;
     case 'image':
-      if (value == "none") {
-        body.view = undefined;
-      } else {
-        var img = document.createElement("img");
-        img.setAttribute("src", value);
-        img.setAttribute("width", "40");
-        img.setAttribute("height", "40");
-        body.view = img;
+      var img = document.createElement("img");
+      img.setAttribute("width", "40");
+      img.setAttribute("height", "40");
+      img.setAttribute("src", value);
+      body.view = img;
+      body.view.onload = function() {
+        drawMaster();
       }
       break;
     default:
