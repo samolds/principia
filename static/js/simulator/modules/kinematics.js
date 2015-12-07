@@ -65,7 +65,7 @@ function initWorld() {
             x: data.x,
             y: data.y,
             radius: 20,        
-            view: img,
+            //view: img,
             styles: {
               fillStyle: '#716cc4',
               angleIndicator: '#3b3e6b'

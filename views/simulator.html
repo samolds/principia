@@ -98,8 +98,22 @@
         <label for="properties-nickname">Nickname</label>
       </div>
     </div>
+    <div class="row">
+      <div>        
+        <select id="properties-img">
+          <option value="none">Default</option>
+          <option value="/static/img/logo/logo.png">Logo</option>
+          <option value="/static/img/toolbox/weight.png">Weight</option>
+          <option value="/static/img/toolbox/car.png">Car</option>
+          <option value="/static/img/toolbox/mascot.png">Mascot</option>
+          <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
+        </select>
+        <label for="properties-img">Display As:</label>      
+      </div>
+    </div>
+    
   </div>
-
+  
   <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
   <div id="viewport" class="simulator"></div>
 
@@ -171,7 +185,7 @@
       <img src="/static/img/logo/logo.png" class="draggable" width="70" component="kinematics1D-spring">	
     </div>
   </div>
-
+  
   <!-- Only post a comment if logged in and simulation is saved -->
   {{ if and (.CurrentUser) (.Data.sim.Id) }}
     <div class="row" id="new-comment">

@@ -2,6 +2,23 @@ $(document).ready(function() {
   //Kinematics1D.initModule();
   KinematicsSandbox.initModule();
   
+  //$('#properties-img').selectmenu();
+  $('#properties-img').on("change", function(value) {
+    var body = Globals.selectedBody;
+    if(value == "none")
+    {
+      body.view = undefined;
+    }
+    else
+    {
+      var img = document.createElement("img");
+      img.setAttribute("src", value);
+      img.setAttribute("width", "40");
+      img.setAttribute("height", "40");
+      body.view = img;
+    }
+  });
+  
   
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 

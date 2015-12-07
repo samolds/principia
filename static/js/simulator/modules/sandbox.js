@@ -27,7 +27,7 @@ function initWorld() {
         var bodyConstants = Globals.bodyConstants;
     
         var img = document.createElement("img");
-        img.setAttribute("src", "/static/img/logo/logo.png"); // TODO - unique image for each component
+        img.setAttribute("src", "/static/img/toolbox/logo.png"); // TODO - unique image for each component
         
         switch(data.type){
           case "kinematics1D-spring":         
@@ -65,7 +65,7 @@ function initWorld() {
             x: data.x,
             y: data.y,
             radius: 20,        
-            view: img,
+            //view: img,
             styles: {
               fillStyle: '#716cc4',
               angleIndicator: '#3b3e6b'
@@ -81,7 +81,11 @@ function initWorld() {
             
         bodyConstants.push({ctype:data.type});
 
-        if(data.type == "kinematics1D-mass") bodyConstants[bodyConstants.length-1].mass = 1.0;
+        if(data.type == "kinematics1D-mass")
+        {
+          bodyConstants[bodyConstants.length-1].mass = 1.0;          
+        }
+        
         world.add(component);
         
         

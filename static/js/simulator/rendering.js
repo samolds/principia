@@ -54,6 +54,17 @@ function displayElementValues(bod){
     } else {
       $('#properties-nickname-title').text("");
     }
+    
+    if(constants.ctype == "kinematics1D-mass"){
+      $('#properties-img')[0].classList.remove("hide");
+      
+    }
+    else {
+      if(!$('#properties-img')[0].classList.contains("hide")){
+        $('#properties-img')[0].classList.add("hide");
+      }
+    }
+    
   } else {
     $('#properties-position-x').val("");
     $('#properties-position-y').val("");
@@ -64,6 +75,7 @@ function displayElementValues(bod){
     $('#properties-mass').val("");
     $('#properties-name').val("");
     $('#properties-nickname-title').text("");
+    $('#properties-img')[0].classList.add("hide");
   }
 }
 
