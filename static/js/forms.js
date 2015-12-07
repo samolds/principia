@@ -53,18 +53,19 @@ function saveSimulation(){
     } 
 
     losefocus();
+
 }
 
-function getfocus() 
-{
+function getfocus() {
     document.getElementById("simulation-name").focus();
-
     document.getElementById("simulation-name-label").style.display = "initial";
+
 }
-function losefocus() 
-{
+
+function losefocus() {
     document.getElementById("simulation-name").blur();
     document.getElementById("simulation-name-label").style.display = "none";
+
 }
 
 function saveComment() {
@@ -92,12 +93,6 @@ function refreshCommentsList() {
         for(var i = 0; i < json.length; i++) {
             var comment = json[i];
 
-            // result += "<div class='row'>";
-            // result += "USER ID: " + comment.UserID + "<br/>";
-            // result += "Contents: " + comment.Contents + "<br/>";
-            // result += "Simulation ID: " + comment.SimulationID + "<br/>";
-            // result += "</div>";
-
             result +=  "<div class='row'>";
             result +=   "<div class='col s2'>";
             result +=    "<i class='medium material-icons'>account_circle</i>";
@@ -106,15 +101,8 @@ function refreshCommentsList() {
             result +=    "<div class='row'>";
             result +=      "<div class='all-point'></div>";
             result +=      "<div class='col  s12'>";
-            result +=         "<p class=''>" +comment.Contents+"</p> ";
-                    
+            result +=         "<p class=''>" +comment.Contents+"</p> ";                  
             result +=      "</div></div></div></div>";
-            //     </div>
-            //   </div>
-            // </div>";
-
-
-
 
         }
 
@@ -126,7 +114,6 @@ function refreshCommentsList() {
 }
 
 function isNewSim(){
-
     var re = new RegExp('\/simulator$');
     return re.test(window.location.href);
 
