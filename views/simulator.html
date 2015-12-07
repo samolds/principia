@@ -20,14 +20,14 @@
             {{ if .CurrentUser }}
                 {{ if .Data.sim.Name }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()" onchange="saveSimulation({{.Data.sim}}) "></input>
+                <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()"></input>
                 {{ else }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus() " onchange="saveSimulation({{.Data.sim}})"></input>
+                <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus()"></input>
                 {{ end }}
             {{ else }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="Kinematics Simulator" onclick="" onchange=""></input>
+                <input id="simulation-name" type="text" value="Kinematics Simulator"></input>
             {{ end }}
           </div>
 
@@ -233,7 +233,7 @@
               <div class="point"></div>
               <div class="input-field col s12 ">
                 <!-- <input id="comment-contents" type="text" onchange="saveComment()" ></input> -->
-                <textarea id="comment-contents" class="materialize-textarea comment-text" placeholder="Comment on this simulation"></textarea>
+                <textarea id="comment-contents" class="materialize-textarea comment-text"></textarea>
                 <label for="comment-name" ></label>
               </div>
             </div>
