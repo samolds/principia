@@ -213,6 +213,8 @@
   </div>
 </div>
 
+<!-- Only post a comment if logged in and simulation is saved -->
+{{ if and (.CurrentUser) (.Data.sim.Id) }}
 <div class="main-container">
   <div class="row">
     <div class="col s12">
@@ -221,8 +223,7 @@
 
         <div class="row">
           <div class="col s8">
-        <!-- Only post a comment if logged in and simulation is saved -->
-        {{ if and (.CurrentUser) (.Data.sim.Id) }}
+        
         <div class="row">
           <div class="col s2">
             <i class="large material-icons">account_circle</i>
@@ -243,7 +244,7 @@
             </div>
           </div>
         </div> 
-        {{ end }}
+       
 
         <!-- Only show comments if this is an existing simulation -->
         <div class=" ">
@@ -275,4 +276,6 @@
     </div>
   </div>
 </div>
+ {{ end }}
+
 {{ end }}
