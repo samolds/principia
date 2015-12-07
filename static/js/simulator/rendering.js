@@ -45,8 +45,8 @@ function displayElementValues(bod){
     $('#properties-position-y').val(st.pos.y);
     $('#properties-velocity-x').val(st.vel.x);
     $('#properties-velocity-y').val(st.vel.y);
-    $('#properties-acceleration-x').val(st.acc.x + Globals.gravity[0]);
-    $('#properties-acceleration-y').val(st.acc.y + Globals.gravity[1]);
+    $('#properties-acceleration-x').val(st.acc.x);
+    $('#properties-acceleration-y').val(st.acc.y);
     $('#properties-mass').val(constants.mass);
     $('#properties-nickname').val(constants.nickname);
     if (constants.nickname) {
@@ -162,43 +162,71 @@ function drawProperties(){
 }
 
 function drawVectors(){
-  var maxLength = 0;
+  var maxVx = 0;
+  var maxVy = 0;
+  var maxAx = 0;
+  var maxAy = 0;
+  
   var bodies = Globals.world.getBodies();
   for(var i=0; i < bodies.length; i++){
-    if(Math.abs(bodies[i].state.vel.x) > maxLength) maxLength = Math.abs(bodies[i].state.vel.x);
-    if(Math.abs(bodies[i].state.vel.y) > maxLength) maxLength = Math.abs(bodies[i].state.vel.y);
+    if(Math.abs(bodies[i].state.vel.x) > maxVx) maxVx = Math.abs(bodies[i].state.vel.x);
+    if(Math.abs(bodies[i].state.vel.y) > maxVy) maxVy = Math.abs(bodies[i].state.vel.y);
+    if(Math.abs(bodies[i].state.acc.x + Globals.gravity[0]) > maxAx) maxAx = Math.abs(bodies[i].state.acc.x + Globals.gravity[0]);
+    if(Math.abs(bodies[i].state.acc.y + Globals.gravity[1]) > maxAy) maxAy = Math.abs(bodies[i].state.acc.y + Globals.gravity[1]);
   }
   
   for(var i=0; i < bodies.length; i++){
-    drawVectorLine(bodies[i], maxLength);
+    drawVectorLine(bodies[i], maxVx, maxVy, maxAx, maxAy);
   } 
 }
 
-function drawVectorLine(body, maxV){
-  var x_amt = (body.state.vel.x / maxV) * 100.0;
-  var y_amt = (body.state.vel.y / maxV) * 100.0;
+function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
+  var vx_amt = (body.state.vel.x / maxVx) * 100.0;
+  var vy_amt = (body.state.vel.y / maxVy) * 100.0;
+  var ax_amt = ((body.state.acc.x + Globals.gravity[0]) / maxAx) * 100.0;
+  var ay_amt = ((body.state.acc.y + Globals.gravity[1]) / maxAy) * 100.0;
+  
   var canvas = Globals.world.renderer();
 	var ctx = canvas.ctx;
   
-  if(Math.sign(x_amt) == 1)ctx.strokeStyle = '#00ff00'; // green
-  else ctx.strokeStyle = '#ff0000'; // red
+  ctx.lineWidth = 3;
   
-	ctx.lineWidth = 3;
+  if(Math.sign(vx_amt) == 1) ctx.strokeStyle = '#00ff00'; // green
+  else ctx.strokeStyle = '#ff0000'; // red
   
   ctx.beginPath();
   ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + x_amt, body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + x_amt + -Math.sign(x_amt)*0.1*Math.abs(x_amt), body.state.pos.y - 5);
+  ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
+  ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
   ctx.stroke();
   
-  if(Math.sign(y_amt) == 1)ctx.strokeStyle = '#ff0000'; // red
+  if(Math.sign(ax_amt) == 1) ctx.strokeStyle = '#00ff00'; // green
+  else ctx.strokeStyle = '#ff0000'; // red
+  
+  ctx.beginPath();
+  ctx.moveTo(body.state.pos.x,body.state.pos.y);
+  ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
+  ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 5);
+  ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.2*Math.abs(ax_amt), body.state.pos.y - 5);
+  ctx.stroke();
+  
+  
+  if(Math.sign(vy_amt) == 1)ctx.strokeStyle = '#ff0000'; // red
   else ctx.strokeStyle = '#00ff00'; // green
   
   ctx.beginPath();
   ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x, body.state.pos.y + y_amt);
-  ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + y_amt + -Math.sign(y_amt)*0.1*Math.abs(y_amt));
+  ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);  
   ctx.stroke();
+  
+  if(Math.sign(ay_amt) == 1)ctx.strokeStyle = '#ff0000'; // red
+  else ctx.strokeStyle = '#00ff00'; // green
+  
+  ctx.beginPath();
+  ctx.moveTo(body.state.pos.x,body.state.pos.y);
+  ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
+  ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+  ctx.stroke();  
 }
 
 // Copy global canvas into canvas for keyframe n

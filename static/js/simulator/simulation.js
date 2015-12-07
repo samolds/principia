@@ -103,9 +103,7 @@ function simulate() {
       var saveState = cloneState(curState);
 
       // Save state information and advance the simulator
-      if (i != 0){
-        saveState["old"] = Globals.states[j][i-1];
-      }
+      if (i != 0){ saveState["old"] = Globals.states[j][i-1]; }
       Globals.states[j].push(saveState);
     }
     Globals.world.step();
@@ -235,8 +233,6 @@ function onPropertyChanged(property, value, redraw){
   if(redraw || redraw == undefined)
     drawMaster();
 }
-
-
 
 Physics.integrator('principia-integrator', function( parent ){
    
