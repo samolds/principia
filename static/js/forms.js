@@ -74,8 +74,10 @@ function saveComment() {
 
     $("#comment-load-gif").show();
     $.post( window.location.href + "/comments", commentObj)
-      .done(function( data ) {
+      .done(function( data ) { 
         refreshCommentsList();
+        // Reset the comment box text
+        $("#comment-contents").val("");
       });
 
 }
