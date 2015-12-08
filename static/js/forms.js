@@ -41,7 +41,7 @@ function saveSimulation(){
     // Save Changes
     var simObject = new Object();
     simObject.Name = $("#simulation-name").val();  
-    simObject.Contents = "TEST CONTENT";
+    simObject.Contents = exportToJson(); // TODO write this function
 
     // Is this a new simulation that we're trying to save?
     if(isNewSim()){

@@ -1,3 +1,31 @@
+function exportToJson()
+{
+  var timelineReady = JSON.stringify(Globals.timelineReady);
+  var keyframeStates = JSON.stringify(Globals.keyframeStates);
+  var bodyConstants = JSON.stringify(Globals.bodyConstants);
+  var gravity = JSON.stringify(Globals.gravity);  
+  var variableMap = JSON.stringify(Globals.variableMap);
+  var totalFrames = JSON.stringify(Globals.totalFrames);
+  var maxFrames = JSON.stringify(Globals.maxFrames);
+  
+  // NOTE LIMIT OF 1500 chars
+  var json = 
+  {
+    keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    bodyConstants:Globals.bodyConstants,
+    gravity:Globals.gravity,
+    variableMap:Globals.variableMap,
+    totalFrames:Globals.totalFrames,
+    maxFrames:Globals.maxFrames,
+    timelineReady:Globals.timelineReady
+  }
+  
+  json = JSON.stringify(json);
+  
+  console.log("done exporting json:" + json);
+  return json;
+}
+
 $(document).ready(function() {
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 

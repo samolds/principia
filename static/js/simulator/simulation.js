@@ -192,8 +192,8 @@ function onPropertyChanged(property, value, redraw){
       body.view = img;
       body.view.onload = function() {
         drawMaster();
-      }
-      break;
+      }      
+      return;      
     default:
       Globals.bodyConstants[i][property] = value;
       break;

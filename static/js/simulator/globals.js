@@ -33,7 +33,7 @@ var Globals = {
   running: false,
     
   // Saved information for scrubbing through simulation
-  // states[0] will always match initStates
+  // states[0] will always match keyframeStates[0]
   states: [],
   
   // State at each keyframe (One inner array per keyframe)
