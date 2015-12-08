@@ -276,7 +276,8 @@ function initWorld() {
       var x = tempKF[0][i].pos._[0];
       var y = tempKF[0][i].pos._[1];
       var data = { 'type': type, 'x': x, 'y': y};
-      Globals.world.emit('addComponent', data);
+      if(type != "kinematics1D-spring-child")
+        Globals.world.emit('addComponent', data);
       Globals.bodyConstants[i] = tempBC[i];
     }
     
