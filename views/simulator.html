@@ -20,34 +20,26 @@
             {{ if .CurrentUser }}
                 {{ if .Data.sim.Name }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()" onchange="saveSimulation({{.Data.sim}}) "></input>
+                <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()" onblur="losefocus()"></input>
                 {{ else }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus() " onchange="saveSimulation({{.Data.sim}})"></input>
+                <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus() " onblur="losefocus()"></input>
                 {{ end }}
             {{ else }}
                 <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-                <input id="simulation-name" type="text" value="Kinematics Simulator" onclick="" onchange=""></input>
+                <input id="simulation-name" type="text" value="Kinematics Simulator" onclick="getfocus()" onblur="losefocus()"></input>
             {{ end }}
           </div>
 
           <!-- Show Save Simulation only if you are the logged in and the owner-->
           {{ if and (.Data.isOwner) (.CurrentUser) }}
             <div class="col s1 right pad-sides">
-              <!--   <div class="input-field col s4">
-                  <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
-                  <label for="simulation-name">Simulation Name</label>
-                </div> -->
                 <div class="">
                   <a class="waves-effect waves-light btn-floating blue darken-1" id="save-button" onclick="saveSimulation()"><i class="material-icons">save</i></a>
                 </div>  
             </div>
           {{ end }}
           </div>
-          <!-- <div class="right">
-            <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
-          </div> -->
-
           
           <div class="row">
             <div class="col s8 ">
@@ -176,56 +168,54 @@
 
           <div class="row">
           
-          <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-            <div class="col s8 left">
-              <div class="row">
-                <h5> Keyframes: </h5>
-                  <div class=" col s6">
-                    <div class ="row">
-                      <div class="col s6 left">
-                        <h7>Frame 1:</h7>
-                        <div class= "row">
-                          <canvas id="keyframe-0" class="keyframe"></canvas>
+            <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+              <div class="col s8 left">
+                  <div class="row">
+                   <h5> Keyframes: </h5>
+                    <div class=" col s6">
+                      <div class ="row">
+                        <div class="col s6 left">
+                          <h7>Frame 1:</h7>
+                          <div class= "row">
+                            <canvas id="keyframe-0" class="keyframe"></canvas>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                               <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                               <label for="keyframe-0-dt" class="active">dt</label>
+                            </div>
+                          </div>
                         </div>
-                        <div class="row">
-                          <div class="input-field col s12">
-                             <input id="keyframe-0-dt" type="text" readonly value="0"></input>
-                             <label for="keyframe-0-dt" class="active">dt</label>
+
+                        <div class="col s6 left">
+                          <div class= "row">
+                            <h7>Frame 2:</h7>
+                            <canvas id="keyframe-1" class="keyframe"></canvas>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                               <input id="keyframe-1-dt" type="text" value="?"></input>
+                               <label for="keyframe-1-dt" class="active">dt</label>
+                            </div>
                           </div>
                         </div>
                       </div>
-
-                      <div class="col s6 left">
-                        <div class= "row">
-                          <h7>Frame 2:</h7>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                        </div>
-                        <div class="row">
-                          <div class="input-field col s12">
-                             <input id="keyframe-1-dt" type="text" value="?"></input>
-                             <label for="keyframe-1-dt" class="active">dt</label>
+                      <div class="row">
+                        <div class="col s12 center">
+                          <div class="input-field col s12" >
+                            <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col s12 center">
-                  <div class="input-field col s12" >
-                          <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
-                  </div>
-                </div>
+
+                    <div class="col s6 right " >
+                      <h7>Solution details:</h7>
+                      <div class= "row solution-details-container" >
+                        <p id="solution-details"> </p>
+                      </div>
                     </div>
                   </div>
-
-                  <div class="col s6 right " >
-                    <h7>Solution details:</h7>
-                    <div class= "row" style="background-color:blue; height:300px;">
-                      <p id="solution-details"> </p>
-                    </div>
-                  </div>
-
-              
-              </div>
             
               </div>
             </div>
