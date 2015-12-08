@@ -1,17 +1,18 @@
-{{ define "title" }} - Home{{ end }}
+{{ define "title" }}{{ end }}
 
 {{ define "scripts" }}
 <script src="/static/js/lib/jquery-ui.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
+<script src="/static/js/lib/eq-solver.js"></script>
 <script src="/static/js/simulator/globals.js"></script>
 <script src="/static/js/simulator/simulation.js"></script>
 <script src="/static/js/simulator/ui-controller.js"></script>
 <script src="/static/js/simulator/rendering.js"></script>
 <script src="/static/js/simulator/utility.js"></script>
-<script src="/static/js/simulator/modules/sandbox.js"></script>
+<script src="/static/js/simulator/modules/kinematics.js"></script>
 
 <script>
-  KinematicsSandbox.initModule();
+  Kinematics1D.initModule();
 </script>
 
 <script src="/static/js/simulator/base.js"></script>
@@ -70,11 +71,11 @@
     </div>
     <div class="row">
       <div class="input-field col s6">
-        <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
+        <input type="number" id="properties-acceleration-x" placeholder=""></input>
         <label for="properties-acceleration-x">X Acceleration</label>
       </div>
       <div class="input-field col s6">
-        <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
+        <input type="number" id="properties-acceleration-y" placeholder=""></input>
         <label for="properties-acceleration-y">Y Acceleration</label>
       </div>
     </div>
@@ -112,6 +113,13 @@
 
   <!-- Scrub through simulation frames with playback -->
   <div class="row" id="playback">
+    <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+    <div class="col s2">
+      <canvas id="keyframe-0" class="keyframe"></canvas>
+    </div>
+    <div class="col s2">
+      <canvas id="keyframe-1" class="keyframe"></canvas>
+    </div>
     <div class="col s8">
       <div class="row">
         <div class="col s1">
@@ -121,6 +129,19 @@
         </div>
         <div class="col s11">
           <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+        </div>
+      </div>
+      <div class="row" id="keyframe-labels">
+        <div class="input-field col s3">
+          <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+          <label for="keyframe-0-dt">dt</label>
+        </div>
+        <div class="input-field col s3">
+          <input id="keyframe-1-dt" type="text" value="?"></input>
+          <label for="keyframe-1-dt">dt</label>
+        </div>
+        <div class="input-field col s6">
+          <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
         </div>
       </div>
     </div>
