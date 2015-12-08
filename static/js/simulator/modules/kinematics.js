@@ -26,39 +26,35 @@ function initWorld() {
         var variableMap = Globals.variableMap;
         var bodyConstants = Globals.bodyConstants;
     
-        var img = document.createElement("img");
-        img.setAttribute("src", "/static/img/logo/logo.png"); // TODO - unique image for each component
-        
         switch(data.type){
-          case "kinematics1D-spring":       
-            treatment:"static",          
-            img.setAttribute("width", "70");
-            img.setAttribute("height", "70");
+          case "kinematics1D-spring":         
             component = Physics.body('circle', {
+              treatment:"static",
               x: data.x,
               y: data.y,           
-              radius: 35,        
-              view: img,
+              radius: 5,
               styles: {
                 fillStyle: '#6c71c4',
                 angleIndicator: '#3b3e6b'
               }
             });
-            componentChild = Physics.body('circle', {
+            componentChild = Physics.body('circle', {              
               treatment:"static",
               x: data.x+120,
               y: data.y,             
-              radius: 5,              
+              radius: 5,                    
               styles: {
                 fillStyle: '#6c71c4',
                 angleIndicator: '#3b3e6b'
               }
-            });                
-          variableMap.push({k:0.001, eq:60});           // Variables associated with spring constants    
-          variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be attached to a mass.
-          break;
+            });
+            variableMap.push({k:0.01, eq:60});           // Variables associated with spring constants    
+            variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be
+            break;
       
           case "kinematics1D-mass":
+            var img = document.createElement("img");
+            img.setAttribute("src", "/static/img/logo/logo.png");
             img.setAttribute("width", "40");
             img.setAttribute("height", "40");
             component = Physics.body('circle', {
@@ -88,8 +84,8 @@ function initWorld() {
         if(componentChild){
           world.add(componentChild);
           bodyConstants.push({ctype:data.type + "-child"});  
-          bodyConstants[bodyConstants.length-2].child = componentChild;
-          bodyConstants[bodyConstants.length-1].parent = component;
+          bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
+          bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
           
           // Spring constant and equilibrium point
           bodyConstants[bodyConstants.length-2].k = 0.01;
@@ -246,6 +242,7 @@ function initWorld() {
     Globals.useKeyframes = true;
     
     // Show keyframe/solver material
+    /*
     var kflabels = $("#keyframe-labels")[0].classList;
     if (kflabels.contains("hide")) { kflabels.remove("hide");}
     
@@ -254,7 +251,56 @@ function initWorld() {
     
     var kf1 = $("#keyframe-1")[0].classList;
     if (kf1.contains("hide")) { kf1.remove("hide");}
+    */
     
+    if(!json || json == "{}")
+      return;
+    
+    var restore = $.parseJSON(json);
+    for(var key in restore)
+    {
+      if(key == "keyframeStates") continue;
+      if(key == "bodyConstants") continue;
+      Globals[key] = restore[key];
+    }
+    
+    // Stringified keyframes don't interact well with PhysicsJS
+    // Solution: Add the real component to get PhysicsJS state object
+    // Then transfer tempKF values to real corresponding "real" keyframe
+    var tempKF = restore.keyframeStates;
+    var tempBC = restore.bodyConstants;
+    
+    for(var i=0; i<tempBC.length; i++)
+    {
+      var type = tempBC[i].ctype;
+      var x = tempKF[0][i].pos._[0];
+      var y = tempKF[0][i].pos._[1];
+      var data = { 'type': type, 'x': x, 'y': y};
+      if(type != "kinematics1D-spring-child")
+        Globals.world.emit('addComponent', data);
+      Globals.bodyConstants[i] = tempBC[i];
+    }
+    
+    for(var i=0; i<tempKF.length; i++)
+      for(var j=0; j<tempKF[i].length; j++)
+      {
+        var KF = tempKF[i][j];
+        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
+        Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
+        Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
+        Globals.keyframeStates[i][j].acc.x = KF.acc._[0];
+        Globals.keyframeStates[i][j].acc.y = KF.acc._[1];
+        var angular = KF.angular;
+        Globals.keyframeStates[i][j].angular = {acc:angular.acc,vel:angular.vel,pos:angular.pos};
+      }
+    
+    setStateKF(0);
+    
+    if(Globals.timelineReady)
+      simulate();
+    
+    drawMaster();
   }
   
   function setDt(dt) { Globals.world.timestep(dt); }

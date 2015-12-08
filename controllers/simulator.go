@@ -20,9 +20,9 @@ func NewSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 
 		if u != nil { // Logged In
-			simulation = models.Simulation{Name: "", UserID: u.ID, Contents: ""}
+			simulation = models.Simulation{Name: "", UserID: u.ID, Contents: "{}"}
 		} else { // Not Logged In
-			simulation = models.Simulation{Name: "", UserID: "", Contents: ""}
+			simulation = models.Simulation{Name: "", UserID: "", Contents: "{}"}
 		}
 
 	} else if r.Method == "POST" {

@@ -38,10 +38,7 @@ function post(path, parameters) {
 
 function saveSimulation(){
 
-    // Save Changes
-    var simObject = new Object();
-    simObject.Name = $("#simulation-name").val();  
-    simObject.Contents = "TEST CONTENT";
+    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson() };
 
     // Is this a new simulation that we're trying to save?
     if(isNewSim()){
@@ -70,8 +67,7 @@ function losefocus() {
 
 function saveComment() {
 
-    var commentObj = new Object();
-    commentObj.Contents = $("#comment-contents").val();
+    commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
     $.post( window.location.href + "/comments", commentObj)
