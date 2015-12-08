@@ -253,7 +253,7 @@ function initWorld() {
     if (kf1.contains("hide")) { kf1.remove("hide");}
     */
     
-    if(json == "{}")
+    if(!json || json == "{}")
       return;
     
     var restore = $.parseJSON(json);

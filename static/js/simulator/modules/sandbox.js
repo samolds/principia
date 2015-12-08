@@ -200,6 +200,55 @@ function initWorld() {
     // TODO: Would be good to adjust size of range here too.
     
     Globals.keyframe = 0;
+        
+     if(!json || json == "{}")
+      return;
+    
+    var restore = $.parseJSON(json);
+    for(var key in restore)
+    {
+      if(key == "keyframeStates") continue;
+      if(key == "bodyConstants") continue;
+      Globals[key] = restore[key];
+    }
+    
+    // Stringified keyframes don't interact well with PhysicsJS
+    // Solution: Add the real component to get PhysicsJS state object
+    // Then transfer tempKF values to real corresponding "real" keyframe
+    var tempKF = restore.keyframeStates;
+    var tempBC = restore.bodyConstants;
+    
+    for(var i=0; i<tempBC.length; i++)
+    {
+      var type = tempBC[i].ctype;
+      var x = tempKF[0][i].pos._[0];
+      var y = tempKF[0][i].pos._[1];
+      var data = { 'type': type, 'x': x, 'y': y};
+      if(type != "kinematics1D-spring-child")
+        Globals.world.emit('addComponent', data);
+      Globals.bodyConstants[i] = tempBC[i];
+    }
+    
+    for(var i=0; i<tempKF.length; i++)
+      for(var j=0; j<tempKF[i].length; j++)
+      {
+        var KF = tempKF[i][j];
+        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
+        Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
+        Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
+        Globals.keyframeStates[i][j].acc.x = KF.acc._[0];
+        Globals.keyframeStates[i][j].acc.y = KF.acc._[1];
+        var angular = KF.angular;
+        Globals.keyframeStates[i][j].angular = {acc:angular.acc,vel:angular.vel,pos:angular.pos};
+      }
+    
+    setStateKF(0);
+    
+    if(Globals.timelineReady)
+      simulate();
+    
+    drawMaster();
   }
   
   function setDt(dt) { Globals.world.timestep(dt); }
