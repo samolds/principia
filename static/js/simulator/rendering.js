@@ -84,8 +84,8 @@ function drawLines(){
 	var bodies = Globals.world.getBodies();
   var bodyConst = Globals.bodyConstants;
 	for (var i = 0; i < bodies.length; i++)
-		if(bodyConst[i].parent)
-			drawSpringLine(bodyConst[i].parent, bodies[i]);
+		if(bodyConst[i].parent || bodyConst[i].parent === 0)
+			drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
 }
 
 // Draws a sine wave between the two specified bodies

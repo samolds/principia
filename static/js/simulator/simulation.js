@@ -208,8 +208,8 @@ function onPropertyChanged(property, value, redraw){
       if(body2Constant(body).ctype == "kinematics1D-mass" && body2Constant(attachBody).ctype == "kinematics1D-spring-child"){
         console.log("attached");
         body.treatment = "static";     
-        body2Constant(attachBody).attachedBody = body;
-        body2Constant(body).attachedTo = attachBody;
+        body2Constant(attachBody).attachedBody = bodies.indexOf(body);
+        body2Constant(body).attachedTo = bodies.indexOf(attachBody);
         
         kState[i].pos.x = attachBody.state.pos.x;
         kState[i].pos.y = attachBody.state.pos.y;
@@ -222,15 +222,15 @@ function onPropertyChanged(property, value, redraw){
   }
   
   // Handle detaching too!
-  if(body2Constant(body).attachedTo)
+  if(body2Constant(body).attachedTo || body2Constant(body).attachedTo === 0)
   {
-    var attachedTo = body2Constant(body).attachedTo;
+    var attachedTo = world.getBodies()[body2Constant(body).attachedTo];
     if(distance(body.state.pos.x, body.state.pos.y, attachedTo.state.pos.x, attachedTo.state.pos.y) > delta) {
         console.log("detached");
      
         body.treatment = "dynamic";
         
-        delete body2Constant(body.attachedTo).attachedBody;
+        delete body2Constant(attachedTo).attachedBody;
         delete body2Constant(body).attachedTo;
     }
   }
@@ -251,9 +251,12 @@ Physics.integrator('principia-integrator', function( parent ){
     var constants = body2Constant(body)
     if(constants.attachedTo)
     {
-      var properties = body2Constant(body2Constant(constants.attachedTo).parent);
-      var origin = body2Constant(constants.attachedTo).parent.state.pos.x + properties.eq;     
-      var springF = -properties.k * (constants.attachedTo.state.pos.x - origin)
+      var attached = Globals.world.getBodies()[constants.attachedTo];
+      var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
+      var spring = Globals.world.getBodies()[spring_idx]; //TODO FIX
+      var properties = body2Constant(spring);
+      var origin = spring.state.pos.x + properties.eq;     
+      var springF = -properties.k * (attached.state.pos.x - origin)
       a = springF / body2Constant(body).mass;       
     }    
     return a;
@@ -303,8 +306,9 @@ Physics.integrator('principia-integrator', function( parent ){
       
       // Attached element must tag along
       if(body2Constant(body).attachedTo){
-        body2Constant(body).attachedTo.state.pos.x = state.pos.x;
-        body2Constant(body).attachedTo.state.pos.y = state.pos.y;
+        var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo];
+        attachedTo.state.pos.x = state.pos.x;
+        attachedTo.state.pos.y = state.pos.y;
       }
       
       state.angular.pos += state.angular.vel;

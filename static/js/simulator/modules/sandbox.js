@@ -89,8 +89,8 @@ function initWorld() {
         if(componentChild){
           world.add(componentChild);
           bodyConstants.push({ctype:data.type + "-child"});  
-          bodyConstants[bodyConstants.length-2].child = componentChild;
-          bodyConstants[bodyConstants.length-1].parent = component;
+          bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
+          bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
           
           // Spring constant and equilibrium point
           bodyConstants[bodyConstants.length-2].k = 0.01;
