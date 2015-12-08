@@ -1,7 +1,7 @@
 {{ define "title" }} - Simulator{{ end }}
 
 {{ define "scripts" }}
-<script src="/static/js/lib/jquery-ui.min.js"></script>
+
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/simulator/globals.js"></script>
 <script src="/static/js/simulator/simulation.js"></script>
@@ -16,192 +16,303 @@
 
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/forms.js"></script>
+<script src="/static/js/view.js"></script>
 {{ end }}
 
 {{ define "content" }}
-<div class="container">
-  {{ if .CurrentUser }}
-    {{ if .Data.sim.Name }}
-      <h3>{{ .Data.sim.Name }}</h3>
-    {{ else }}
-      <h3>New Simulation!</h3>
-    {{ end }}
-  {{ else }}
-    {{ if .Data.sim.Name }}
-      <h3>{{ .Data.sim.Name }}</h3>
-    {{ else }}
-      <h3>Kinematics Simulator</h3>
-    {{ end }}
-  {{ end }}
-</div>
-
-<div class="wide">
-  <div class="right">
-    <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
-  </div>
-
-  <div class="clear"></div>
-
-  <!-- Hideable global properties window for each element -->
-  <div id="global-properties" class="hide prop-window global-win">
-    <span class="right"><a href="#!" onclick="toggleGlobalProp()"><i class="material-icons">close</i></a></span>
-    <h5 class="pad-sides">Global Properties</h5>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="glob-xaccel" placeholder=""></input>
-        <label for="glob-xaccel">Horizontal Acceleration</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="glob-yaccel" placeholder=""></input>
-        <label for="glob-yaccel">Vertical Acceleration</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Hideable properties window for each element -->
-  <div id="properties" class="hide prop-window element-win">
-    <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-position-x" placeholder=""></input>
-        <label for="properties-position-x">X Position</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-position-y" placeholder=""></input>
-        <label for="properties-position-y">Y Position</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-velocity-x" placeholder=""></input>
-        <label for="properties-velocity-x">X Velocity</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-velocity-y" placeholder=""></input>
-        <label for="properties-velocity-y">Y Velocity</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-acceleration-x" placeholder=""></input>
-        <label for="properties-acceleration-x">X Acceleration</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-acceleration-y" placeholder=""></input>
-        <label for="properties-acceleration-y">Y Acceleration</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-mass" placeholder=""></input>
-        <label for="properties-mass">Mass</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="text" id="properties-nickname" placeholder="Point"></input>
-        <label for="properties-nickname">Nickname</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">        
-        <select id="properties-img" class="browser-default">
-          <option disabled>Display As:</option>
-          <option value="/static/img/logo/logo.png" selected="selected">Logo</option>
-          <option value="/static/img/toolbox/weight.png">Weight</option>
-          <option value="/static/img/toolbox/car.png">Car</option>
-          <option value="/static/img/toolbox/mascot.png">Mascot</option>
-          <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
-          <option value="/static/img/team/dalton.png">Dalton</option>
-          <option value="/static/img/team/danny.png">Danny</option>
-          <option value="/static/img/team/matthew.png">Matthew</option>
-          <option value="/static/img/team/sam.png">Sam</option>
-        </select>
-      </div>
-    </div>
-    
-  </div>
-  
-  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div id="viewport" class="simulator"></div>
-
-  <!-- Scrub through simulation frames with playback -->
-  <div class="row" id="playback">
-    <div class="col s8">
-      <div class="row">
-        <div class="col s1">
-          <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-            <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-          </button>
-        </div>
-        <div class="col s11">
-          <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-
-  <!-- Show Save Simulation only if you are the logged in and the owner-->
-  {{ if and (.Data.isOwner) (.CurrentUser) }}
-    <div class="row">
-        <div class="input-field col s4">
-          <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
-          <label for="simulation-name">Simulation Name</label>
-        </div>
-        <div class="input-field col s2">
-          <a class="waves-effect waves-light btn blue darken-1" onclick="saveSimulation()">Save</a>
-        </div>  
-    </div>
-  {{ end }}
-
-  <!-- Always show the toolbox -->
-  <div class="row" id="toolbox">
-    <div class="row">
-      <div class="col s6">
-        <h5>Toolbox</h5>
-        <small>Just drag an image up and click play!</small>
-        <hr />
-      </div>
-    </div>
-    <div class="col 2">
-      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
-    </div>
-    <div class="col 2">
-      <img src="/static/img/toolbox/spring.png" class="draggable" width="70" component="kinematics1D-spring">	
-    </div>
-  </div>
-  
-  <!-- Only post a comment if logged in and simulation is saved -->
-  {{ if and (.CurrentUser) (.Data.sim.Id) }}
-    <div class="row" id="new-comment">
-      <div class="input-field col s4">
-        <input id="comment-contents" type="text" ></input>
-        <label for="comment-name">Comment</label>
-      </div>
-      <div class="input-field col s2">
-        <a class="waves-effect waves-light btn blue darken-1" onclick="saveComment()">Save Comment</a>
-      </div>
-    </div>
-  {{ end }}
-
-  <!-- Only show comments if this is an existing simulation -->
-  {{ if .Data.sim.Id}}
-    <div class="row" id="comment-wrapper">
-      <div class="preloader-wrapper small active" id="comment-load-gif">
-        <div class="spinner-layer spinner-green-only">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div><div class="gap-patch">
-            <div class="circle"></div>
-          </div><div class="circle-clipper right">
-            <div class="circle"></div>
+<div class="main-container">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel z-depth-5">
+        <div class="row">
+          <div class="col s4">
+            {{ if .CurrentUser }}
+                {{ if .Data.sim.Name }}
+                <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+                <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onclick="getfocus()" onblur="losefocus()"></input>
+                {{ else }}
+                <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+                <input id="simulation-name" type="text" value="New Simulation" onclick="getfocus() " onblur="losefocus()"></input>
+                {{ end }}
+            {{ else }}
+                <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+                <input id="simulation-name" type="text" value="Kinematics Simulator" onclick="getfocus()" onblur="losefocus()"></input>
+            {{ end }}
           </div>
+
+          <!-- Show Save Simulation only if you are the logged in and the owner-->
+          {{ if and (.Data.isOwner) (.CurrentUser) }}
+            <div class="col s1 right pad-sides">
+                <div class="">
+                  <a class="waves-effect waves-light btn-floating blue darken-1" id="save-button" onclick="saveSimulation()"><i class="material-icons">save</i></a>
+                </div>  
+            </div>
+          {{ end }}
+          </div>
+          
+          <div class="row">
+            <div class="col s8 ">
+              <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+              <div style="height: 500px; margin: 10px;" id="viewport" class="white card"></div>
+            </div>
+            <div class="col s4 card z-depth-1" style="height: 500px;  ">
+              <div class="row">
+                  <div class="col s12">
+                    <ul class="tabs">
+                      <li class="tab col s4 valign-wrapper" onmouseup="tabColor()"><a class="property-tab blue-text "  href="#globalprops"><i class="material-icons">public</i></a></li>
+                      <li class="tab col s4" onmouseup="tabColor()"><a class="property-tab blue-text blue-text valign"  href="#elementprops"><i class="material-icons">info_outline</i></a></li>
+                      <li class="tab col s4" onmouseup="tabColor()"><a class="property-tab blue-text blue-text valign active"  href="#toolbox"><i class="material-icons">view_module</i></a></li>
+                      <div class="indicator blue" style="z-index:1"></div>
+                    </ul>
+                  </div>
+                  <!-- Hideable global properties window for each element -->
+                  <div id="globalprops" class="col s12">
+                    <div >
+                      <h5 class="pad-sides">Global Properties</h5>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input placeholder="" type="number" id="glob-xaccel" ></input>
+                          <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="glob-yaccel" placeholder=""></input>
+                          <label for="glob-yaccel" class="active">Vertical Acceleration</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Hideable properties window for each element -->
+                  <div id="elementprops" class="col s12">
+                    <div >
+                      <h5 class="pad-sides"><span id="properties-nickname-title"></span>Element Properties</h5>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-position-x" placeholder=""></input>
+                          <label for="properties-position-x" class="active">X Position</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-position-y" placeholder=""></input>
+                          <label for="properties-position-y" class="active">Y Position</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-velocity-x" placeholder=""></input>
+                          <label for="properties-velocity-x" class="active">X Velocity</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-velocity-y" placeholder=""></input>
+                          <label for="properties-velocity-y" class="active">Y Velocity</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input disabled type="number" id="properties-acceleration-x" placeholder=""></input>
+                          <label for="properties-acceleration-x" class="active">X Acceleration</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input disabled type="number" id="properties-acceleration-y" placeholder=""></input>
+                          <label for="properties-acceleration-y" class="active">Y Acceleration</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input type="number" id="properties-mass" placeholder=""></input>
+                          <label for="properties-mass" class="active">Mass</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input type="text" id="properties-nickname" placeholder="Point"></input>
+                          <label for="properties-nickname" class="active">Nickname</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s6">        
+                          <select id="properties-img" class="browser-default">
+                            <option disabled>Display As:</option>
+                            <option value="/static/img/logo/logo.png" selected="selected">Logo</option>
+                            <option value="/static/img/toolbox/weight.png">Weight</option>
+                            <option value="/static/img/toolbox/car.png">Car</option>
+                            <option value="/static/img/toolbox/mascot.png">Mascot</option>
+                            <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
+                            <option value="/static/img/team/dalton.png">Dalton</option>
+                            <option value="/static/img/team/danny.png">Danny</option>
+                            <option value="/static/img/team/matthew.png">Matthew</option>
+                            <option value="/static/img/team/sam.png">Sam</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="toolbox" class="col s12 ">
+                    <div class=" center-align" >
+                      <div class="row">
+                        <div class="col s6">
+                          <h5>Toolbox</h5>
+                        </div>
+                      </div>
+
+                      
+                      <div class="row " >
+                          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
+                             <div class="dummy"></div>
+                             <div class="toolbox-item">
+                              <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
+                             </div>
+                          </div>
+                          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px; ">
+                             <div class="dummy"></div>
+                             <div class="toolbox-item"> 
+                              <img src="/static/img/logo/logo.png" class="draggable" width="55" component="kinematics1D-spring">
+                             </div>
+                          </div>
+                          
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scrub through simulation frames with playback -->
+          <div class="row " id="playback">
+            <div class="col s8">
+              <div class="row">
+                <div class="col s1">
+                  <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+                    <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+                  </button>
+                </div>
+                <div class="hello col s11">
+                  <input  type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+          
+            <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+              <div class="col s8 left">
+                  <div class="row">
+                   <h5> Keyframes: </h5>
+                    <div class=" col s6">
+                      <div class ="row">
+                        <div class="col s6 left">
+                          <h7>Frame 1:</h7>
+                          <div class= "row">
+                            <canvas id="keyframe-0" class="keyframe"></canvas>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                               <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                               <label for="keyframe-0-dt" class="active">dt</label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col s6 left">
+                          <div class= "row">
+                            <h7>Frame 2:</h7>
+                            <canvas id="keyframe-1" class="keyframe"></canvas>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                               <input id="keyframe-1-dt" type="text" value="?"></input>
+                               <label for="keyframe-1-dt" class="active">dt</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col s12 center">
+                          <div class="input-field col s12" >
+                            <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col s6 right " >
+                      <h7>Solution details:</h7>
+                      <div class= "row solution-details-container" >
+                        <p id="solution-details"> </p>
+                      </div>
+                    </div>
+                  </div>
+            
+              </div>
+            </div>
+          </div>   
         </div>
       </div>
-      <div id="comments"></div>
     </div>
-  {{ end }}
-
+  </div>
 </div>
+
+<!-- Only post a comment if logged in and simulation is saved -->
+{{ if and (.CurrentUser) (.Data.sim.Id) }}
+<div class="main-container">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel z-depth-5">
+        <h5>  Comments <i class="material-icons" style="margin-top: 10px;">question_answer</i></h5>
+
+        <div class="row">
+          <div class="col s8">
+        
+        <div class="row">
+          <div class="col s2">
+            <i class="large material-icons">account_circle</i>
+          </div>
+          <div class="col s10 bubble-content" id="new-comment">
+            <div class="row">
+              <div class="point"></div>
+              <div class="input-field col s12 ">
+                <!-- <input id="comment-contents" type="text" onchange="saveComment()" ></input> -->
+                <textarea id="comment-contents" class="materialize-textarea comment-text" placeholder="Comment on this simulation"></textarea>
+                <label for="comment-name" ></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col right">
+              <a class="waves-effect waves-light btn blue darken-1" onclick="saveComment()">Post</a>
+            </div>
+          </div>
+        </div> 
+       
+
+        <!-- Only show comments if this is an existing simulation -->
+        <div class=" ">
+        {{ if .Data.sim.Id}}
+          <div class="row" id="comment-wrapper">
+            <div class="col s12">
+              <div class="preloader-wrapper small active" id="comment-load-gif">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <div class="col s10"id="comments" style="word-wrap: break-word;"></div>
+          </div>
+        {{ end }}
+        </div>
+
+      </div>
+    </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+ {{ end }}
+
 {{ end }}
