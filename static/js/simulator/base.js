@@ -1,13 +1,5 @@
 function exportToJson()
-{
-  var timelineReady = JSON.stringify(Globals.timelineReady);
-  var keyframeStates = JSON.stringify(Globals.keyframeStates);
-  var bodyConstants = JSON.stringify(Globals.bodyConstants);
-  var gravity = JSON.stringify(Globals.gravity);  
-  var variableMap = JSON.stringify(Globals.variableMap);
-  var totalFrames = JSON.stringify(Globals.totalFrames);
-  var maxFrames = JSON.stringify(Globals.maxFrames);
-  
+{  
   // NOTE LIMIT OF 1500 chars
   var json = 
   {
