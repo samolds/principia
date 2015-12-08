@@ -14,7 +14,9 @@ func init() {
 
 	router.HandleFunc("/", controllers.HomeHandler)
 	router.HandleFunc("/simulator", controllers.NewSimulatorHandler)
+	router.HandleFunc("/simulator/all", controllers.AllSimulatorHandler)
 	router.HandleFunc("/simulator/{simulatorId}", controllers.EditSimulatorHandler)
+
 
 	// API Endpoint (Returns JSON)
 	router.HandleFunc("/simulator/{simulatorId}/comments", controllers.CommentHandler)

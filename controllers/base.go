@@ -16,7 +16,8 @@ var (
 
 	templates = map[string]*template.Template{
 		"home":            template.Must(template.ParseFiles(base, tmplDir+"home.html")),
-		"usersimulations": template.Must(template.ParseFiles(base, tmplDir+"mysimulations.html")),
+		"allSimulations":  template.Must(template.ParseFiles(base, tmplDir+"allSimulations.html")),
+		"userSimulations": template.Must(template.ParseFiles(base, tmplDir+"mySimulations.html")),
 		"simulator":       template.Must(template.ParseFiles(base, tmplDir+"simulator.html")),
 		"about":           template.Must(template.ParseFiles(base, tmplDir+"about.html")),
 		"faqs":            template.Must(template.ParseFiles(base, tmplDir+"faqs.html")),

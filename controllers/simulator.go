@@ -119,29 +119,60 @@ func EditSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 
 func UserSimulatorHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Grab the user
-	c := appengine.NewContext(r)
-	u := user.Current(c)
+	if r.Method == "GET" {
+		// Grab the user
+		c := appengine.NewContext(r)
+		u := user.Current(c)
 
-	q := datastore.NewQuery("Simulation").Filter("UserID =", u.ID)
-	simulations := make([]models.Simulation, 0, 10)
+		q := datastore.NewQuery("Simulation").Filter("UserID =", u.ID)
+		simulations := make([]models.Simulation, 0, 10)
 
-	keys, err := q.GetAll(c, &simulations)
+		keys, err := q.GetAll(c, &simulations)
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for i := 0; i < len(simulations); i++ {
+			simulations[i].Id = keys[i].IntID()
+		}
+
+		data := map[string]interface{}{
+			"sims": simulations,
+		}
+
+		baseHandler(w, r, "userSimulations", data)
 	}
 
-	for i := 0; i < len(simulations); i++ {
-		simulations[i].Id = keys[i].IntID()
-	}
+}
 
-	data := map[string]interface{}{
-		"sims": simulations,
-	}
+func AllSimulatorHandler(w http.ResponseWriter, r *http.Request) {
+	
+	if r.Method == "GET" {
 
-	baseHandler(w, r, "usersimulations", data)
+		c := appengine.NewContext(r)
+		q := datastore.NewQuery("Simulation").Order("-Name")
+		simulations := make([]models.Simulation, 0, 10)
+
+		keys, err := q.GetAll(c, &simulations)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for i := 0; i < len(simulations); i++ {
+			simulations[i].Id = keys[i].IntID()
+		}
+
+		data := map[string]interface{}{
+			"sims": simulations,
+		}
+
+		baseHandler(w, r, "allSimulations", data)
+		
+	}
 
 }
 
