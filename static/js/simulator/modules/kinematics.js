@@ -285,7 +285,7 @@ function initWorld() {
       {
         var KF = tempKF[i][j];
         Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
-        Globals.keyframeStates[i][j].pos.x = KF.pos._[1];
+        Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
         Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
         Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
         Globals.keyframeStates[i][j].acc.x = KF.acc._[0];
