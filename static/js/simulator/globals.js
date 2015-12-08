@@ -33,7 +33,7 @@ var Globals = {
   running: false,
     
   // Saved information for scrubbing through simulation
-  // states[0] will always match initStates
+  // states[0] will always match keyframeStates[0]
   states: [],
   
   // State at each keyframe (One inner array per keyframe)
@@ -69,7 +69,7 @@ var Globals = {
   vectorDrawing: [],
   
   // Equation solver for currently loaded module
-  // Current approach: Using js-solver library, which uses eval function and map of variables to equations used to solve them
+  // Current approach: Using eq-solver library, which uses eval function and map of variables to equations used to solve them
   // Generate frames when there are no unknowns left, gives up if an iteration doesn't update any variables
   solver: false,
   

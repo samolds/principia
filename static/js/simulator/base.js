@@ -1,8 +1,24 @@
+function exportToJson()
+{  
+  // NOTE LIMIT OF 1500 chars
+  var json = 
+  {
+    keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    bodyConstants:Globals.bodyConstants,
+    gravity:Globals.gravity,
+    variableMap:Globals.variableMap,
+    totalFrames:Globals.totalFrames,
+    maxFrames:Globals.maxFrames,
+    timelineReady:Globals.timelineReady
+  }
+  
+  json = JSON.stringify(json);
+  
+  console.log("done exporting json:" + json);
+  return json;
+}
+
 $(document).ready(function() {
-  //Kinematics1D.initModule();
-  KinematicsSandbox.initModule();
-  
-  
   // Prepare event handling
   $('#properties-position-x').on("change", function(){ onPropertyChanged('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ onPropertyChanged('posy', $('#properties-position-y').val()); }); 
@@ -13,6 +29,7 @@ $(document).ready(function() {
   
   $('#properties-mass').on("change", function(){ onPropertyChanged('mass', $('#properties-mass').val()); }); 
   $('#properties-nickname').on("change", function(){ onPropertyChanged('nickname', $('#properties-nickname').val()); }); 
+  $('#properties-img').on("change", function(){ onPropertyChanged('image', $('#properties-img option:selected')[0].value); });
   
   $('#solve-btn').on('click', function() { attemptSimulation(); });
   

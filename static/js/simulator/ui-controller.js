@@ -11,6 +11,7 @@ $(".draggable").draggable({
 	  helper: 'clone'
 });
 
+
 // Event fired when user is done dragging component from toolbox
 function handleDragStop(event, ui){
   if(!Globals.canAdd()) return;
