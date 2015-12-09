@@ -2,12 +2,13 @@
 
 {{ define "content" }}
 <div class="container narrow">
-  <h1 class="page-header">Browse</h1>
-
-  {{range $simulation := .Data.sims}}
-    <a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a> 
-    <br/>
-  {{ end }}
-  
+  <div class="card-panel z-depth-5">
+    <h3 class="page-header">Browse All Simulations</h3>
+    <ul>
+      {{range $simulation := .Data.sims}}
+      <li><a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a></li>
+      {{ end }}
+    </ul>
+  </div>
 </div>
 {{ end }}

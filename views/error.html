@@ -2,7 +2,9 @@
 
 {{ define "content" }}
 <div class="container narrow">
-  <h1 class="page-header">{{ .title }}</h1>
-  <p>{{ .errMsg }}</p>
+  <div class="card-panel z-depth-5">
+    <h1 class="page-header">{{ .title }}</h1>
+    <p>{{ .errMsg }}</p>
+  </div>
 </div>
 {{ end }}

@@ -72,7 +72,7 @@ var Solver = (function () {
                     var variables = this.extras[eq].vars[i];
                     for(var j=0; j<variables.length; j++)
                       msg += this.extras[eq].vars[i][j] + " = " + eval(this.extras[eq].vars[i][j]) + "\n";
-                    alert(msg);
+                    $("#solution-details")[0].textContent += msg;
                     
                     changed = true;
                     out[eq] = result;

@@ -57,7 +57,6 @@ function displayElementValues(bod){
     
     if(constants.ctype == "kinematics1D-mass"){
       $('#properties-img')[0].classList.remove("hide");
-      
     }
     else {
       if(!$('#properties-img')[0].classList.contains("hide")){
@@ -164,12 +163,9 @@ function highlightSelection(body){
   canvas.ctx.strokeRect(loc.x-halfw*2, loc.y-halfh*2, halfw*4, halfh*4);						
 }
 
-function drawProperties(){
-  var propWin = $("#properties")[0].classList;
+function drawProperties() {
   if (Globals.selectedBody) {
-    propWin.remove("hide");
-  } else if (!propWin.contains("hide")) {
-    propWin.add("hide");
+    document.getElementById("elementprops-tab").click();
   }
 }
 

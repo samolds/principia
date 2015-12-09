@@ -1,7 +1,6 @@
 {{ define "title" }}{{ end }}
 
 {{ define "scripts" }}
-<script src="/static/js/lib/jquery-ui.min.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/lib/eq-solver.js"></script>
 <script src="/static/js/simulator/globals.js"></script>
@@ -16,153 +15,210 @@
 </script>
 
 <script src="/static/js/simulator/base.js"></script>
+<script src="/static/js/view.js"></script>
 {{ end }}
 
 {{ define "content" }}
-<div class="container">
-  <h3>Welcome!</h3>
-</div>
-
-<div class="wide">
-  <div class="right">
-    <a href="#!" onclick="toggleGlobalProp()"><i class="tiny material-icons">language</i> Global Properties</a>
-  </div>
-
-  <div class="clear"></div>
-
-  <!-- Hideable global properties window for each element -->
-  <div id="global-properties" class="hide prop-window global-win">
-    <span class="right"><a href="#!" onclick="toggleGlobalProp()"><i class="material-icons">close</i></a></span>
-    <h5 class="pad-sides">Global Properties</h5>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="glob-xaccel" placeholder=""></input>
-        <label for="glob-xaccel">Horizontal Acceleration</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="glob-yaccel" placeholder=""></input>
-        <label for="glob-yaccel">Vertical Acceleration</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Hideable properties window for each element -->
-  <div id="properties" class="hide prop-window element-win">
-    <h5 class="pad-sides"><span id="properties-nickname-title"></span>Properties</h5>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-position-x" placeholder=""></input>
-        <label for="properties-position-x">X Position</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-position-y" placeholder=""></input>
-        <label for="properties-position-y">Y Position</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-velocity-x" placeholder=""></input>
-        <label for="properties-velocity-x">X Velocity</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-velocity-y" placeholder=""></input>
-        <label for="properties-velocity-y">Y Velocity</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-acceleration-x" placeholder=""></input>
-        <label for="properties-acceleration-x">X Acceleration</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="number" id="properties-acceleration-y" placeholder=""></input>
-        <label for="properties-acceleration-y">Y Acceleration</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">
-        <input type="number" id="properties-mass" placeholder=""></input>
-        <label for="properties-mass">Mass</label>
-      </div>
-      <div class="input-field col s6">
-        <input type="text" id="properties-nickname" placeholder="Point"></input>
-        <label for="properties-nickname">Nickname</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s6">        
-        <select id="properties-img" class="browser-default">
-          <option disabled>Display As:</option>
-          <option value="/static/img/logo/logo.png" selected="selected">Logo</option>
-          <option value="/static/img/toolbox/weight.png">Weight</option>
-          <option value="/static/img/toolbox/car.png">Car</option>
-          <option value="/static/img/toolbox/mascot.png">Mascot</option>
-          <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
-          <option value="/static/img/team/dalton.png">Dalton</option>
-          <option value="/static/img/team/danny.png">Danny</option>
-          <option value="/static/img/team/matthew.png">Matthew</option>
-          <option value="/static/img/team/sam.png">Sam</option>
-        </select>
-      </div>
-    </div>
-    
-  </div>
-  
-  <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
-  <div id="viewport" class="simulator"></div>
-
-  <!-- Scrub through simulation frames with playback -->
-  <div class="row" id="playback">
-    <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-    <div class="col s2">
-      <canvas id="keyframe-0" class="keyframe"></canvas>
-    </div>
-    <div class="col s2">
-      <canvas id="keyframe-1" class="keyframe"></canvas>
-    </div>
-    <div class="col s8">
-      <div class="row">
-        <div class="col s1">
-          <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-            <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
-          </button>
+<div class="main-container">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel z-depth-5">
+        <div class="row">
+          <h3>Welcome!</h3>
         </div>
-        <div class="col s11">
-          <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-        </div>
-      </div>
-      <div class="row" id="keyframe-labels">
-        <div class="input-field col s3">
-          <input id="keyframe-0-dt" type="text" readonly value="0"></input>
-          <label for="keyframe-0-dt">dt</label>
-        </div>
-        <div class="input-field col s3">
-          <input id="keyframe-1-dt" type="text" value="?"></input>
-          <label for="keyframe-1-dt">dt</label>
-        </div>
-        <div class="input-field col s6">
-          <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="container">
-  <!-- Always show the toolbox -->
-  <div class="row" id="toolbox">
-    <div class="row">
-      <div class="col s6">
-        <h5>Toolbox</h5>
-        <small>Just drag an image up and click play!</small>
-        <hr />
+        <!-- Simulator! -->
+        <div class="row">
+          <div class="col s8">
+            <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
+            <div style="height: 500px; padding: 10px;" id="viewport" class="white card"></div>
+          </div>
+          <div class="col s4 card z-depth-1 scrollable-tools" style="height: 500px;">
+            <ul class="tabs">
+              <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="material-icons">view_module</i></a></li>
+              <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="material-icons">info_outline</i></a></li>
+              <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="material-icons">public</i></a></li>
+              <div class="indicator blue" style="z-index: 1;"></div>
+            </ul>
+
+            <!-- Toolbox -->
+            <div id="toolbox">
+              <div class="center-align">
+                <h5 class="pad-sides">Toolbox</h5>
+                <div class="row">
+                  <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
+                    <div class="dummy"></div>
+                    <div class="toolbox-item">
+                      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
+                    </div>
+                  </div>
+                  <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px; ">
+                    <div class="dummy"></div>
+                    <div class="toolbox-item"> 
+                      <img src="/static/img/toolbox/spring.png" class="draggable" width="55" component="kinematics1D-spring">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Properties window for each element -->
+            <div id="elementprops">
+              <div class="center-align">
+                <h5 class="pad-sides"><span id="properties-nickname-title"></span>Element Properties</h5>
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-position-x" placeholder=""></input>
+                    <label for="properties-position-x" class="active">X Position</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-position-y" placeholder=""></input>
+                    <label for="properties-position-y" class="active">Y Position</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-velocity-x" placeholder=""></input>
+                    <label for="properties-velocity-x" class="active">X Velocity</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-velocity-y" placeholder=""></input>
+                    <label for="properties-velocity-y" class="active">Y Velocity</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-acceleration-x" placeholder=""></input>
+                    <label for="properties-acceleration-x" class="active">X Acceleration</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-acceleration-y" placeholder=""></input>
+                    <label for="properties-acceleration-y" class="active">Y Acceleration</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input type="number" id="properties-mass" placeholder=""></input>
+                    <label for="properties-mass" class="active">Mass</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input type="text" id="properties-nickname" placeholder=""></input>
+                    <label for="properties-nickname" class="active">Nickname</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s6">        
+                    <select id="properties-img" class="browser-default">
+                      <option disabled>Display As:</option>
+                      <option value="/static/img/logo/logo.png" selected="selected">Logo</option>
+                      <option value="/static/img/toolbox/weight.png">Weight</option>
+                      <option value="/static/img/toolbox/car.png">Car</option>
+                      <option value="/static/img/toolbox/mascot.png">Mascot</option>
+                      <option value="/static/img/toolbox/tranquilizer.png">Dart</option>
+                      <option value="/static/img/team/dalton.png">Dalton</option>
+                      <option value="/static/img/team/danny.png">Danny</option>
+                      <option value="/static/img/team/matthew.png">Matthew</option>
+                      <option value="/static/img/team/sam.png">Sam</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hideable global properties window for each element -->
+            <div id="globalprops">
+              <div class="center-align">
+                <h5 class="pad-sides">Global Properties</h5>
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input type="number" id="glob-xaccel" placeholder=""></input>
+                    <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input type="number" id="glob-yaccel" placeholder=""></input>
+                    <label for="glob-yaccel" class="active">Vertical Acceleration</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End simulator -->
+
+        <!-- Scrub through simulation frames with playback -->
+        <div class="row" id="playback">
+          <div class="col s8">
+            <div class="row">
+              <div class="col s1">
+                <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+                  <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+                </button>
+              </div>
+              <div class="hello col s11">
+                <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
+          <div class="col s8">
+            <div class="row">
+              <h5>Keyframes:</h5>
+              <div class="col s6">
+                <div class="row">
+                  <div class="col s6 left">
+                    <h6>Frame 1:</h6>
+                    <div class="row">
+                      <canvas id="keyframe-0" class="keyframe"></canvas>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                        <label for="keyframe-0-dt" class="active">dt</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col s6 left">
+                    <h6>Frame 2:</h6>
+                    <div class="row">
+                      <canvas id="keyframe-1" class="keyframe"></canvas>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <input id="keyframe-1-dt" type="text" value="?"></input>
+                        <label for="keyframe-1-dt" class="active">dt</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col s12 center">
+                    <div class="input-field col s12" >
+                      <a class="waves-effect waves-light btn blue darken-1" id="solve-btn">Solve for Unknowns</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col s6">
+                <h6>Solution details:</h6>
+                <div class="row solution-details-container">
+                  <p id="solution-details"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s4">
+            <h5>Example Problem:</h5>
+            <img src="/static/img/example-problem.png" class="responsive-img">
+          </div>
+        </div>
+
       </div>
-    </div>
-    <div class="col 2">
-      <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
-    </div>
-    <div class="col 2">
-      <img src="/static/img/toolbox/spring.png" class="draggable" width="70" component="kinematics1D-spring">	
     </div>
   </div>
 </div>

@@ -1,19 +1,14 @@
 {{ define "title" }} - My Simulations{{ end }}
 
 {{ define "content" }}
-<div class="main-container">
-  <div class="row">
-    <div class="col s12">
-      <div class="card-panel z-depth-5">
-        <h1 class="page-header">My Simulations</h1>
-
-        {{range $simulation := .Data.sims}}
-          <a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a> 
-          <br/>
-        {{ end }}
-        
-      </div>
-    </div>
+<div class="container narrow">
+  <div class="card-panel z-depth-5">
+    <h3 class="page-header">My Simulations</h3>
+    <ul>
+      {{range $simulation := .Data.sims}}
+      <li><a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a></li>
+      {{ end }}
+    </ul>
   </div>
 </div>
 {{ end }}

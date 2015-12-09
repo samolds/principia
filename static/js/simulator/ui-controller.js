@@ -8,7 +8,8 @@ $(".draggable").draggable({
 	  containment: $(Globals.canvasId),
 	  scroll: false,
 	  stop: handleDragStop,
-	  helper: 'clone'
+	  helper: 'clone',
+    appendTo: 'body'
 });
 
 

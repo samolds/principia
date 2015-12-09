@@ -30,7 +30,7 @@ function attemptSimulation(){
   
   if(!results[0])
   {
-    alert("There is insufficient data to solve for all unknowns.");
+    $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.";
     Globals.timelineReady = false;
     return;
   }
@@ -158,46 +158,48 @@ function onPropertyChanged(property, value, redraw){
   // Attempt to update the corresponding variable
   if(Globals.useKeyframes) updateVariable(body, property, value);
  
-	switch(property)
-	{		
-		case 'posx':
-			kState[i].pos.x = valuef;
-			break;
-		case 'posy':
-			kState[i].pos.y = valuef;			
-			break;
-		case 'velx':
-			kState[i].vel.x = valuef;
-			break;
-		case 'vely':
-			kState[i].vel.y = valuef;
-			break;
-		case 'accx':
-			kState[i].acc.x = valuef;
-			break;
-		case 'accy':
-			kState[i].acc.y = valuef;
-			break;
-    case 'gravityx':
-      Globals.gravity[0] = valuef;
-      break;
-    case 'gravityy':
-      Globals.gravity[1] = valuef;
-      break;
-    case 'image':
-      var img = document.createElement("img");
-      img.setAttribute("width", "40");
-      img.setAttribute("height", "40");
-      img.setAttribute("src", value);
-      body.view = img;
-      body.view.onload = function() {
-        drawMaster();
-      }      
-      return;      
-    default:
-      Globals.bodyConstants[i][property] = value;
-      break;
-	}
+  if (body) {
+    switch(property)
+    {		
+      case 'posx':
+        kState[i].pos.x = valuef;
+        break;
+      case 'posy':
+        kState[i].pos.y = valuef;			
+        break;
+      case 'velx':
+        kState[i].vel.x = valuef;
+        break;
+      case 'vely':
+        kState[i].vel.y = valuef;
+        break;
+      case 'accx':
+        kState[i].acc.x = valuef;
+        break;
+      case 'accy':
+        kState[i].acc.y = valuef;
+        break;
+      case 'gravityx':
+        Globals.gravity[0] = valuef;
+        break;
+      case 'gravityy':
+        Globals.gravity[1] = valuef;
+        break;
+      case 'image':
+        var img = document.createElement("img");
+        img.setAttribute("width", "40");
+        img.setAttribute("height", "40");
+        img.setAttribute("src", value);
+        body.view = img;
+        body.view.onload = function() {
+          drawMaster();
+        }      
+        return;      
+      default:
+        Globals.bodyConstants[i][property] = value;
+        break;
+    }
+  }
   
   var delta = 100;
   // Wait until user does mouseup for snap-to effect

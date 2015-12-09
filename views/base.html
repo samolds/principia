@@ -14,7 +14,7 @@
     <title>Principia{{ template "title" . }}</title>
   </head>
 
-  <body id="grad">
+  <body>
     <header>
       <nav id="nav" class="grey darken-3" role="navigation">
         <div class="nav-wrapper main-container">
@@ -22,8 +22,6 @@
           <a id="logo-container" class="brand-logo left" href="/"><img id="logo" src="/static/img/logo/principia-invert.png"></a>
           
           <ul class="right hide-on-med-down">
-            <li><a href="/simulator/all">Browse</a></li>
-            <li><a href="/simulator">Simulator</a></li>
             <li>
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">
                 {{ if .CurrentUser }}
@@ -38,6 +36,8 @@
 
       <!-- Dropdown Structure -->
       <ul id="myPrincipiaDropdown" class="dropdown-content grey darken-4" role="navigation">
+        <li class="grey darken-3"><a class="white-text" href="/simulator">Simulator</a></li>
+        <li class="grey darken-3"><a class="white-text" href="/simulator/all">Browse Simulations</a></li>
         {{ if .CurrentUser }}
           <li class="grey darken-3"><a class="white-text" href="/simulator/user/{{.CurrentUser.ID}}">My Simulations</a></li>
           <li class="grey darken-3"><a class="white-text" href="#">My Profile</a></li>
