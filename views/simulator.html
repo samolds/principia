@@ -26,13 +26,14 @@
     <div class="col s12">
       <div class="card-panel z-depth-5">
         <div class="row">
-          <div class="col s4">
+          <div class="input-field col s4">
             {{ if and (.CurrentUser) (.Data.isOwner) }}
               {{ if .Data.sim.Name }}
                 <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
               {{ else }}
                 <input id="simulation-name" type="text" value="New Simulation"></input>
-              {{ end }}
+              {{ end }}     
+              <label for="simulation-name" id="simulation-name-label">Simulation Name</label>        
             {{ else }}
               {{ if .Data.sim.Name }}
                 <h5 class="page-header">{{ .Data.sim.Name }}</h5>
@@ -40,7 +41,6 @@
                 <h5 class="page-header">New Simulation</h5>
               {{ end }}
             {{ end }}
-            <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
           </div>
 
           {{ if and (.Data.isOwner) (.CurrentUser) }}
