@@ -1,3 +1,8 @@
+/*
+  kinematics.js -- 
+  This file defines the primary kinematics modules utilizing the keyframe system.
+*/
+
 function Kinematics1DModule() {
 
 function initWorld() {
@@ -21,91 +26,23 @@ function initWorld() {
       world.add(integrator);
 
       world.on('addComponent', function(data) {
-        var component;
-        var componentChild = false;  
+        
         var variableMap = Globals.variableMap;
         var bodyConstants = Globals.bodyConstants;
-    
+
+        bodyConstants.push({ctype:data.type});
+        
         switch(data.type){
           case "kinematics1D-spring":         
-            component = Physics.body('circle', {
-              treatment:"static",
-              x: data.x,
-              y: data.y,           
-              radius: 5,
-              styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
-            componentChild = Physics.body('circle', {              
-              treatment:"static",
-              x: data.x+120,
-              y: data.y,             
-              radius: 5,                    
-              styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
-            variableMap.push({k:0.01, eq:60});           // Variables associated with spring constants    
-            variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be
+            bodyConstants.push({ctype:data.type + "-child"});
+            addSpring(data);
             break;
       
           case "kinematics1D-mass":
-            var img = document.createElement("img");
-            img.setAttribute("src", "/static/img/logo/logo.png");
-            img.setAttribute("width", "40");
-            img.setAttribute("height", "40");
-            component = Physics.body('circle', {
-            x: data.x,
-            y: data.y,
-            radius: 20,        
-            view: img,
-            styles: {
-              fillStyle: '#716cc4',
-              angleIndicator: '#3b3e6b'
-            }
-          });                    
-          
-          // Upon being added, a map of variables associated with this mass is added to the globals
-          variableMap.push({x0:data.x, xf: data.x, v0:0, vf:0, a:0, m:1});
-          break;
+            addMass(data);
+            break;
         }
     
-        console.log("Added at " + data.x + "," + data.y);
-            
-        bodyConstants.push({ctype:data.type});
-
-        if(data.type == "kinematics1D-mass") bodyConstants[bodyConstants.length-1].mass = 1.0;
-        world.add(component);
-        
-        
-        if(componentChild){
-          world.add(componentChild);
-          bodyConstants.push({ctype:data.type + "-child"});  
-          bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
-          bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
-          
-          // Spring constant and equilibrium point
-          bodyConstants[bodyConstants.length-2].k = 0.01;
-          bodyConstants[bodyConstants.length-2].eq = 60;
-        }
-    
-
-        var nKF = Globals.keyframeStates.length;
-        
-        // Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()
-        // Add the body to every keyframe and update that world state's rendering
-        for(var i=0; i < nKF; i++){
-          Globals.keyframeStates[i].push(cloneState(component.state)); 
-          if(componentChild) Globals.keyframeStates[i].push(cloneState(componentChild.state));
-          setStateKF(i);
-          world.render();
-          viewportToKeyCanvas(i);
-        }
-      
-  
         drawMaster();
       });
   
@@ -125,8 +62,7 @@ function initWorld() {
       }, true);
    
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
-      world.on('interact:grab', function( data ){
-        console.log("grab");
+      world.on('interact:grab', function( data ){        
         if(data.body){
           Globals.selectedBody = data.body;
           drawMaster()
@@ -138,8 +74,9 @@ function initWorld() {
       if(!Globals.canEdit()) return;
       
       Globals.didMove = true;
-      onPropertyChanged("posx", data.x, false);
-      onPropertyChanged("posy", data.y, true);
+      onPropertyChanged("posx", data.x);
+      onPropertyChanged("posy", data.y);
+      drawMaster();
     }
   });
   
@@ -153,8 +90,8 @@ function initWorld() {
         // Update keyframe
         var kStates = Globals.keyframeStates[Globals.keyframe];
         var i = Globals.world.getBodies().indexOf(data.body);
-        onPropertyChanged("posx", data.x, false);
-        onPropertyChanged("posy", data.y, true);
+        onPropertyChanged("posx", data.x);
+        onPropertyChanged("posy", data.y);
         
         // Update variable map
         if(Globals.keyframe == 0)
@@ -164,9 +101,9 @@ function initWorld() {
     }
   });
   
-      world.on('interact:poke', function( data ){
-        console.log("poke: " + data.x + "," + data.y);
+      world.on('interact:poke', function( data ){        
         Globals.selectedBody = false;
+        document.getElementById("toolbox-tab").click();
         drawMaster();
       });
       
@@ -178,128 +115,102 @@ function initWorld() {
         Physics.behavior('sweep-prune'),
         edgeBounce
       ]);
-
-    
-
     });
 } // end initWorld
 
   function initModule(json) {
     Globals.world = initWorld();
-    Globals.canEdit = function(){ return (Globals.keyframe || Globals.keyframe === 0); }
+    Globals.canEdit = function(){ return (Globals.keyframe ||
+                                          Globals.keyframe === 0 ||
+                                          (Globals.frame == Globals.totalFrames) && Globals.totalFrames != 0); }
     Globals.canAdd =  function(){ return  Globals.keyframe === 0; }
+    Globals.useKeyframes = true;
     
     // How the solver object works:
     // Try to assign a value to each key using known variables
     // Repeat until no new values can be assigned
     // Note that an overconstrained problem could still be solved with this method, leading to unsound results
-    var kinematicsSolver = new Solver(
+    Globals.solver = new Solver(
     {
       xf:
       {
-        eq:['x0 + v0*t + 0.5*a*t^2'],
-        pretty:[' using the kinematic equation xf = x + vt + 1/2 a t^2 '], 
-        vars:[['x0','v0','a','t']]
+        eq:['x0 + vx0*t + 0.5*ax*t^2'],
+        pretty:[' using the kinematic equation xf = x + vx*t + 1/2*ax*t^2 '], 
+        vars:[['x0','vx0','ax','t']]
       },
       
-      vf:
+      yf:
       {
-        eq:['v0 + a*t'],
-        pretty:[' using the kinematic equation vf = v + a*t '],
-        vars:[['v0','a','t']]
+        eq:['y0 + vy0*t + 0.5*ay*t^2'],
+        pretty:[' using the kinematic equation yf = y + vy*t + 1/2*ay*t^2 '], 
+        vars:[['y0','vy0','ay','t']]
       },
       
-      v0:
+      vxf:
       {
-        eq:['vf-a*t'],
-        pretty:[' rearranging the kinematic equation vf = v + a*t'],
-        vars:[['vf','a','t']]
+        eq:['vx0 + ax*t'],
+        pretty:[' using the kinematic equation vxf = vx + ax*t '],
+        vars:[['vx0','ax','t']]
+      },
+      
+      vyf:
+      {
+        eq:['vy0 + ay*t'],
+        pretty:[' using the kinematic equation vyf = vy + ay*t '],
+        vars:[['vy0','ay','t']]
+      },
+      
+      vx0:
+      {
+        eq:['vxf-ax*t'],
+        pretty:[' rearranging the kinematic equation vxf = vx + a*t'],
+        vars:[['vxf','ax','t']]
+      },
+      
+      vy0:
+      {
+        eq:['vyf-ay*t'],
+        pretty:[' rearranging the kinematic equation vyf = vy + a*t'],
+        vars:[['vyf','ay','t']]
       },
       
       x0:
       {
-        eq:['xf-v0*t-0.5*a*t^2'],
-        pretty:[' rearranging the kinematic equation xf = x + vt + 1/2 a t^2 '],
-        vars:[['xf','v0','t','a']]
+        eq:['xf-vx0*t-0.5*ax*t^2'],
+        pretty:[' rearranging the kinematic equation xf = x + vx*t + 1/2*ax*t^2 '],
+        vars:[['xf','vx0','t','ax']]
+      },
+      
+      y0:
+      {
+        eq:['yf-vy0*t-0.5*ay*t^2'],
+        pretty:[' rearranging the kinematic equation yf = y + vy*t + 1/2*ay*t^2 '],
+        vars:[['yf','vy0','t','ay']]
       },
       
       t:
       {
-        eq:['(vf-v0)/a'],
-        pretty:[' rearranging the kinematic equation vf = v + a*t '],
-        vars:[['vf','v0','a']]
+        eq:['(vxf-vx0)/ax', '(vyf-vy0)/ay'],
+        pretty:[' rearranging the kinematic equation vf = v + a*t ', ' rearranging the kinematic equation vf = v + a*t '],
+        vars:[['vxf','vx0','ax'],['vyf','vy0','ay']]
       },
       
-      a:
+      ax:
       {
-        eq:['(vf-v0)/t'],
-        pretty:[' rearranging the kinematic equation vf = v + a*t '],
-        vars:[['vf','v0','t']]
-      }
+        eq:['(vxf-vx0)/t'],
+        pretty:[' rearranging the kinematic equation vxf = vx + ax*t '],
+        vars:[['vxf','vx0','t']]
+      },
+      
+      ay:
+      {
+        eq:['(vyf-vy0)/t'],
+        pretty:[' rearranging the kinematic equation vyf = vy + ay*t '],
+        vars:[['vyf','vy0','t']]
+      }      
     });
     
-    Globals.solver = kinematicsSolver;
-    Globals.useKeyframes = true;
-    
-    // Show keyframe/solver material
-    /*
-    var kflabels = $("#keyframe-labels")[0].classList;
-    if (kflabels.contains("hide")) { kflabels.remove("hide");}
-    
-    var kf0 = $("#keyframe-0")[0].classList;
-    if (kf0.contains("hide")) { kf0.remove("hide");}
-    
-    var kf1 = $("#keyframe-1")[0].classList;
-    if (kf1.contains("hide")) { kf1.remove("hide");}
-    */
-    
-    if(!json || json == "{}")
-      return;
-    
-    var restore = $.parseJSON(json);
-    for(var key in restore)
-    {
-      if(key == "keyframeStates") continue;
-      if(key == "bodyConstants") continue;
-      Globals[key] = restore[key];
-    }
-    
-    // Stringified keyframes don't interact well with PhysicsJS
-    // Solution: Add the real component to get PhysicsJS state object
-    // Then transfer tempKF values to real corresponding "real" keyframe
-    var tempKF = restore.keyframeStates;
-    var tempBC = restore.bodyConstants;
-    
-    for(var i=0; i<tempBC.length; i++)
-    {
-      var type = tempBC[i].ctype;
-      var x = tempKF[0][i].pos._[0];
-      var y = tempKF[0][i].pos._[1];
-      var data = { 'type': type, 'x': x, 'y': y};
-      if(type != "kinematics1D-spring-child")
-        Globals.world.emit('addComponent', data);
-      Globals.bodyConstants[i] = tempBC[i];
-    }
-    
-    for(var i=0; i<tempKF.length; i++)
-      for(var j=0; j<tempKF[i].length; j++)
-      {
-        var KF = tempKF[i][j];
-        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
-        Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
-        Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
-        Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
-        Globals.keyframeStates[i][j].acc.x = KF.acc._[0];
-        Globals.keyframeStates[i][j].acc.y = KF.acc._[1];
-        var angular = KF.angular;
-        Globals.keyframeStates[i][j].angular = {acc:angular.acc,vel:angular.vel,pos:angular.pos};
-      }
-    
-    setStateKF(0);
-    
-    if(Globals.timelineReady)
-      simulate();
-    
+        
     drawMaster();
   }
   

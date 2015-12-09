@@ -7729,7 +7729,7 @@ Physics.behavior('body-impulse-response', function( parent ){
          * Collide two bodies by modifying their positions and velocities to conserve momentum
          **/
         collideBodies: function(bodyA, bodyB, normal, point, mtrans, contact){
-
+            if(bodyA.treatment === 'ghost' || bodyB.treatment === 'ghost') return; //ADDED BY MADADASA
             var fixedA = bodyA.treatment === 'static' || bodyA.treatment === 'kinematic'
                 ,fixedB = bodyB.treatment === 'static' || bodyB.treatment === 'kinematic'
                 ,scratch = Physics.scratchpad()
@@ -11012,6 +11012,7 @@ Physics.renderer('canvas', function( proto ){
             ctx.translate( x, y );
             ctx.rotate( ang );
             ctx.translate( os._[0], os._[1] );
+            ctx.globalAlpha = body2Constant(body).alpha? body2Constant(body).alpha: 1.0; // Added by Madadasa
             ctx.drawImage(view, -view.width/2, -view.height/2, view.width, view.height);
             ctx.restore();
         },
