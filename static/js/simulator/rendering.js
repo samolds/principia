@@ -90,7 +90,7 @@ function displayElementValues(bod){
     $('#properties-acceleration-x').val("");
     $('#properties-acceleration-y').val("");
     $('#properties-mass').val("");
-    $('#properties-name').val("");
+    $('#properties-nickname').val("");
     $('#properties-size').val("");
     $('#properties-nickname-title').text("");    
   }
