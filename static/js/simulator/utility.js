@@ -25,7 +25,9 @@ function cloneState(state) {
   return {"acc": acc, "vel": vel, "pos": pos, "angular": ang};
 }
 
+function bIndex(body){ return Globals.world.getBodies().indexOf(body); }
+
 function body2Constant(body){
-  var index = Globals.world.getBodies().indexOf(body);
+  var index = bIndex(body);
   return Globals.bodyConstants[index];
 }

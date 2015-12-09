@@ -80,5 +80,17 @@ var Globals = {
   canEdit: function() { return true; }, 
   
   // Function used to determine if the user is allowed to add a new component
-  canAdd: function() { return true; }
+  canAdd: function() { return true; },
+  
+  massImages: [
+              "/static/img/logo/logo.png",
+              "/static/img/toolbox/weight.png",
+              "/static/img/toolbox/car.png",
+              "/static/img/toolbox/mascot.png",
+              "/static/img/toolbox/tranquilizer.png",
+              "/static/img/team/dalton.png",
+              "/static/img/team/danny.png",
+              "/static/img/team/matthew.png",
+              "/static/img/team/sam.png"
+              ]
 };

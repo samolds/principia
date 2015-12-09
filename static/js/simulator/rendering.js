@@ -41,6 +41,9 @@ function displayElementValues(bod){
   if (bod) {
     var st = bod.state;
     var constants = Globals.bodyConstants[Globals.world.getBodies().indexOf(bod)];
+    var selected = constants.img;
+    $('#properties-img option[value=' + selected +']').attr('selected', 'selected');
+    
     $('#properties-position-x').val(st.pos.x);
     $('#properties-position-y').val(st.pos.y);
     $('#properties-velocity-x').val(st.vel.x);
@@ -99,25 +102,10 @@ function drawSpringLine(b1, b2){
   // Get the coordinates of each body
 	var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
 	var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
-	
-  // Get the minimum and maximum x-coordinates
-	var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;
-	
-  // Associate starting and ending y-coordinates with corresponding x-coordinate
-	var ys = (x1 == xmin)? y1:y2; var ye = (x1 == xmin)? y2:y1;
-	
-  // Save difference in x and y and corresponding slope
-  var dx = xmax-xmin; var dy = ye-ys; var m = dy/dx;
-  
-  // Save angle from x-axis
-  var theta = Math.atan2(dy, dx) * 180 / Math.PI; // range (-PI, PI]
-  
-  // Initialize x and y: x and y will store the "canonical" line with no perturbations
-	var x = xmin; var y =  ys;	
-	ctx.beginPath();
-	ctx.moveTo(x,y);
-	
-  var d = distance(x1,y1,x2,y2);
+	var d = distance(x1,y1,x2,y2);
+  var angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+  // -0.001 to -179.9999 is upper
+  // 180 to 0 is lower
   
   // Determine properties of sine wave based on how far the spring is stretched
 	var wavelength, amplitude;
@@ -137,15 +125,46 @@ function drawSpringLine(b1, b2){
 	var incr;         // Amount to increment before drawing next point
   var delta   = 10; // If within delta from x or xmax, modify increment
   
-	for(; x<=xmax; x+=incr){
-    incr = (Math.abs(x - xmin) < delta || Math.abs(x - xmax) < delta) ? 1: Math.PI/2;
-    var xnew = x;
-    var ynew = y + Math.sin(x*wavelength)*amplitude;
+  
+  var swap = (angle < -45 && angle > -135) || (angle < 135 && angle > 45)
+  if(swap)
+  {
+    var ymin = y1 < y2? y1: y2; var ymax = y1 > y2? y1: y2;
+    var xs = (y1 == ymin)? x1:x2; var xe = (y1 == ymin)? x2:x1;
+    var dy = ymax-ymin; var dx = xe-xs; var m = dx/dy;
     
-    ctx.lineTo(xnew,ynew);
+    var x = xs; var y = ymin;
+    
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    for(; y<=ymax; y+=incr){
+      incr = (Math.abs(y - ymin) < delta || Math.abs(y - ymax) < delta) ? 1: Math.PI/2;
+      var xnew = x + Math.sin(y*wavelength)*amplitude;
+      var ynew = y;    
+      ctx.lineTo(xnew,ynew);
+      x += (m*incr);
+    }
+  }
+  else
+  {
+    var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;    
+    var ys = (x1 == xmin)? y1:y2; var ye = (x1 == xmin)? y2:y1;      
+    var dx = xmax-xmin; var dy = ye-ys; var m = dy/dx;
+    
+    // Initialize x and y: x and y will store the "canonical" line with no perturbations
+    var x = xmin; var y =  ys;	
+    
+    ctx.beginPath();
+    ctx.moveTo(x,y);  
+    for(; x<=xmax; x+=incr){
+      incr = (Math.abs(x - xmin) < delta || Math.abs(x - xmax) < delta) ? 1: Math.PI/2;
+      var xnew = x;
+      var ynew = y + Math.sin(x*wavelength)*amplitude;    
+      ctx.lineTo(xnew,ynew);
+      y += (m*incr);
+    }
+  }
    
-		y += (m*incr);
-	}
   ctx.stroke();
 }
 
@@ -189,52 +208,68 @@ function drawVectors(){
 }
 
 function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
-  var vx_amt = (body.state.vel.x / maxVx) * 100.0;
-  var vy_amt = (body.state.vel.y / maxVy) * 100.0;
+  
+  //maxVx = maxVx > 100? maxVx: 100;
+  //maxVy = maxVy > 100? maxVy: 100;
+  //maxAx = maxAx > 10? maxAx: 10;
+  //maxAy = maxAy > 10? maxAy: 10;
+  maxAx = maxVx;
+  maxAy = maxVy;
+  
+  var vx_amt = (body.state.vel.x / maxVx) * 200.0;
+  var vy_amt = (body.state.vel.y / maxVy) * 200.0;
   var ax_amt = ((body.state.acc.x + Globals.gravity[0]) / maxAx) * 100.0;
   var ay_amt = ((body.state.acc.y + Globals.gravity[1]) / maxAy) * 100.0;
   
   var canvas = Globals.world.renderer();
 	var ctx = canvas.ctx;
-  
   ctx.lineWidth = 3;
   
-  if(Math.sign(vx_amt) == 1) ctx.strokeStyle = '#00ff00'; // green
-  else ctx.strokeStyle = '#ff0000'; // red
+  if(vx_amt != 0)
+  {
+    ctx.strokeStyle = (Math.sign(vx_amt) == 1)? '#00ff00': '#ff0000';    
+    ctx.beginPath();
+    ctx.moveTo(body.state.pos.x,body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
+    ctx.stroke();
+  }
+
+  if(ax_amt != 0)
+  {
+    ctx.strokeStyle = (Math.sign(ax_amt) == 1)? '#009900': '#990000';
+    ctx.beginPath();
+    ctx.moveTo(body.state.pos.x,body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + ax_amt * 0.8 + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
+    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
+    ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
+    ctx.stroke();
+  }
   
-  ctx.beginPath();
-  ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
-  ctx.stroke();
+  if(vy_amt != 0)
+  {
+    ctx.strokeStyle = (Math.sign(vy_amt) == 1)? '#ff0000': '#00ff00';
+    ctx.beginPath();
+    ctx.moveTo(body.state.pos.x,body.state.pos.y);
+    ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);
+    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + vy_amt + -Math.sign(vy_amt)*0.1*Math.abs(vy_amt));
+    ctx.stroke();
+  }
   
-  if(Math.sign(ax_amt) == 1) ctx.strokeStyle = '#00ff00'; // green
-  else ctx.strokeStyle = '#ff0000'; // red
-  
-  ctx.beginPath();
-  ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
-  ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 5);
-  ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.2*Math.abs(ax_amt), body.state.pos.y - 5);
-  ctx.stroke();
-  
-  
-  if(Math.sign(vy_amt) == 1)ctx.strokeStyle = '#ff0000'; // red
-  else ctx.strokeStyle = '#00ff00'; // green
-  
-  ctx.beginPath();
-  ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);  
-  ctx.stroke();
-  
-  if(Math.sign(ay_amt) == 1)ctx.strokeStyle = '#ff0000'; // red
-  else ctx.strokeStyle = '#00ff00'; // green
-  
-  ctx.beginPath();
-  ctx.moveTo(body.state.pos.x,body.state.pos.y);
-  ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
-  ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
-  ctx.stroke();  
+  if(ay_amt != 0)
+  {
+    ctx.strokeStyle = (Math.sign(ay_amt) == 1)? '#990000': '#009900';
+    ctx.beginPath();
+    ctx.moveTo(body.state.pos.x,body.state.pos.y);
+    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
+    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + 0.8*ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
+    ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
+    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+    ctx.stroke();
+  }
 }
 
 // Copy global canvas into canvas for keyframe n
@@ -249,8 +284,12 @@ function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
   if(isKeyframe && Globals.useKeyframes){ viewportToKeyCanvas(Globals.keyframe); displayVariableValues(selectedBody); }
   else { displayElementValues(selectedBody); }
-  drawLines();
-  drawVectors();
+  
+  //if(!Globals.didMove){
+    drawLines();
+    drawVectors();
+  //}
+  
   if(selectedBody) { highlightSelection(selectedBody); }
   drawProperties();
 }

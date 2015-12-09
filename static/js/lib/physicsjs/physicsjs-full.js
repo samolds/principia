@@ -7729,7 +7729,7 @@ Physics.behavior('body-impulse-response', function( parent ){
          * Collide two bodies by modifying their positions and velocities to conserve momentum
          **/
         collideBodies: function(bodyA, bodyB, normal, point, mtrans, contact){
-
+            if(bodyA.treatment === 'ghost' || bodyB.treatment === 'ghost') return; //ADDED BY MADADASA
             var fixedA = bodyA.treatment === 'static' || bodyA.treatment === 'kinematic'
                 ,fixedB = bodyB.treatment === 'static' || bodyB.treatment === 'kinematic'
                 ,scratch = Physics.scratchpad()

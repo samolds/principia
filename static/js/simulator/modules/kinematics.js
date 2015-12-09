@@ -21,91 +21,23 @@ function initWorld() {
       world.add(integrator);
 
       world.on('addComponent', function(data) {
-        var component;
-        var componentChild = false;  
+        
         var variableMap = Globals.variableMap;
         var bodyConstants = Globals.bodyConstants;
-    
+
+        bodyConstants.push({ctype:data.type});
+        
         switch(data.type){
           case "kinematics1D-spring":         
-            component = Physics.body('circle', {
-              treatment:"static",
-              x: data.x,
-              y: data.y,           
-              radius: 5,
-              styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
-            componentChild = Physics.body('circle', {              
-              treatment:"static",
-              x: data.x+120,
-              y: data.y,             
-              radius: 5,                    
-              styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
-              }
-            });
-            variableMap.push({k:0.01, eq:60});           // Variables associated with spring constants    
-            variableMap.push({x0:data.x, xf: data.x});  // Variables associated with stretched point. Necessary? Should be
+            bodyConstants.push({ctype:data.type + "-child"});
+            addSpring(data);
             break;
       
           case "kinematics1D-mass":
-            var img = document.createElement("img");
-            img.setAttribute("src", "/static/img/logo/logo.png");
-            img.setAttribute("width", "40");
-            img.setAttribute("height", "40");
-            component = Physics.body('circle', {
-            x: data.x,
-            y: data.y,
-            radius: 20,        
-            view: img,
-            styles: {
-              fillStyle: '#716cc4',
-              angleIndicator: '#3b3e6b'
-            }
-          });                    
-          
-          // Upon being added, a map of variables associated with this mass is added to the globals
-          variableMap.push({x0:data.x, xf: data.x, v0:0, vf:0, a:0, m:1});
-          break;
+            addMass(data);
+            break;
         }
     
-        console.log("Added at " + data.x + "," + data.y);
-            
-        bodyConstants.push({ctype:data.type});
-
-        if(data.type == "kinematics1D-mass") bodyConstants[bodyConstants.length-1].mass = 1.0;
-        world.add(component);
-        
-        
-        if(componentChild){
-          world.add(componentChild);
-          bodyConstants.push({ctype:data.type + "-child"});  
-          bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
-          bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
-          
-          // Spring constant and equilibrium point
-          bodyConstants[bodyConstants.length-2].k = 0.01;
-          bodyConstants[bodyConstants.length-2].eq = 60;
-        }
-    
-
-        var nKF = Globals.keyframeStates.length;
-        
-        // Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()
-        // Add the body to every keyframe and update that world state's rendering
-        for(var i=0; i < nKF; i++){
-          Globals.keyframeStates[i].push(cloneState(component.state)); 
-          if(componentChild) Globals.keyframeStates[i].push(cloneState(componentChild.state));
-          setStateKF(i);
-          world.render();
-          viewportToKeyCanvas(i);
-        }
-      
-  
         drawMaster();
       });
   
@@ -139,7 +71,7 @@ function initWorld() {
       
       Globals.didMove = true;
       onPropertyChanged("posx", data.x, false);
-      onPropertyChanged("posy", data.y, true);
+      onPropertyChanged("posy", data.y, false);
     }
   });
   

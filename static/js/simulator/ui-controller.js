@@ -82,13 +82,19 @@ function selectKeyframe(event) {
 	drawMaster();
 }
 
+// TODO: Not being called anymore?
 function toggleGlobalProp() {
   var propWin = $("#global-properties")[0].classList;
   if (propWin.contains("hide")) {
-    propWin.remove("hide");
+    propWin.remove("hide");    
   } else {
     propWin.add("hide");
   }
+}
+
+function updatePropertyRedraw(property, value){
+  onPropertyChanged(property, value, true);
+  drawMaster();
 }
 
 

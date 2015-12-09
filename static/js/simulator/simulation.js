@@ -142,7 +142,31 @@ function setState(n){
     bodies[i].state = Globals.states[i][n];
 }
 
-function onPropertyChanged(property, value, redraw){
+function updateKeyframes(components)
+{
+  var world = Globals.world;
+  var nKF = Globals.keyframeStates.length;
+  var KFs = Globals.keyframeStates;
+        
+  // Must enforce invariant: Index of body in keyframe states must match index of body in world.getBodies()
+  // Add the body to every keyframe and update that world state's rendering
+  for(var i=0; i < nKF; i++){
+    for(var j=0; j < components.length; j++)
+    {
+      var component = components[j];
+      KFs[i].push(cloneState(component.state)); 
+    }
+ 
+    // If mini-canvases exist, paint to them now
+    if(Globals.useKeyframes){
+      setStateKF(i);
+      world.render();
+      viewportToKeyCanvas(i);
+    }
+  } 
+}
+
+function onPropertyChanged(property, value, doSimulate){
 	if(!Globals.canEdit()) return;
 	//console.log(property + "," + value);
 	
@@ -162,9 +186,11 @@ function onPropertyChanged(property, value, redraw){
     switch(property)
     {		
       case 'posx':
+        body.state.pos.x = valuef;
         kState[i].pos.x = valuef;
         break;
       case 'posy':
+        body.state.pos.y = valuef;
         kState[i].pos.y = valuef;			
         break;
       case 'velx':
@@ -187,83 +213,31 @@ function onPropertyChanged(property, value, redraw){
         break;
       case 'image':
         var img = document.createElement("img");
-        img.setAttribute("width", "40");
-        img.setAttribute("height", "40");
-        img.setAttribute("src", value);
+        img.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
+        img.setAttribute("height", Globals.bodyConstants[i].size/100 * 50);
+        img.setAttribute("src", Globals.massImages[valuef]);
         body.view = img;
-        body.view.onload = function() {
-          drawMaster();
-        }      
+        body.view.onload = function() { drawMaster(); }  
+        Globals.bodyConstants[i].img = valuef;
         return;      
+      case 'size':
+        Globals.bodyConstants[i]["size"] = value;
+        body.view.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
+        body.view.setAttribute("height", Globals.bodyConstants[i].size/100 * 50);
+        body.radius = Globals.bodyConstants[i].size/100 * 25;
+        body.view.onload = function() { drawMaster(); }      
+        return;
       default:
         Globals.bodyConstants[i][property] = value;
         break;
     }
   }
   
-  var delta = 100;
-  // Wait until user does mouseup for snap-to effect
-  if(!Globals.didMove && body) {
-  for(var j=0; j<bodies.length; j++){
-    var attachBody = bodies[j];
-    if(distance(body.state.pos.x, body.state.pos.y, attachBody.state.pos.x, attachBody.state.pos.y) <= delta){
-      if(body2Constant(body).ctype == "kinematics1D-mass" && body2Constant(attachBody).ctype == "kinematics1D-spring-child"){
-        console.log("attached");
-        body.treatment = "static";     
-        body2Constant(attachBody).attachedBody = bodies.indexOf(body);
-        body2Constant(body).attachedTo = bodies.indexOf(attachBody);
-        
-        kState[i].pos.x = attachBody.state.pos.x;
-        kState[i].pos.y = attachBody.state.pos.y;
-             
-        // Attempt to update the corresponding variable
-        if(Globals.useKeyframes) updateVariable(body, "posx", attachBody.state.pos.x);
-        if(Globals.useKeyframes) updateVariable(body, "posy", attachBody.state.pos.y);        
-      }
-    }
-  }
-  
-  // Handle detaching too!
-  if(body2Constant(body).attachedTo || body2Constant(body).attachedTo === 0)
-  {
-    var attachedTo = world.getBodies()[body2Constant(body).attachedTo];
-    if(distance(body.state.pos.x, body.state.pos.y, attachedTo.state.pos.x, attachedTo.state.pos.y) > delta) {
-        console.log("detached");
-     
-        body.treatment = "dynamic";
-        
-        delete body2Constant(attachedTo).attachedBody;
-        delete body2Constant(body).attachedTo;
-    }
-  }
-  }
-  
   // Rerun the simulation using updated properties if not using keyframes
-  if(!Globals.useKeyframes && !Globals.didMove) simulate();
- 
-  // If told to redraw or if parameter is excluded, redraw
-  if(redraw || redraw == undefined)
-    drawMaster();
+  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) simulate();
 }
 
-Physics.integrator('principia-integrator', function( parent ){
-   
-  function applyForces(body) {
-    var a = 0;    
-    var constants = body2Constant(body)
-    if(constants.attachedTo)
-    {
-      var attached = Globals.world.getBodies()[constants.attachedTo];
-      var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
-      var spring = Globals.world.getBodies()[spring_idx]; //TODO FIX
-      var properties = body2Constant(spring);
-      var origin = spring.state.pos.x + properties.eq;     
-      var springF = -properties.k * (attached.state.pos.x - origin)
-      a = springF / body2Constant(body).mass;       
-    }    
-    return a;
-  }
-   
+Physics.integrator('principia-integrator', function( parent ){  
   return {  
   // Velocity increases by acceleration * dt
   integrateVelocities: function( bodies, dt ){
@@ -273,12 +247,12 @@ Physics.integrator('principia-integrator', function( parent ){
     
     for ( var i = 0, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
-      var state = body.state;	
-      var spring_x = applyForces(body);    
+      var spring_a = applySpringForces(body);
+      var state = body.state;	      
       state.old = cloneState(body.state);
       
-      state.vel.x += state.acc.x * dt + spring_x;
-      state.vel.y += state.acc.y * dt;
+      state.vel.x += state.acc.x * dt + spring_a[0];
+      state.vel.y += state.acc.y * dt + spring_a[1];
       
       if(body.treatment == "dynamic"){
         state.vel.x += Globals.gravity[0];
@@ -295,7 +269,7 @@ Physics.integrator('principia-integrator', function( parent ){
       var state = body.state;
       var temp = cloneState(body.state);
       
-      if(body.treatment == "static") {        
+      if(Globals.bodyConstants[i].attachedTo) {        
         state.pos.x += state.vel.x;// * dt; //+ state.acc.x * 0.5 * dt*dt;
         state.pos.y += state.vel.y;// * dt; //+ state.acc.y * 0.5 * dt*dt;
       }
