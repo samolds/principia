@@ -285,6 +285,12 @@ input[type=range]::-webkit-slider-thumb {
   background-color: #2196f3 !important;
 }
 
+/*slider color*/
+input[type=checkbox] .lever::-webkit-slider-thumb {
+  background-color: #2196f3 !important;
+}
+input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !important; }
+
 .toolbox-item img{
   margin: 0;
   position: absolute;
