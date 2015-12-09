@@ -1,3 +1,8 @@
+/*
+  eq-solver.js --
+  This file defines an object that can iterate over equations to solve for unknown values.
+*/
+
 var Solver = (function () {
 
     function Solver(input) {
@@ -33,6 +38,7 @@ var Solver = (function () {
     }
 
     Solver.prototype.solve = function solve(obj) {
+        var precision = Globals.dPrecision;
         var out = {};
         var needed = Object.keys(this.equations).length; // Number of variables to solve for
         var solved = 0; // Number of variables solved for
@@ -53,6 +59,7 @@ var Solver = (function () {
         }
     
         // Attempt to define variables not described by input
+        // TODO: Need to be checking for consistent results along the way
         var equations = JSON.parse(JSON.stringify(this.equations))        
         while (solved != needed) {
             changed = false;
@@ -60,7 +67,22 @@ var Solver = (function () {
             with(Math){
               if(typeof out[eq] == "undefined"){
                 for(var i=0; i < equations[eq].eq.length; i++) {
-                  if(!(typeof out[eq] == "undefined")) continue;
+                  if(!(typeof out[eq] == "undefined")) {
+                  
+                    var result = eval(equations[eq].eq[i]);                  
+                    if(result)
+                    {
+                      if(result != out[eq]){
+                        var err = "Warning! Got an inconsistent result:\n";
+                        err += "Original: " + eq + " = " + out[eq].toFixed(precision) + ".\n";
+                        err += "New: " +  eq + " = " + result.toFixed(precision) + ".\n"
+                        $("#solution-details")[0].textContent += err;
+                      }
+                    }
+                    
+                    continue;
+                  }
+                  
                   var result = eval(equations[eq].eq[i]);
                   if (result) {
                     solved++;
@@ -71,12 +93,12 @@ var Solver = (function () {
                     
                     var variables = this.extras[eq].vars[i];
                     for(var j=0; j<variables.length; j++)
-                      msg += this.extras[eq].vars[i][j] + " = " + eval(this.extras[eq].vars[i][j]) + "\n";
+                      msg += this.extras[eq].vars[i][j] + " = " + eval(this.extras[eq].vars[i][j]).toFixed(precision) + "\n";
                     $("#solution-details")[0].textContent += msg;
                     
                     changed = true;
                     out[eq] = result;
-                    eval(eq + '=' + result);              
+                    eval(eq + '=' + result);
                   }
                 }
               }

@@ -1,3 +1,7 @@
+/*
+  sandbox.js --
+  This file defines a kinematics module that immediately resimulates instead of supporting keyframes.
+*/
 function KinematicsSandboxModule() {
 
 function initWorld() {
@@ -59,8 +63,7 @@ function initWorld() {
       }, true);
    
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
-      world.on('interact:grab', function( data ){
-        console.log("grab");
+      world.on('interact:grab', function( data ){        
         if(data.body){
           Globals.selectedBody = data.body;
           drawMaster()
@@ -99,8 +102,7 @@ function initWorld() {
     }
   });
   
-      world.on('interact:poke', function( data ){
-        console.log("poke: " + data.x + "," + data.y);
+      world.on('interact:poke', function( data ){        
         Globals.selectedBody = false;
         drawMaster();
       });

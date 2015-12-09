@@ -1,4 +1,5 @@
 /*
+  rendering.js -- 
   This file contains functions for rendering the simulation itself.
   This includes drawing the PhysicsJS world as well as post-world.render() effects (springs, vectors)
 */
@@ -13,6 +14,10 @@ function drawLoop(){
   setState(Globals.frame);
   if(Globals.useKeyframes)
     Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? Globals.frame: false; 
+  
+  $("#" + "keyframe-0").attr("style","");
+  $("#" + "keyframe-1").attr("style","");
+  
   drawMaster();
   Globals.frame++;
 }
@@ -20,19 +25,26 @@ function drawLoop(){
 // Show variable values in html elements
 function displayVariableValues(body){
   var variables = Globals.variableMap[Globals.world.getBodies().indexOf(body)];
+  var precision = Globals.dPrecision;
   displayElementValues(body);
-  if (variables && body) {
-    if (Globals.keyframe == 0) {
-      $('#properties-position-x').val(variables["x0"]);
-      $('#properties-velocity-x').val(variables["v0"]);
-      $('#properties-acceleration-x').val(variables["a"]);
+  if (variables && body){
+    if (Globals.keyframe == 0){
+      $('#properties-position-x').val(variables["x0"].toFixed(precision));
+      $('#properties-position-y').val(variables["y0"].toFixed(precision));
+      $('#properties-velocity-x').val(variables["vx0"].toFixed(precision));
+      $('#properties-velocity-y').val(variables["vy0"].toFixed(precision));
+      $('#properties-acceleration-x').val(variables["ax"].toFixed(precision));
+      $('#properties-acceleration-y').val(variables["ay"].toFixed(precision));
     } else {
-      $('#properties-position-x').val(variables["xf"]);
-      $('#properties-velocity-x').val(variables["vf"]);
-      $('#properties-acceleration-x').val(variables["a"]);
+      $('#properties-position-x').val(variables["xf"].toFixed(precision));
+      $('#properties-position-y').val(variables["yf"].toFixed(precision));
+      $('#properties-velocity-x').val(variables["vxf"].toFixed(precision));
+      $('#properties-velocity-y').val(variables["vyf"].toFixed(precision));
+      $('#properties-acceleration-x').val(variables["ax"].toFixed(precision));
+      $('#properties-acceleration-y').val(variables["ay"].toFixed(precision));
     }
-    
-    
+ 
+
   }
 }
 
@@ -43,13 +55,13 @@ function displayElementValues(bod){
     var constants = Globals.bodyConstants[Globals.world.getBodies().indexOf(bod)];
     var selected = constants.img;
     $('#properties-img option[value=' + selected +']').attr('selected', 'selected');
-    
-    $('#properties-position-x').val(st.pos.x);
-    $('#properties-position-y').val(st.pos.y);
-    $('#properties-velocity-x').val(st.vel.x);
-    $('#properties-velocity-y').val(st.vel.y);
-    $('#properties-acceleration-x').val(st.acc.x);
-    $('#properties-acceleration-y').val(st.acc.y);
+    var precision = Globals.dPrecision;
+    $('#properties-position-x').val(st.pos.x.toFixed(precision));
+    $('#properties-position-y').val(st.pos.y.toFixed(precision));
+    $('#properties-velocity-x').val(st.vel.x.toFixed(precision));
+    $('#properties-velocity-y').val(st.vel.y.toFixed(precision));
+    $('#properties-acceleration-x').val(st.acc.x.toFixed(precision));
+    $('#properties-acceleration-y').val(st.acc.y.toFixed(precision));
     $('#properties-mass').val(constants.mass);
     $('#properties-nickname').val(constants.nickname);
     if (constants.nickname) {
@@ -82,49 +94,48 @@ function displayElementValues(bod){
 }
 
 // Draw a line between a component and its parent element (handles drawing springs, ropes)
-function drawLines(){		
-	var bodies = Globals.world.getBodies();
+function drawLines(){
+  var bodies = Globals.world.getBodies();
   var bodyConst = Globals.bodyConstants;
-	for (var i = 0; i < bodies.length; i++)
-		if(bodyConst[i].parent || bodyConst[i].parent === 0)
-			drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
+  for (var i = 0; i < bodies.length; i++)
+    if(bodyConst[i].parent || bodyConst[i].parent === 0)
+      drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
 }
 
 // Draws a sine wave between the two specified bodies
 // TODO: Have separate functions for drawing springs and other lines when other components are supported.
 function drawSpringLine(b1, b2){
-	var canvas = Globals.world.renderer();
-	var ctx = canvas.ctx;
-	
-	ctx.strokeStyle = '#aaaaaa'; // Gray
-	ctx.lineWidth = 3;
-	
+  var canvas = Globals.world.renderer();
+  var ctx = canvas.ctx;
+  
+  ctx.strokeStyle = '#aaaaaa'; // Gray
+  ctx.lineWidth = 3;
+  
   // Get the coordinates of each body
-	var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
-	var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
-	var d = distance(x1,y1,x2,y2);
+  var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
+  var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
+  var d = distance(x1,y1,x2,y2);
   var angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
   // -0.001 to -179.9999 is upper
   // 180 to 0 is lower
   
   // Determine properties of sine wave based on how far the spring is stretched
-	var wavelength, amplitude;
+  var wavelength, amplitude;
   if(d > 600)      { wavelength = 0.5; amplitude = 1; }
-	else if(d > 550) { wavelength = 0.5; amplitude = 2; }
+  else if(d > 550) { wavelength = 0.5; amplitude = 2; }
   else if(d > 500) { wavelength = 0.5; amplitude = 3; }
   else if(d > 450) { wavelength = 0.5; amplitude = 4; }
   else if(d > 400) { wavelength = 0.5; amplitude = 5; }
-	else if(d > 350) { wavelength = 0.5; amplitude = 6; }
-	else if(d > 300) { wavelength = 0.5; amplitude = 7; }
+  else if(d > 350) { wavelength = 0.5; amplitude = 6; }
+  else if(d > 300) { wavelength = 0.5; amplitude = 7; }
   else if(d > 250) { wavelength = 0.5; amplitude = 8; }
   else if(d > 200) { wavelength = 0.5; amplitude = 9; }
   else if(d > 150) { wavelength = 0.5; amplitude = 16; }
   else if(d > 100) { wavelength = 0.5; amplitude = 18; }
-	else             { wavelength = 0.5; amplitude = 20; }
-			
-	var incr;         // Amount to increment before drawing next point
+  else             { wavelength = 0.5; amplitude = 20; }
+      
+  var incr;         // Amount to increment before drawing next point
   var delta   = 10; // If within delta from x or xmax, modify increment
-  
   
   var swap = (angle < -45 && angle > -135) || (angle < 135 && angle > 45)
   if(swap)
@@ -152,7 +163,7 @@ function drawSpringLine(b1, b2){
     var dx = xmax-xmin; var dy = ye-ys; var m = dy/dx;
     
     // Initialize x and y: x and y will store the "canonical" line with no perturbations
-    var x = xmin; var y =  ys;	
+    var x = xmin; var y =  ys;  
     
     ctx.beginPath();
     ctx.moveTo(x,y);  
@@ -179,15 +190,17 @@ function highlightSelection(body){
   canvas.ctx.lineWidth = 2;
 
   var loc = body.state.pos;
-  canvas.ctx.strokeRect(loc.x-halfw*2, loc.y-halfh*2, halfw*4, halfh*4);						
+  canvas.ctx.strokeRect(loc.x-halfw*2, loc.y-halfh*2, halfw*4, halfh*4);
 }
 
-function drawProperties() {
+// Opens the properties tab
+function drawProperties(){
   if (Globals.selectedBody) {
     document.getElementById("elementprops-tab").click();
   }
 }
 
+// Draws a vector for each body
 function drawVectors(){
   var maxVx = 0;
   var maxVy = 0;
@@ -207,14 +220,13 @@ function drawVectors(){
   } 
 }
 
+// Draw a vector for the specified body, scaled using the provided arguments
 function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   
-  //maxVx = maxVx > 100? maxVx: 100;
-  //maxVy = maxVy > 100? maxVy: 100;
-  //maxAx = maxAx > 10? maxAx: 10;
-  //maxAy = maxAy > 10? maxAy: 10;
-  maxAx = maxVx;
-  maxAy = maxVy;
+  maxVx = maxVx > 25? maxVx: 25;
+  maxVy = maxVy > 25? maxVy: 25;
+  maxAx = maxAx > 5? maxAx: 5;
+  maxAy = maxAy > 5? maxAy: 5;
   
   var vx_amt = (body.state.vel.x / maxVx) * 200.0;
   var vy_amt = (body.state.vel.y / maxVy) * 200.0;
@@ -222,7 +234,7 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   var ay_amt = ((body.state.acc.y + Globals.gravity[1]) / maxAy) * 100.0;
   
   var canvas = Globals.world.renderer();
-	var ctx = canvas.ctx;
+  var ctx = canvas.ctx;
   ctx.lineWidth = 3;
   
   if(vx_amt != 0)
@@ -274,22 +286,27 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
 
 // Copy global canvas into canvas for keyframe n
 function viewportToKeyCanvas(n){
+  if(n > 0) n = 1; //TODO: Map n to the appropriate keyframe index
   var canvas = $('#' + Globals.canvasId)[0].children[0];  
-	var keycanvas = $("#keyframe-" + n)[0];
-	keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
-	keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+  var keycanvas = $("#keyframe-" + n)[0];
+  keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
+  keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 }
 
+// Adds post world.render() effects including property windows, springs, vectors, and highlights.
 function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
-  if(isKeyframe && Globals.useKeyframes){ viewportToKeyCanvas(Globals.keyframe); displayVariableValues(selectedBody); }
-  else { displayElementValues(selectedBody); }
+  if(isKeyframe && Globals.useKeyframes){
+    viewportToKeyCanvas(Globals.keyframe); 
+    displayVariableValues(selectedBody); 
+  }
+  else {
+    displayElementValues(selectedBody);
+  }
   
-  //if(!Globals.didMove){
-    drawLines();
-    drawVectors();
-  //}
-  
+  drawLines();
+  drawVectors();
+
   if(selectedBody) { highlightSelection(selectedBody); }
   drawProperties();
 }
@@ -297,17 +314,17 @@ function postRender(isKeyframe){
 // Sets the world state to the currently selected frame and renders it.
 function drawMaster(){
   var world = Globals.world;
-	var frame = Globals.frame;
-	var keyframe = Globals.keyframe;
+  var frame = Globals.frame;
+  var keyframe = Globals.keyframe;
   
   if((keyframe || keyframe === 0) && Globals.useKeyframes){
     setStateKF(keyframe);
     world.render();
     postRender(true);
   }
-  else if(frame === 0 || frame) {    
+  else if(frame === 0 || frame) {
     setState(frame);
     world.render();
     postRender(false);
-  } 
+  }
 }
