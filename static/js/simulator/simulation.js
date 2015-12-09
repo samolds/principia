@@ -238,22 +238,38 @@ function onPropertyChanged(property, value, doSimulate){
  
   // Attempt to update the corresponding variable
   if(Globals.useKeyframes) updateVariable(body, property, value);
- 
-  if(property == 'gravityx')
-    Globals.gravity[0] = valuef;        
-  if(property == 'gravityy')      
-    Globals.gravity[1] = valuef;
 
+  
+  
+  if(!isNaN(valuef))
+  {
+    if(property == 'gravityx')
+      Globals.gravity[0] = valuef;        
+    if(property == 'gravityy')      
+      Globals.gravity[1] = valuef;
+  }
+
+  var canvas = document.getElementById('viewport');
+  var canvas2d = canvas.children[0].getContext('2d');
   if (body) {
     switch(property)
     {    
       case 'posx':
-        body.state.pos.x = valuef;
-        kState[i].pos.x = valuef;
+
+        if(isNaN(valuef))
+          body2Constant(body).alpha = 0.5;
+        else {                    
+          body.state.pos.x = valuef;          
+          kState[i].pos.x = valuef;
+        }
         break;
       case 'posy':
-        body.state.pos.y = valuef;
-        kState[i].pos.y = valuef;      
+        if(isNaN(valuef))
+          body2Constant(body).alpha = 0.5;
+        else {
+          body.state.pos.y = valuef;
+          kState[i].pos.y = valuef;
+        }
         break;
       case 'velx':
         kState[i].vel.x = valuef;
@@ -288,6 +304,10 @@ function onPropertyChanged(property, value, doSimulate){
         Globals.bodyConstants[i][property] = value;
         break;
     }
+    
+    if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
+      delete Globals.bodyConstants[i].alpha;
+    
   }
   
   // Rerun the simulation using updated properties if not using keyframes

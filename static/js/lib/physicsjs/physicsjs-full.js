@@ -11012,6 +11012,7 @@ Physics.renderer('canvas', function( proto ){
             ctx.translate( x, y );
             ctx.rotate( ang );
             ctx.translate( os._[0], os._[1] );
+            ctx.globalAlpha = body2Constant(body).alpha? body2Constant(body).alpha: 1.0; // Added by Madadasa
             ctx.drawImage(view, -view.width/2, -view.height/2, view.width, view.height);
             ctx.restore();
         },
