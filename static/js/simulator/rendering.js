@@ -63,6 +63,7 @@ function displayElementValues(bod){
     $('#properties-acceleration-x').val(st.acc.x.toFixed(precision));
     $('#properties-acceleration-y').val(st.acc.y.toFixed(precision));
     $('#properties-mass').val(constants.mass);
+    $('#properties-size').val(constants.size);
     $('#properties-nickname').val(constants.nickname);
     if (constants.nickname) {
       $('#properties-nickname-title').text(constants.nickname + " ");
@@ -71,11 +72,13 @@ function displayElementValues(bod){
     }
     
     if(constants.ctype == "kinematics1D-mass"){
-      $('#properties-img')[0].classList.remove("hide");
+      $('#properties-img-container')[0].classList.remove("hide");
+      $('#properties-size-container')[0].classList.remove("hide");
     }
     else {
       if(!$('#properties-img')[0].classList.contains("hide")){
-        $('#properties-img')[0].classList.add("hide");
+        $('#properties-img-container')[0].classList.add("hide");
+        $('#properties-size-container')[0].classList.add("hide");
       }
     }
     
@@ -88,8 +91,8 @@ function displayElementValues(bod){
     $('#properties-acceleration-y').val("");
     $('#properties-mass').val("");
     $('#properties-name').val("");
-    $('#properties-nickname-title').text("");
-    $('#properties-img')[0].classList.add("hide");
+    $('#properties-size').val("");
+    $('#properties-nickname-title').text("");    
   }
 }
 
@@ -216,6 +219,7 @@ function drawVectors(){
   }
   
   for(var i=0; i < bodies.length; i++){
+    if(!Globals.bodyConstants[i].vectors) continue;
     drawVectorLine(bodies[i], maxVx, maxVy, maxAx, maxAy);
   } 
 }
@@ -302,6 +306,11 @@ function postRender(isKeyframe){
   }
   else {
     displayElementValues(selectedBody);
+  }
+  
+  if(selectedBody){
+    var checkbox = document.getElementById('vector-checkbox');
+    checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].vectors;
   }
   
   drawLines();

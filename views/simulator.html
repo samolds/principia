@@ -127,8 +127,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="input-field col s6"> 
-                    <h7>Element image:</h7>
+                  <div class="input-field col s6" id="properties-img-container">                     
                     <select id="properties-img" class="browser-default">
                       <option disabled>Display As:</option>
                       <option value="0" selected="selected">Logo</option>
@@ -142,19 +141,26 @@
                       <option value="8">Matthew</option>
                       <option value="9">Sam</option>                      
                     </select>
+                    <label for="properties-img" class="active">Display As</label>
                   </div>
+                  <div class="input-field col s6" id="properties-size-container" class="">
+                    <input type="text" id="properties-size" placeholder=""></input>
+                    <label for="properties-size" class="active">Size</label>
+                  </div>
+                </div>
+                <div class="row">
                   <div class="intput-field col s6">
-                  </br>
-                    <h7>Show Vectors</h7>
-                    <div class="switch">
-                      <label>
-                        Off
-                        <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
-                        <span class="lever" ></span>
-                        On
-                      </label>
+                    </br>
+                      <h7>Show Vectors</h7>
+                      <div class="switch">
+                        <label>
+                          Off
+                          <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+                          <span class="lever" ></span>
+                          On
+                        </label>
+                      </div>
                     </div>
-                  </div>
                 </div>
               </div>
             </div>

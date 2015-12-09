@@ -42,7 +42,9 @@ function addSpring(data)
   
   bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
   bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
+  bodyConstants[bodyConstants.length-1].vectors = false;
   bodyConstants[bodyConstants.length-2].k = 0.01;
+  bodyConstants[bodyConstants.length-2].vectors = false;
   
   updateKeyframes([component, componentChild]);
   

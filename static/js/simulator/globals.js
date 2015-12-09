@@ -66,9 +66,6 @@ var Globals = {
   // x0, xf, v0, vf, a (for kinematics, need to update later with y values plus other unknowns?)
   variableMap: [],
 
-  // For each body, contains a 2-array indicating whether to draw velocity and/or acceleration vectors
-  vectorDrawing: [],
-
   // Equation solver for currently loaded module
   // Current approach: Using eq-solver library, which uses eval function and map of variables to equations used to solve them
   // Generate frames when there are no unknowns left, gives up if an iteration doesn't update any variables

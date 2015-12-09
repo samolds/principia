@@ -239,6 +239,11 @@ function onPropertyChanged(property, value, doSimulate){
   // Attempt to update the corresponding variable
   if(Globals.useKeyframes) updateVariable(body, property, value);
  
+  if(property == 'gravityx')
+    Globals.gravity[0] = valuef;        
+  if(property == 'gravityy')      
+    Globals.gravity[1] = valuef;
+
   if (body) {
     switch(property)
     {    
@@ -262,12 +267,6 @@ function onPropertyChanged(property, value, doSimulate){
       case 'accy':
         kState[i].acc.y = valuef;
         break;
-      case 'gravityx':
-        Globals.gravity[0] = valuef;
-        break;
-      case 'gravityy':
-        Globals.gravity[1] = valuef;
-        break;
       case 'image':
         var img = document.createElement("img");
         img.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
@@ -278,7 +277,8 @@ function onPropertyChanged(property, value, doSimulate){
         Globals.bodyConstants[i].img = valuef;
         return;      
       case 'size':
-        Globals.bodyConstants[i]["size"] = value;
+        if(valuef < 50 || valuef > 500 || isNaN(valuef)) valuef = 100;
+        Globals.bodyConstants[i]["size"] = valuef;
         body.view.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
         body.view.setAttribute("height", Globals.bodyConstants[i].size/100 * 50);
         body.radius = Globals.bodyConstants[i].size/100 * 25;
@@ -300,9 +300,7 @@ Physics.integrator('principia-integrator', function( parent ){
   // Velocity increases by acceleration * dt
   integrateVelocities: function( bodies, dt ){
     
-    // TODO: Apply forces to modify acceleration before integrating velocity
-    
-    
+    // TODO: Apply forces to modify acceleration before integrating velocity    
     for ( var i = 0, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
       var spring_a = applySpringForces(body);

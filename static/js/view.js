@@ -7,11 +7,15 @@ $(document).ready(function(){
 function showVectors() {
   var checkbox = document.getElementById('vector-checkbox');
   if( checkbox.checked)
-  {
+  {    
     //show vectors;
+    Globals.bodyConstants[bIndex(Globals.selectedBody)].vectors = true;
   }
   else
   {
     //dont show vectors;
+    Globals.bodyConstants[bIndex(Globals.selectedBody)].vectors = false;
   }
+  
+  drawMaster();
 }

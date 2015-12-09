@@ -103,6 +103,7 @@ function initWorld() {
   
       world.on('interact:poke', function( data ){        
         Globals.selectedBody = false;
+        document.getElementById("toolbox-tab").click();
         drawMaster();
       });
       

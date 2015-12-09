@@ -104,6 +104,9 @@ function initWorld() {
   
       world.on('interact:poke', function( data ){        
         Globals.selectedBody = false;
+        
+        // TODO: Switch tabs and disable element tab until body is selected?
+        document.getElementById("toolbox-tab").click();
         drawMaster();
       });
       
