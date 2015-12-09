@@ -62,8 +62,8 @@ function attemptSimulation(){
         Globals.timelineReady = false;
         return;
       }
-      
-      //Globals.keyframeTimes[1] = results[1]["t"];
+  
+      Globals.keyframeTimes[1] = results[1]["t"];
       Globals.totalFrames = results[1]["t"]/Globals.world.timestep();
     }  
     
