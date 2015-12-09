@@ -43,7 +43,8 @@ function initWorld() {
             break;
         }
       
-        simulate();
+        if(data.blockSimulation == 'undefined' || !data.blockSimulation)
+          simulate();
         drawMaster();
       });
   
@@ -161,7 +162,7 @@ function initWorld() {
       var type = tempBC[i].ctype;
       var x = tempKF[0][i].pos._[0];
       var y = tempKF[0][i].pos._[1];
-      var data = { 'type': type, 'x': x, 'y': y};
+      var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
       if(type != "kinematics1D-spring-child")
         Globals.world.emit('addComponent', data);
       Globals.bodyConstants[i] = tempBC[i];
