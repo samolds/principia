@@ -43,9 +43,11 @@ function initWorld() {
             break;
         }
       
-        if(data.blockSimulation == 'undefined' || !data.blockSimulation)
+        if(data.blockSimulation == 'undefined' || !data.blockSimulation) {
           simulate();
-        drawMaster();
+          drawMaster();
+        }
+          
       });
   
       // constrain objects to these bounds
