@@ -104,7 +104,22 @@ function selectKeyframe(event){
   $("#" + "keyframe-0").attr("style","");
   $("#" + "keyframe-1").attr("style","");
   $("#" + event.target.id).attr("style","border:4px solid #0000cc");
-  
+ 
+  if(frame == 0){
+    for(var i=0; i<Globals.world.getBodies().length; i++)
+      if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
+        delete Globals.bodyConstants[i].alpha;
+      else
+        Globals.bodyConstants[i].alpha = 0.5;
+  }
+  else{
+    for(var i=0; i<Globals.world.getBodies().length; i++)
+      if(!isNaN(Globals.variableMap[i].xf) && !isNaN(Globals.variableMap[i].yf))
+        delete Globals.bodyConstants[i].alpha;
+      else
+        Globals.bodyConstants[i].alpha = 0.5;
+  }
+   
   // Draw master will set state appropriately and display it
 	drawMaster();
 }

@@ -16,8 +16,17 @@
   Kinematics1D.initModule();
 </script>
 
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/view.js"></script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
 {{ end }}
 
 {{ define "content" }}
@@ -228,7 +237,7 @@
               <div class="col s6">
                 <h6>Solution details:</h6>
                 <div class="row solution-details-container" style="overflow:auto;">
-                  <p id="solution-details" style="white-space: pre-wrap;"></p>
+                  <p id="solution-details" style="white-space: pre-wrap;"></p>                  
                 </div>
               </div>
             </div>

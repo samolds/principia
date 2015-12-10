@@ -41,6 +41,9 @@ function attemptSimulation(){
   
     // Solve for unknowns, store results
     var results = solver.solve(variables);
+    
+    // Update format of solution details
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
   
     if(!results[0])
     {
@@ -83,6 +86,9 @@ function attemptSimulation(){
       keyframeStates[0][i]["acc"]["x"] = results[1]["ax"];
       keyframeStates[1][i]["acc"]["y"] = results[1]["ay"];
       keyframeStates[1][i]["acc"]["y"] = results[1]["ay"];
+      
+      if(Globals.bodyConstants[i].alpha)
+        delete Globals.bodyConstants[i].alpha;
     }
   }
   
@@ -304,14 +310,16 @@ function onPropertyChanged(property, value, doSimulate){
         Globals.bodyConstants[i][property] = value;
         break;
     }
-    
-    if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
-      delete Globals.bodyConstants[i].alpha;
-    
   }
   
   // Rerun the simulation using updated properties if not using keyframes
-  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) simulate();  
+  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
+    delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
+    simulate();  
+  }
+  
+  if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
+     delete Globals.bodyConstants[i].alpha;
 }
 
 // Custom integrator: On each iteration, updates velocity then position of each component

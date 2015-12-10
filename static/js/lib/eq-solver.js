@@ -87,13 +87,16 @@ var Solver = (function () {
                   if (result) {
                     solved++;
                     // TODO: Fire solved event: which equation was used/what was solved for
-                    var msg = "Solved for " + eq + ", it is " + result + "!\n";
+                    var msg = "Solved for " + this.extras[eq].name + ", it is " + result.toFixed(precision) + "!\n";
                     msg += "Try " + this.extras[eq].pretty[i] + ".\n";
                     msg += "You can use some of the values you already know:\n";
                     
                     var variables = this.extras[eq].vars[i];
                     for(var j=0; j<variables.length; j++)
-                      msg += this.extras[eq].vars[i][j] + " = " + eval(this.extras[eq].vars[i][j]).toFixed(precision) + "\n";
+                      msg += this.extras[eq].prettyvars[i][j] + " = " + eval(this.extras[eq].vars[i][j]).toFixed(precision) + "\n";
+                    
+                    msg += "\n\n";
+                    
                     $("#solution-details")[0].textContent += msg;
                     
                     changed = true;
