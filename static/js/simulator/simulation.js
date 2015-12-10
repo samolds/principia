@@ -313,7 +313,10 @@ function onPropertyChanged(property, value, doSimulate){
   }
   
   // Rerun the simulation using updated properties if not using keyframes
-  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) simulate();  
+  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
+    delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
+    simulate();  
+  }
   
   if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
      delete Globals.bodyConstants[i].alpha;
