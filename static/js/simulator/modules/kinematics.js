@@ -134,79 +134,101 @@ function initWorld() {
     {
       xf:
       {
+        name:'$x_f$',
         eq:['x0 + vx0*t + 0.5*ax*t^2'],
-        pretty:[' using the kinematic equation xf = x + vx*t + 1/2*ax*t^2 '], 
-        vars:[['x0','vx0','ax','t']]
+        pretty:[' using the kinematic equation $x_f = x_0 + {v_x}_0*t + 1/2*a_x*t^2$ '], 
+        vars:[['x0','vx0','ax','t']],
+        prettyvars:[['$x_0$', '${v_x}_0$', '$a_x$', '$t$']]
       },
       
       yf:
       {
+        name:'$y_f$',
         eq:['y0 + vy0*t + 0.5*ay*t^2'],
-        pretty:[' using the kinematic equation yf = y + vy*t + 1/2*ay*t^2 '], 
-        vars:[['y0','vy0','ay','t']]
+        pretty:[' using the kinematic equation y_f = y_0 + v_y*t + 1/2*a_y*t^2 '], 
+        vars:[['y0','vy0','ay','t']],
+        prettyvars:[['$y_0$', '${v_y}_0$', '$a_y$', '$t$']]
       },
       
       vxf:
       {
+        name:'${v_x}_f$',
         eq:['vx0 + ax*t'],
-        pretty:[' using the kinematic equation vxf = vx + ax*t '],
-        vars:[['vx0','ax','t']]
+        pretty:[' using the kinematic equation ${v_x}_f = v_x + a_x*t$ '],
+        vars:[['vx0','ax','t']],
+        prettyvars:[['${v_x}_0$','$a_x$','$t$']]
       },
       
       vyf:
       {
+        name:'${v_y}_f$',
         eq:['vy0 + ay*t'],
-        pretty:[' using the kinematic equation vyf = vy + ay*t '],
-        vars:[['vy0','ay','t']]
+        pretty:[' using the kinematic equation ${v_y}_f = v_y + a_y*t$ '],
+        vars:[['vy0','ay','t']],
+        prettyvars:[['${v_y}_0$','$a_y$','$t$']]
       },
       
       vx0:
       {
+        name:'${v_x}_0$',
         eq:['vxf-ax*t'],
-        pretty:[' rearranging the kinematic equation vxf = vx + a*t'],
-        vars:[['vxf','ax','t']]
+        pretty:[' rearranging the kinematic equation {v_x}_f = v_x + a*t'],
+        vars:[['vxf','ax','t']],
+        prettyvars:[['${v_x}_f$','$a_x$','$t$']]
       },
       
       vy0:
       {
+        name:'${v_y}_0$',
         eq:['vyf-ay*t'],
-        pretty:[' rearranging the kinematic equation vyf = vy + a*t'],
-        vars:[['vyf','ay','t']]
+        pretty:[' rearranging the kinematic equation ${v_y}_f = v_y + a_y*t$'],
+        vars:[['vyf','ay','t']],
+        prettyvars:[['${v_y}_f$','$a_y$','$t$']]
       },
       
       x0:
       {
+        name:'$x_0$',
         eq:['xf-vx0*t-0.5*ax*t^2'],
-        pretty:[' rearranging the kinematic equation xf = x + vx*t + 1/2*ax*t^2 '],
-        vars:[['xf','vx0','t','ax']]
+        pretty:[' rearranging the kinematic equation $x_f = x + v_x*t + 1/2 a_x*t^2$ '],
+        vars:[['xf','vx0','t','ax']],
+        prettyvars:[['$x_f$','${v_x}_0$','$t$','$a_x$']]
       },
       
       y0:
       {
+        name:'${y_0}_f$',
         eq:['yf-vy0*t-0.5*ay*t^2'],
-        pretty:[' rearranging the kinematic equation yf = y + vy*t + 1/2*ay*t^2 '],
-        vars:[['yf','vy0','t','ay']]
+        pretty:[' rearranging the kinematic equation $y_f = y + v_y*t + 1/2 a_y*t^2$ '],
+        vars:[['yf','vy0','t','ay']],
+        prettyvars:[['$y_f$','${v_y}_0$','$t$','$a_y$']]
       },
       
       t:
       {
+        name:'$t$',
         eq:['(vxf-vx0)/ax', '(vyf-vy0)/ay'],
-        pretty:[' rearranging the kinematic equation vf = v + a*t ', ' rearranging the kinematic equation vf = v + a*t '],
-        vars:[['vxf','vx0','ax'],['vyf','vy0','ay']]
+        pretty:[' rearranging the kinematic equation ${v_x}_f = {v_x}_0 + a_x*t$ ', ' rearranging the kinematic equation ${v_y}_f = {v_y}_0 + a_y*t$ '],
+        vars:[['vxf','vx0','ax'],['vyf','vy0','ay']],
+        prettyvars:[['${v_x}_f$','${v_x}_0$','$a_x$'],['${v_y}_f$','${v_y}_0$','$a_y$']]
       },
       
       ax:
       {
+        name:'$a_x$',
         eq:['(vxf-vx0)/t'],
-        pretty:[' rearranging the kinematic equation vxf = vx + ax*t '],
-        vars:[['vxf','vx0','t']]
+        pretty:[' rearranging the kinematic equation ${v_x}_f = v_x + a_x*t$ '],
+        vars:[['vxf','vx0','t']],
+        vars:[['${v_x}_f$','${v_x}_0$','$t$']]
       },
       
       ay:
       {
+        name:'$a_y$',
         eq:['(vyf-vy0)/t'],
-        pretty:[' rearranging the kinematic equation vyf = vy + ay*t '],
-        vars:[['vyf','vy0','t']]
+        pretty:[' rearranging the kinematic equation ${v_y}_f = v_y + a_y*t$ '],
+        vars:[['vyf','vy0','t']],
+        prettyvars:[['${v_y}_f$','${v_y}_0$','$t$']]
       }      
     });
     
