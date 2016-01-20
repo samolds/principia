@@ -35,7 +35,8 @@ func validPath(path string, name string) bool {
 	return true
 }
 
-func errorHandler(w http.ResponseWriter, buffer *bytes.Buffer, errMsg string, status int) {
+func errorHandler(w http.ResponseWriter, errMsg string, status int) {
+	var buffer bytes.Buffer
 	buffer.Reset()
 	w.WriteHeader(status)
 
@@ -43,21 +44,21 @@ func errorHandler(w http.ResponseWriter, buffer *bytes.Buffer, errMsg string, st
 		"title":  status,
 		"errMsg": errMsg,
 	}
-	err := templates["error"].ExecuteTemplate(buffer, baseName, data)
+	err := templates["error"].ExecuteTemplate(&buffer, baseName, data)
 
 	if err != nil {
 		buffer.Reset()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	io.Copy(w, buffer)
+	io.Copy(w, &buffer)
 }
 
 func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[string]interface{}) {
 	var buffer bytes.Buffer
 
 	if !validPath(r.URL.Path, templ) {
-		errorHandler(w, &buffer, "Not Found!", http.StatusNotFound)
+		errorHandler(w, "Not Found!", http.StatusNotFound)
 		return
 	}
 
@@ -91,7 +92,7 @@ func baseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
 	if err != nil {
-		errorHandler(w, &buffer, err.Error(), http.StatusInternalServerError)
+		errorHandler(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

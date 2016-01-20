@@ -36,6 +36,9 @@ function post(path, parameters) {
 
 }
 
+// Saves the simulation, whether new or existing
+// if a new simulation it does NOT use ajax to allow
+// for a page redirect to simulator/{simulatorId}
 function saveSimulation(){
 
     simObject = { Name: $("#simulation-name").val(), Contents: exportToJson() };
@@ -46,7 +49,13 @@ function saveSimulation(){
         post(window.location.href, simObject);
     } else {
         // Updating an existing simulation
-        $.post(window.location.href, simObject);
+        $.post(window.location.href, simObject)
+        .done(function() { 
+            debugger;
+            // I believe 'done' is synonymous with 'success' here
+            $("#save-button").removeClass( "blue" )
+            $("#save-button").removeClass( "green" )
+      });
     } 
 
     losefocus();
@@ -65,6 +74,8 @@ function losefocus() {
 
 }
 
+// Save new comment to the datastore
+// and refresh the comment list
 function saveComment() {
 
     commentObj = { Contents: $("#comment-contents").val() };
@@ -79,6 +90,8 @@ function saveComment() {
 
 }
 
+// Called after saveComment() has finished
+// posting a new comment OR on initial page load
 function refreshCommentsList() {
 
     $.get(window.location.href + "/comments", function( json ) {
@@ -109,6 +122,8 @@ function refreshCommentsList() {
 
 }
 
+// Determines from the url if the simulation
+// is a new simulation or an existing simulation
 function isNewSim(){
     var re = new RegExp('\/simulator$');
     return re.test(window.location.href);
