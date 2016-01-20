@@ -320,6 +320,13 @@ function onPropertyChanged(property, value, doSimulate){
   
   if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
      delete Globals.bodyConstants[i].alpha;
+
+   resetSaveButton();
+}
+
+function resetSaveButton(){
+  $("#save-button").removeClass( "green" )
+  $("#save-button").addClass( "blue" )
 }
 
 // Custom integrator: On each iteration, updates velocity then position of each component

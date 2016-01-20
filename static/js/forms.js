@@ -51,10 +51,9 @@ function saveSimulation(){
         // Updating an existing simulation
         $.post(window.location.href, simObject)
         .done(function() { 
-            debugger;
             // I believe 'done' is synonymous with 'success' here
             $("#save-button").removeClass( "blue" )
-            $("#save-button").removeClass( "green" )
+            $("#save-button").addClass( "green" )
       });
     } 
 

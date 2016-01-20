@@ -34,6 +34,8 @@ function handleDragStop(event, ui){
   var data = { 'type': type, 'x': cx-vleft, 'y': cy-vtop};
 
   Globals.world.emit('addComponent', data);
+
+  resetSaveButton();
 }
 
 // Scrubs to selected frame
