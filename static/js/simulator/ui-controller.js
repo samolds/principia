@@ -13,6 +13,38 @@ $(".draggable").draggable({
     appendTo: 'body'
 });
 
+// Defines drag event for ui-draggable-classed components
+$(".ui-draggable").draggable({
+    cursor: 'move',
+    containment: $(Globals.canvasId),
+    scroll: false,
+    stop: handleUIDragStop,
+    helper: 'clone',
+    appendTo: 'body'
+});
+
+// Event fired when user is done dragging component from toolbox
+function handleUIDragStop(event, ui){
+  // Left and top of helper img
+  var left = ui.offset.left;
+  var top = ui.offset.top;
+  
+  var width = event.target.width;
+  var height = event.target.height;
+  var cx = left + width / 2;
+  var cy = top + height / 2;
+
+  // Left and top of canvas window
+  var vleft = $("#" + Globals.canvasId).position().left;
+  var vtop = $("#" + Globals.canvasId).position().top;
+
+  var data = { 'x': cx-vleft, 'y': cy-vtop};
+
+  console.log("Origin:" + data.x + ", " + data.y  );
+  $("#glob-xorig").val(data.x) ; 
+  $("#glob-yorig").val(data.y) ;
+}
+
 // Event fired when user is done dragging component from toolbox
 function handleDragStop(event, ui){
   if(!Globals.canAdd()) return;
@@ -138,4 +170,15 @@ function toggleGlobalProp(){
 function updatePropertyRedraw(property, value){
   onPropertyChanged(property, value, true);
   drawMaster();
+}
+
+function updateCoords(coord_sys){
+    console.log("Updated Coords" + coord_sys);
+  }
+
+function addKeyframe(){
+  console.log("Added Keyframe");
+}
+function removeKeyframe(){
+  console.log("Removed Keyframe");
 }

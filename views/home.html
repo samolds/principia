@@ -170,6 +170,39 @@
                     <label for="glob-yaccel" class="active">Vertical Acceleration</label>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="input-field col s12">        
+                    <select id="coord-sys" class="browser-default">
+                      <option disabled>Coordinate System</option>
+                      <option value="Cart" selected="selected">Cartesian</option>
+                      <option value="Polar" >Polar</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div id="toolbox">
+                    <div class="center-align">
+                      <h5 class="pad-sides">Toolbox</h5>
+                      <div class="row">
+                        <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
+                          <div class="dummy"></div>
+                          <div class="toolbox-item">
+                            <img src="/static/img/target.jpg" class="ui-draggable" width="40" >
+                          </div>
+                        </div>
+                        <div class="input-field col s4">
+                          <input type="number" id="glob-xorig" placeholder=""></input>
+                          <label for="glob-xorig" class="active">Origin X</label>
+                        </div>
+                        <div class="input-field col s4">
+                          <input type="number" id="glob-yorig" placeholder=""></input>
+                          <label for="glob-yorig" class="active">Origin Y</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+                </div>
+
               </div>
             </div>
           </div>
@@ -197,6 +230,8 @@
           <div class="col s8">
             <div class="row">
               <h5>Keyframes:</h5>
+              <a class="btn-floating btn-large waves-effect waves-light red" id="add-keyframe"><i class="material-icons">add</i></a>
+              <a class="btn-floating btn-large waves-effect waves-light red" id="remove-keyframe"><i class="material-icons">minus</i></a>
               <div class="col s6">
                 <div class="row">
                   <div class="col s6 left">

@@ -42,6 +42,8 @@ $(document).ready(function(){
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
+  $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
+  $('#remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
   
   // Events for handling updating "dt" on keyframe 1
   $('#keyframe-1-dt').on("change", function(){ 
@@ -54,5 +56,6 @@ $(document).ready(function(){
   $('#glob-xaccel').val(Globals.gravity[0]);
   $('#glob-yaccel').val(Globals.gravity[1]);  
   $('#glob-xaccel').on("change", function(){ updatePropertyRedraw('gravityx', $('#glob-xaccel').val()); }); 
-  $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', $('#glob-yaccel').val()); }); 
+  $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', $('#glob-yaccel').val()); });
+  $('#coord-sys').on("change", function(){updateCoords( $('#coord-sys').val()); }); 
 });
