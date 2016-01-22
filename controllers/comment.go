@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+// GET returns JSON all comments associated with the simId passed in the url
+// POST saves the comment to datastore with the simId as the ancestor key
 func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -53,6 +55,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := datastore.Put(c, key, &comment)
 
 		if err != nil {
+			// TODO: if posting the comment fails, display an error instead of throwing up..
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -61,6 +64,8 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Returns the key for a given simulation in the datastore
+// Used to set ancestor keys when persisting comments
 func simulationKey(c appengine.Context, simId int64) *datastore.Key {
 	return datastore.NewKey(c, "Simulation", "", simId, nil)
 }
