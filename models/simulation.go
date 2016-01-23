@@ -1,13 +1,15 @@
 package models
 
-import ()
+import (
+	"time"
+)
 
 type Simulation struct {
-	Name string
-	// Tell datastore not to index this field, increase max size
-	// from 1500 bytes to ~ 1 MB
-	Contents string `datastore:",noindex"`
-	UserID   string
-	// Tell datastore to ignore thie field
-	Id int64 `datastore:"-"`
+	Name         string
+	Contents     string `datastore:",noindex"` // Don't index this field => max size = 1MB
+	UserID       string
+	Type         string
+	CreationDate time.Time
+	UpdatedDate  time.Time
+	Id           int64 `datastore:"-"` // Ignore this field
 }

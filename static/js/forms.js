@@ -1,13 +1,10 @@
 // Load the comments initially via AJAX
 $( document ).ready(function() {
-    
-    if(!isNewSim()) {
-        refreshCommentsList();
-    }
-    else {
+    if (!isNewSim()) {
+        refreshCommentsList(globalSimulationId);
+    } else {
         $("#comment-load-gif").hide();
     }
-       
 });
 
 function post(path, parameters) {
@@ -33,7 +30,6 @@ function post(path, parameters) {
     // order for us to be able to submit it.
     $(document.body).append(form);
     form.submit();
-
 }
 
 // Saves the simulation, whether new or existing
@@ -75,26 +71,23 @@ function losefocus() {
 
 // Save new comment to the datastore
 // and refresh the comment list
-function saveComment() {
-
+function saveComment(simulationId) {
     commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
-    $.post( window.location.href + "/comments", commentObj)
+    $.post("/api/simulator/" + simulationId + "/comments", commentObj)
       .done(function( data ) { 
-        refreshCommentsList();
+        refreshCommentsList(simulationId);
         // Reset the comment box text
         $("#comment-contents").val("");
       });
-
 }
 
 // Called after saveComment() has finished
 // posting a new comment OR on initial page load
-function refreshCommentsList() {
+function refreshCommentsList(simulationId) {
 
-    $.get(window.location.href + "/comments", function( json ) {
-        
+    $.get("/api/simulator/" + simulationId + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
 
@@ -124,7 +117,5 @@ function refreshCommentsList() {
 // Determines from the url if the simulation
 // is a new simulation or an existing simulation
 function isNewSim(){
-    var re = new RegExp('\/simulator$');
-    return re.test(window.location.href);
-
+  return globalSimulationId == null;
 }

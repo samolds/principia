@@ -1,0 +1,19 @@
+{{ define "title" }} - Browse Simulations{{ end }}
+
+{{ define "content" }}
+<div class="container narrow">
+  <div class="card-panel z-depth-5">
+    <h3 class="page-header">Browse Simulations</h3>
+    {{ if .Data.topSimulations }}
+      <ul>
+        {{ range $simulation := .Data.topSimulations }}
+          <li><a href="/simulator/{{ $simulation.Type }}/{{$simulation.Id}}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <p>Nothing?!</p>
+      <p>😔 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠</p>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

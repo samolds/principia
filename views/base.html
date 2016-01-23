@@ -18,7 +18,7 @@
     <header>
       <nav id="nav" class="grey darken-3" role="navigation">
         <div class="nav-wrapper main-container">
-          <a id="logo-container" class="brand-logo left" href="/"><img id="logo" src="/static/img/logo/principia-invert.png"></a>
+          <a id="logo-container" class="brand-logo left" href="/"><img id="nav-bar-principia-logo" src="/static/img/logo/principia-invert.png"></a>
           <ul class="right hide-on-med-down">
             <li>
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">
@@ -40,7 +40,8 @@
       <!-- Dropdown Structure -->
       <ul id="myPrincipiaDropdown" class="dropdown-content grey darken-4" role="navigation">
         {{ if .CurrentUser }}
-          <li class="grey darken-3"><a class="white-text" href="#">My Profile</a></li>
+          <li class="grey darken-3"><a class="white-text" href="#/user/{{ .CurrentUser.ID }}">My Profile</a></li>
+          <li class="grey darken-3"><a class="white-text" href="/user/{{ .CurrentUser.ID }}/simulations">My Simulations</a></li>
           <li class="divider grey darken-3 white-text"></li>
         {{ end }}
         <li class="grey darken-3"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
@@ -48,12 +49,9 @@
 
       <!-- Dropdown Structure -->
       <ul id="simulatorDropdown" class="dropdown-content grey darken-4" role="navigation">
-        <li class="grey darken-3"><a class="white-text" href="/simulator">Sandbox</a></li>
-        <li class="grey darken-3"><a class="white-text" href="/">Kinematics</a></li>
-        {{ if .CurrentUser }}
-          <li class="grey darken-3"><a class="white-text" href="/simulator/user/{{.CurrentUser.ID}}">My Simulations</a></li>
-        {{ end }}
-        <li class="grey darken-3"><a class="white-text" href="/simulator/all">All Simulations</a></li>
+        <li class="grey darken-3"><a class="white-text" href="/simulator/sandbox">Sandbox</a></li>
+        <li class="grey darken-3"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
+        <li class="grey darken-3"><a class="white-text" href="/simulator/browse">All Simulations</a></li>
       </ul>
     </header>
 
@@ -63,13 +61,13 @@
       {{ template "content" . }}
     </main>
 
-    <footer class="page-footer grey darken-3">
+    <footer class="page-footer transparent-navbar">
       <div class="container">
         <div class="row">
           <span class="pad-sides"><a class="white-text" href="/about">About</a></span>
           <span class="pad-sides"><a class="white-text" href="/faqs">FAQs</a></span>
           <span class="pad-sides"><a class="white-text" href="/feedback">Feedback</a></span>
-          <span class="white-text right">&copy; 2015 Principia</span>
+          <span class="white-text right">&copy; 2015 - 2016 Principia</span>
         </div>
       </div>
     </footer>
