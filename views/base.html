@@ -40,7 +40,7 @@
       <!-- Dropdown Structure -->
       <ul id="myPrincipiaDropdown" class="dropdown-content grey darken-4" role="navigation">
         {{ if .CurrentUser }}
-          <li class="grey darken-3"><a class="white-text" href="#/user/{{ .CurrentUser.ID }}">My Profile</a></li>
+          <li class="grey darken-3"><a class="white-text" href="/user/{{ .CurrentUser.ID }}">My Profile</a></li>
           <li class="grey darken-3"><a class="white-text" href="/user/{{ .CurrentUser.ID }}/simulations">My Simulations</a></li>
           <li class="divider grey darken-3 white-text"></li>
         {{ end }}

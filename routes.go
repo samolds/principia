@@ -32,7 +32,7 @@ func init() {
 	//router.HandleFunc("/simulator/kinematics/{simulatorId:[0-9]+}", simulator.EditKinematicsHandler)
 
 	// User pages
-	//router.HandleFunc("/user/{userId:[0-9]+}", controllers.UserProfileHandler)
+	router.HandleFunc("/user/{userId:[0-9]+}", user.UserProfileHandler)
 	router.HandleFunc("/user/{userId:[0-9]+}/simulations", user.AllSimulationsHandler)
 
 	// API Endpoint (Returns JSON)

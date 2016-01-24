@@ -40,3 +40,10 @@ func AllSimulationsHandler(w http.ResponseWriter, r *http.Request) {
 
 	controllers.BaseHandler(w, r, "user/allSimulations", data)
 }
+
+func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
+	data := map[string]interface{}{
+		
+	}
+	controllers.BaseHandler(w, r, "user/profile", data)
+}
