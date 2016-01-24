@@ -243,10 +243,8 @@ function onPropertyChanged(property, value, doSimulate){
   var valuef = parseFloat(value);
  
   // Attempt to update the corresponding variable
-  if(Globals.useKeyframes) updateVariable(body, property, value);
+  if(Globals.useKeyframes && body) updateVariable(body, property, value);
 
-  
-  
   if(!isNaN(valuef))
   {
     if(property == 'gravityx')
@@ -314,11 +312,14 @@ function onPropertyChanged(property, value, doSimulate){
   
   // Rerun the simulation using updated properties if not using keyframes
   if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
-    delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
+    
+    if(Globals.bodyContants[i].alpha)
+      delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
+    
     simulate();  
   }
   
-  if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "")
+  if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
      delete Globals.bodyConstants[i].alpha;
 }
 

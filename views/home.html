@@ -80,11 +80,11 @@
                 <div class="row">
                   <div class="input-field col s6">
                     <input type="number" id="properties-position-x" placeholder=""></input>
-                    <label for="properties-position-x" class="active">X Position</label>
+                    <label for="properties-position-x" class="active" id="x-position-label">X Position</label>
                   </div>
                   <div class="input-field col s6">
                     <input type="number" id="properties-position-y" placeholder=""></input>
-                    <label for="properties-position-y" class="active">Y Position</label>
+                    <label for="properties-position-y" class="active" id="y-position-label">Y Position</label>
                   </div>
                 </div>
                 <div class="row">
@@ -174,8 +174,8 @@
                   <div class="input-field col s12">        
                     <select id="coord-sys" class="browser-default">
                       <option disabled>Coordinate System</option>
-                      <option value="Cart" selected="selected">Cartesian</option>
-                      <option value="Polar" >Polar</option>
+                      <option value="cartesian" selected="selected">Cartesian</option>
+                      <option value="polar" >Polar</option>
                     </select>
                   </div>
                 </div>
@@ -191,12 +191,12 @@
                           </div>
                         </div>
                         <div class="input-field col s4">
-                          <input type="number" id="glob-xorig" placeholder=""></input>
-                          <label for="glob-xorig" class="active">Origin X</label>
+                          <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
+                          <label for="glob-xorigin" class="active">Origin X</label>
                         </div>
                         <div class="input-field col s4">
-                          <input type="number" id="glob-yorig" placeholder=""></input>
-                          <label for="glob-yorig" class="active">Origin Y</label>
+                          <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
+                          <label for="glob-yorigin" class="active">Origin Y</label>
                         </div>
                       </div>
                     </div>
@@ -228,7 +228,7 @@
         <div class="row">
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
           <div class="col s8">
-            <div class="row">
+            <div class="row" id="keyframes">
               <h5>Keyframes:</h5>
               <a class="btn-floating btn-large waves-effect waves-light red" id="add-keyframe"><i class="material-icons">add</i></a>
               <a class="btn-floating btn-large waves-effect waves-light red" id="remove-keyframe"><i class="material-icons">minus</i></a>

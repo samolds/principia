@@ -3,16 +3,6 @@
   This file contains functions and event handlers for interacting with UI elements.
 */
 
-// Defines drag event for draggable-classed components
-$(".draggable").draggable({
-	  cursor: 'move',
-	  containment: $(Globals.canvasId),
-	  scroll: false,
-	  stop: handleDragStop,
-	  helper: 'clone',
-    appendTo: 'body'
-});
-
 // Defines drag event for ui-draggable-classed components
 $(".ui-draggable").draggable({
     cursor: 'move',
@@ -23,7 +13,18 @@ $(".ui-draggable").draggable({
     appendTo: 'body'
 });
 
-// Event fired when user is done dragging component from toolbox
+// Defines drag event for draggable-classed components
+$(".draggable").draggable({
+	  cursor: 'move',
+	  containment: $(Globals.canvasId),
+	  scroll: false,
+	  stop: handleDragStop,
+	  helper: 'clone',
+    appendTo: 'body'
+});
+
+
+// Event fired when user is done dragging component that is not part of PhysicJS world (origin target)
 function handleUIDragStop(event, ui){
   // Left and top of helper img
   var left = ui.offset.left;
@@ -41,8 +42,11 @@ function handleUIDragStop(event, ui){
   var data = { 'x': cx-vleft, 'y': cy-vtop};
 
   console.log("Origin:" + data.x + ", " + data.y  );
-  $("#glob-xorig").val(data.x) ; 
-  $("#glob-yorig").val(data.y) ;
+  
+  Globals.origin = [data.x, data.y];
+  
+  $("#glob-xorigin").val(data.x) ; 
+  $("#glob-yorigin").val(data.y) ;
 }
 
 // Event fired when user is done dragging component from toolbox
@@ -62,7 +66,7 @@ function handleDragStop(event, ui){
   // Left and top of canvas window
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
-
+  
   var data = { 'type': type, 'x': cx-vleft, 'y': cy-vtop};
 
   Globals.world.emit('addComponent', data);
@@ -121,9 +125,11 @@ function toggleSimulator(){
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }
-    if(Globals.frame == Globals.totalFrames){
-      $("#keyframe-1").attr("style","border:4px solid #0000cc");
-    }
+    //from old version: assumes keyframe-1 is the last keyframe
+    // TODO delete this when fully updated
+    //if(Globals.frame == Globals.totalFrames){
+      //$("#keyframe-1").attr("style","border:4px solid #0000cc");
+    //}
   }
 }
 
@@ -168,17 +174,63 @@ function toggleGlobalProp(){
 
 // Wrapper for updating properties followed by immediate resimulate and redraw
 function updatePropertyRedraw(property, value){
+
+  // Special case for Polar coordinates
+  if(Globals.coordinateSystem == "polar"){
+    
+    // Convert from Polar input to Cartesian coordinate
+    var point;
+    if(property == "posx") {
+      other = $('#properties-position-y').val();
+      point = polar2Cartesian([value, other]);
+    }
+    else {
+      other = $('#properties-position-x').val();
+      point = polar2Cartesian([other, value]);
+    }
+    
+    // Convert back to default PhysicsJS origin
+    point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
+    
+    // Update properties within simulator, draw, and return
+    onPropertyChanged("posx", point[0], false);
+    onPropertyChanged("posy", point[1], true);
+    drawMaster();
+    return;
+  }
+
+  // Convert back to default PhysicsJS origin, update properties, and draw
+  if(property == "posx" || property == "posy")
+    value = origin2PhysicsScalar(property.slice(-1), value);    
   onPropertyChanged(property, value, true);
   drawMaster();
 }
 
 function updateCoords(coord_sys){
-    console.log("Updated Coords" + coord_sys);
+    Globals.coordinateSystem = coord_sys;
+    if(coord_sys == "cartesian"){
+      $('#x-position-label').html("X Position");
+      $('#y-position-label').html("Y Position");
+    }
+    else if(coord_sys == "polar"){
+      $('#x-position-label').html("r Position");
+      $('#y-position-label').html("Θ Position");
+    }
   }
 
 function addKeyframe(){
   console.log("Added Keyframe");
 }
+
 function removeKeyframe(){
   console.log("Removed Keyframe");
+}
+
+function updateOrigin(coordinate, value){
+  if(coordinate == "x"){
+    Globals.origin[0] = value;
+  }
+  else {
+    Globals.origin[1] = value;
+  }
 }

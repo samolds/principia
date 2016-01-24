@@ -80,6 +80,19 @@ var Globals = {
   // Function used to determine if the user is allowed to add a new component
   canAdd: function() { return true; },
 
+  // Zero-point for this simulation, object coordinates are displayed relative to this point
+  // Internally, still use PhysicsJS default coordinate system (0 is upper-left, y-axis is down)
+  origin: [0, 0],
+  
+  // False if the origin is a fixed point, otherwise the origin moves along with the object stored in this variable
+  originObject: false,
+  
+  // Coordinate system currently used (Cartesian or Polar)
+  coordinateSystem: "cartesian",
+  
+  // Number of keyframes for current simulation
+  numKeyframes: 2,
+  
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,
 

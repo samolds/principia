@@ -57,5 +57,10 @@ $(document).ready(function(){
   $('#glob-yaccel').val(Globals.gravity[1]);  
   $('#glob-xaccel').on("change", function(){ updatePropertyRedraw('gravityx', $('#glob-xaccel').val()); }); 
   $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', $('#glob-yaccel').val()); });
-  $('#coord-sys').on("change", function(){updateCoords( $('#coord-sys').val()); }); 
+  
+  // Events for handling updating the origin (w.r.t. the default coordinate space, i.e. 0,0 always means top-left)
+  $('#glob-xorigin').on("change", function(){ updateOrigin("x", $('#glob-xorigin').val()); });
+  $('#glob-yorigin').on("change", function(){ updateOrigin("y", $('#glob-yorigin').val()); });
+  
+  $('#coord-sys').on("change", function(){ updateCoords( $('#coord-sys').val()); }); 
 });
