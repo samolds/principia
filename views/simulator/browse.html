@@ -4,9 +4,9 @@
 <div class="container narrow">
   <div class="card-panel z-depth-5">
     <h3 class="page-header">Browse Simulations</h3>
-    {{ if .Data.topSimulations }}
+    {{ if .Data.sims }}
       <ul>
-        {{ range $simulation := .Data.topSimulations }}
+        {{ range $simulation := .Data.sims }}
           <li><a href="/simulator/{{ $simulation.Type }}/{{$simulation.Id}}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
         {{ end }}
       </ul>

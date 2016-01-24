@@ -21,10 +21,10 @@ func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	limit := 10
-	simulations := make([]models.Simulation, limit)
+	simulations := make([]models.Simulation, 0, limit)
 
 	c := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-Date").Limit(limit) // TODO: filter out when CreationDate is older than 7 days
+	q := datastore.NewQuery("Simulation").Order("-CreationDate").Limit(limit) // TODO: filter out when CreationDate is older than 7 days
 	keys, err := q.GetAll(c, &simulations)
 
 	if err != nil {

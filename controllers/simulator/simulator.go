@@ -17,7 +17,7 @@ import (
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		limit := 20
-		simulations := make([]models.Simulation, limit)
+		simulations := make([]models.Simulation, 0, limit)
 
 		c := appengine.NewContext(r)
 		q := datastore.NewQuery("Simulation").Order("-Name").Limit(limit)
@@ -124,11 +124,16 @@ func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
 		// Construct the simulations key
 		key := datastore.NewKey(c, "Simulation", "", id, nil)
 
-		// Update simulation contents
-		simulation = models.Simulation{Name: r.FormValue("Name"), UserID: u.ID, Contents: r.FormValue("Contents"), UpdatedDate: time.Now()}
+		// We need to get the entity and update it instead
+		// https://cloud.google.com/appengine/docs/go/datastore/entities#Go_Updating_an_entity
+		err := datastore.Get(c, key, &simulation)
+
+		simulation.Name = r.FormValue("Name")
+		simulation.Contents = r.FormValue("Contents")
+		simulation.UpdatedDate = time.Now()
 
 		// Put the simulation in the datastore
-		_, err := datastore.Put(c, key, &simulation)
+		_, err = datastore.Put(c, key, &simulation)
 
 		if err != nil {
 			// Could not place the simulation in the datastore

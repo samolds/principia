@@ -4,9 +4,9 @@
 <div class="container">
   <div class="card-panel z-depth-5">
     <h3 class="page-header">This week's Top 10 Simulations!</h3>
-    {{ if .Data.sims }}
+    {{ if .Data.topSimulations }}
       <ul>
-        {{ range $simulation := .Data.sims }}
+        {{ range $simulation := .Data.topSimulations }}
           <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.Id }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
         {{ end }}
       </ul>

@@ -71,23 +71,21 @@ function losefocus() {
 
 // Save new comment to the datastore
 // and refresh the comment list
-function saveComment(simulationId) {
+function saveComment() {
     commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
-    $.post("/api/simulator/" + simulationId + "/comments", commentObj)
+    $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
       .done(function( data ) { 
-        refreshCommentsList(simulationId);
-        // Reset the comment box text
-        $("#comment-contents").val("");
+        refreshCommentsList();
       });
 }
 
 // Called after saveComment() has finished
 // posting a new comment OR on initial page load
-function refreshCommentsList(simulationId) {
+function refreshCommentsList() {
 
-    $.get("/api/simulator/" + simulationId + "/comments", function(json) {
+    $.get("/api/simulator/" + globalSimulationId + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
 
@@ -110,6 +108,9 @@ function refreshCommentsList(simulationId) {
       $( "#comments" ).html( result );
 
       $("#comment-load-gif").hide();
+      // Reset the comment box text
+      $("#comment-contents").val("");
+
     });    
 
 }
