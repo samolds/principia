@@ -10,7 +10,12 @@
 
 .main-container {
   margin: auto;
-  width: 1200px;
+  max-width: 1400px;
+  min-width: 600px;
+}
+
+.simulator-container {
+  width: 1100px;
 }
 
 .clear {
@@ -30,7 +35,6 @@
   padding-bottom: 30px;
 }
 
-
 .pad-scrub {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -39,11 +43,24 @@
 .principia-logo {
   width: 430px;
   max-width: 100%;
+}
 
+.principia-logo-small {
+  width: 120px;
+  max-width: 100%;
 }
 
 .principia-blue {
-  background-color: #b2dfdb;
+  background-color: #0066cc;
+}
+
+.principia-blue-navbar {
+  background-color: #00001a !important;
+}
+
+/* because of materialize stupidness */
+.transparent-navbar {
+  background-color: transparent !important;
 }
 
 /* for blue links on about cards */
@@ -55,6 +72,18 @@
 
   .card-action a.dark-link-blue:hover {
     color: #29b6f6;
+  }
+/* end blue links */
+
+/* for smaller text on about cards */
+  .card .card-content .card-title,
+  .card .card-reveal .card-title {
+    font-size: 1.25em;
+    line-height: 1.25em;
+  }
+
+  .card-reveal {
+    font-size: 0.9em;
   }
 /* end blue links */
 
@@ -290,17 +319,14 @@ border: 2px solid #888;
 } 
 
 
-/*logo stuff*/
-  .logo-img {
-    height: 80px;
-    width: 30px;
-  }
-  #logo{
+/* logo stuff */
+  #nav-bar-principia-logo {
     padding: 10px;
     max-width: 100%;
     max-height: 100%;
-    height:64px;
+    height: 64px;
   }
+/* end logo stuff */
 
 /*slider color*/
 input[type=range]::-webkit-slider-thumb {
@@ -335,4 +361,17 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 .solution-details-container{
   background-color:#e0e0e0; 
   height:300px;
+}
+
+/* Profile Page */
+#profile-pic-container {
+  height: 250px; 
+  width: 70%; 
+  border: dashed 1px grey; 
+  margin:auto; 
+  border-radius: 5px
+}
+
+#profile-welcome-modal {
+  height: 200px
 }

@@ -313,7 +313,7 @@ function onPropertyChanged(property, value, doSimulate){
   // Rerun the simulation using updated properties if not using keyframes
   if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
     
-    if(Globals.bodyContants[i].alpha)
+    if(Globals.bodyConstants[i].alpha)
       delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
     
     simulate();  
@@ -321,6 +321,13 @@ function onPropertyChanged(property, value, doSimulate){
   
   if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
      delete Globals.bodyConstants[i].alpha;
+
+   resetSaveButton();
+}
+
+function resetSaveButton(){
+  $("#save-button").removeClass( "green" )
+  $("#save-button").addClass( "blue" )
 }
 
 // Custom integrator: On each iteration, updates velocity then position of each component

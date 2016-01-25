@@ -1,0 +1,44 @@
+{{ define "title" }} - Simulator{{ end }}
+
+{{ define "scripts" }}
+<script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
+<script src="/static/js/simulator/globals.js"></script>
+<script src="/static/js/simulator/simulation.js"></script>
+<script src="/static/js/simulator/ui-controller.js"></script>
+<script src="/static/js/simulator/rendering.js"></script>
+<script src="/static/js/simulator/utility.js"></script>
+<script src="/static/js/simulator/components/mass.js"></script>
+<script src="/static/js/simulator/components/spring.js"></script>
+<script src="/static/js/simulator/modules/sandbox.js"></script>
+
+<script>
+  KinematicsSandbox.initModule({{.Data.sim.Contents}});
+  var globalSimulationId = {{ .Data.sim.Id }}; // I know this is janky
+  if (!globalSimulationId) { // TODO: Clean this up. This is a temporary
+    globalSimulationId = null; // holder while refactoring.
+  }
+</script>
+
+<script src="/static/js/simulator/base.js"></script>
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/view.js"></script>
+{{ end }}
+
+{{ define "content" }}
+<div class="main-container simulator-container">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel z-depth-5">
+        {{ template "simulatorFrag" . }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ if .Data.sim.Id }}
+  <div class="main-container simulator-container">
+    {{ template "commentsFrag" . }}
+  </div>
+{{ end }}
+
+{{ end }}

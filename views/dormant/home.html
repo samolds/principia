@@ -1,0 +1,19 @@
+{{ define "title" }}{{ end }}
+
+{{ define "content" }}
+<div class="container">
+  <div class="card-panel z-depth-5">
+    <h3 class="page-header">This week's Top 10 Simulations!</h3>
+    {{ if .Data.topSimulations }}
+      <ul>
+        {{ range $simulation := .Data.topSimulations }}
+          <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.Id }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <p>No new simulations have been created this week.<br />😔 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠</p>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+

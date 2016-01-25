@@ -1,13 +1,10 @@
 // Load the comments initially via AJAX
 $( document ).ready(function() {
-    
-    if(!isNewSim()) {
-        refreshCommentsList();
-    }
-    else {
+    if (!isNewSim()) {
+        refreshCommentsList(globalSimulationId);
+    } else {
         $("#comment-load-gif").hide();
     }
-       
 });
 
 function post(path, parameters) {
@@ -33,9 +30,11 @@ function post(path, parameters) {
     // order for us to be able to submit it.
     $(document.body).append(form);
     form.submit();
-
 }
 
+// Saves the simulation, whether new or existing
+// if a new simulation it does NOT use ajax to allow
+// for a page redirect to simulator/{simulatorId}
 function saveSimulation(){
 
     simObject = { Name: $("#simulation-name").val(), Contents: exportToJson() };
@@ -46,43 +45,48 @@ function saveSimulation(){
         post(window.location.href, simObject);
     } else {
         // Updating an existing simulation
-        $.post(window.location.href, simObject);
+        $.post(window.location.href, simObject)
+        .done(function() { 
+            // I believe 'done' is synonymous with 'success' here
+            $("#save-button").removeClass( "blue" )
+            $("#save-button").addClass( "green" )
+        });
     } 
 
     losefocus();
 
 }
 
-function getfocus() {
-    document.getElementById("simulation-name").focus();
-    document.getElementById("simulation-name-label").style.display = "initial";
+function saveUser() {
 
+    simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
+
+    $.post(window.location.href, simObject)
+        .done(function() { 
+            // I believe 'done' is synonymous with 'success' here
+            $("#profile-save-button").removeClass( "blue" )
+            $("#profile-save-button").addClass( "green" )
+        });
 }
 
-function losefocus() {
-    document.getElementById("simulation-name").blur();
-    document.getElementById("simulation-name-label").style.display = "none";
-
-}
-
+// Save new comment to the datastore
+// and refresh the comment list
 function saveComment() {
-
     commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
-    $.post( window.location.href + "/comments", commentObj)
+    $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
       .done(function( data ) { 
         refreshCommentsList();
-        // Reset the comment box text
-        $("#comment-contents").val("");
       });
 
 }
 
+// Called after saveComment() has finished
+// posting a new comment OR on initial page load
 function refreshCommentsList() {
 
-    $.get(window.location.href + "/comments", function( json ) {
-        
+    $.get("/api/simulator/" + globalSimulationId + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
 
@@ -105,12 +109,48 @@ function refreshCommentsList() {
       $( "#comments" ).html( result );
 
       $("#comment-load-gif").hide();
+      // Reset the comment box text
+      $("#comment-contents").val("");
+
     });    
 
 }
 
+// Determines from the url if the simulation
+// is a new simulation or an existing simulation
 function isNewSim(){
-    var re = new RegExp('\/simulator$');
-    return re.test(window.location.href);
+
+  if (typeof globalSimulationId === 'undefined') {
+      return true;
+  }
+
+  return globalSimulationId == null;
+
+}
+
+// Used when uploading a new profile picture on the profile page
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#profile-pic')
+                .attr('src', e.target.result)
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
+
+function getfocus() {
+    document.getElementById("simulation-name").focus();
+    document.getElementById("simulation-name-label").style.display = "initial";
+
+}
+
+function losefocus() {
+    document.getElementById("simulation-name").blur();
+    document.getElementById("simulation-name-label").style.display = "none";
 
 }
