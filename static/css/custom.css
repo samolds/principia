@@ -166,11 +166,33 @@ body {
 /* keyframe thumbnails */
   .keyframe {
     height: 120px;
-    width: 100%;
+    width: 150px;
     border: 1px solid #888;
     background-color: #e3f2fd;
   }
 /* end keyframe */
+
+#keyframelist ul{
+    list-style-type: none;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+#keyframelist li{
+    display: inline-block;
+}
+
+.keyframe-tile{
+border: 2px solid #888;
+
+}
+
+.remove-keyframe-btn{
+  position:relative;
+  left: 125px;
+  top:50px;
+  
+}
 
 /*this is to vertically space tab icons*/
 .tabs li i {

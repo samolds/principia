@@ -206,6 +206,15 @@ function updatePropertyRedraw(property, value){
   drawMaster();
 }
 
+// function showRemoveKeyframeBtn(event){
+//   $('.remove-keyframe-btn').style.visibility = "visible";
+//   console.log("yo yo yo");
+// }
+// function hideRemoveKeyframeBtn(event){
+//   $('.remove-keyframe-btn').style.visibility = "hidden";
+//   console.log("yo yo yo");
+// }
+
 function updateCoords(coord_sys){
     Globals.coordinateSystem = coord_sys;
     if(coord_sys == "cartesian"){
