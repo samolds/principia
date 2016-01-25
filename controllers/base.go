@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"appengine"
+	"appengine/datastore"
 	"appengine/user"
 	"bytes"
 	"html/template"
 	"io"
-	"net/http"
 	"models"
-	"appengine/datastore"
+	"net/http"
 	"time"
 )
 
@@ -34,7 +34,7 @@ var (
 		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
 		"simulator/sandbox":    template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"sandbox.html")),
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
-		"user/allSimulations":  template.Must(template.ParseFiles(base, userDir+"allSimulations.html")),
+		"user/simulations":     template.Must(template.ParseFiles(base, userDir+"simulations.html")),
 		"user/profile":         template.Must(template.ParseFiles(base, userDir+"profile.html")),
 	}
 )
@@ -102,9 +102,9 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		// Point to something
 		pUser = &models.User{}
 
+		// TODO: Better way to do this?
 		if err := datastore.Get(c, k, pUser); err != nil {
-			if err.Error() == "datastore: no such entity" {
-				
+			if err == datastore.ErrNoSuchEntity {
 				// Create new user
 				pUser.Email = u.Email
 				pUser.Admin = u.Admin
@@ -125,8 +125,8 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 					return
 				}
 			} else {
-					ErrorHandler(w, "User object was not found: "+err.Error(), http.StatusInternalServerError)
-					return
+				ErrorHandler(w, "User object was not found: "+err.Error(), http.StatusInternalServerError)
+				return
 			}
 		}
 

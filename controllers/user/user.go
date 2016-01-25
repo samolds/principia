@@ -11,7 +11,7 @@ import (
 )
 
 // Returns all simulations tied to the user id passed in the url
-func AllSimulationsHandler(w http.ResponseWriter, r *http.Request) {
+func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	// Grab the userId
 	vars := mux.Vars(r)
 	userId := vars["userId"]
@@ -39,14 +39,14 @@ func AllSimulationsHandler(w http.ResponseWriter, r *http.Request) {
 		"sims": simulations,
 	}
 
-	controllers.BaseHandler(w, r, "user/allSimulations", data)
+	controllers.BaseHandler(w, r, "user/simulations", data)
 }
 
-func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
+func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		c := appengine.NewContext(r)
-	  u := user.Current(c)
+		u := user.Current(c)
 		var pUser models.User
 
 		// Construct the simulations key

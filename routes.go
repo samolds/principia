@@ -29,11 +29,11 @@ func init() {
 	router.HandleFunc("/simulator/sandbox", simulator.NewSandboxHandler)
 	router.HandleFunc("/simulator/sandbox/{simulatorId:[0-9]+}", simulator.EditSandboxHandler)
 	router.HandleFunc("/simulator/kinematics", simulator.NewKinematicsHandler)
-	//router.HandleFunc("/simulator/kinematics/{simulatorId:[0-9]+}", simulator.EditKinematicsHandler)
+	router.HandleFunc("/simulator/kinematics/{simulatorId:[0-9]+}", simulator.EditKinematicsHandler)
 
 	// User pages
-	router.HandleFunc("/user/{userId:[0-9]+}", user.UserProfileHandler)
-	router.HandleFunc("/user/{userId:[0-9]+}/simulations", user.AllSimulationsHandler)
+	router.HandleFunc("/user/{userId:[0-9]+}", user.ProfileHandler)
+	router.HandleFunc("/user/{userId:[0-9]+}/simulations", user.SimulationsHandler)
 
 	// API Endpoint (Returns JSON)
 	router.HandleFunc("/api/simulator/{simulatorId:[0-9]+}/comments", api.CommentHandler)

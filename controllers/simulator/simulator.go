@@ -15,39 +15,35 @@ import (
 
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		limit := 20
-		simulations := make([]models.Simulation, 0, limit)
+	limit := 20
+	simulations := make([]models.Simulation, 0, limit)
 
-		c := appengine.NewContext(r)
-		q := datastore.NewQuery("Simulation").Order("-Name").Limit(limit)
-		keys, err := q.GetAll(c, &simulations)
+	c := appengine.NewContext(r)
+	q := datastore.NewQuery("Simulation").Order("-Name").Limit(limit)
+	keys, err := q.GetAll(c, &simulations)
 
-		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		for i := 0; i < len(keys); i++ {
-			simulations[i].Id = keys[i].IntID()
-		}
-
-		data := map[string]interface{}{
-			"sims": simulations,
-		}
-
-		controllers.BaseHandler(w, r, "simulator/browse", data)
+	if err != nil {
+		controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	for i := 0; i < len(keys); i++ {
+		simulations[i].Id = keys[i].IntID()
+	}
+
+	data := map[string]interface{}{
+		"sims": simulations,
+	}
+
+	controllers.BaseHandler(w, r, "simulator/browse", data)
 }
 
 // GET returns a new simulation which the current user is made owner of (if logged in)
 // POST saves the simulation and redirects to simulator/{simulatorId}
-func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
+func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, uri string, template string) {
 	c := appengine.NewContext(r)
 	u := user.Current(c)
 	var simulation models.Simulation
-
-	simType := "sandbox"
 	creationTime := time.Now()
 
 	if r.Method == "GET" {
@@ -78,7 +74,7 @@ func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
 		simId := strconv.FormatInt(result.IntID(), 10)
 
 		// an AJAX Request would prevent a redirect..
-		http.Redirect(w, r, "/simulator/sandbox/"+simId, http.StatusFound)
+		http.Redirect(w, r, uri+simId, http.StatusFound)
 
 		return
 
@@ -90,13 +86,12 @@ func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
 		"isOwner": true,
 	}
 
-	controllers.BaseHandler(w, r, "simulator/sandbox", data)
+	controllers.BaseHandler(w, r, template, data)
 }
 
 // GET returns simulation as specified by the simulatorId passed in the url
 // POST saves the simulation as specified by the simulatorId passed in the url
-// Renders the simulator.html page
-func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
+func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, uri string, template string) {
 	vars := mux.Vars(r)
 	simId := vars["simulatorId"]
 	c := appengine.NewContext(r)
@@ -153,6 +148,18 @@ func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
 	controllers.BaseHandler(w, r, "simulator/sandbox", data)
 }
 
+func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
+	newGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
+}
+
 func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
-	controllers.BaseHandler(w, r, "simulator/kinematics", nil)
+	newGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+}
+
+func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {
+	editGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+}
+
+func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
+	editGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
 }
