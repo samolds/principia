@@ -36,3 +36,51 @@ function body2Constant(body){
   var index = bIndex(body);
   return Globals.bodyConstants[index];
 }
+
+// Transforms from user-defined coordinate system to default PhysicsJS coordinate system
+function origin2Physics(point){
+  return [point[0] + Globals.origin[0], point[1] + Globals.origin[1]];
+}
+
+// Transforms from user-defined coordinate system to default PhysicsJS coordinate system
+function origin2PhysicsScalar(coordinate, value){
+  var value = parseFloat(value);
+  return coordinate == "x"? value + Globals.origin[0]: value + Globals.origin[1];
+}
+
+// Transforms from default PhysicsJS coordinate system to user-defined coordinate system
+function physics2Origin(point){
+  return [point[0] - Globals.origin[0], point[1] - Globals.origin[1]];
+}
+
+// Transforms from Cartesian to Polar (assumes point is in user-defined coordinate system)
+function cartesian2Polar(point){
+  var x = point[0];
+  var y = point[1];
+  var theta = rad2deg(Math.atan(y/x));
+  
+  // Q1: Use theta
+  // Q2, Q3: Use theta + 180
+  // Q4: Use theta + 360
+  if(x < 0) theta -= 180; // Handles Q2, Q3
+  if(x > 0 && y > 0) theta -= 360; // Handles Q4 
+  
+  if(x == 0)
+  {
+    if(y > 0) theta = -270;
+    else if(y < 0) theta = -90;
+    else theta = 0;
+  }
+  
+  // Negate theta due to inverted y-axis
+  return [Math.sqrt(x*x + y*y), -theta];
+}
+
+function polar2Cartesian(point){
+  // Negate sin due to inverted y-axis: Also note that testing shows that there is potentially ~1e-7 rounding error
+  return [point[0] * Math.cos(deg2rad(point[1])), point[0] * -Math.sin(deg2rad(point[1]))];
+}
+
+function rad2deg(rads) { return 57.2957795131 * rads; }
+
+function deg2rad(degs) { return 0.01745329251 * degs; }

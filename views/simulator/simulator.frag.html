@@ -1,31 +1,5 @@
 {{ define "simulatorFrag" }}
 <div class="row">
-  <div class="input-field col s4">
-    {{ if and (.CurrentUser) (.Data.isOwner) }}
-      {{ if .Data.sim.Name }}
-        <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
-      {{ else }}
-        <input id="simulation-name" type="text" value="New Simulation"></input>
-      {{ end }}     
-      <label for="simulation-name" id="simulation-name-label">Simulation Name</label>        
-    {{ else }}
-      {{ if .Data.sim.Name }}
-        <h5 class="page-header">{{ .Data.sim.Name }}</h5>
-      {{ else }}
-        <h5 class="page-header">New Simulation</h5>
-      {{ end }}
-    {{ end }}
-  </div>
-
-  {{ if and (.Data.isOwner) (.CurrentUser) }}
-  <!-- Show Save Simulation only if you are the logged in and the owner -->
-  <div class="col s1 right pad-sides">
-    <a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="material-icons">save</i></a>
-  </div>
-  {{ end }}
-</div>
-
-<div class="row">
   <div class="col s8">
     <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
     <div style="height: 500px;" id="viewport" class="white card"></div>
@@ -66,11 +40,11 @@
         <div class="row">
           <div class="input-field col s6">
             <input type="number" id="properties-position-x" placeholder=""></input>
-            <label for="properties-position-x" class="active">X Position</label>
+            <label for="properties-position-x" class="active" id="x-position-label">X Position</label>
           </div>
           <div class="input-field col s6">
             <input type="number" id="properties-position-y" placeholder=""></input>
-            <label for="properties-position-y" class="active">Y Position</label>
+            <label for="properties-position-y" class="active" id="y-position-label">Y Position</label>
           </div>
         </div>
         <div class="row">
@@ -156,14 +130,46 @@
             <label for="glob-yaccel" class="active">Vertical Acceleration</label>
           </div>
         </div>
+        <div class="row">
+          <div class="input-field col s12">        
+            <select id="coord-sys" class="browser-default">
+              <option disabled>Coordinate System</option>
+              <option value="cartesian" selected="selected">Cartesian</option>
+              <option value="polar" >Polar</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div id="toolbox">
+            <div class="center-align">
+              <h5 class="pad-sides">Toolbox</h5>
+              <div class="row">
+                <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
+                  <div class="dummy"></div>
+                  <div class="toolbox-item">
+                    <img src="/static/img/target.jpg" class="ui-draggable" width="40" >
+                  </div>
+                </div>
+                <div class="input-field col s4">
+                  <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
+                  <label for="glob-xorigin" class="active">Origin X</label>
+                </div>
+                <div class="input-field col s4">
+                  <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
+                  <label for="glob-yorigin" class="active">Origin Y</label>
+                </div>
+              </div>
+            </div>
+          </div> 
+        </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<!-- Scrub through simulation frames with playback -->
 <div class="row" id="playback">
-  <div class="col s12">
+  <div class="col s8">
     <div class="row">
       <div class="col s1">
         <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
