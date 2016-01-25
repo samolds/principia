@@ -1,4 +1,4 @@
-Copyright (c) 2015 Sam Olds, Danny Petersen, Matthew Turner, Dalton Wallace
+Copyright (c) 2015 - 2016 Sam Olds, Danny Petersen, Matthew Turner, Dalton Wallace
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
