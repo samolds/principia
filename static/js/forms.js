@@ -50,23 +50,23 @@ function saveSimulation(){
             // I believe 'done' is synonymous with 'success' here
             $("#save-button").removeClass( "blue" )
             $("#save-button").addClass( "green" )
-      });
+        });
     } 
 
     losefocus();
 
 }
 
-function getfocus() {
-    document.getElementById("simulation-name").focus();
-    document.getElementById("simulation-name-label").style.display = "initial";
+function saveUser() {
 
-}
+    simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
 
-function losefocus() {
-    document.getElementById("simulation-name").blur();
-    document.getElementById("simulation-name-label").style.display = "none";
-
+    $.post(window.location.href, simObject)
+        .done(function() { 
+            // I believe 'done' is synonymous with 'success' here
+            $("#profile-save-button").removeClass( "blue" )
+            $("#profile-save-button").addClass( "green" )
+        });
 }
 
 // Save new comment to the datastore
@@ -79,6 +79,7 @@ function saveComment() {
       .done(function( data ) { 
         refreshCommentsList();
       });
+
 }
 
 // Called after saveComment() has finished
@@ -118,5 +119,38 @@ function refreshCommentsList() {
 // Determines from the url if the simulation
 // is a new simulation or an existing simulation
 function isNewSim(){
+
+  if (typeof globalSimulationId === 'undefined') {
+      return true;
+  }
+
   return globalSimulationId == null;
+
+}
+
+// Used when uploading a new profile picture on the profile page
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#profile-pic')
+                .attr('src', e.target.result)
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
+
+function getfocus() {
+    document.getElementById("simulation-name").focus();
+    document.getElementById("simulation-name-label").style.display = "initial";
+
+}
+
+function losefocus() {
+    document.getElementById("simulation-name").blur();
+    document.getElementById("simulation-name-label").style.display = "none";
+
 }

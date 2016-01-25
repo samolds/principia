@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"models"
+	"appengine/datastore"
 )
 
 var (
@@ -37,7 +39,7 @@ var (
 )
 
 type PageData struct {
-	CurrentUser *user.User
+	CurrentUser *models.User
 	Data        map[string]interface{}
 }
 
@@ -82,18 +84,47 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	// User authentication
 	c := appengine.NewContext(r)
 	u := user.Current(c)
+	// p for principia
+	var pUser *models.User
 
 	// Build correct login/logout links for Google
 	if u == nil {
 		data["loginUrl"], _ = user.LoginURL(c, "/")
 		data["loginMessage"] = "Sign In"
+		pUser = nil
 	} else {
 		data["loginUrl"], _ = user.LogoutURL(c, "/")
 		data["loginMessage"] = "Sign Out"
+
+		// Grab the user from the db
+		k := datastore.NewKey(c, "User", u.ID, 0, nil)
+
+		pUser = &models.User{}
+
+		if err := datastore.Get(c, k, pUser); err != nil {
+			if err.Error() == "datastore: no such entity" {
+				// This means no profile exists yet for the user
+				// force a redirect so they cans setup a profile
+				if templ != "user/profile" {
+
+					http.Redirect(w, r, "/user/"+u.ID, http.StatusFound)
+					return
+				}
+			} else {
+
+					ErrorHandler(w, "User object was not found: "+err.Error(), http.StatusInternalServerError)
+					return
+			}
+		}
+
+		// Update the entity
+		pUser.Email = u.Email
+		pUser.Admin = u.Admin
+		pUser.ID = u.ID
 	}
 
 	pageData := &PageData{
-		CurrentUser: u,
+		CurrentUser: pUser,
 		Data:        data,
 	}
 

@@ -340,3 +340,16 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
   background-color:#e0e0e0; 
   height:300px;
 }
+
+/* Profile Page */
+#profile-pic-container {
+  height: 250px; 
+  width: 70%; 
+  border: dashed 1px grey; 
+  margin:auto; 
+  border-radius: 5px
+}
+
+#profile-welcome-modal {
+  height: 200px
+}

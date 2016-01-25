@@ -3,10 +3,12 @@ package user
 import (
 	"appengine"
 	"appengine/datastore"
+	"appengine/user"
 	"controllers"
 	"lib/gorilla/mux"
 	"models"
 	"net/http"
+	"time"
 )
 
 // Returns all simulations tied to the user id passed in the url
@@ -42,8 +44,34 @@ func AllSimulationsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
-	data := map[string]interface{}{
-		
+	if r.Method == "POST" {
+
+		c := appengine.NewContext(r)
+	  u := user.Current(c)
+
+		// Construct the simulations key
+		key := datastore.NewKey(c, "User", u.ID, 0, nil)
+
+		var pUser models.User
+
+		pUser.Email = u.Email
+		pUser.ID = u.ID
+		pUser.Admin = u.Admin
+		pUser.DisplayName = r.FormValue("DisplayName")
+		pUser.Interests = r.FormValue("Interests")
+		pUser.JoinDate = time.Now()
+
+		// Put the user in the datastore
+		_, err := datastore.Put(c, key, &pUser)
+
+		if err != nil {
+			// Could not place the user in the datastore
+			controllers.ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 	}
+
+	data := map[string]interface{}{}
 	controllers.BaseHandler(w, r, "user/profile", data)
 }
