@@ -8,7 +8,6 @@ import (
 	"lib/gorilla/mux"
 	"models"
 	"net/http"
-	"time"
 )
 
 // Returns all simulations tied to the user id passed in the url
@@ -18,7 +17,7 @@ func AllSimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	userId := vars["userId"]
 
 	limit := 10
-	simulations := make([]models.Simulation, limit)
+	simulations := make([]models.Simulation, 0, limit)
 
 	// Get the current context
 	c := appengine.NewContext(r)
@@ -48,21 +47,23 @@ func UserProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 		c := appengine.NewContext(r)
 	  u := user.Current(c)
+		var pUser models.User
 
 		// Construct the simulations key
 		key := datastore.NewKey(c, "User", u.ID, 0, nil)
 
-		var pUser models.User
+		// Get
+		err := datastore.Get(c, key, &pUser)
 
+		// Update
 		pUser.Email = u.Email
 		pUser.ID = u.ID
 		pUser.Admin = u.Admin
 		pUser.DisplayName = r.FormValue("DisplayName")
 		pUser.Interests = r.FormValue("Interests")
-		pUser.JoinDate = time.Now()
 
 		// Put the user in the datastore
-		_, err := datastore.Put(c, key, &pUser)
+		_, err = datastore.Put(c, key, &pUser)
 
 		if err != nil {
 			// Could not place the user in the datastore

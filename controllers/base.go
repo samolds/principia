@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"models"
 	"appengine/datastore"
+	"time"
 )
 
 var (
@@ -84,7 +85,6 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	// User authentication
 	c := appengine.NewContext(r)
 	u := user.Current(c)
-	// p for principia
 	var pUser *models.User
 
 	// Build correct login/logout links for Google
@@ -99,27 +99,39 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		// Grab the user from the db
 		k := datastore.NewKey(c, "User", u.ID, 0, nil)
 
+		// Point to something
 		pUser = &models.User{}
 
 		if err := datastore.Get(c, k, pUser); err != nil {
 			if err.Error() == "datastore: no such entity" {
-				// This means no profile exists yet for the user
-				// force a redirect so they cans setup a profile
-				if templ != "user/profile" {
+				
+				// Create new user
+				pUser.Email = u.Email
+				pUser.Admin = u.Admin
+				pUser.ID = u.ID
+				pUser.JoinDate = time.Now()
 
+				// Put the new user in datastore
+				_, err := datastore.Put(c, k, pUser)
+
+				if err != nil {
+					// Could not place the user in the datastore
+					ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				if templ != "user/profile" {
 					http.Redirect(w, r, "/user/"+u.ID, http.StatusFound)
 					return
 				}
 			} else {
-
 					ErrorHandler(w, "User object was not found: "+err.Error(), http.StatusInternalServerError)
 					return
 			}
 		}
 
-		// Update the entity
-		pUser.Email = u.Email
-		pUser.Admin = u.Admin
+		// Datastore doesn't return the ID in the object so we
+		// need to add it back
 		pUser.ID = u.ID
 	}
 

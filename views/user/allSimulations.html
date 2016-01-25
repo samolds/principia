@@ -5,9 +5,16 @@
   <div class="card-panel z-depth-5">
     <h3 class="page-header">My Simulations</h3>
     <ul>
-      {{range $simulation := .Data.sims}}
-      <li><a href="/simulator/{{$simulation.Id}}">{{ $simulation.Name }}</a></li>
-      {{ end }}
+      {{ if .Data.sims }}
+      <ul>
+        {{ range $simulation := .Data.sims }}
+          <li><a href="/simulator/{{ $simulation.Type }}/{{$simulation.Id}}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <p>Nothing?!</p>
+      <p>😔 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠</p>
+    {{ end }}
     </ul>
   </div>
 </div>
