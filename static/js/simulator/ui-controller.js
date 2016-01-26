@@ -118,12 +118,14 @@ function toggleSimulator(){
   
   if (Globals.running) {
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
-    document.getElementById("play-pause-icon").innerHTML ="pause";   
+    document.getElementById("play-pause-icon").classList.remove("fa-play")
+    document.getElementById("play-pause-icon").classList.add("fa-pause")
     Globals.selectedKeyframe = false;
   } 
   else {
     clearInterval(Globals.anim);
-    document.getElementById("play-pause-icon").innerHTML ="play_arrow";
+    document.getElementById("play-pause-icon").classList.remove("fa-pause")
+    document.getElementById("play-pause-icon").classList.add("fa-play")
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }

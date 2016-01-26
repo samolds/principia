@@ -98,7 +98,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		data["loginMessage"] = "Sign In"
 		user = nil
 	} else {
-		data["loginUrl"], _ = appengineUser.LogoutURL(c, html.EscapeString(r.URL.Path))
+		data["loginUrl"], _ = appengineUser.LogoutURL(c, "/")
 		data["loginMessage"] = "Sign Out"
 
 		// Grab the user from the db

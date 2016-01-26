@@ -8,7 +8,6 @@
 
     <link href="/static/img/favicon.ico" rel="icon" type="image/x-icon">
     <link href="/static/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link href="/static/css/custom.css" rel="stylesheet" type="text/css">
 
@@ -22,13 +21,13 @@
           <a id="logo-container" class="brand-logo left" href="/"><img id="nav-bar-principia-logo" src="/static/img/logo/principia-invert.png"></a>
           <ul class="right hide-on-small-only">
             <li>
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="simulatorDropdown">Simulator<i class="material-icons right">arrow_drop_down</i></a>
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="simulatorDropdown">Simulator<i class="fa fa-caret-down right fa-size-small"></i></a>
             </li>
             <li>
               {{ if .CurrentUser }}
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">{{ .CurrentUser.Email }}<i class="material-icons right">arrow_drop_down</i></a>
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">{{ .CurrentUser.Email }}<i class="fa fa-caret-down right fa-size-small"></i></a>
               {{ else }}
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">MyPrincipia<i class="material-icons right">arrow_drop_down</i></a>
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">MyPrincipia<i class="fa fa-caret-down right fa-size-small"></i></a>
               {{ end }}
             </li>
           </ul>
@@ -84,9 +83,9 @@
           <span class="pad-sides"><a class="white-text" href="/about">About</a></span>
           <span class="pad-sides"><a class="white-text" href="/faqs">FAQs</a></span>
           <span class="pad-sides"><a class="white-text" href="/feedback">Feedback</a></span>
-          <span class="pad-sides"><a class="white-text" href="http://github.com/samolds/principia"><i class="fa fa-github"></i></a></span>
+          <span class="pad-sides"><a class="white-text" href="http://github.com/samolds/principia"><i class="fa fa-github-square"></i></a></span>
           <span class="pad-sides"><a class="white-text" href="http://instagram.com/principia.cc"><i class="fa fa-instagram"></i></a></span>
-          <span class="white-text right hide-on-small-only">&copy; 2015 - 2016 Principia</span>
+          <span class="white-text right hide-on-small-only"><i class="fa fa-copyright"></i> 2015 - 2016 Principia</span>
         </div>
       </div>
     </footer>

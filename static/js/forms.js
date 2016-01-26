@@ -99,7 +99,7 @@ function refreshCommentsList() {
 
             result +=  "<div class='row'>";
             result +=   "<div class='col s2'>";
-            result +=    "<i class='medium material-icons'>account_circle</i>";
+            result +=    "<i class='medium fa fa-user'></i>";
             result +=  "</div>";
             result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
             result +=    "<div class='row'>";

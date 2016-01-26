@@ -380,3 +380,13 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 #profile-welcome-modal {
   height: 200px
 }
+
+/* change font awesome glyphicons size */
+i.fa.fa-size-small {
+  font-size: 1.5em;
+}
+
+i.fa.fa-size-medium {
+  font-size: 2em;
+}
+/* end font awesome size change */
