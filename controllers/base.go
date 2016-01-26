@@ -5,6 +5,7 @@ import (
 	"appengine/datastore"
 	appengineUser "appengine/user"
 	"bytes"
+	"html"
 	"html/template"
 	"io"
 	"lib/gomobiledetect"
@@ -93,11 +94,11 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 	// Build correct login/logout links for Google
 	if googleUser == nil {
-		data["loginUrl"], _ = appengineUser.LoginURL(c, "/")
+		data["loginUrl"], _ = appengineUser.LoginURL(c, html.EscapeString(r.URL.Path))
 		data["loginMessage"] = "Sign In"
 		user = nil
 	} else {
-		data["loginUrl"], _ = appengineUser.LogoutURL(c, "/")
+		data["loginUrl"], _ = appengineUser.LogoutURL(c, html.EscapeString(r.URL.Path))
 		data["loginMessage"] = "Sign Out"
 
 		// Grab the user from the db
