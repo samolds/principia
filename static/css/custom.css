@@ -98,6 +98,13 @@
   }
 /* end sticky footer */
 
+/* for footer hover over text change */
+  .page-footer a.white-text:hover,
+  .page-footer a.white-text:active {
+    color: #000033 !important; /* because of materialize stupidness */
+  }
+/* end footer text color change */
+
 
 /*for Simulation name input*/
 #simulation-name {
