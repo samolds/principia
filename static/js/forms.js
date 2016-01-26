@@ -43,6 +43,7 @@ function saveSimulation(){
     if(isNewSim()){
         // Creating a new simulation
         post(window.location.href, simObject);
+        Materialize.toast('Simulation saved successfully!', 2000)
     } else {
         // Updating an existing simulation
         $.post(window.location.href, simObject)
@@ -50,6 +51,7 @@ function saveSimulation(){
             // I believe 'done' is synonymous with 'success' here
             $("#save-button").removeClass( "blue" )
             $("#save-button").addClass( "green" )
+            Materialize.toast('Simulation saved successfully!', 2000)
         });
     } 
 
@@ -66,6 +68,7 @@ function saveUser() {
             // I believe 'done' is synonymous with 'success' here
             $("#profile-save-button").removeClass( "blue" )
             $("#profile-save-button").addClass( "green" )
+            Materialize.toast('User saved successfully!', 2000)
         });
 }
 
@@ -78,6 +81,7 @@ function saveComment() {
     $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
       .done(function( data ) { 
         refreshCommentsList();
+        Materialize.toast('Comment saved successfully!', 2000)
       });
 
 }

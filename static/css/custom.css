@@ -54,12 +54,12 @@
 }
 
 .principia-blue-navbar {
-  background-color: #00001a !important;
+  background-color: #000033 !important; /* because of materialize stupidness */
 }
 
-/* because of materialize stupidness */
-.transparent-navbar {
-  background-color: transparent !important;
+.principia-blue-navbar ul li:hover,
+.principia-blue-navbar ul li.active {
+  background-color: #003366;
 }
 
 /* for blue links on about cards */
