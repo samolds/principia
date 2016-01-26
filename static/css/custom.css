@@ -10,8 +10,7 @@
 
 .main-container {
   margin: auto;
-  max-width: 1400px;
-  min-width: 600px;
+  width: 90%;
 }
 
 .simulator-container {
@@ -118,7 +117,6 @@
 
 /*for scrollable tool list*/
 ul.toollist {
- 
   overflow-x: -moz-scrollbars-vertical;
   overflow-x: scroll;
   white-space: nowrap;

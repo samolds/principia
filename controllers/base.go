@@ -3,12 +3,14 @@ package controllers
 import (
 	"appengine"
 	"appengine/datastore"
-	"appengine/user"
+	appengineUser "appengine/user"
 	"bytes"
 	"html/template"
 	"io"
+	"lib/gomobiledetect"
 	"models"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -25,11 +27,12 @@ var (
 	base     = tmplDir + baseName + ".html"
 
 	templates = map[string]*template.Template{
-		"dormant/home":     template.Must(template.ParseFiles(base, dormDir+"home.html")),
-		"dormant/about":    template.Must(template.ParseFiles(base, dormDir+"about.html")),
-		"dormant/faqs":     template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
-		"dormant/feedback": template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
-		"dormant/error":    template.Must(template.ParseFiles(base, dormDir+"error.html")),
+		"dormant/home":        template.Must(template.ParseFiles(base, dormDir+"home.html")),
+		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
+		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
+		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
+		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
+		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
 
 		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
 		"simulator/sandbox":    template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"sandbox.html")),
@@ -72,6 +75,7 @@ func ErrorHandler(w http.ResponseWriter, errMsg string, status int) {
 }
 
 // The base handler method that all other controllers execute
+// TODO: Clean up this handler
 func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[string]interface{}) {
 	// Buffer is used to store rendered template temporarily instead
 	// of writing it directly back to the browser incase there are
@@ -84,35 +88,35 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 	// User authentication
 	c := appengine.NewContext(r)
-	u := user.Current(c)
-	var pUser *models.User
+	googleUser := appengineUser.Current(c)
+	var user *models.User
 
 	// Build correct login/logout links for Google
-	if u == nil {
-		data["loginUrl"], _ = user.LoginURL(c, "/")
+	if googleUser == nil {
+		data["loginUrl"], _ = appengineUser.LoginURL(c, "/")
 		data["loginMessage"] = "Sign In"
-		pUser = nil
+		user = nil
 	} else {
-		data["loginUrl"], _ = user.LogoutURL(c, "/")
+		data["loginUrl"], _ = appengineUser.LogoutURL(c, "/")
 		data["loginMessage"] = "Sign Out"
 
 		// Grab the user from the db
-		k := datastore.NewKey(c, "User", u.ID, 0, nil)
+		k := datastore.NewKey(c, "User", googleUser.ID, 0, nil)
 
 		// Point to something
-		pUser = &models.User{}
+		user = &models.User{}
 
 		// TODO: Better way to do this?
-		if err := datastore.Get(c, k, pUser); err != nil {
+		if err := datastore.Get(c, k, user); err != nil {
 			if err == datastore.ErrNoSuchEntity {
 				// Create new user
-				pUser.Email = u.Email
-				pUser.Admin = u.Admin
-				pUser.ID = u.ID
-				pUser.JoinDate = time.Now()
+				user.Email = googleUser.Email
+				user.Admin = googleUser.Admin
+				user.ID = googleUser.ID
+				user.JoinDate = time.Now()
 
 				// Put the new user in datastore
-				_, err := datastore.Put(c, k, pUser)
+				_, err := datastore.Put(c, k, user)
 
 				if err != nil {
 					// Could not place the user in the datastore
@@ -121,7 +125,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 				}
 
 				if templ != "user/profile" {
-					http.Redirect(w, r, "/user/"+u.ID, http.StatusFound)
+					http.Redirect(w, r, "/user/"+googleUser.ID, http.StatusFound)
 					return
 				}
 			} else {
@@ -132,16 +136,24 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 		// Datastore doesn't return the ID in the object so we
 		// need to add it back
-		pUser.ID = u.ID
+		user.ID = googleUser.ID
 	}
 
 	pageData := &PageData{
-		CurrentUser: pUser,
+		CurrentUser: user,
 		Data:        data,
 	}
 
-	// Render template with all page data include user information, or error
+	// Render template with all page data including user information, or error
 	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
+
+	// Catch mobile users and render mobile friendly template
+	detect := mobiledetect.NewMobileDetect(r, nil)
+	if detect.IsMobile() && strings.HasPrefix(templ, "simulator/") {
+		buffer.Reset()
+		err = templates["dormant/unsupported"].ExecuteTemplate(&buffer, baseName, pageData)
+	}
+
 	if err != nil {
 		ErrorHandler(w, err.Error(), http.StatusInternalServerError)
 	} else {
