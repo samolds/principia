@@ -1,3 +1,13 @@
+function successToast(msg) {
+  var $toastContent = $('<span class="green lighten-5 black-text pad"><h5><i class="fa fa-check"></i> Success!</h5><span>' + msg + '</span></span>');
+  Materialize.toast($toastContent, 2000);
+}
+
+function failToast(msg) {
+  var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><span>' + msg + '</span></span>');
+  Materialize.toast($toastContent, 8000);
+}
+
 // Load the comments initially via AJAX
 $( document ).ready(function() {
     if (!isNewSim()) {
@@ -43,7 +53,7 @@ function saveSimulation(){
     if(isNewSim()){
         // Creating a new simulation
         post(window.location.href, simObject);
-        Materialize.toast('Simulation saved successfully!', 2000)
+        successToast('Simulation saved successfully!');
     } else {
         // Updating an existing simulation
         $.post(window.location.href, simObject)
@@ -51,7 +61,10 @@ function saveSimulation(){
             // I believe 'done' is synonymous with 'success' here
             $("#save-button").removeClass( "blue" )
             $("#save-button").addClass( "green" )
-            Materialize.toast('Simulation saved successfully!', 2000)
+            successToast('Simulation saved successfully!');
+        })
+        .fail(function(xhr, textStatus, errorThrown) {
+          failToast(xhr.responseText);
         });
     } 
 
@@ -60,7 +73,6 @@ function saveSimulation(){
 }
 
 function saveUser() {
-
     simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
 
     $.post(window.location.href, simObject)
@@ -68,7 +80,10 @@ function saveUser() {
             // I believe 'done' is synonymous with 'success' here
             $("#profile-save-button").removeClass( "blue" )
             $("#profile-save-button").addClass( "green" )
-            Materialize.toast('User saved successfully!', 2000)
+            successToast('User saved successfully!');
+        })
+        .fail(function(xhr, textStatus, errorThrown) {
+          failToast(xhr.responseText);
         });
 }
 
@@ -79,9 +94,13 @@ function saveComment() {
 
     $("#comment-load-gif").show();
     $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
-      .done(function( data ) { 
+      .done(function() { 
         refreshCommentsList();
-        Materialize.toast('Comment saved successfully!', 2000)
+        successToast('Comment saved successfully!');
+      })
+      .fail(function(xhr, textStatus, errorThrown) {
+        $("#comment-load-gif").hide();
+        failToast(xhr.responseText);
       });
 
 }

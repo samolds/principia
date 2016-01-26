@@ -21,6 +21,10 @@
   clear: both;
 }
 
+.pad {
+  padding: 20px;
+}
+
 .pad-sides {
   padding-left: 10px;
   padding-right: 10px;
@@ -276,6 +280,7 @@ border: 2px solid #888;
 
 /*comments*/
 .bubble-content {
+  color: #fff;
   position:relative;
   float:left;
   margin-left:12px;
@@ -286,8 +291,12 @@ border: 2px solid #888;
   box-shadow:1px 1px 5px rgba(0,0,0,.2);
 }
 
-.bubble {
-  margin-top:20px;
+.bubble-content .character-counter {
+  color: #fff;
+}
+
+textarea.comment-text {
+  padding-top: 0;
 }
 
 .point {
@@ -298,10 +307,6 @@ border: 2px solid #888;
   left:-10px;
   top:12px;
 } 
-
-.comment-text{
-  color: white;
-}
 
 .all-bubble-content {
   position:relative;
@@ -363,9 +368,9 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 }
 
 /* solution details box */
-.solution-details-container{
-  background-color:#e0e0e0; 
-  height:300px;
+.solution-details-container {
+  background-color: #e0e0e0;
+  height: 300px;
 }
 
 /* Profile Page */
@@ -390,3 +395,12 @@ i.fa.fa-size-medium {
   font-size: 2em;
 }
 /* end font awesome size change */
+
+/* remove normal styling of toasts */
+.toast {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  max-width: 450px;
+}
+/* end toast overwrite */

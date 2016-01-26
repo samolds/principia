@@ -38,6 +38,22 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	controllers.BaseHandler(w, r, "simulator/browse", data)
 }
 
+func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
+	newGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
+}
+
+func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
+	newGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+}
+
+func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {
+	editGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+}
+
+func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
+	editGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
+}
+
 // GET returns a new simulation which the current user is made owner of (if logged in)
 // POST saves the simulation and redirects to simulator/{simulatorId}
 func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, uri string, template string) {
@@ -146,20 +162,4 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	}
 
 	controllers.BaseHandler(w, r, "simulator/sandbox", data)
-}
-
-func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	newGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
-}
-
-func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
-	newGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
-}
-
-func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {
-	editGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
-}
-
-func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	editGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
 }
