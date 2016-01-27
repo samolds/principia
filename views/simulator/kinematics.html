@@ -43,34 +43,88 @@
         <div class="row">
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
           <div class="col s8">
-            <div class="row">
-              <h5>Keyframes:</h5>
-              <div class="col s6">
-                <div class="row">
-                  <div class="col s6 left">
-                    <h6>Frame 1:</h6>
-                    <div class="row">
-                      <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
-                    </div>
-                    <div class="row">
-                      <div class="input-field col s12">
-                        <input id="keyframe-0-dt" type="text" readonly value="0"></input>
-                        <label for="keyframe-0-dt" class="active">dt</label>
+            <div class="" >
+              <h5>Keyframes:
+              <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="material-icons">add</i></a>
+              </h5>
+              <div class="">
+                <div class="" id="keyframelist">
+                  <ul>
+                    <li>
+                      <div class="keyframe-tile">
+                        <div class="remove-keyframe-btn">
+                          <a class="btn-floating btn-small waves-effect waves-light red" id="remove-keyframe"><i class="material-icons">clear</i></a>
+                        </div>
+                          <h6>Frame 1: </h6>
+                          <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
+                     
+                        <div class="input-field">
+                              <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                              <label for="keyframe-0-dt" class="active">dt</label>
+                        </div>
+                       </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                      </div> 
+                      <div class="input-field">
+                            <input id="keyframe-1-dt" type="text" value="?"></input>
+                            <label for="keyframe-1-dt" class="active">dt</label>
                       </div>
-                    </div>
-                  </div>
-                  <div class="col s6 left">
-                    <h6>Frame 2:</h6>
-                    <div class="row">
-                      <canvas id="keyframe-1" class="keyframe"></canvas>
-                    </div>
-                    <div class="row">
-                      <div class="input-field col s12">
-                        <input id="keyframe-1-dt" type="text" value="?"></input>
-                        <label for="keyframe-1-dt" class="active">dt</label>
-                      </div>
-                    </div>
-                  </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                       </div> 
+                       <div class="input-field">
+                            <input id="keyframe-2-dt" type="text" value="?"></input>
+                            <label for="keyframe-2-dt" class="active">dt</label>
+                       </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                       </div> 
+                       <div class="input-field">
+                            <input id="keyframe-1-dt" type="text" value="?"></input>
+                            <label for="keyframe-1-dt" class="active">dt</label>
+                       </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                       </div> 
+                       <div class="input-field">
+                            <input id="keyframe-1-dt" type="text" value="?"></input>
+                            <label for="keyframe-1-dt" class="active">dt</label>
+                       </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                       </div> 
+                       <div class="input-field">
+                            <input id="keyframe-1-dt" type="text" value="?"></input>
+                            <label for="keyframe-1-dt" class="active">dt</label>
+                       </div>
+                    </li>
+                    <li>
+                      <div>
+                        <h6>Frame 2:</h6>
+                          <canvas id="keyframe-1" class="keyframe"></canvas>
+                       </div> 
+                       <div class="input-field">
+                            <input id="keyframe-1-dt" type="text" value="?"></input>
+                            <label for="keyframe-1-dt" class="active">dt</label>
+                       </div>
+                    </li>
+                  </ul>
                 </div>
 
                 <div class="row">
