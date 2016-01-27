@@ -2,7 +2,7 @@
 
 {{ define "content" }}
 <div class="container">
-  <div class="card-panel z-depth-5">
+  <div class="card-panel">
     <h3><img src="/static/img/logo/principia.svg" class="principia-logo"/></h3>
     <p>
       Principia is an educational physics playground emphasizing visualizations and interactability.
@@ -19,19 +19,24 @@
       Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students
       to further explore concepts in a visually exciting way.
     </p>
+    <p>
+      This is a Computer Science senior capstone project at the University of Utah. Fork us on
+      <a href="http://github.com/samolds/principia">GitHub</a>, or follow along with our behind the scenes on
+      <a href="http://instagram.com/principia.cc">Instagram</a>!
+    </p>
 
     <h3 class="pad-top">The Team</h3>
     <div class="row">
       <div class="col s12 m3">
-        <div class="card grey darken-4 white-text">
+        <div class="card principia-blue-navbar white-text">
           <div class="card-image waves-effect waves-block waves-light">
             <img src="/static/img/team/sam.gif" />
           </div>
           <div class="card-content">
             <span class="card-title activator">Sam Olds</span>
           </div>
-          <div class="card-reveal grey darken-4">
-            <span class="card-title">About<i class="material-icons right">close</i></span>
+          <div class="card-reveal principia-blue-navbar">
+            <span class="card-title">About<i class="fa fa-times right"></i></span>
             <p>
               Sam enjoys funky jazz and cheap wine.
             </p>
@@ -43,15 +48,15 @@
       </div>
 
       <div class="col s12 m3">
-        <div class="card grey darken-4 white-text">
+        <div class="card principia-blue-navbar white-text">
           <div class="card-image waves-effect waves-block waves-light">
             <img src="/static/img/team/danny.gif" />
           </div>
           <div class="card-content">
             <span class="card-title activator">Danny Petersen</span>
           </div>
-          <div class="card-reveal grey darken-4">
-            <span class="card-title">About<i class="material-icons right">close</i></span>
+          <div class="card-reveal principia-blue-navbar">
+            <span class="card-title">About<i class="fa fa-times right"></i></span>
             <p>
               Danny enjoys upbeat movies and piña coladas.
             </p>
@@ -63,15 +68,15 @@
       </div>
 
       <div class="col s12 m3">
-        <div class="card grey darken-4 white-text">
+        <div class="card principia-blue-navbar white-text">
           <div class="card-image waves-effect waves-block waves-light">
             <img src="/static/img/team/matthew.gif" />
           </div>
           <div class="card-content">
             <span class="card-title activator">Matthew Turner<span>
           </div>
-          <div class="card-reveal grey darken-4">
-            <span class="card-title">About<i class="material-icons right">close</i></span>
+          <div class="card-reveal principia-blue-navbar">
+            <span class="card-title">About<i class="fa fa-times right"></i></span>
             <p>
               Matthew enjoys instrumental hip hop and a good lager.
             </p>
@@ -83,15 +88,15 @@
       </div>
 
       <div class="col s12 m3">
-        <div class="card grey darken-4 white-text">
+        <div class="card principia-blue-navbar white-text">
           <div class="card-image waves-effect waves-block waves-light">
             <img src="/static/img/team/dalton.gif" />
           </div>
           <div class="card-content">
             <span class="card-title activator">Dalton Wallace</span>
           </div>
-          <div class="card-reveal grey darken-4">
-            <span class="card-title">About<i class="material-icons right">close</i></span>
+          <div class="card-reveal principia-blue-navbar">
+            <span class="card-title">About<i class="fa fa-times right"></i></span>
             <p>
               Dalton enjoys a good 'ol come back story and poutine.
             </p>
@@ -102,12 +107,6 @@
         </div>
       </div>
     </div>
-
-    <p>
-      This is a Computer Science senior capstone project at the University of Utah. It is hosted on Google App Engine
-      using Go, with PhysicsJS on the front end. The source code is available on
-      <a href="http://github.com/samolds/principia">GitHub</a>.
-    </p>
   </div>
 </div>
 {{ end }}
