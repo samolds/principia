@@ -163,4 +163,3 @@ func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
 func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {
 	editGenericHandler(w, r, "kinematics", "simulator/kinematics")
 }
-

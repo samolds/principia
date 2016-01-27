@@ -37,4 +37,7 @@ func init() {
 
 	// API Endpoint (Returns JSON)
 	router.HandleFunc("/api/simulator/{simulatorId:[0-9]+}/comments", api.CommentHandler)
+
+	// Test pages
+	router.HandleFunc("/test/{testPage:[a-z]+}", controllers.TestHandler)
 }
