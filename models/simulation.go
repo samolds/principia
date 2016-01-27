@@ -12,4 +12,5 @@ type Simulation struct {
 	CreationDate time.Time
 	UpdatedDate  time.Time
 	Id           int64 `datastore:"-"` // Ignore this field
+  IsPrivate    bool
 }

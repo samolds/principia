@@ -405,3 +405,7 @@ i.fa.fa-size-medium {
   word-break: normal;
 }
 /* end toast overwrite */
+
+.private-checkbox {
+  margin-top: 26px;
+}

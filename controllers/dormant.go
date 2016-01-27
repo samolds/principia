@@ -32,7 +32,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	simulations := make([]models.Simulation, 0, limit)
 
 	c := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-CreationDate").Limit(limit) // TODO: filter out when CreationDate is older than 7 days
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(limit) // TODO: filter out when CreationDate is older than 7 days
 	keys, err := q.GetAll(c, &simulations)
 
 	if err != nil {

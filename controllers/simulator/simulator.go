@@ -19,7 +19,7 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	simulations := make([]models.Simulation, 0, limit)
 
 	c := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-Name").Limit(limit)
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(limit)
 	keys, err := q.GetAll(c, &simulations)
 
 	if err != nil {
@@ -54,8 +54,10 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 			simulation = models.Simulation{Name: "", UserID: "", Contents: "{}", Type: simType, CreationDate: creationTime, UpdatedDate: creationTime} // Is this necessary?
 		}
 	} else if r.Method == "POST" {
+		// Parse the boolean
+		isPrivate:= utils.StringToBool(r.FormValue("IsPrivate"))
 		// Create the simulation object
-		simulation = models.Simulation{Name: r.FormValue("Name"), UserID: u.ID, Contents: r.FormValue("Contents"), Type: simType, CreationDate: creationTime, UpdatedDate: creationTime}
+		simulation = models.Simulation{Name: r.FormValue("Name"), UserID: u.ID, Contents: r.FormValue("Contents"), Type: simType, CreationDate: creationTime, UpdatedDate: creationTime, IsPrivate: isPrivate}
 
 		// Give it a new incomplete key
 		// Datastore will define a simulation id for us
@@ -126,6 +128,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		simulation.Name = r.FormValue("Name")
 		simulation.Contents = r.FormValue("Contents")
 		simulation.UpdatedDate = time.Now()
+		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
 
 		// Put the simulation in the datastore
 		_, err = datastore.Put(c, key, &simulation)
