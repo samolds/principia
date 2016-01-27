@@ -91,7 +91,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 
 // GET returns simulation as specified by the simulatorId passed in the url
 // POST saves the simulation as specified by the simulatorId passed in the url
-func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, uri string, template string) {
+func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, template string) {
 	vars := mux.Vars(r)
 	simId := vars["simulatorId"]
 	c := appengine.NewContext(r)
@@ -145,11 +145,15 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		"isOwner": utils.IsOwner(simulation.UserID, u),
 	}
 
-	controllers.BaseHandler(w, r, "simulator/sandbox", data)
+	controllers.BaseHandler(w, r, template, data)
 }
 
 func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
 	newGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
+}
+
+func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
+	editGenericHandler(w, r, "sandbox", "simulator/sandbox")
 }
 
 func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
@@ -157,9 +161,6 @@ func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {
-	editGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+	editGenericHandler(w, r, "kinematics", "simulator/kinematics")
 }
 
-func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	editGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
-}
