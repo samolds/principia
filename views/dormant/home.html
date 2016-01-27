@@ -32,10 +32,13 @@
           </div>
           {{ if eq "Sign In" .Data.loginMessage }}
             <div class="col s5">
-              <p class="flow-text valign center-align">
-                Don't have an account? <a href="{{ .Data.loginUrl }}">Log In</a>
-                or <a href="{{ .Data.loginUrl }}">Sign up</a>!
-              </p>
+              <div class="valign center-align">
+                <p class="flow-text">
+                  Already have a Google Account?
+                </p>
+                <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg"></a>
+                <p class="pad-top">Or go <a href="{{ .Data.loginUrl }}">Sign Up</a>!</p>
+              </div>
             </div>
           {{ end }}
         </div>
