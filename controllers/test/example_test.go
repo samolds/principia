@@ -2,7 +2,6 @@ package test
 
 import (
   "testing"
-  "reflect"
 )
 
 func TestAverage(t *testing.T) {
