@@ -13,7 +13,7 @@
 <script src="/static/js/simulator/modules/kinematics.js"></script>
 
 <script>
-  Kinematics1D.initModule();
+  Kinematics1D.initModule({{ .Data.sim.Contents }});
   var globalSimulationId = {{ .Data.sim.Id }}; // I know this is janky
   if (!globalSimulationId) { // TODO: Clean this up. This is a temporary
     globalSimulationId = null; // holder while refactoring.
@@ -156,6 +156,8 @@
 </div>
 
 {{ if .Data.sim.Id }}
-  {{ template "commentsFrag" . }}
+  <div class="main-container simulator-container">
+    {{ template "commentsFrag" . }}
+  </div>
 {{ end }}
 {{ end }}
