@@ -10,8 +10,7 @@
 
 .main-container {
   margin: auto;
-  max-width: 1400px;
-  min-width: 600px;
+  width: 90%;
 }
 
 .simulator-container {
@@ -20,6 +19,10 @@
 
 .clear {
   clear: both;
+}
+
+.pad {
+  padding: 20px;
 }
 
 .pad-sides {
@@ -55,12 +58,12 @@
 }
 
 .principia-blue-navbar {
-  background-color: #00001a !important;
+  background-color: #000033 !important; /* because of materialize stupidness */
 }
 
-/* because of materialize stupidness */
-.transparent-navbar {
-  background-color: transparent !important;
+.principia-blue-navbar ul li:hover,
+.principia-blue-navbar ul li.active {
+  background-color: #003366;
 }
 
 /* for blue links on about cards */
@@ -99,6 +102,13 @@
   }
 /* end sticky footer */
 
+/* for footer hover over text change */
+  .page-footer a.white-text:hover,
+  .page-footer a.white-text:active {
+    color: #000033 !important; /* because of materialize stupidness */
+  }
+/* end footer text color change */
+
 
 /*for Simulation name input*/
 #simulation-name {
@@ -118,7 +128,6 @@
 
 /*for scrollable tool list*/
 ul.toollist {
- 
   overflow-x: -moz-scrollbars-vertical;
   overflow-x: scroll;
   white-space: nowrap;
@@ -271,6 +280,7 @@ border: 2px solid #888;
 
 /*comments*/
 .bubble-content {
+  color: #fff;
   position:relative;
   float:left;
   margin-left:12px;
@@ -281,8 +291,12 @@ border: 2px solid #888;
   box-shadow:1px 1px 5px rgba(0,0,0,.2);
 }
 
-.bubble {
-  margin-top:20px;
+.bubble-content .character-counter {
+  color: #fff;
+}
+
+textarea.comment-text {
+  padding-top: 0;
 }
 
 .point {
@@ -293,10 +307,6 @@ border: 2px solid #888;
   left:-10px;
   top:12px;
 } 
-
-.comment-text{
-  color: white;
-}
 
 .all-bubble-content {
   position:relative;
@@ -358,9 +368,9 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 }
 
 /* solution details box */
-.solution-details-container{
-  background-color:#e0e0e0; 
-  height:300px;
+.solution-details-container {
+  background-color: #e0e0e0;
+  height: 300px;
 }
 
 /* Profile Page */
@@ -375,3 +385,23 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 #profile-welcome-modal {
   height: 200px
 }
+
+/* change font awesome glyphicons size */
+i.fa.fa-size-small {
+  font-size: 1.5em;
+}
+
+i.fa.fa-size-medium {
+  font-size: 2em;
+}
+/* end font awesome size change */
+
+/* remove normal styling of toasts */
+.toast {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  max-width: 450px;
+  word-break: normal;
+}
+/* end toast overwrite */

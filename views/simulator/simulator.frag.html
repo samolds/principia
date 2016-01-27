@@ -1,14 +1,40 @@
 {{ define "simulatorFrag" }}
 <div class="row">
+  <div class="input-field col s4">
+    {{ if and (.CurrentUser) (.Data.isOwner) }}
+      {{ if .Data.sim.Name }}
+        <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
+      {{ else }}
+        <input id="simulation-name" type="text" value="New Simulation"></input>
+      {{ end }}
+      <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+    {{ else }}
+      {{ if .Data.sim.Name }}
+        <h5 class="page-header">{{ .Data.sim.Name }}</h5>
+      {{ else }}
+        <h5 class="page-header">New Simulation</h5>
+      {{ end }}
+    {{ end }}
+  </div>
+
+  {{ if and (.Data.isOwner) (.CurrentUser) }}
+  <!-- Show Save Simulation only if you are the logged in and the owner -->
+  <div class="col s1 right pad-sides">
+    <a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a>
+  </div>
+  {{ end }}
+</div>
+
+<div class="row">
   <div class="col s8">
     <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
     <div style="height: 500px;" id="viewport" class="white card"></div>
   </div>
-  <div class="col s4 card z-depth-1 scrollable-tools" style="height: 500px;">
+  <div class="col s4 card scrollable-tools" style="height: 500px;">
     <ul class="tabs">
-      <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="material-icons">view_module</i></a></li>
-      <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="material-icons">info_outline</i></a></li>
-      <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="material-icons">public</i></a></li>
+      <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
+      <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
+      <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
       <div class="indicator blue" style="z-index: 1;"></div>
     </ul>
 
@@ -147,7 +173,7 @@
                 <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
                   <div class="dummy"></div>
                   <div class="toolbox-item">
-                    <img src="/static/img/target.jpg" class="ui-draggable" width="40" >
+                    <img src="/static/img/toolbox/target.jpg" class="ui-draggable" width="40" >
                   </div>
                 </div>
                 <div class="input-field col s4">
@@ -169,14 +195,14 @@
 </div>
 
 <div class="row" id="playback">
-  <div class="col s8">
+  <div class="col s12">
     <div class="row">
       <div class="col s1">
         <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-          <span aria-hidden="true"><i id="play-pause-icon"class="material-icons">play_arrow</i></span>GO!
+          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-small"></i></span>
         </button>
       </div>
-      <div class="hello col s11">
+      <div class="col s11">
         <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
       </div>
     </div>

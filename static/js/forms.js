@@ -1,3 +1,13 @@
+function successToast(msg) {
+  var $toastContent = $('<span class="green lighten-5 black-text pad"><h5><i class="fa fa-check"></i> Success!</h5><p>' + msg + '</p></span>');
+  Materialize.toast($toastContent, 2000);
+}
+
+function failToast(msg) {
+  var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><p>' + msg + '</p></span>');
+  Materialize.toast($toastContent, 8000);
+}
+
 // Load the comments initially via AJAX
 $( document ).ready(function() {
     if (!isNewSim()) {
@@ -43,6 +53,7 @@ function saveSimulation(){
     if(isNewSim()){
         // Creating a new simulation
         post(window.location.href, simObject);
+        successToast('Simulation saved successfully!');
     } else {
         // Updating an existing simulation
         $.post(window.location.href, simObject)
@@ -50,6 +61,10 @@ function saveSimulation(){
             // I believe 'done' is synonymous with 'success' here
             $("#save-button").removeClass( "blue" )
             $("#save-button").addClass( "green" )
+            successToast('Simulation saved successfully!');
+        })
+        .fail(function(xhr, textStatus, errorThrown) {
+          failToast(xhr.responseText);
         });
     } 
 
@@ -58,7 +73,6 @@ function saveSimulation(){
 }
 
 function saveUser() {
-
     simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
 
     $.post(window.location.href, simObject)
@@ -66,6 +80,10 @@ function saveUser() {
             // I believe 'done' is synonymous with 'success' here
             $("#profile-save-button").removeClass( "blue" )
             $("#profile-save-button").addClass( "green" )
+            successToast('User saved successfully!');
+        })
+        .fail(function(xhr, textStatus, errorThrown) {
+          failToast(xhr.responseText);
         });
 }
 
@@ -76,8 +94,13 @@ function saveComment() {
 
     $("#comment-load-gif").show();
     $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
-      .done(function( data ) { 
+      .done(function() { 
         refreshCommentsList();
+        successToast('Comment saved successfully!');
+      })
+      .fail(function(xhr, textStatus, errorThrown) {
+        $("#comment-load-gif").hide();
+        failToast(xhr.responseText);
       });
 
 }
@@ -95,7 +118,7 @@ function refreshCommentsList() {
 
             result +=  "<div class='row'>";
             result +=   "<div class='col s2'>";
-            result +=    "<i class='medium material-icons'>account_circle</i>";
+            result +=    "<i class='medium fa fa-user'></i>";
             result +=  "</div>";
             result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
             result +=    "<div class='row'>";

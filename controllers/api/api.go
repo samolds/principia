@@ -4,15 +4,22 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"appengine/user"
-	"controllers"
 	"controllers/utils"
 	"encoding/json"
 	"lib/gorilla/mux"
-	"log"
 	"models"
 	"net/http"
 	"time"
 )
+
+// Can be caught by JQuery ".fail()" function and be used to display
+// a notification on the front end of the error.
+//
+// Just returns an error code and message. Doesn't try to render an
+// entire template
+func apiErrorResponse(w http.ResponseWriter, err string, code int) {
+  http.Error(w, err, code)
+}
 
 // GET returns JSON all comments associated with the simId passed in the url
 // POST saves the comment to datastore with the simId as the ancestor key
@@ -29,7 +36,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := q.GetAll(c, &comments)
 
 		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -41,7 +48,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		u := user.Current(c)
 
 		if u == nil {
-			log.Println("CANNOT POST COMMENT WHEN NOT LOGGED IN")
+			apiErrorResponse(w, "Cannot post comment when not logged in", http.StatusInternalServerError)
 			return
 		}
 
@@ -51,11 +58,11 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		// Construct the simulations key
 		key := datastore.NewIncompleteKey(c, "Comment", simulationKey(c, id))
 
-		// Put the simulation in the datastore
+		// Put the comment in the datastore
 		_, err := datastore.Put(c, key, &comment)
 
 		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
