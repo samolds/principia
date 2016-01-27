@@ -5,6 +5,7 @@ import (
 	"appengine/datastore"
 	"models"
 	"net/http"
+	"lib/gorilla/mux"
 )
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +18,13 @@ func FaqsHandler(w http.ResponseWriter, r *http.Request) {
 
 func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
 	BaseHandler(w, r, "dormant/feedback", nil)
+}
+
+func TestHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	page := vars["testPage"]
+
+	BaseHandler(w, r, "test/" + page, nil)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {

@@ -20,6 +20,7 @@ var (
 	dormDir = tmplDir + "dormant/"
 	simDir  = tmplDir + "simulator/"
 	userDir = tmplDir + "user/"
+	testDir = tmplDir + "test/"
 
 	simFrag = simDir + "simulator.frag.html"
 	comFrag = simDir + "comments.frag.html"
@@ -40,6 +41,9 @@ var (
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 		"user/simulations":     template.Must(template.ParseFiles(base, userDir+"simulations.html")),
 		"user/profile":         template.Must(template.ParseFiles(base, userDir+"profile.html")),
+
+		"test/sandbox":         template.Must(template.ParseFiles(testDir + "SandboxRunner.html")),
+		"test/kinematics":      template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
 	}
 )
 
