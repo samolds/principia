@@ -1,10 +1,10 @@
 function successToast(msg) {
-  var $toastContent = $('<span class="green lighten-5 black-text pad"><h5><i class="fa fa-check"></i> Success!</h5><span>' + msg + '</span></span>');
+  var $toastContent = $('<span class="green lighten-5 black-text pad"><h5><i class="fa fa-check"></i> Success!</h5><p>' + msg + '</p></span>');
   Materialize.toast($toastContent, 2000);
 }
 
 function failToast(msg) {
-  var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><span>' + msg + '</span></span>');
+  var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><p>' + msg + '</p></span>');
   Materialize.toast($toastContent, 8000);
 }
 

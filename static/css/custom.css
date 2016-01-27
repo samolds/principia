@@ -402,5 +402,6 @@ i.fa.fa-size-medium {
   padding: 0;
   background-color: transparent;
   max-width: 450px;
+  word-break: normal;
 }
 /* end toast overwrite */
