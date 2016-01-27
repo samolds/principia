@@ -10,35 +10,34 @@
       <h4 class="home-card-title white-text hide-on-med-and-up">Welcome to Principia!</h4>
       <span class="home-card-subtitle white-text">
         {{ if gt $numSimulations 1 }}
-          This Week's Top {{ $numSimulations }} Simulations!
+          This Week's Top {{ $numSimulations }} Simulations
         {{ else if eq $numSimulations 1 }}
-          This Week's Top Simulation!
+          This Week's Top Simulation
         {{ end }}
       </span>
     </div>
     <div class="card-content">
       <div class="row">
         <div class="valign-wrapper">
+          <div class="col s6">
+            {{ if .Data.topSimulations }}
+              <ol class="valign">
+                {{ range $simulation := .Data.topSimulations }}
+                  <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.Id }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
+                {{ end }}
+              </ol>
+            {{ else }}
+              <p>No new simulations this week!</p>
+            {{ end }}
+          </div>
           {{ if eq "Sign In" .Data.loginMessage }}
-            <div class="col s6">
+            <div class="col s5">
               <p class="flow-text valign center-align">
                 Don't have an account? <a href="{{ .Data.loginUrl }}">Log In</a>
                 or <a href="{{ .Data.loginUrl }}">Sign up</a>!
               </p>
             </div>
           {{ end }}
-          <div class="col s1"></div>
-          <div class="col s5">
-            {{ if .Data.topSimulations }}
-              <ul class="valign">
-                {{ range $simulation := .Data.topSimulations }}
-                  <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.Id }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
-                {{ end }}
-              </ul>
-            {{ else }}
-              <p>No new simulations this week!</p>
-            {{ end }}
-          </div>
         </div>
       </div>
     </div>
