@@ -92,6 +92,9 @@ var Globals = {
   
   // Number of keyframes for current simulation
   numKeyframes: 2,
+
+  //Max number of keyframes
+  maxNumKeyframes: 5, 
   
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,

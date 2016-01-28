@@ -42,8 +42,8 @@ $(document).ready(function(){
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
-  $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
-  $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
+  // $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
+  // $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
   $('#remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
   

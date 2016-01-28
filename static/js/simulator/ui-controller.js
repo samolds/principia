@@ -142,25 +142,30 @@ function selectKeyframe(event){
 	var frame = event.target.id.split("-")[1];
 	Globals.keyframe = parseInt(frame);
   
-  // Do highlight
-  $("#" + "keyframe-0").attr("style","");
-  $("#" + "keyframe-1").attr("style","");
+  for(var i = 0; i<Globals.numKeyframes+1; i++)
+  {
+    //remove highlight
+    $("#" + "keyframe-"+i).attr("style","");
+
+  }
+//add highlight
   $("#" + event.target.id).attr("style","border:4px solid #0000cc");
  
-  if(frame == 0){
-    for(var i=0; i<Globals.world.getBodies().length; i++)
-      if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
-        delete Globals.bodyConstants[i].alpha;
-      else
-        Globals.bodyConstants[i].alpha = 0.5;
-  }
-  else{
-    for(var i=0; i<Globals.world.getBodies().length; i++)
-      if(!isNaN(Globals.variableMap[i].xf) && !isNaN(Globals.variableMap[i].yf))
-        delete Globals.bodyConstants[i].alpha;
-      else
-        Globals.bodyConstants[i].alpha = 0.5;
-  }
+ //TODO: handle transparent for general case
+  // if(frame == 0){
+  //   for(var i=0; i<Globals.world.getBodies().length; i++)
+  //     if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
+  //       delete Globals.bodyConstants[i].alpha;
+  //     else
+  //       Globals.bodyConstants[i].alpha = 0.5;
+  // }
+  // else{
+  //   for(var i=0; i<Globals.world.getBodies().length; i++)
+  //     if(!isNaN(Globals.variableMap[i].xf) && !isNaN(Globals.variableMap[i].yf))
+  //       delete Globals.bodyConstants[i].alpha;
+  //     else
+  //       Globals.bodyConstants[i].alpha = 0.5;
+  // }
    
   // Draw master will set state appropriately and display it
 	drawMaster();
@@ -233,10 +238,37 @@ function updateCoords(coord_sys){
 
 function addKeyframe(){
   console.log("Added Keyframe");
+if (Globals.numKeyframes == Globals.maxNumKeyframes)
+{
+  return;
+}
+  Globals.numKeyframes++;
+
+  $('#keyframe-list').append("<li id='keyframe-li-" + Globals.numKeyframes +"> " +
+                     " <div class='keyframe-tile'> " +
+                      "  <div class='remove-keyframe-btn'> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe'><i class='fa fa-times'></i></a> " +
+                      "  </div> " +
+                       "   <h6>Frame " + Globals.numKeyframes + ": </h6> " +
+                       "   <canvas id='keyframe-"+ Globals.numKeyframes +"' class='keyframe' ></canvas> " +
+                     
+                       " <div class='input-field'> " +
+                       "       <input id='keyframe-"+ Globals.numKeyframes +"-dt' type='text' value='?'></input> " +
+                       "       <label for='keyframe-"+ Globals.numKeyframes +"-dt' class='active'>dt</label> " +
+                       " </div> " +
+                      " </div> " +
+                   " </li>");
+
+ $('#keyframe-' + Globals.numKeyframes).on("click", function(event) { selectKeyframe(event); } );
+
 }
 
 function removeKeyframe(){
-  console.log("Removed Keyframe");
+var frame = event.target;
+console.log("FRAME:" +frame);
+$(frame).parents().eq(3).remove();
+
+
 }
 
 function updateOrigin(coordinate, value){
