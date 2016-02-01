@@ -4,11 +4,11 @@ import (
 	"appengine"
 	"appengine/datastore"
 	appengineUser "appengine/user"
+	"crypto/sha1"
+	"encoding/base32"
 	"errors"
-	"math"
-	"math/rand"
 	"models"
-	"regexp"
+	"strings"
 	"time"
 )
 
@@ -57,21 +57,15 @@ func GenerateUniqueKey(ctx appengine.Context, kind string, userID string, ancest
 		userID = user.KeyID
 	}
 
-	timeLen := len(now) - 1
-	userLen := len(userID) - 1
-	length := int(math.Min(float64(timeLen), float64(userLen)))
-	unique := make([]byte, length)
+	// SHA1 hash
+	hash := sha1.New()
+	hash.Write([]byte(userID + now))
+	hashBytes := hash.Sum(nil)
 
-	// xor the end of the user's ID with the time as a string
-	for i := 0; i < length; i++ {
-		unique[i] = now[timeLen-i] ^ userID[userLen-i]
-	}
-
-	// replace any unfavorable bytes with acceptable ones
-	re := regexp.MustCompile("[^a-zA-Z0-9-]")
-	properUnique := re.ReplaceAllString(string(unique), string(letterBytes[rand.Intn(len(letterBytes))]))
+	// Conversion to base32
+	unique := strings.ToLower(base32.HexEncoding.EncodeToString(hashBytes))
 
 	// use this unique string to create a datastore key of 'kind' belonging to 'ancestorKey'
-	key := datastore.NewKey(ctx, kind, properUnique, 0, ancestorKey)
+	key := datastore.NewKey(ctx, kind, unique, 0, ancestorKey)
 	return key, nil
 }
