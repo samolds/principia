@@ -247,7 +247,7 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
   $('#keyframe-list').append("<li id='keyframe-li-" + Globals.numKeyframes +"> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
-                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe'><i class='fa fa-times'></i></a> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red remove-keyframe' ><i class='fa fa-times'></i></a> " +
                       "  </div> " +
                        "   <h6>Frame " + Globals.numKeyframes + ": </h6> " +
                        "   <canvas id='keyframe-"+ Globals.numKeyframes +"' class='keyframe' ></canvas> " +
@@ -260,10 +260,11 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
                    " </li>");
 
  $('#keyframe-' + Globals.numKeyframes).on("click", function(event) { selectKeyframe(event); } );
+ $('.remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
 
 }
 
-function removeKeyframe(){
+function removeKeyframe(event){
 var frame = event.target;
 console.log("FRAME:" +frame);
 $(frame).parents().eq(3).remove();
