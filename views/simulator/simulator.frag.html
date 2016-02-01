@@ -1,27 +1,43 @@
 {{ define "simulatorFrag" }}
 <div class="row">
-  <div class="input-field col s4">
-    {{ if and (.CurrentUser) (.Data.isOwner) }}
-      {{ if .Data.sim.Name }}
-        <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}"></input>
+  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+    <div class="input-field col s6">
+      {{ if .Data.simulation.Name }}
+        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
       {{ else }}
         <input id="simulation-name" type="text" value="New Simulation"></input>
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-    {{ else }}
-      {{ if .Data.sim.Name }}
-        <h5 class="page-header">{{ .Data.sim.Name }}</h5>
-      {{ else }}
-        <h5 class="page-header">New Simulation</h5>
-      {{ end }}
+    </div>
+    <div class="col s1 right pad-sides">
+      <h4><a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a></h4>
+    </div>
+    {{ if .Data.simulation.Name }}
+    <div class="col s1 right pad-sides">
+      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+      </h4>
+    </div>
     {{ end }}
-  </div>
-
-  {{ if and (.Data.isOwner) (.CurrentUser) }}
-  <!-- Show Save Simulation only if you are the logged in and the owner -->
-  <div class="col s1 right pad-sides">
-    <a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a>
-  </div>
+  {{ else }}
+    <div class="col s6">
+      {{ if .Data.simulation.Name }}
+        <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
+      {{ else }}
+        <h4 class="page-header">Simulation</h4>
+      {{ end }}
+    </div>
+    {{ if .Data.simulation.Name }}
+    <div class="col s1 right pad-sides">
+      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        {{ if .IsLoggedIn }}
+          <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+        {{ else }}
+          <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+        {{ end }}
+      </h4>
+    </div>
+    {{ end }}
   {{ end }}
 </div>
 
@@ -218,7 +234,7 @@
   </div>
 </div>
 
-<div class="row" id="playback">
+<div class="row">
   <div class="col s12">
     <div class="row">
       <div class="col s1">

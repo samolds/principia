@@ -3,9 +3,9 @@ package controllers
 import (
 	"appengine"
 	"appengine/datastore"
+	"lib/gorilla/mux"
 	"models"
 	"net/http"
-	"lib/gorilla/mux"
 )
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,28 +24,23 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	page := vars["testPage"]
 
-	BaseHandler(w, r, "test/" + page, nil)
+	BaseHandler(w, r, "test/"+page, nil)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	limit := 10
-	simulations := make([]models.Simulation, 0, limit)
+	ctx := appengine.NewContext(r)
+	q := datastore.NewQuery("Simulation").Order("-CreationDate").Limit(10) // TODO: filter out when CreationDate is older than 7 days and Order by rating
 
-	c := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-CreationDate").Limit(limit) // TODO: filter out when CreationDate is older than 7 days
-	keys, err := q.GetAll(c, &simulations)
+	var simulations []models.Simulation
+	_, err := q.GetAll(ctx, &simulations)
 
 	if err != nil {
 		ErrorHandler(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	for i := 0; i < len(keys); i++ {
-		simulations[i].Id = keys[i].IntID()
-	}
-
 	data := map[string]interface{}{
-		"topSimulations": simulations,
+		"simulations": simulations,
 	}
 
 	BaseHandler(w, r, "dormant/home", data)

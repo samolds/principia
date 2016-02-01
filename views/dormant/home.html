@@ -3,7 +3,7 @@
 {{ define "content" }}
 <div class="container">
   <div class="card">
-    {{ $numSimulations := len .Data.topSimulations }}
+    {{ $numSimulations := len .Data.simulations }}
     <div class="card-image waves-effect waves-block waves-light">
       <img class="activator" src="/static/img/homebanner.png">
       <h2 class="home-card-title white-text hide-on-small-only">Welcome to Principia!</h2>
@@ -13,6 +13,8 @@
           This Week's Top {{ $numSimulations }} Simulations
         {{ else if eq $numSimulations 1 }}
           This Week's Top Simulation
+        {{ else }}
+          No New Simulations This Week
         {{ end }}
       </span>
     </div>

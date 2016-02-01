@@ -42,35 +42,37 @@ var (
 		"user/simulations":     template.Must(template.ParseFiles(base, userDir+"simulations.html")),
 		"user/profile":         template.Must(template.ParseFiles(base, userDir+"profile.html")),
 
-		"test/sandbox":         template.Must(template.ParseFiles(testDir + "SandboxRunner.html")),
-		"test/kinematics":      template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
+		"test/sandbox":    template.Must(template.ParseFiles(testDir + "SandboxRunner.html")),
+		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
 	}
 )
 
 type PageData struct {
-	CurrentUser *models.User
-	Data        map[string]interface{}
+	IsLoggedIn bool
+	User       models.User
+	Data       map[string]interface{}
 }
 
 // The 404 page handler. Just a wrapper on the ErrorHandler but has
-// the same function signature.
+// the same function signature necessary for routes
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	ErrorHandler(w, "Not Found!", http.StatusNotFound)
 }
 
 // Renders a nice looking error page. Call this function whenever you want
-// to return and error from any other function!
+// to return and error template from any other function!
 func ErrorHandler(w http.ResponseWriter, errMsg string, status int) {
 	var buffer bytes.Buffer
-	buffer.Reset()
-	w.WriteHeader(status)
+
+	// TODO: Add user information stuff. Sign in links aren't rendered on error pages
 
 	data := map[string]interface{}{
 		"title":  status,
 		"errMsg": errMsg,
 	}
-	err := templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
 
+	w.WriteHeader(status)
+	err := templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -80,7 +82,6 @@ func ErrorHandler(w http.ResponseWriter, errMsg string, status int) {
 }
 
 // The base handler method that all other controllers execute
-// TODO: Clean up this handler
 func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[string]interface{}) {
 	// Buffer is used to store rendered template temporarily instead
 	// of writing it directly back to the browser incase there are
@@ -92,36 +93,38 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	}
 
 	// User authentication
-	c := appengine.NewContext(r)
-	googleUser := appengineUser.Current(c)
-	var user *models.User
+	ctx := appengine.NewContext(r)
+	googleUser := appengineUser.Current(ctx)
+	var user models.User
+	isLoggedIn := false
 
 	// Build correct login/logout links for Google
 	if googleUser == nil {
-		data["loginUrl"], _ = appengineUser.LoginURL(c, html.EscapeString(r.URL.Path))
+		data["loginUrl"], _ = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
 		data["loginMessage"] = "Sign In"
-		user = nil
 	} else {
-		data["loginUrl"], _ = appengineUser.LogoutURL(c, "/")
+		data["loginUrl"], _ = appengineUser.LogoutURL(ctx, "/")
 		data["loginMessage"] = "Sign Out"
+		isLoggedIn = true
 
+		// TODO: Better way to do this? -> Do this in the profile handler and redirect?
 		// Grab the user from the db
-		k := datastore.NewKey(c, "User", googleUser.ID, 0, nil)
+		userKey := datastore.NewKey(ctx, "User", googleUser.ID, 0, nil)
+		err := datastore.Get(ctx, userKey, &user)
 
-		// Point to something
-		user = &models.User{}
-
-		// TODO: Better way to do this?
-		if err := datastore.Get(c, k, user); err != nil {
+		if err != nil {
 			if err == datastore.ErrNoSuchEntity {
 				// Create new user
-				user.Email = googleUser.Email
-				user.Admin = googleUser.Admin
-				user.ID = googleUser.ID
-				user.JoinDate = time.Now()
+				user = models.User{
+					KeyID:    userKey.Encode(),
+					GoogleID: googleUser.ID,
+					Email:    googleUser.Email,
+					Admin:    googleUser.Admin,
+					JoinDate: time.Now(),
+				}
 
 				// Put the new user in datastore
-				_, err := datastore.Put(c, k, user)
+				_, err := datastore.Put(ctx, userKey, &user)
 
 				if err != nil {
 					// Could not place the user in the datastore
@@ -130,23 +133,21 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 				}
 
 				if templ != "user/profile" {
-					http.Redirect(w, r, "/user/"+googleUser.ID, http.StatusFound)
+					http.Redirect(w, r, "/user/"+user.KeyID, http.StatusFound)
 					return
 				}
 			} else {
-				ErrorHandler(w, "User object was not found: "+err.Error(), http.StatusInternalServerError)
+				ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
 				return
 			}
 		}
-
-		// Datastore doesn't return the ID in the object so we
-		// need to add it back
-		user.ID = googleUser.ID
 	}
+	// END TODO
 
 	pageData := &PageData{
-		CurrentUser: user,
-		Data:        data,
+		IsLoggedIn: isLoggedIn,
+		User:       user,
+		Data:       data,
 	}
 
 	// Render template with all page data including user information, or error
