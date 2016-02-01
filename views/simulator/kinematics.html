@@ -14,9 +14,9 @@
 
 <script>
   Kinematics1D.initModule({{ .Data.simulation.Simulator }});
-  var globalSimulationId = {{ .Data.simulation.KeyID }}; // I know this is janky
-  if (!globalSimulationId) { // TODO: Clean this up. This is a temporary
-    globalSimulationId = null; // holder while refactoring.
+  var GlobalKeyIDs = {
+    User: {{ .User.KeyID }},
+    Simulation: {{ .Data.simulation.KeyID }},
   }
 </script>
 

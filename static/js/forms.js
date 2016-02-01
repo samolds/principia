@@ -10,7 +10,8 @@ function failToast(msg) {
 
 // Load the comments initially via AJAX
 $( document ).ready(function() {
-    if (!isNewSim()) {
+    // TODO: Just break out this JS file into form helpers and simulator helpers
+    if (!isNewSim() && window.location.pathname.substr(0, 11) == "/simulator/") {
         refreshCommentsList();
         refreshRatings();
     } else {
@@ -94,7 +95,7 @@ function saveComment() {
     commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
-    $.post("/api/simulator/" + globalSimulationId + "/comments", commentObj)
+    $.post("/api/simulator/" + GlobalKeyIDs.Simulation + "/comments", commentObj)
       .done(function() { 
         refreshCommentsList();
         successToast('Comment saved successfully!');
@@ -110,7 +111,7 @@ function saveComment() {
 function saveRating() {
     ratingObj = { Score: 1 };
 
-    $.post("/api/simulator/" + globalSimulationId + "/ratings", ratingObj)
+    $.post("/api/simulator/" + GlobalKeyIDs.Simulation + "/ratings", ratingObj)
       .done(function() { 
         refreshRatings();
         successToast('Rating updated successfully!');
@@ -126,7 +127,7 @@ function saveRating() {
 // posting a new comment OR on initial page load
 function refreshCommentsList() {
 
-    $.get("/api/simulator/" + globalSimulationId + "/comments", function(json) {
+    $.get("/api/simulator/" + GlobalKeyIDs.Simulation + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
         if (json) {
@@ -164,16 +165,14 @@ function refreshCommentsList() {
 // Called after saveRating() has finished
 // posting a new rating OR on initial page load
 function refreshRatings() {
-    $.get("/api/simulator/" + globalSimulationId + "/ratings", function(response) {
+    $.get("/api/simulator/" + GlobalKeyIDs.Simulation + "/ratings", function(response) {
       json = JSON.parse(response);
 
       var rater = false;
 
-      /* TODO: Get access to the current user's ActiverUserKey
-      var ActiveUserKey = "ahNkZXZ-dGhlcHJpbmNpcGlheHl6ch8LEgRVc2VyIhUxNTkxNjExNzUzMjQwODUwNzc4MjAM";
       if (json.Ratings) {
         for (var i = 0; i < json.Ratings.length; i++) {
-          if (json.Ratings[i].AuthorKey == ActiveUserKey) {
+          if (json.Ratings[i].AuthorKey == GlobalKeyIDs.User) {
             rater = true;
           }
         }
@@ -186,7 +185,6 @@ function refreshRatings() {
         $("#star-icon").removeClass("fa-star");
         $("#star-icon").addClass("fa-star-o");
       }
-      */
       $("#ratings").attr("data-tooltip", json.TotalScore + " Stars");
     })
     .fail(function() {
@@ -196,13 +194,15 @@ function refreshRatings() {
 // Determines from the url if the simulation
 // is a new simulation or an existing simulation
 function isNewSim(){
-
-  if (typeof globalSimulationId === 'undefined') {
+  if (typeof GlobalKeyIDs !== 'undefined') {
+    if (!GlobalKeyIDs.Simulation) {
       return true;
+    }
+
+    return GlobalKeyIDs.Simulation == null || GlobalKeyIDs.Simulation == "";
+  } else {
+    return false;
   }
-
-  return globalSimulationId == null;
-
 }
 
 // Used when uploading a new profile picture on the profile page
