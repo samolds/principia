@@ -14,7 +14,7 @@
     </div>
     <div class="col s1 right pad-sides">
       <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-        <i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i>
+        <i id="star-icon" class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
       </h4>
     </div>
   {{ else }}
@@ -30,7 +30,7 @@
         {{ if .IsLoggedIn }}
           <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
         {{ else }}
-          <i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i>
+          <i id="star-icon" class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
         {{ end }}
       </h4>
     </div>

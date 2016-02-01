@@ -62,7 +62,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 			Type:         simType,
 			CreationDate: creationTime,
 			UpdatedDate:  creationTime,
-			UserKey:      user.KeyID,
+			AuthorKey:    user.KeyID,
 		}
 
 		// Put the simulation in the datastore
@@ -124,7 +124,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		}
 	}
 
-	isOwner := utils.IsOwner(simulation.UserKey, ctx)
+	isOwner := utils.IsOwner(simulation.AuthorKey, ctx)
 
 	data := map[string]interface{}{
 		"simulation": simulation,

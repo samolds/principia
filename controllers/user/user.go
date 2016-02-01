@@ -17,7 +17,7 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	// TODO: Only show public simulations if NOT THE OWNER is trying to view
-	q := datastore.NewQuery("Simulation").Filter("UserKey =", userID)
+	q := datastore.NewQuery("Simulation").Filter("AuthorKey =", userID)
 	var simulations []models.Simulation
 	_, err := q.GetAll(ctx, &simulations)
 

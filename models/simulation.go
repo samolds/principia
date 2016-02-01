@@ -13,7 +13,7 @@ type Simulation struct {
 	Type         string
 	CreationDate time.Time
 	UpdatedDate  time.Time
-	UserKey      string // Encoded datastore key
+	AuthorKey    string // Encoded datastore key
 	// Ratings by descendant
 	// Comments by descendant
 }

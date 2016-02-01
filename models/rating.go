@@ -10,7 +10,7 @@ type Rating struct {
 
 	Score        int8
 	CreationDate time.Time
-	UserKey      string // Encoded datastore key
+	AuthorKey    string // Encoded datastore key
 
 	// AncestorKey = Thing that was rated
 	// Using AncecstorKey for strong consistency

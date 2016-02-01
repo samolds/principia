@@ -10,7 +10,7 @@ type Comment struct {
 
 	Contents     string
 	CreationDate time.Time
-	UserKey      string // Encoded datastore key
+	AuthorKey    string // Encoded datastore key
 	// Ratings by descendant
 
 	// AncestorKey = Simulation

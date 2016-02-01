@@ -67,7 +67,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		// Build the comment object
 		comment := models.Comment{
 			KeyID:        key.Encode(),
-			UserKey:      user.KeyID,
+			AuthorKey:    user.KeyID,
 			Contents:     r.FormValue("Contents"),
 			CreationDate: time.Now(),
 		}
@@ -129,7 +129,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for i := 0; i < len(ratings); i++ {
-			if user.KeyID == ratings[i].UserKey {
+			if user.KeyID == ratings[i].AuthorKey {
 				ratingsKey, err := datastore.DecodeKey(ratings[i].KeyID)
 
 				if err != nil {
@@ -158,7 +158,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 		// Build the comment object
 		rating := models.Rating{
 			KeyID:        key.Encode(),
-			UserKey:      user.KeyID,
+			AuthorKey:    user.KeyID,
 			Score:        int8(score),
 			CreationDate: time.Now(),
 		}

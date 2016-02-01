@@ -173,7 +173,7 @@ function refreshRatings() {
       var ActiveUserKey = "ahNkZXZ-dGhlcHJpbmNpcGlheHl6ch8LEgRVc2VyIhUxNTkxNjExNzUzMjQwODUwNzc4MjAM";
       if (json.Ratings) {
         for (var i = 0; i < json.Ratings.length; i++) {
-          if (json.Ratings[i].UserKey == ActiveUserKey) {
+          if (json.Ratings[i].AuthorKey == ActiveUserKey) {
             rater = true;
           }
         }
