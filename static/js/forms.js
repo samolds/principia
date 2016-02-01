@@ -11,7 +11,8 @@ function failToast(msg) {
 // Load the comments initially via AJAX
 $( document ).ready(function() {
     if (!isNewSim()) {
-        refreshCommentsList(globalSimulationId);
+        refreshCommentsList();
+        refreshRatings();
     } else {
         $("#comment-load-gif").hide();
     }
@@ -102,8 +103,24 @@ function saveComment() {
         $("#comment-load-gif").hide();
         failToast(xhr.responseText);
       });
+}
+
+// Save new rating to the datastore
+// and refresh the ratings
+function saveRating() {
+    ratingObj = { Score: 1 };
+
+    $.post("/api/simulator/" + globalSimulationId + "/ratings", ratingObj)
+      .done(function() { 
+        refreshRatings();
+        successToast('Rating updated successfully!');
+      })
+      .fail(function(xhr, textStatus, errorThrown) {
+        failToast(xhr.responseText);
+      });
 
 }
+
 
 // Called after saveComment() has finished
 // posting a new comment OR on initial page load
@@ -112,21 +129,23 @@ function refreshCommentsList() {
     $.get("/api/simulator/" + globalSimulationId + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
+        if (json) {
 
-        for(var i = 0; i < json.length; i++) {
-            var comment = json[i];
+          for(var i = 0; i < json.length; i++) {
+              var comment = json[i];
 
-            result +=  "<div class='row'>";
-            result +=   "<div class='col s2'>";
-            result +=    "<i class='medium fa fa-user'></i>";
-            result +=  "</div>";
-            result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
-            result +=    "<div class='row'>";
-            result +=      "<div class='all-point'></div>";
-            result +=      "<div class='col  s12'>";
-            result +=         "<p class=''>" +comment.Contents+"</p> ";                  
-            result +=      "</div></div></div></div>";
+              result +=  "<div class='row'>";
+              result +=   "<div class='col s2'>";
+              result +=    "<i class='medium fa fa-user'></i>";
+              result +=  "</div>";
+              result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
+              result +=    "<div class='row'>";
+              result +=      "<div class='all-point'></div>";
+              result +=      "<div class='col  s12'>";
+              result +=         "<p class=''>" +comment.Contents+"</p> ";
+              result +=      "</div></div></div></div>";
 
+          }
         }
 
       $( "#comments" ).html( result );
@@ -135,8 +154,43 @@ function refreshCommentsList() {
       // Reset the comment box text
       $("#comment-contents").val("");
 
+    })
+    .fail(function() {
+      $("#comment-load-gif").hide();
     });    
 
+}
+
+// Called after saveRating() has finished
+// posting a new rating OR on initial page load
+function refreshRatings() {
+    $.get("/api/simulator/" + globalSimulationId + "/ratings", function(response) {
+      json = JSON.parse(response);
+
+      var rater = false;
+
+      /* TODO: Get access to the current user's ActiverUserKey
+      var ActiveUserKey = "ahNkZXZ-dGhlcHJpbmNpcGlheHl6ch8LEgRVc2VyIhUxNTkxNjExNzUzMjQwODUwNzc4MjAM";
+      if (json.Ratings) {
+        for (var i = 0; i < json.Ratings.length; i++) {
+          if (json.Ratings[i].UserKey == ActiveUserKey) {
+            rater = true;
+          }
+        }
+      }
+
+      if (rater) {
+        $("#star-icon").removeClass("fa-star-o");
+        $("#star-icon").addClass("fa-star");
+      } else {
+        $("#star-icon").removeClass("fa-star");
+        $("#star-icon").addClass("fa-star-o");
+      }
+      */
+      $("#ratings").attr("data-tooltip", json.TotalScore + " Stars");
+    })
+    .fail(function() {
+    });    
 }
 
 // Determines from the url if the simulation

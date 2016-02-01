@@ -4,15 +4,14 @@ import (
 	"time"
 )
 
-// Belong to Simulation
-type Comment struct {
+// Belong to Simulation or Comment
+type Rating struct {
 	KeyID string // Encoded datastore key
 
-	Contents     string
+	Score        int8
 	CreationDate time.Time
 	UserKey      string // Encoded datastore key
-	// Ratings by descendant
 
-	// AncestorKey = Simulation
+	// AncestorKey = Thing that was rated
 	// Using AncecstorKey for strong consistency
 }

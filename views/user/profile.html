@@ -26,11 +26,11 @@
       <div class="col s6">
         <div class="input-field col s12">
           <label for="user-email" id="user-email-label">User Email</label>
-          <input disabled value="{{.CurrentUser.Email}}" id="user-email" type="text" class="validate">
+          <input disabled value="{{ .User.Email }}" id="user-email" type="text" class="validate">
         </div>
         <div class="input-field col s12">
           <label for="user-display-name" id="user-email-label">Display name</label>
-          <input id="user-display-name" value="{{.CurrentUser.DisplayName}}" type="text" class="validate">
+          <input id="user-display-name" value="{{ .User.DisplayName }}" type="text" class="validate">
         </div>
       </div>
       <div class="input-field col s6">
@@ -47,7 +47,7 @@
     </div>
     <div class="row">
       <div class="input-field col s12">
-        <textarea id="user-interests" class="materialize-textarea" length="120">{{.CurrentUser.Interests}}</textarea>
+        <textarea id="user-interests" class="materialize-textarea" length="120">{{ .User.Interests }}</textarea>
         <label for="user-interests">Areas Of Interest:</label>
       </div>
     </div>

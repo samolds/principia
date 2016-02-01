@@ -3,8 +3,8 @@ package user
 import (
 	"appengine"
 	"appengine/datastore"
-	"appengine/user"
 	"controllers"
+	"controllers/utils"
 	"lib/gorilla/mux"
 	"models"
 	"net/http"
@@ -12,67 +12,78 @@ import (
 
 // Returns all simulations tied to the user id passed in the url
 func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
-	// Grab the userId
 	vars := mux.Vars(r)
-	userId := vars["userId"]
-
-	limit := 10
-	simulations := make([]models.Simulation, 0, limit)
-
-	// Get the current context
-	c := appengine.NewContext(r)
+	userID := vars["userID"]
+	ctx := appengine.NewContext(r)
 
 	// TODO: Only show public simulations if NOT THE OWNER is trying to view
-	q := datastore.NewQuery("Simulation").Filter("UserID =", userId)
-	keys, err := q.GetAll(c, &simulations)
+	q := datastore.NewQuery("Simulation").Filter("UserKey =", userID)
+	var simulations []models.Simulation
+	_, err := q.GetAll(ctx, &simulations)
 
 	if err != nil {
 		controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	for i := 0; i < len(keys); i++ {
-		simulations[i].Id = keys[i].IntID()
-	}
-
 	data := map[string]interface{}{
-		"sims": simulations,
+		"simulations": simulations,
 	}
 
 	controllers.BaseHandler(w, r, "user/simulations", data)
 }
 
+// Handles Posts from Profile Page
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID := vars["userID"]
+	pageUserKey, err := datastore.DecodeKey(userID)
+	ctx := appengine.NewContext(r)
+
+	if r.Method == "GET" {
+		var user models.User
+		err = datastore.Get(ctx, pageUserKey, &user)
+		if err != nil {
+			controllers.ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
+			return
+		}
+	}
+
 	if r.Method == "POST" {
+		user, err := utils.GetCurrentUser(ctx)
 
-		c := appengine.NewContext(r)
-		u := user.Current(c)
-		var pUser models.User
+		if err != nil {
+			// Could not place the user in the datastore
+			controllers.ErrorHandler(w, "Could not load user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-		// Construct the simulations key
-		key := datastore.NewKey(c, "User", u.ID, 0, nil)
+		activeUserKey, err := datastore.DecodeKey(user.KeyID)
 
-		// Get
-		err := datastore.Get(c, key, &pUser)
+		if err != nil {
+			// Could not place the user in the datastore
+			controllers.ErrorHandler(w, "Could not load user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if !pageUserKey.Equal(activeUserKey) {
+			controllers.ErrorHandler(w, "Unauthorized update attempt: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// Update
-		pUser.Email = u.Email
-		pUser.ID = u.ID
-		pUser.Admin = u.Admin
-		pUser.DisplayName = r.FormValue("DisplayName")
-		pUser.Interests = r.FormValue("Interests")
+		user.DisplayName = r.FormValue("DisplayName")
+		user.Interests = r.FormValue("Interests")
 
 		// Put the user in the datastore
-		_, err = datastore.Put(c, key, &pUser)
+		_, err = datastore.Put(ctx, activeUserKey, &user)
 
 		if err != nil {
 			// Could not place the user in the datastore
 			controllers.ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 	}
 
-	data := map[string]interface{}{}
-	controllers.BaseHandler(w, r, "user/profile", data)
+	controllers.BaseHandler(w, r, "user/profile", nil)
 }
