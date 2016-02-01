@@ -45,7 +45,7 @@ $(document).ready(function(){
   // $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
   // $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
-  $('.remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
+  $('#remove-keyframe-1').on("click", function(event) { removeKeyframe(event); } );
   
   // Events for handling updating "dt" on keyframe 1
   $('#keyframe-1-dt').on("change", function(){ 

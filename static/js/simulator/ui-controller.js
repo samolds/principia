@@ -244,10 +244,10 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
 }
   Globals.numKeyframes++;
 
-  $('#keyframe-list').append("<li id='keyframe-li-" + Globals.numKeyframes +"> " +
+  $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
-                       "   <a class='btn-floating btn-small waves-effect waves-light red remove-keyframe' ><i class='fa fa-times'></i></a> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
                       "  </div> " +
                        "   <h6>Frame " + Globals.numKeyframes + ": </h6> " +
                        "   <canvas id='keyframe-"+ Globals.numKeyframes +"' class='keyframe' ></canvas> " +
@@ -260,16 +260,29 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
                    " </li>");
 
  $('#keyframe-' + Globals.numKeyframes).on("click", function(event) { selectKeyframe(event); } );
- $('.remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
+ $('#remove-keyframe-' + Globals.numKeyframes).on("click", function(event) { removeKeyframe(event); } );
 
 }
 
 function removeKeyframe(event){
-var frame = event.target;
-console.log("FRAME:" +frame);
-$(frame).parents().eq(3).remove();
-
-
+  var frame = event.target;  
+  
+  var index = parseInt(frame.parentNode.id.split("-")[2]) - 1;
+  var keyframes = $(".keyframe-tile");
+  
+  for(var i=index+1; i<keyframes.length; i++)
+  {
+    var keyframe = keyframes[i];
+    keyframe.childNodes[1].childNodes[1].id = "remove-keyframe-" + (i-1);
+    keyframe.childNodes[3].innerHTML = "Frame " + (i) + ": ";
+    keyframe.childNodes[5].id = "keyframe-" + (i-1);
+    
+    keyframe.childNodes[7].childNodes[1].id = "keyframe-" + (i-1) + "-dt";
+    keyframe.childNodes[7].childNodes[3].setAttribute("for", "keyframe-" + (i-1) + "-dt");
+  }
+  
+  $(frame).parents().eq(3).remove();
+  Globals.numKeyframes--;
 }
 
 function updateOrigin(coordinate, value){
