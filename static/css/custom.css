@@ -405,3 +405,19 @@ i.fa.fa-size-medium {
   word-break: normal;
 }
 /* end toast overwrite */
+
+/* home page card title */
+.home-card-title {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  padding: 20px;
+}
+
+.home-card-subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 20px;
+}
+/* end home page card title */
