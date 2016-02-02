@@ -32,19 +32,23 @@ function displayVariableValues(body){
       
       // Convert to user coordinate system before displaying position
       var position = physics2Origin([variables["x0"], variables["y0"]]);
+      var velocity = [variables["vx0"], variables["vy0"]];
+      var acceleration = [variables["ax"], variables["ay"]];
       
       // Convert to Polar coordinates, if necessary
       if(Globals.coordinateSystem == "polar"){
         position = cartesian2Polar([position[0], position[1]]);
+        velocity = cartesian2Polar([velocity[0], velocity[1]]);
+        acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
       }
       
       $('#properties-position-x').val(position[0].toFixed(precision));
       $('#properties-position-y').val(position[1].toFixed(precision));
       
-      $('#properties-velocity-x').val(variables["vx0"].toFixed(precision));
-      $('#properties-velocity-y').val(variables["vy0"].toFixed(precision));
-      $('#properties-acceleration-x').val(variables["ax"].toFixed(precision));
-      $('#properties-acceleration-y').val(variables["ay"].toFixed(precision));
+      $('#properties-velocity-x').val(velocity[0].toFixed(precision));
+      $('#properties-velocity-y').val(velocity[1].toFixed(precision));
+      $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
+      $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
     } else {
     
       // Convert to user coordinate system before displaying position
@@ -80,19 +84,23 @@ function displayElementValues(bod){
     
     // Convert to user coordinate system before displaying position
     var position = physics2Origin([st.pos.x, st.pos.y]);
+    var velocity = [st.vel.x, st.vel.y];
+    var acceleration = [st.acc.x, st.acc.y];
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
       position = cartesian2Polar([position[0], position[1]]);
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);
+      acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
       
     $('#properties-position-x').val(position[0].toFixed(precision));
     $('#properties-position-y').val(position[1].toFixed(precision));
 
-    $('#properties-velocity-x').val(st.vel.x.toFixed(precision));
-    $('#properties-velocity-y').val(st.vel.y.toFixed(precision));
-    $('#properties-acceleration-x').val(st.acc.x.toFixed(precision));
-    $('#properties-acceleration-y').val(st.acc.y.toFixed(precision));
+    $('#properties-velocity-x').val(velocity[0].toFixed(precision));
+    $('#properties-velocity-y').val(velocity[1].toFixed(precision));
+    $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
+    $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
     $('#properties-mass').val(constants.mass);
     $('#properties-size').val(constants.size);
     $('#properties-nickname').val(constants.nickname);

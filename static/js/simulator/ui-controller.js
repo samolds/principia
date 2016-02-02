@@ -189,21 +189,42 @@ function updatePropertyRedraw(property, value){
     
     // Convert from Polar input to Cartesian coordinate
     var point;
+    
     if(property == "posx") {
       other = $('#properties-position-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else {
+    else if(property == "posy") {
       other = $('#properties-position-x').val();
       point = polar2Cartesian([other, value]);
     }
     
-    // Convert back to default PhysicsJS origin
-    point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
+    if(property == "velx") {
+      other = $('#properties-velocity-y').val();
+      point = polar2Cartesian([value, other]);
+    }
+    else if(property == "vely") {
+      other = $('#properties-velocity-x').val();
+      point = polar2Cartesian([other, value]);
+    }
+    
+    if(property == "accx") {
+      other = $('#properties-acceleration-y').val();
+      point = polar2Cartesian([value, other]);
+    }
+    else if(property == "accy") {
+      other = $('#properties-acceleration-x').val();
+      point = polar2Cartesian([other, value]);
+    }
+    
+    
+    // Convert back to default PhysicsJS origin, if a position was updated
+    if(property.substring(0,3) == "pos")
+      point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
     
     // Update properties within simulator, draw, and return
-    onPropertyChanged("posx", point[0], false);
-    onPropertyChanged("posy", point[1], true);
+    onPropertyChanged(property.substring(0,3) + "x", point[0], false);
+    onPropertyChanged(property.substring(0,3) + "y", point[1], true);
     drawMaster();
     return;
   }
@@ -215,24 +236,23 @@ function updatePropertyRedraw(property, value){
   drawMaster();
 }
 
-// function showRemoveKeyframeBtn(event){
-//   $('.remove-keyframe-btn').style.visibility = "visible";
-//   console.log("yo yo yo");
-// }
-// function hideRemoveKeyframeBtn(event){
-//   $('.remove-keyframe-btn').style.visibility = "hidden";
-//   console.log("yo yo yo");
-// }
-
 function updateCoords(coord_sys){
     Globals.coordinateSystem = coord_sys;
     if(coord_sys == "cartesian"){
       $('#x-position-label').html("X Position");
       $('#y-position-label').html("Y Position");
+      $('#x-velocity-label').html("X Velocity");
+      $('#y-velocity-label').html("Y Velocity");
+      $('#x-acceleration-label').html("X Acceleration");
+      $('#y-acceleration-label').html("Y Acceleration");
     }
     else if(coord_sys == "polar"){
       $('#x-position-label').html("r Position");
       $('#y-position-label').html("Θ Position");
+      $('#x-velocity-label').html("r Velocity");
+      $('#y-velocity-label').html("Θ Velocity");
+      $('#x-acceleration-label').html("r Acceleration");
+      $('#y-acceleration-label').html("Θ Acceleration");
     }
   }
 
