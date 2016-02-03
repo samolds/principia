@@ -49,7 +49,7 @@ function post(path, parameters) {
 // for a page redirect to simulator/{simulatorId}
 function saveSimulation(){
 
-    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson() };
+    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson(), IsPrivate: $("#simulation-is-private").is(":checked") };
 
     // Is this a new simulation that we're trying to save?
     if(isNewSim()){
@@ -230,4 +230,10 @@ function losefocus() {
     document.getElementById("simulation-name").blur();
     document.getElementById("simulation-name-label").style.display = "none";
 
+}
+
+function outOfSync()
+{
+    $("#save-button").removeClass( "green" )
+    $("#save-button").addClass( "blue" )
 }

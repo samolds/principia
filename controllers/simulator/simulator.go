@@ -14,7 +14,7 @@ import (
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-Name").Limit(20)
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(20)
 
 	var simulations []models.Simulation
 	_, err := q.GetAll(ctx, &simulations)
@@ -62,6 +62,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 			Type:         simType,
 			CreationDate: creationTime,
 			UpdatedDate:  creationTime,
+			IsPrivate:    utils.StringToBool(r.FormValue("IsPrivate")),
 			AuthorKey:    user.KeyID,
 		}
 
@@ -112,6 +113,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	if r.Method == "POST" {
 		simulation.Name = r.FormValue("Name")
 		simulation.Simulator = r.FormValue("Contents")
+		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
 		simulation.UpdatedDate = time.Now()
 
 		// Put the simulation in the datastore

@@ -10,6 +10,8 @@ import (
 	"models"
 	"strings"
 	"time"
+	"strconv"
+	"log"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"
@@ -27,6 +29,17 @@ func IsOwner(simUserKey string, ctx appengine.Context) bool {
 	}
 
 	return simUserKey == currentUser.KeyID
+}
+
+// Converts a string to int64
+func StringToBool(s string) bool {
+	result, err := strconv.ParseBool(s)
+
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return result
 }
 
 // Returns the current user from the google id

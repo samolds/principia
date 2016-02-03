@@ -406,6 +406,10 @@ i.fa.fa-size-medium {
 }
 /* end toast overwrite */
 
+.private-checkbox {
+  margin-top: 26px;
+}
+
 /* home page card title */
 .home-card-title {
   position: absolute;
@@ -421,3 +425,4 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
+

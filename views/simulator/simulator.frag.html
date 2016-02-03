@@ -3,14 +3,29 @@
   {{ if and (.IsLoggedIn) (.Data.isOwner) }}
     <div class="input-field col s6">
       {{ if .Data.simulation.Name }}
-        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
+        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="outOfSync()"></input>
       {{ else }}
-        <input id="simulation-name" type="text" value="New Simulation"></input>
+        <input id="simulation-name" type="text" value="New Simulation" onkeypress="outOfSync()"></input>
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
     </div>
     <div class="col s1 right pad-sides">
       <h4><a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a></h4>
+    </div>
+    <!-- Private/Public Checkbox -->
+    <div class="col s2 right private-checkbox">
+      <div class="switch">
+        <label>
+          Public
+          {{ if .Data.simulation.IsPrivate }}
+            <input id="simulation-is-private" checked="true" type="checkbox" onclick="outOfSync()">
+          {{ else }}
+            <input id="simulation-is-private" type="checkbox" onclick="outOfSync()">
+          {{ end }}
+          <span class="lever"></span>
+          Private
+        </label>
+      </div>
     </div>
     {{ if .Data.simulation.Name }}
     <div class="col s1 right pad-sides">

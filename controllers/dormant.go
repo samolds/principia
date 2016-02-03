@@ -29,7 +29,7 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Order("-CreationDate").Limit(10) // TODO: filter out when CreationDate is older than 7 days and Order by rating
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(10) // TODO: filter out when CreationDate is older than 7 days and Order by rating
 
 	var simulations []models.Simulation
 	_, err := q.GetAll(ctx, &simulations)

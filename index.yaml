@@ -16,14 +16,20 @@ indexes:
   - name: CreationDate
     direction: desc
 
-- kind: Comment
-  ancestor: yes
-  properties:
-  - name: Date
-    direction: desc
-
 - kind: Rating
   ancestor: yes
   properties:
   - name: CreationDate
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: IsPrivate
+  - name: CreationDate
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: IsPrivate
+  - name: Name
     direction: desc
