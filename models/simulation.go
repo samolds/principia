@@ -4,13 +4,17 @@ import (
 	"time"
 )
 
+// Root Object
 type Simulation struct {
+	KeyID string // Encoded datastore key
+
 	Name         string
-	Contents     string `datastore:",noindex"` // Don't index this field => max size = 1MB
-	UserID       string
+	Simulator    string `datastore:",noindex"` // Don't index this field => max size = 1MB
 	Type         string
 	CreationDate time.Time
 	UpdatedDate  time.Time
-	Id           int64 `datastore:"-"` // Ignore this field
   IsPrivate    bool
+	AuthorKey    string // Encoded datastore key
+	// Ratings by descendant
+	// Comments by descendant
 }

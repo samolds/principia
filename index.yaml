@@ -13,7 +13,13 @@ indexes:
 - kind: Comment
   ancestor: yes
   properties:
-  - name: Date
+  - name: CreationDate
+    direction: desc
+
+- kind: Rating
+  ancestor: yes
+  properties:
+  - name: CreationDate
     direction: desc
 
 - kind: Simulation

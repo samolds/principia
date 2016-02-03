@@ -1,41 +1,58 @@
 {{ define "simulatorFrag" }}
 <div class="row">
-  <div class="input-field col s4">
-    {{ if and (.CurrentUser) (.Data.isOwner) }}
-      {{ if .Data.sim.Name }}
-        <input id="simulation-name" type="text" value="{{ .Data.sim.Name }}" onkeypress="outOfSync()"></input>
+  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+    <div class="input-field col s6">
+      {{ if .Data.simulation.Name }}
+        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="outOfSync()"></input>
       {{ else }}
         <input id="simulation-name" type="text" value="New Simulation" onkeypress="outOfSync()"></input>
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
-    {{ else }}
-      {{ if .Data.sim.Name }}
-        <h5 class="page-header">{{ .Data.sim.Name }}</h5>
-      {{ else }}
-        <h5 class="page-header">New Simulation</h5>
-      {{ end }}
-    {{ end }}
-  </div>
-
-  {{ if and (.Data.isOwner) (.CurrentUser) }}
-  <!-- Show Save Simulation only if you are the logged in and the owner -->
-  <div class="col s1 right pad-sides input-field">
-    <a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a>
-  </div>
-  <div class="col s2 right private-checkbox">
-    <div class="switch">
-      <label>
-        Public
-        {{ if .Data.sim.IsPrivate }}
-          <input id="simulation-is-private" checked="true" type="checkbox" onclick="outOfSync()">
-        {{ else }}
-          <input id="simulation-is-private" type="checkbox" onclick="outOfSync()">
-        {{ end }}
-        <span class="lever"></span>
-        Private
-      </label>
     </div>
-  </div>
+    <!-- Private/Public Checkbox -->
+    <div class="col s2 right private-checkbox">
+      <div class="switch">
+        <label>
+          Public
+          {{ if .Data.simulation.IsPrivate }}
+            <input id="simulation-is-private" checked="true" type="checkbox" onclick="outOfSync()">
+          {{ else }}
+            <input id="simulation-is-private" type="checkbox" onclick="outOfSync()">
+          {{ end }}
+          <span class="lever"></span>
+          Private
+        </label>
+      </div>
+    </div>
+    <div class="col s1 right pad-sides">
+      <h4><a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a></h4>
+    </div>
+    {{ if .Data.simulation.Name }}
+    <div class="col s1 right pad-sides">
+      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+      </h4>
+    </div>
+    {{ end }}
+  {{ else }}
+    <div class="col s6">
+      {{ if .Data.simulation.Name }}
+        <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
+      {{ else }}
+        <h4 class="page-header">Simulation</h4>
+      {{ end }}
+    </div>
+    {{ if .Data.simulation.Name }}
+    <div class="col s1 right pad-sides">
+      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        {{ if .IsLoggedIn }}
+          <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+        {{ else }}
+          <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+        {{ end }}
+      </h4>
+    </div>
+    {{ end }}
   {{ end }}
 </div>
 
@@ -180,6 +197,30 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s6">
+            <select id="glob-length-unit" class="browser-default">
+              <option disabled>Length Unit</option>
+              <option value="1000.0" >Millimeters</option>
+              <option value="100.0" >Centimeters</option>
+              <option value="1.0" selected="selected">Meters</option>
+              <option value="0.001" >Kilometers</option>
+              <option value="39.3701" >Inches</option>
+              <option value="3.28084" >Feet</option>
+              <option value="1.09361" >Yards</option>
+              <option value="0.000621371" >Miles</option>
+            </select>
+          </div>
+          <div class="input-field col s6">
+            <select id="glob-time-unit" class="browser-default">
+              <option disabled>Time Unit</option>
+              <option value="1000.0" >Milliseconds</option>
+              <option value="1.0" selected="selected">Seconds</option>
+              <option value="0.01666666667" >Minutes</option>
+              <option value="0.00027777778" >Hours</option>              
+            </select>
+          </div>
+        </div>
+        <div class="row">
           <div id="toolbox">
             <div class="center-align">
               <h5 class="pad-sides">Toolbox</h5>
@@ -208,7 +249,7 @@
   </div>
 </div>
 
-<div class="row" id="playback">
+<div class="row">
   <div class="col s12">
     <div class="row">
       <div class="col s1">

@@ -24,8 +24,8 @@
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="simulatorDropdown">Simulator<i class="fa fa-caret-down right fa-size-small"></i></a>
             </li>
             <li>
-              {{ if .CurrentUser }}
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">{{ .CurrentUser.Email }}<i class="fa fa-caret-down right fa-size-small"></i></a>
+              {{ if .IsLoggedIn }}
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">{{ .User.Email }}<i class="fa fa-caret-down right fa-size-small"></i></a>
               {{ else }}
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="myPrincipiaDropdown">MyPrincipia<i class="fa fa-caret-down right fa-size-small"></i></a>
               {{ end }}
@@ -33,8 +33,8 @@
           </ul>
           <ul class="right hide-on-med-and-up">
             <li>
-              {{ if .CurrentUser }}
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="mobileDropdown">{{ .CurrentUser.Email }}</a>
+              {{ if .IsLoggedIn }}
+              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="mobileDropdown">{{ .User.Email }}</a>
               {{ else }}
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="mobileDropdown">Menu</a>
               {{ end }}
@@ -44,9 +44,9 @@
       </nav>
 
       <ul id="myPrincipiaDropdown" class="dropdown-content" role="navigation">
-        {{ if .CurrentUser }}
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .CurrentUser.ID }}">My Profile</a></li>
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .CurrentUser.ID }}/simulations">My Simulations</a></li>
+        {{ if .IsLoggedIn }}
+          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyID }}">My Profile</a></li>
+          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyID }}/simulations">My Simulations</a></li>
           <li class="principia-blue-navbar divider white-text"></li>
         {{ end }}
         <li class="principia-blue-navbar"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
@@ -59,9 +59,9 @@
       </ul>
 
       <ul id="mobileDropdown" class="dropdown-content" role="navigation">
-        {{ if .CurrentUser }}
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .CurrentUser.ID }}">My Profile</a></li>
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .CurrentUser.ID }}/simulations">My Simulations</a></li>
+        {{ if .IsLoggedIn }}
+          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyID }}">My Profile</a></li>
+          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyID }}/simulations">My Simulations</a></li>
           <li class="principia-blue-navbar divider white-text"></li>
         {{ end }}
         <li class="principia-blue-navbar"><a class="white-text" href="/simulator/sandbox">Sandbox</a></li>
@@ -84,7 +84,8 @@
           <span class="pad-sides"><a class="white-text" href="/faqs">FAQs</a></span>
           <span class="pad-sides"><a class="white-text" href="/feedback">Feedback</a></span>
           <span class="pad-sides"><a class="white-text" href="http://github.com/samolds/principia"><i class="fa fa-github-square"></i></a></span>
-          <span class="pad-sides"><a class="white-text" href="http://instagram.com/principia.cc"><i class="fa fa-instagram"></i></a></span>
+          <span class="pad-sides"><a class="white-text" href="http://instagram.com/principiaxyz"><i class="fa fa-instagram"></i></a></span>
+          <span class="pad-sides"><a class="white-text" href="http://twitter.com/principiaxyz"><i class="fa fa-twitter-square"></i></a></span>
           <span class="white-text right hide-on-small-only"><i class="fa fa-copyright"></i> 2015 - 2016 Principia</span>
         </div>
       </div>
