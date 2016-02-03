@@ -4,14 +4,11 @@ import (
 	"appengine"
 	"appengine/datastore"
 	appengineUser "appengine/user"
-	"crypto/sha1"
-	"encoding/base32"
 	"errors"
-	"models"
-	"strings"
-	"time"
-	"strconv"
 	"log"
+	"models"
+	"strconv"
+	"time"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"
@@ -67,18 +64,10 @@ func GenerateUniqueKey(ctx appengine.Context, kind string, userID string, ancest
 		if err != nil {
 			return nil, err
 		}
-		userID = user.KeyID
+		userID = user.Email
 	}
 
-	// SHA1 hash
-	hash := sha1.New()
-	hash.Write([]byte(userID + now))
-	hashBytes := hash.Sum(nil)
-
-	// Conversion to base32
-	unique := strings.ToLower(base32.HexEncoding.EncodeToString(hashBytes))
-
 	// use this unique string to create a datastore key of 'kind' belonging to 'ancestorKey'
-	key := datastore.NewKey(ctx, kind, unique, 0, ancestorKey)
+	key := datastore.NewKey(ctx, kind, now+userID, 0, ancestorKey)
 	return key, nil
 }

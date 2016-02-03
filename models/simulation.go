@@ -13,7 +13,7 @@ type Simulation struct {
 	Type         string
 	CreationDate time.Time
 	UpdatedDate  time.Time
-  IsPrivate    bool
+	IsPrivate    bool
 	AuthorKey    string // Encoded datastore key
 	// Ratings by descendant
 	// Comments by descendant
