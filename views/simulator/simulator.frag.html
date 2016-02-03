@@ -9,6 +9,9 @@
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
     </div>
+    <div class="col s1 right pad-sides">
+      <h4><a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a></h4>
+    </div>
     <!-- Private/Public Checkbox -->
     <div class="col s2 right private-checkbox">
       <div class="switch">
@@ -23,9 +26,6 @@
           Private
         </label>
       </div>
-    </div>
-    <div class="col s1 right pad-sides">
-      <h4><a class="waves-effect waves-light btn-floating green darken-1" id="save-button" onclick="saveSimulation()"><i class="fa fa-floppy-o"></i></a></h4>
     </div>
     {{ if .Data.simulation.Name }}
     <div class="col s1 right pad-sides">
