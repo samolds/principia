@@ -21,11 +21,7 @@ func IsOwner(simUserKey string, ctx appengine.Context) bool {
 		return false
 	}
 
-	if currentUser.KeyID == "" {
-		return false
-	}
-
-	return simUserKey == currentUser.KeyID
+	return simUserKey == currentUser.KeyName
 }
 
 // Converts a string to int64
@@ -56,18 +52,13 @@ func GetCurrentUser(ctx appengine.Context) (models.User, error) {
 }
 
 // Generates a psuedo random unique key based on time and userID
-func GenerateUniqueKey(ctx appengine.Context, kind string, userID string, ancestorKey *datastore.Key) (*datastore.Key, error) {
-	now := time.Now().Format(time.RFC3339)
+func GenerateUniqueKey(ctx appengine.Context, kind string, user models.User, ancestorKey *datastore.Key) (*datastore.Key, string) {
+	tstamp := time.Now().Unix() // seconds since epoch: ~1351700038
+	unique := user.KeyName + strconv.FormatInt(tstamp, 10)
 
-	if userID == "" {
-		user, err := GetCurrentUser(ctx)
-		if err != nil {
-			return nil, err
-		}
-		userID = user.Email
-	}
+	log.Println(unique)
 
 	// use this unique string to create a datastore key of 'kind' belonging to 'ancestorKey'
-	key := datastore.NewKey(ctx, kind, now+userID, 0, ancestorKey)
-	return key, nil
+	key := datastore.NewKey(ctx, kind, unique, 0, ancestorKey)
+	return key, unique
 }

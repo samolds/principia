@@ -14,9 +14,9 @@
 
 <script>
   Kinematics1D.initModule({{ .Data.simulation.Simulator }});
-  var GlobalKeyIDs = {
-    User: {{ .User.KeyID }},
-    Simulation: {{ .Data.simulation.KeyID }},
+  var GlobalKeyNames = {
+    User: {{ .User.KeyName }},
+    Simulation: {{ .Data.simulation.KeyName }},
   }
 </script>
 
@@ -155,7 +155,7 @@
   </div>
 </div>
 
-{{ if .Data.simulation.KeyID }}
+{{ if .Data.simulation.KeyName }}
   <div class="main-container simulator-container">
     {{ template "commentsFrag" . }}
   </div>

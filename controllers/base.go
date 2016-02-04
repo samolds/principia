@@ -107,16 +107,19 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		data["loginMessage"] = "Sign Out"
 		isLoggedIn = true
 
-		// TODO: Better way to do this? -> Do this in the profile handler and redirect?
-		// Grab the user from the db
-		userKey := datastore.NewKey(ctx, "User", googleUser.ID, 0, nil)
+		// TODO-OO: Better way to do this? -> Do this in the profile handler and redirect?
+
+		// Maybe TODO XOR this with something CONSTANT to mask the
+		// user id? maybe that doesn't matter?
+		userKeyName := googleUser.ID
+		userKey := datastore.NewKey(ctx, "User", userKeyName, 0, nil)
 		err := datastore.Get(ctx, userKey, &user)
 
 		if err != nil {
 			if err == datastore.ErrNoSuchEntity {
 				// Create new user
 				user = models.User{
-					KeyID:    userKey.Encode(),
+					KeyName:  userKeyName,
 					GoogleID: googleUser.ID,
 					Email:    googleUser.Email,
 					Admin:    googleUser.Admin,
@@ -133,7 +136,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 				}
 
 				if templ != "user/profile" {
-					http.Redirect(w, r, "/user/"+user.KeyID, http.StatusFound)
+					http.Redirect(w, r, "/user/"+user.KeyName, http.StatusFound)
 					return
 				}
 			} else {
@@ -142,7 +145,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 			}
 		}
 	}
-	// END TODO
+	// END TODO-OO
 
 	pageData := &PageData{
 		IsLoggedIn: isLoggedIn,

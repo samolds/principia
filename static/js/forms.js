@@ -95,7 +95,7 @@ function saveComment() {
     commentObj = { Contents: $("#comment-contents").val() };
 
     $("#comment-load-gif").show();
-    $.post("/api/simulator/" + GlobalKeyIDs.Simulation + "/comments", commentObj)
+    $.post("/api/simulator/" + GlobalKeyNames.Simulation + "/comments", commentObj)
       .done(function() { 
         refreshCommentsList();
         successToast('Comment saved successfully!');
@@ -111,7 +111,7 @@ function saveComment() {
 function saveRating() {
     ratingObj = { Score: 1 };
 
-    $.post("/api/simulator/" + GlobalKeyIDs.Simulation + "/ratings", ratingObj)
+    $.post("/api/simulator/" + GlobalKeyNames.Simulation + "/ratings", ratingObj)
       .done(function() { 
         refreshRatings();
         successToast('Rating updated successfully!');
@@ -127,7 +127,7 @@ function saveRating() {
 // posting a new comment OR on initial page load
 function refreshCommentsList() {
 
-    $.get("/api/simulator/" + GlobalKeyIDs.Simulation + "/comments", function(json) {
+    $.get("/api/simulator/" + GlobalKeyNames.Simulation + "/comments", function(json) {
         var result = "";
         json = JSON.parse(json);
         if (json) {
@@ -165,14 +165,14 @@ function refreshCommentsList() {
 // Called after saveRating() has finished
 // posting a new rating OR on initial page load
 function refreshRatings() {
-    $.get("/api/simulator/" + GlobalKeyIDs.Simulation + "/ratings", function(response) {
+    $.get("/api/simulator/" + GlobalKeyNames.Simulation + "/ratings", function(response) {
       json = JSON.parse(response);
 
       var rater = false;
 
       if (json.Ratings) {
         for (var i = 0; i < json.Ratings.length; i++) {
-          if (json.Ratings[i].AuthorKey == GlobalKeyIDs.User) {
+          if (json.Ratings[i].AuthorKeyName == GlobalKeyNames.User) {
             rater = true;
           }
         }
@@ -194,12 +194,12 @@ function refreshRatings() {
 // Determines from the url if the simulation
 // is a new simulation or an existing simulation
 function isNewSim(){
-  if (typeof GlobalKeyIDs !== 'undefined') {
-    if (!GlobalKeyIDs.Simulation) {
+  if (typeof GlobalKeyNames !== 'undefined') {
+    if (!GlobalKeyNames.Simulation) {
       return true;
     }
 
-    return GlobalKeyIDs.Simulation == null || GlobalKeyIDs.Simulation == "";
+    return GlobalKeyNames.Simulation == null || GlobalKeyNames.Simulation == "";
   } else {
     return false;
   }

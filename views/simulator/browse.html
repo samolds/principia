@@ -7,7 +7,7 @@
     {{ if .Data.simulations }}
       <ul>
         {{ range $simulation := .Data.simulations }}
-          <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyID }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
+          <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
         {{ end }}
       </ul>
     {{ else }}

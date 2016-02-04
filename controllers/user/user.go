@@ -13,11 +13,11 @@ import (
 // Returns all simulations tied to the user id passed in the url
 func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userID"]
+	userKeyName := vars["userID"]
 	ctx := appengine.NewContext(r)
 
 	// TODO: Only show public simulations if NOT THE OWNER is trying to view
-	q := datastore.NewQuery("Simulation").Filter("AuthorKey =", userID)
+	q := datastore.NewQuery("Simulation").Filter("AuthorKeyName =", userKeyName)
 	var simulations []models.Simulation
 	_, err := q.GetAll(ctx, &simulations)
 
@@ -34,15 +34,17 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handles Posts from Profile Page
+// TODO: Show whomever's profile is trying to be viewed by userKeyName, not by GetCurrentUser
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userID"]
-	pageUserKey, err := datastore.DecodeKey(userID)
+	userKeyName := vars["userID"]
+
 	ctx := appengine.NewContext(r)
+	pageUserKey := datastore.NewKey(ctx, "User", userKeyName, 0, nil)
 
 	if r.Method == "GET" {
 		var user models.User
-		err = datastore.Get(ctx, pageUserKey, &user)
+		err := datastore.Get(ctx, pageUserKey, &user)
 		if err != nil {
 			controllers.ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
 			return
@@ -50,21 +52,14 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
-		user, err := utils.GetCurrentUser(ctx)
+		activeUser, err := utils.GetCurrentUser(ctx)
 
 		if err != nil {
-			// Could not place the user in the datastore
 			controllers.ErrorHandler(w, "Could not load user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		activeUserKey, err := datastore.DecodeKey(user.KeyID)
-
-		if err != nil {
-			// Could not place the user in the datastore
-			controllers.ErrorHandler(w, "Could not load user: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
+		activeUserKey := datastore.NewKey(ctx, "User", activeUser.KeyName, 0, nil)
 
 		if !pageUserKey.Equal(activeUserKey) {
 			controllers.ErrorHandler(w, "Unauthorized update attempt: "+err.Error(), http.StatusInternalServerError)
@@ -72,11 +67,11 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Update
-		user.DisplayName = r.FormValue("DisplayName")
-		user.Interests = r.FormValue("Interests")
+		activeUser.DisplayName = r.FormValue("DisplayName")
+		activeUser.Interests = r.FormValue("Interests")
 
 		// Put the user in the datastore
-		_, err = datastore.Put(ctx, activeUserKey, &user)
+		_, err = datastore.Put(ctx, activeUserKey, &activeUser)
 
 		if err != nil {
 			// Could not place the user in the datastore

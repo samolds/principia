@@ -6,11 +6,11 @@ import (
 
 // Belong to Simulation
 type Comment struct {
-	KeyID string // Encoded datastore key
+	KeyName string // UniqueID used to get Key
 
-	Contents     string
-	CreationDate time.Time
-	AuthorKey    string // Encoded datastore key
+	Contents      string
+	CreationDate  time.Time
+	AuthorKeyName string // Used to get Author Key
 	// Ratings by descendant
 
 	// AncestorKey = Simulation
