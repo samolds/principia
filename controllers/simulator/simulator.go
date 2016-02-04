@@ -33,7 +33,7 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 
 // GET returns a new simulation which the current user is made owner of (if logged in)
 // POST saves the simulation and redirects to simulator/{simulationID}
-func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, uri string, template string) {
+func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, template string) {
 	ctx := appengine.NewContext(r)
 
 	var simulation models.Simulation
@@ -46,24 +46,19 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 			return
 		}
 
-		key, err := utils.GenerateUniqueKey(ctx, "Simulation", user.KeyID, nil)
-
-		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		key, keyName := utils.GenerateUniqueKey(ctx, "Simulation", user, nil)
 
 		// Create the simulation object
 		creationTime := time.Now()
 		simulation = models.Simulation{
-			KeyID:        key.Encode(),
-			Name:         r.FormValue("Name"),
-			Simulator:    r.FormValue("Contents"),
-			Type:         simType,
-			CreationDate: creationTime,
-			UpdatedDate:  creationTime,
-			IsPrivate:    utils.StringToBool(r.FormValue("IsPrivate")),
-			AuthorKey:    user.KeyID,
+			KeyName:       keyName,
+			Name:          r.FormValue("Name"),
+			Simulator:     r.FormValue("Contents"),
+			Type:          simType,
+			CreationDate:  creationTime,
+			UpdatedDate:   creationTime,
+			IsPrivate:     utils.StringToBool(r.FormValue("IsPrivate")),
+			AuthorKeyName: user.KeyName,
 		}
 
 		// Put the simulation in the datastore
@@ -74,9 +69,10 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 			return
 		}
 
-		// an AJAX Request would prevent a redirect..
-		http.Redirect(w, r, uri+simulation.KeyID, http.StatusFound)
+		pagePath := r.URL.Path + "/" + simulation.KeyName
 
+		// an AJAX Request would prevent a redirect..
+		http.Redirect(w, r, pagePath, http.StatusFound)
 		return
 	}
 
@@ -93,18 +89,14 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, u
 // POST saves the simulation as specified by the simulationID passed in the url
 func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, template string) {
 	vars := mux.Vars(r)
-	simID := vars["simulationID"]
-	simulationKey, err := datastore.DecodeKey(simID)
-
-	if err != nil {
-		controllers.ErrorHandler(w, "Invalid Simulation ID: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	keyName := vars["simulationID"]
 
 	ctx := appengine.NewContext(r)
-	var simulation models.Simulation
+	simulationKey := datastore.NewKey(ctx, "Simulation", keyName, 0, nil)
 
-	err = datastore.Get(ctx, simulationKey, &simulation)
+	var simulation models.Simulation
+	err := datastore.Get(ctx, simulationKey, &simulation)
+
 	if err != nil {
 		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return
@@ -124,20 +116,35 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			controllers.ErrorHandler(w, "Could not save existing simulation: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// an AJAX Request would prevent a redirect..
+		http.Redirect(w, r, r.URL.Path, http.StatusFound)
+		return
 	}
 
-	isOwner := utils.IsOwner(simulation.AuthorKey, ctx)
+	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
+	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
+
+	var author models.User
+	err = datastore.Get(ctx, authorKey, &author)
+
+	authorDisplay := author.Email
+	if author.DisplayName != "" {
+		authorDisplay = author.DisplayName
+	}
 
 	data := map[string]interface{}{
-		"simulation": simulation,
-		"isOwner":    isOwner,
+		"simulation":              simulation,
+		"simulationAuthor":        author,
+		"simulationAuthorDisplay": authorDisplay,
+		"isOwner":                 isOwner,
 	}
 
 	controllers.BaseHandler(w, r, template, data)
 }
 
 func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	newGenericHandler(w, r, "sandbox", "/simulator/sandbox/", "simulator/sandbox")
+	newGenericHandler(w, r, "sandbox", "simulator/sandbox")
 }
 
 func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +152,7 @@ func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
-	newGenericHandler(w, r, "kinematics", "/simulator/kinematics/", "simulator/kinematics")
+	newGenericHandler(w, r, "kinematics", "simulator/kinematics")
 }
 
 func EditKinematicsHandler(w http.ResponseWriter, r *http.Request) {

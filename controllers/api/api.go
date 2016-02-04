@@ -25,19 +25,13 @@ func apiErrorResponse(w http.ResponseWriter, err string, code int) {
 // POST saves the comment to datastore with the simulationID as the ancestor key
 func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	simID := vars["simulationID"]
-	simulationKey, err := datastore.DecodeKey(simID)
-
-	if err != nil {
-		apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	simKeyName := vars["simulationID"]
 
 	ctx := appengine.NewContext(r)
+	simulationKey := datastore.NewKey(ctx, "Simulation", simKeyName, 0, nil)
 
 	if r.Method == "GET" {
 		var comments []models.Comment
-
 		q := datastore.NewQuery("Comment").Ancestor(simulationKey).Order("-CreationDate")
 		_, err := q.GetAll(ctx, &comments)
 
@@ -58,18 +52,14 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get an ID as a simulation descendant
-		key, err := utils.GenerateUniqueKey(ctx, "Comment", user.KeyID, simulationKey)
-		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		key, keyName := utils.GenerateUniqueKey(ctx, "Comment", user, simulationKey)
 
 		// Build the comment object
 		comment := models.Comment{
-			KeyID:        key.Encode(),
-			AuthorKey:    user.KeyID,
-			Contents:     r.FormValue("Contents"),
-			CreationDate: time.Now(),
+			KeyName:       keyName,
+			AuthorKeyName: user.KeyName,
+			Contents:      r.FormValue("Contents"),
+			CreationDate:  time.Now(),
 		}
 
 		// Put the comment in the datastore
@@ -86,19 +76,14 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 // POST saves the rating to datastore with the simulationID as the ancestor key
 func RatingHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	simID := vars["simulationID"]
-	simulationKey, err := datastore.DecodeKey(simID)
-
-	if err != nil {
-		apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	simKeyName := vars["simulationID"]
 
 	ctx := appengine.NewContext(r)
-	var ratings []models.Rating
+	simulationKey := datastore.NewKey(ctx, "Simulation", simKeyName, 0, nil)
 
+	var ratings []models.Rating
 	q := datastore.NewQuery("Rating").Ancestor(simulationKey).Order("-CreationDate")
-	_, err = q.GetAll(ctx, &ratings)
+	_, err := q.GetAll(ctx, &ratings)
 
 	if err != nil {
 		apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
@@ -129,8 +114,8 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for i := 0; i < len(ratings); i++ {
-			if user.KeyID == ratings[i].AuthorKey {
-				ratingsKey, err := datastore.DecodeKey(ratings[i].KeyID)
+			if user.KeyName == ratings[i].AuthorKeyName {
+				ratingsKey := datastore.NewKey(ctx, "Rating", ratings[i].KeyName, 0, simulationKey)
 
 				if err != nil {
 					apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
@@ -143,11 +128,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get an ID as a simulation descendant
-		key, err := utils.GenerateUniqueKey(ctx, "Rating", user.KeyID, simulationKey)
-		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		key, keyName := utils.GenerateUniqueKey(ctx, "Rating", user, simulationKey)
 
 		score, err := strconv.ParseInt(r.FormValue("Score"), 10, 8)
 		if err != nil {
@@ -157,10 +138,10 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Build the comment object
 		rating := models.Rating{
-			KeyID:        key.Encode(),
-			AuthorKey:    user.KeyID,
-			Score:        int8(score),
-			CreationDate: time.Now(),
+			KeyName:       keyName,
+			AuthorKeyName: user.KeyName,
+			Score:         int8(score),
+			CreationDate:  time.Now(),
 		}
 
 		// Put the comment in the datastore

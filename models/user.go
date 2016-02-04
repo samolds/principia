@@ -6,7 +6,7 @@ import (
 
 // Root Object
 type User struct {
-	KeyID    string // Encoded datastore key
+	KeyName  string // UniqueID used to get Key
 	GoogleID string
 
 	DisplayName string

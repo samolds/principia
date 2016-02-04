@@ -6,8 +6,8 @@
     {{ $numSimulations := len .Data.simulations }}
     <div class="card-image waves-effect waves-block waves-light">
       <img class="activator" src="/static/img/homebanner.png">
-      <h2 class="home-card-title white-text hide-on-small-only">Welcome to Principia!</h2>
-      <h4 class="home-card-title white-text hide-on-med-and-up">Welcome to Principia!</h4>
+      <h2 class="home-card-title white-text hide-on-small-only">Welcome!</h2>
+      <h4 class="home-card-title white-text hide-on-med-and-up flow">Welcome!</h4>
       <span class="home-card-subtitle white-text">
         {{ if gt $numSimulations 1 }}
           This Week's Top {{ $numSimulations }} Simulations
@@ -25,7 +25,7 @@
             {{ if .Data.simulations }}
               <ol class="valign">
                 {{ range $simulation := .Data.simulations }}
-                  <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyID }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
+                  <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
                 {{ end }}
               </ol>
             {{ else }}

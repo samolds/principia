@@ -6,11 +6,11 @@ import (
 
 // Belong to Simulation or Comment
 type Rating struct {
-	KeyID string // Encoded datastore key
+	KeyName string // UniqueID used to get Key
 
-	Score        int8
-	CreationDate time.Time
-	AuthorKey    string // Encoded datastore key
+	Score         int8
+	CreationDate  time.Time
+	AuthorKeyName string // Used to get Author Key
 
 	// AncestorKey = Thing that was rated
 	// Using AncecstorKey for strong consistency
