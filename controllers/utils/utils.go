@@ -11,8 +11,6 @@ import (
 	"time"
 )
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"
-
 // Returns true if the user.ID and simUserId are equivalent
 func IsOwner(simUserKey string, ctx appengine.Context) bool {
 	currentUser, err := GetCurrentUser(ctx)
@@ -55,8 +53,6 @@ func GetCurrentUser(ctx appengine.Context) (models.User, error) {
 func GenerateUniqueKey(ctx appengine.Context, kind string, user models.User, ancestorKey *datastore.Key) (*datastore.Key, string) {
 	tstamp := time.Now().Unix() // seconds since epoch: ~1351700038
 	unique := user.KeyName + strconv.FormatInt(tstamp, 10)
-
-	log.Println(unique)
 
 	// use this unique string to create a datastore key of 'kind' belonging to 'ancestorKey'
 	key := datastore.NewKey(ctx, kind, unique, 0, ancestorKey)
