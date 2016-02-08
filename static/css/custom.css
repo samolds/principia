@@ -228,6 +228,7 @@ body {
     min-height: 255px;
     vertical-align: top;
 }
+
 .keyframe-tile{
   margin: 0px;
   margin-right: 10px;
@@ -241,7 +242,6 @@ body {
   margin: 0px;
   padding: 0px;
   vertical-align: auto;
-
 }
 
 .delete-kf-btn{
@@ -464,5 +464,3 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
-
-

@@ -1,6 +1,9 @@
 {{ define "title" }} - Simulator{{ end }}
 
 {{ define "scripts" }}
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/lib/eq-solver.js"></script>
 <script src="/static/js/simulator/globals.js"></script>
@@ -28,9 +31,7 @@
 <script src="/static/js/forms.js"></script>
 <script src="/static/js/view.js"></script>
 
-<script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+
 {{ end }}
 
 {{ define "content" }}

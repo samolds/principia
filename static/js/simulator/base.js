@@ -36,7 +36,12 @@ $(document).ready(function(){
   $('#properties-img').on("change", function(){ updatePropertyRedraw('image', $('#properties-img option:selected')[0].value); });
   
   // Event for clicking solve button
-  $('#solve-btn').on('click', function() { attemptSimulation(); });
+  $('#solve-btn').on('click', function() {     
+    attemptSimulation();
+    
+    // Update format of solution details
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  });
   
   // Events for selecting mini-canvases representing keyframes
   // MUST name keyframe divs using this format (splits on -)

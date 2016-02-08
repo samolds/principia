@@ -49,7 +49,7 @@ var Solver = (function () {
             eval(this.params[key] + '=undefined')
         }
 
-    // Define variables described by input
+        // Define variables described by input
         for (var key in obj) {
             if (this.params.indexOf(key) != -1 && (obj[key]==0 || obj[key])) {
                 eval(key + '=' + obj[key]);
@@ -84,6 +84,16 @@ var Solver = (function () {
                   }
                   
                   var result = eval(equations[eq].eq[i]);
+                  
+                  // Special case for time equation 2: Use positive answer to quadratic
+                  if(eq == "t")
+                  {
+                    if(result < 0 && i == 2)
+                    {
+                      result = eval("-(sqrt(2*yf*ay - 2*y0*ay + vy0^2) - vy0)/ay");                      
+                    }
+                  }
+                  
                   if (result) {
                     solved++;
                     // TODO: Fire solved event: which equation was used/what was solved for
