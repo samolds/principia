@@ -10,6 +10,7 @@
 <script src="/static/js/simulator/components/mass.js"></script>
 <script src="/static/js/simulator/components/spring.js"></script>
 <script src="/static/js/simulator/modules/sandbox.js"></script>
+<script src="/static/js/lib/canvasjs.min.js"></script>
 
 <script>
   KinematicsSandbox.initModule({{ .Data.simulation.Simulator }});
@@ -17,6 +18,80 @@
     User: {{ .User.KeyName }},
     Simulation: {{ .Data.simulation.KeyName }},
   }
+
+
+  window.onload = function () {
+
+    positionData =     [];
+    velocityData =     [];
+    accelerationData = [];
+
+    chart = new CanvasJS.Chart("chartContainer",{
+      axisX:{
+        maximum: 4000,
+      },
+      data: [{ 
+        type: "line",
+        showInLegend: true,
+        name: "Position",
+        dataPoints: positionData
+      },
+      {       
+        type: "line",
+        showInLegend: true,
+        name: "Acceleration" ,
+        dataPoints: velocityData
+      },
+      {       
+        type: "line",
+        showInLegend: true,
+        name: "Velocity" ,
+        dataPoints: accelerationData
+      }]
+    });
+
+    updatePVAChart = function () {
+      var dataLength = 4000; // number of dataPoints visible at any point
+
+      if(!Globals.selectedBody) {
+        return;
+      }
+
+      positionData.push({
+        x: Globals.frame,
+        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].pos.y, 2) + Math.pow(Globals.states[0][Globals.frame].pos.x, 2))
+      });
+
+      velocityData.push({
+        x: Globals.frame,
+        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].vel.y, 2) + Math.pow(Globals.states[0][Globals.frame].vel.x, 2))
+      });
+
+      accelerationData.push({
+        x: Globals.frame,
+        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].acc.y, 2) + Math.pow(Globals.states[0][Globals.frame].acc.x, 2))
+      });
+
+      if (positionData.length > dataLength)
+      {
+        debugger;
+        positionData.shift();        
+      }
+      if (velocityData.length > dataLength)
+      {
+        debugger;
+        velocityData.shift();        
+      }
+      if (accelerationData.length > dataLength)
+      {
+        debugger;
+        accelerationData.shift();        
+      }
+      
+      chart.render();   
+    };
+  }
+
 </script>
 
 <script src="/static/js/simulator/base.js"></script>

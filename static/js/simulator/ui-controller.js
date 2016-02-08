@@ -100,7 +100,8 @@ function onRangeUpdate(){
     $("#" + "keyframe-1").attr("style","");
   }
   
-  drawMaster();  
+  drawMaster();
+  updatePVAChart();
 }
 
 // Toggles the state of the simulator between running and paused

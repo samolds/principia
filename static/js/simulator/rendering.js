@@ -19,6 +19,7 @@ function drawLoop(){
   $("#" + "keyframe-1").attr("style","");
   
   drawMaster();
+  updatePVAChart();
   Globals.frame++;
 }
 
