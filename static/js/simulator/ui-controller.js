@@ -23,7 +23,6 @@ $(".draggable").draggable({
     appendTo: 'body'
 });
 
-
 // Event fired when user is done dragging component that is not part of PhysicJS world (origin target)
 function handleUIDragStop(event, ui){
   // Left and top of helper img
@@ -43,10 +42,33 @@ function handleUIDragStop(event, ui){
 
   console.log("Origin:" + data.x + ", " + data.y  );
   
-  Globals.origin = [data.x, data.y];
   
+  var world = Globals.world;
+  var bodies = world.getBodies();
+  var delta = Globals.delta;
+    
+  // Attach the origin to a body if within delta pixels
+  var detach = true;
+  for(var j=0; j<bodies.length; j++){
+    var body = bodies[j];
+    if(distance(body.state.pos.x, body.state.pos.y, data.x, data.y) <= delta){
+      detach = false;
+      Globals.originObject = j;
+      
+      // Update data to point to object position
+      data.x = body.state.pos.x;
+      data.y = body.state.pos.y;
+    }
+  }
+  
+  if(detach && (Globals.originObject === 0 || Globals.originObject))  
+    Globals.originObject = false;
+    
+  Globals.origin = [data.x, data.y];  
   $("#glob-xorigin").val(data.x) ; 
   $("#glob-yorigin").val(data.y) ;
+  
+  drawMaster();
 }
 
 // Event fired when user is done dragging component from toolbox
@@ -86,7 +108,7 @@ function onRangeUpdate(){
   Globals.frame = parseInt($("#simulatorFrameRange").val());
   // Update keyframe variable if the selected frame is also a keyframe
   if(Globals.useKeyframes)
-    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? Globals.frame: false;   
+    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
   
   // Highlight mini canvas
   if(Globals.keyframe === 0 || Globals.keyframe)
@@ -142,16 +164,15 @@ function selectKeyframe(event){
 	var frame = event.target.id.split("-")[1];
 	Globals.keyframe = parseInt(frame);
   
-  for(var i = 0; i<Globals.numKeyframes+1; i++)
+  for(var i = 0; i<Globals.numKeyframes; i++)
   {
     //remove highlight
     $("#" + "keyframe-"+i).attr("style","");
-
   }
 //add highlight
   $("#" + event.target.id).attr("style","border:4px solid #0000cc");
  
- //TODO: handle transparent for general case
+ //TODO: handle transparency for general case
   // if(frame == 0){
   //   for(var i=0; i<Globals.world.getBodies().length; i++)
   //     if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
@@ -169,16 +190,6 @@ function selectKeyframe(event){
    
   // Draw master will set state appropriately and display it
 	drawMaster();
-}
-
-// TODO: Not being called anymore?
-function toggleGlobalProp(){
-  var propWin = $("#global-properties")[0].classList;
-  if (propWin.contains("hide")) {
-    propWin.remove("hide");    
-  } else {
-    propWin.add("hide");
-  }
 }
 
 // Wrapper for updating properties followed by immediate resimulate and redraw
@@ -217,13 +228,16 @@ function updatePropertyRedraw(property, value){
       point = polar2Cartesian([other, value]);
     }
     
-    
     // Convert back to default PhysicsJS origin, if a position was updated
     if(property.substring(0,3) == "pos")
       point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
     
     // Update properties within simulator, draw, and return
     onPropertyChanged(property.substring(0,3) + "x", point[0], false);
+    
+    if(point[1] === -0)
+      point[1] = "?";
+    
     onPropertyChanged(property.substring(0,3) + "y", point[1], true);
     drawMaster();
     return;
@@ -236,6 +250,7 @@ function updatePropertyRedraw(property, value){
   drawMaster();
 }
 
+// Update the coordinate system to 'polar' or 'cartesian'
 function updateCoords(coord_sys){
     Globals.coordinateSystem = coord_sys;
     if(coord_sys == "cartesian"){
@@ -254,62 +269,76 @@ function updateCoords(coord_sys){
       $('#x-acceleration-label').html("r Acceleration");
       $('#y-acceleration-label').html("Θ Acceleration");
     }
+    
+    drawMaster();
   }
 
+// Adds a new keyframe, up to the limit
 function addKeyframe(){
-  console.log("Added Keyframe");
-if (Globals.numKeyframes == Globals.maxNumKeyframes)
-{
-  return;
-}
-  Globals.numKeyframes++;
-
+  
+  if (Globals.numKeyframes == Globals.maxNumKeyframes)
+    return;
+  
   $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
-                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe-" + (Globals.numKeyframes) + "'><i class='fa fa-times'></i></a> " +
                       "  </div> " +
-                       "   <h6>Frame " + Globals.numKeyframes + ": </h6> " +
-                       "   <canvas id='keyframe-"+ Globals.numKeyframes +"' class='keyframe' ></canvas> " +
+                       "   <h6>Frame " + (Globals.numKeyframes+1) + ": </h6> " +
+                       "   <canvas id='keyframe-"+ (Globals.numKeyframes) +"' class='keyframe' ></canvas> " +
                      
                        " <div class='input-field'> " +
-                       "       <input id='keyframe-"+ Globals.numKeyframes +"-dt' type='text' value='?'></input> " +
-                       "       <label for='keyframe-"+ Globals.numKeyframes +"-dt' class='active'>dt</label> " +
+                       "       <input id='keyframe-"+ (Globals.numKeyframes) +"-dt' type='text' value='?'></input> " +
+                       "       <label for='keyframe-"+ (Globals.numKeyframes) +"-dt' class='active'>dt</label> " +
                        " </div> " +
                       " </div> " +
                    " </li>");
 
- $('#keyframe-' + Globals.numKeyframes).on("click", function(event) { selectKeyframe(event); } );
- $('#remove-keyframe-' + Globals.numKeyframes).on("click", function(event) { removeKeyframe(event); } );
-
+  $('#keyframe-' + (Globals.numKeyframes)).on("click", function(event) { selectKeyframe(event); } );
+  $('#remove-keyframe-' + (Globals.numKeyframes)).on("click", function(event) { removeKeyframe(event); } );
+  
+  pushDuplicates();   
+  Globals.numKeyframes++;
 }
 
 function removeKeyframe(event){
-  var frame = event.target;  
+  var eventFrame = event.target;  
   
-  var index = parseInt(frame.parentNode.id.split("-")[2]) - 1;
-  var keyframes = $(".keyframe-tile");
+  var index = parseInt(eventFrame.parentNode.id.split("-")[2]) - 1;
   
-  for(var i=index+1; i<keyframes.length; i++)
+  // Shift keyframe times, states, indices, variableMap
+  Globals.variableMap.splice(index, 1);
+  Globals.keyframeStates.splice(index, 1);
+  Globals.keyframes.splice(index, 1);
+  Globals.keyframeTimes.splice(index, 1);
+  
+  var keyframeTiles = $(".keyframe-tile");
+  
+  for(var i=index+1; i<keyframeTiles.length; i++)
   {
-    var keyframe = keyframes[i];
-    keyframe.childNodes[1].childNodes[1].id = "remove-keyframe-" + (i-1);
-    keyframe.childNodes[3].innerHTML = "Frame " + (i) + ": ";
-    keyframe.childNodes[5].id = "keyframe-" + (i-1);
+    var keyframeTile = keyframeTiles[i];
+    keyframeTile.childNodes[1].childNodes[1].id = "remove-keyframe-" + (i-1);
+    keyframeTile.childNodes[3].innerHTML = "Frame " + (i) + ": ";
+    keyframeTile.childNodes[5].id = "keyframe-" + (i-1);
     
-    keyframe.childNodes[7].childNodes[1].id = "keyframe-" + (i-1) + "-dt";
-    keyframe.childNodes[7].childNodes[3].setAttribute("for", "keyframe-" + (i-1) + "-dt");
+    keyframeTile.childNodes[7].childNodes[1].id = "keyframe-" + (i-1) + "-dt";
+    keyframeTile.childNodes[7].childNodes[3].setAttribute("for", "keyframe-" + (i-1) + "-dt");
   }
   
-  $(frame).parents().eq(3).remove();
+  $(eventFrame).parents().eq(3).remove();
   Globals.numKeyframes--;
+  
+  // Special case: User deletes currently selected keyframe
+  if(index == Globals.keyframe){
+    // select Globals.keyframe -1
+  }
 }
 
 function updateOrigin(coordinate, value){
-  if(coordinate == "x"){
+  if(coordinate == "x")
     Globals.origin[0] = value;
-  }
-  else {
+  else 
     Globals.origin[1] = value;
-  }
+    
+  drawMaster();
 }

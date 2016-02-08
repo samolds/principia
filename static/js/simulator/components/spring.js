@@ -34,8 +34,20 @@ function addSpring(data)
               }
             });
             
-  variableMap.push({k:0.01});                         // Variables associated with spring constant
-  variableMap.push({x0:data.x+120, xf: data.x+120});  // Variables associated with stretched point.
+  // Variables associated with spring
+  addToVariableMap(
+    {
+      k: 0.01
+    }
+  );
+  
+  // Variables associated with stretched point
+  addToVariableMap(
+    {
+      posx: data.x, 
+      posy: data.y
+    }
+  );
   
   world.add(component);
   world.add(componentChild);
@@ -95,7 +107,7 @@ function attachSpring(body){
   var bodies = world.getBodies();
   var kState = Globals.keyframeStates[Globals.keyframe];
   var i = world.getBodies().indexOf(body);
-  var delta = 50;
+  var delta = Globals.delta;
   
   for(var j=0; j<bodies.length; j++){
     var attachBody = bodies[j];

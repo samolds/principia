@@ -31,6 +31,9 @@ function cloneState(state){
 //Returns the index of the specified body within the world
 function bIndex(body){ return Globals.world.getBodies().indexOf(body); }
 
+//Returns the index of the specified frame as a keyframe
+function kIndex(frame) { return Globals.keyframes.indexOf(frame); }
+
 // Returns the constants associated with the specified body
 function body2Constant(body){
   var index = bIndex(body);

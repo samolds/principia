@@ -63,15 +63,23 @@ function initWorld() {
    
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
       world.on('interact:grab', function( data ){        
-        if(data.body){
+        if(data.body){          
           Globals.selectedBody = data.body;
-          drawMaster()
+          drawProperties();
+          drawMaster();
         }
       });
   
   world.on('interact:move', function( data ){
     if(data.body) {
       if(!Globals.canEdit()) return;
+      
+      if(bIndex(data.body) === Globals.originObject)
+      {
+        Globals.origin = [data.x, data.y];
+        $("#glob-xorigin").val(data.x) ; 
+        $("#glob-yorigin").val(data.y) ;
+      }
       
       Globals.didMove = true;
       onPropertyChanged("posx", data.x);
@@ -89,15 +97,9 @@ function initWorld() {
         
         // Update keyframe
         var kStates = Globals.keyframeStates[Globals.keyframe];
-        var i = Globals.world.getBodies().indexOf(data.body);
+        var i = bIndex(data.body);
         onPropertyChanged("posx", data.x);
-        onPropertyChanged("posy", data.y);
-        
-        // Update variable map
-        if(Globals.keyframe == 0)
-          Globals.variableMap[i]["x0"] = data.x;
-        else
-          Globals.variableMap[i]["xf"] = data.x;
+        onPropertyChanged("posy", data.y);       
     }
   });
   
@@ -207,10 +209,10 @@ function initWorld() {
       t:
       {
         name:'$t$',
-        eq:['(vxf-vx0)/ax', '(vyf-vy0)/ay'],
-        pretty:[' rearranging the kinematic equation ${v_x}_f = {v_x}_0 + a_x*t$ ', ' rearranging the kinematic equation ${v_y}_f = {v_y}_0 + a_y*t$ '],
-        vars:[['vxf','vx0','ax'],['vyf','vy0','ay']],
-        prettyvars:[['${v_x}_f$','${v_x}_0$','$a_x$'],['${v_y}_f$','${v_y}_0$','$a_y$']]
+        eq:['(vxf-vx0)/ax', '(vyf-vy0)/ay', '(sqrt(2*yf*ay - 2*y0*ay + vy0^2) - vy0)/ay'],
+        pretty:[' rearranging the kinematic equation ${v_x}_f = {v_x}_0 + a_x*t$ ', ' rearranging the kinematic equation ${v_y}_f = {v_y}_0 + a_y*t$ ', ' using the kinematic equation $y_f - y_0 = v_0*t + 1/2 a t^2$  '],
+        vars:[['vxf','vx0','ax'],['vyf','vy0','ay'],['yf','ay','y0','vy0']],
+        prettyvars:[['${v_x}_f$','${v_x}_0$','$a_x$'],['${v_y}_f$','${v_y}_0$','$a_y$'],['yf','ay','y0','vy0']]
       },
       
       ax:
@@ -229,7 +231,7 @@ function initWorld() {
         pretty:[' rearranging the kinematic equation ${v_y}_f = v_y + a_y*t$ '],
         vars:[['vyf','vy0','t']],
         prettyvars:[['${v_y}_f$','${v_y}_0$','$t$']]
-      }      
+      }       
     });
     
      if(!json || json == "{}")

@@ -67,15 +67,23 @@ function initWorld() {
    
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
       world.on('interact:grab', function( data ){        
-        if(data.body){
+        if(data.body){          
           Globals.selectedBody = data.body;
-          drawMaster()
+          drawProperties();
+          drawMaster();
         }
       });
   
   world.on('interact:move', function( data ){
     if(data.body) {
       if(!Globals.canEdit()) return;
+      
+      if(bIndex(data.body) === Globals.originObject)
+      {
+        Globals.origin = [data.x, data.y];
+        $("#glob-xorigin").val(data.x) ; 
+        $("#glob-yorigin").val(data.y) ;
+      }
       
       Globals.didMove = true;
       onPropertyChanged("posx", data.x, false);

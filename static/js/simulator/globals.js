@@ -18,12 +18,6 @@ var Globals = {
   // Currently selected frame in range
   frame: 0,
 
-  // Currently selected keyframe (without respect to simulation frames)
-  keyframe: 0,
-
-  // Controls speed of frame change while animating
-  delay: 250,
-
   // Interval event that allows for animation
   anim: {},
 
@@ -37,20 +31,23 @@ var Globals = {
   // states[0] will always match keyframeStates[0]
   states: [],
 
+  // Currently selected keyframe INDEX (without respect to timeline/states frames)
+  keyframe: 0,
+  
   // State at each keyframe (One inner array per keyframe)
   keyframeStates: [[],[]],
 
   // Time associated with each keyframe (false if unknown)
   keyframeTimes: [0, false],
 
-  // Index of key frames within states (false if not associated with "real" frame yet)
+  // Index of key frames within timeline (i.e. states) (false if not associated with timeline frame yet)
   keyframes: [0, false],
 
+  // Number of keyframes for current simulation
+  numKeyframes: 2,
+  
   // Number of frames in current simulation
   totalFrames: 0,
-
-  // Number of frames to attempt to simulate before declaring simulation failure if keyframes don't match
-  maxFrames: 4000,
 
   // Id associated with canvas element used for rendering
   canvasId: "viewport",
@@ -61,10 +58,9 @@ var Globals = {
   // Currently selected body, false if none
   selectedBody: false,
 
-  // Variables associated with each body:
-  // Each body has:
-  // x0, xf, v0, vf, a (for kinematics, need to update later with y values plus other unknowns?)
-  variableMap: [],
+  // For each keyframe:
+  // A list of bodies and their associated variable values  
+  variableMap: [[],[]],
 
   // Equation solver for currently loaded module
   // Current approach: Using eq-solver library, which uses eval function and map of variables to equations used to solve them
@@ -90,15 +86,16 @@ var Globals = {
   // Coordinate system currently used (Cartesian or Polar)
   coordinateSystem: "cartesian",
   
-  // Number of keyframes for current simulation
-  numKeyframes: 2,
-
-  //Max number of keyframes
-  maxNumKeyframes: 5, 
+  // -- CONSTANTS -- \\
+  // Controls speed of frame change while animating
+  delay: 250,  
   
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,
-
+  
+  // Number of pixels within range for attaching objects (for springs or moving origin)
+  delta: 50,
+  
   // Paths to images used for drawing point mass
   massImages: [
               "/static/img/logo/logo.png",
@@ -111,5 +108,10 @@ var Globals = {
               "/static/img/team/danny.png",
               "/static/img/team/matthew.png",
               "/static/img/team/sam.png"
-              ]
+              ],
+
+// Number of frames to attempt to simulate before declaring simulation failure
+  maxFrames: 4000,
+  
+  maxNumKeyframes: 5
 };
