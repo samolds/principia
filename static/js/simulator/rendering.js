@@ -13,7 +13,7 @@ function drawLoop(){
   $("#simulatorFrameRange").val(Globals.frame)
   setState(Globals.frame);
   if(Globals.useKeyframes)
-    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? Globals.frame: false; 
+    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false; 
   
   $("#" + "keyframe-0").attr("style","");
   $("#" + "keyframe-1").attr("style","");
@@ -24,54 +24,39 @@ function drawLoop(){
 
 // Show variable values in html elements
 function displayVariableValues(body){
-  var variables = Globals.variableMap[Globals.world.getBodies().indexOf(body)];
+  var variables = Globals.variableMap[Globals.keyframe][bIndex(body)];
   var precision = Globals.dPrecision;
   displayElementValues(body);
   if (variables && body){
-    if (Globals.keyframe == 0){
-      
-      // Convert to user coordinate system before displaying position
-      var position = physics2Origin([variables["x0"], variables["y0"]]);
-      
-      // Convert to user unit
-      position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
-      
-      // Convert to Polar coordinates, if necessary
-      if(Globals.coordinateSystem == "polar"){
-        position = cartesian2Polar([position[0], position[1]]);
-      }
-      
-      $('#properties-position-x').val(position[0].toFixed(precision));
-      $('#properties-position-y').val(position[1].toFixed(precision));
-      
-      $('#properties-velocity-x').val(convertUnit(variables["vx0"], "velx", false).toFixed(precision));
-      $('#properties-velocity-y').val(convertUnit(variables["vy0"], "vely", false).toFixed(precision));
-      $('#properties-acceleration-x').val(convertUnit(variables["ax"], "accx", false).toFixed(precision));
-      $('#properties-acceleration-y').val(convertUnit(variables["ay"], "accy", false).toFixed(precision));
-    } else {
     
-      // Convert to user coordinate system before displaying position
-      var position = physics2Origin([variables["xf"], variables["yf"]]);    
+    // Convert to user coordinate system before displaying position
+    var position = physics2Origin([variables["posx"], variables["posy"]]);
+    var velocity = [variables["velx"], variables["vely"]];
+    var acceleration = [variables["accx"], variables["accy"]];
+    
+    // Convert to Polar coordinates, if necessary
+    if(Globals.coordinateSystem == "polar"){
+      position = cartesian2Polar([position[0], position[1]]);
       
-      // Convert to user unit
-      position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
+      var temp;
+      if(velocity[1] == "?") 
+        temp = velocity[0];      
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);
       
-      // Convert to Polar coordinates, if necessary
-      if(Globals.coordinateSystem == "polar"){
-        position = cartesian2Polar([position[0], position[1]]);
-      }
+      if(temp) 
+        velocity = [temp, "?"];
       
-      $('#properties-position-x').val(position[0].toFixed(precision));
-      $('#properties-position-y').val(position[1].toFixed(precision));
-      
-      $('#properties-velocity-x').val(convertUnit(variables["vxf"], "velx", false).toFixed(precision));
-      $('#properties-velocity-y').val(convertUnit(variables["vyf"], "vely", false).toFixed(precision));
-      $('#properties-acceleration-x').val(convertUnit(variables["ax"], "accx", false).toFixed(precision));
-      $('#properties-acceleration-y').val(convertUnit(variables["ay"], "accy", false).toFixed(precision));
+      acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
- 
-
-  }
+    
+    // TODO fix unit conversions
+    $('#properties-position-x').val(position[0].toFixed(precision));
+    $('#properties-position-y').val(position[1].toFixed(precision));    
+    $('#properties-velocity-x').val(velocity[0].toFixed(precision));
+    $('#properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
+    $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
+    $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
+  } 
 }
 
 // Shows elements values in html elements
@@ -82,10 +67,11 @@ function displayElementValues(bod){
     var selected = constants.img;
     $('#properties-img option[value=' + selected +']').attr('selected', 'selected');
     var precision = Globals.dPrecision;
-
     
     // Convert to user coordinate system before displaying position
     var position = physics2Origin([st.pos.x, st.pos.y]);
+    var velocity = [st.vel.x, st.vel.y];
+    var acceleration = [st.acc.x, st.acc.y];
     
     // Convert to user unit
     position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
@@ -93,15 +79,18 @@ function displayElementValues(bod){
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
       position = cartesian2Polar([position[0], position[1]]);
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);
+      acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
       
     $('#properties-position-x').val(position[0].toFixed(precision));
     $('#properties-position-y').val(position[1].toFixed(precision));
 
-    $('#properties-velocity-x').val(convertUnit(st.vel.x, "velx", false).toFixed(precision));
-    $('#properties-velocity-y').val(convertUnit(st.vel.y, "vely", false).toFixed(precision));
-    $('#properties-acceleration-x').val(convertUnit(st.acc.x, "accx", false).toFixed(precision));
-    $('#properties-acceleration-y').val(convertUnit(st.acc.y, "accy", false).toFixed(precision));
+    $('#properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
+    $('#properties-velocity-y').val(convertUnit(velocity[1], "vely", false).toFixed(precision));
+    $('#properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
+    $('#properties-acceleration-y').val(convertUnit(acceleration[1], "accy", false).toFixed(precision));
+
     $('#properties-mass').val(constants.mass);
     $('#properties-size').val(constants.size);
     $('#properties-nickname').val(constants.nickname);
@@ -223,13 +212,24 @@ function drawSpringLine(b1, b2){
 }
 
 // Draws highlight box around selected element
-function highlightSelection(body){
+function highlightSelection(body, color, modifier){
   var img = body.view;
   var halfw = img["width"] / 2;
   var halfh = img["height"] / 2;
   var canvas = Globals.world.renderer();
 
+  if(modifier){
+    halfw += modifier;
+    halfh += modifier;
+  }
+  
+  // Default to red
   canvas.ctx.strokeStyle = '#ff0000';
+  
+  // Otherwise use provided color
+  if(color)
+    canvas.ctx.strokeStyle = color;
+  
   canvas.ctx.lineWidth = 2;
 
   var loc = body.state.pos;
@@ -330,16 +330,48 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
 
 // Copy global canvas into canvas for keyframe n
 function viewportToKeyCanvas(n){
-  if(n > 0) n = 1; //TODO: Map n to the appropriate keyframe index
+  //if(n > 0) n = 1; //TODO: Map n to the appropriate keyframe index
   var canvas = $('#' + Globals.canvasId)[0].children[0];  
   var keycanvas = $("#keyframe-" + n)[0];
   keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
   keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 }
 
+function drawOrigin(){
+  var canvas = Globals.world.renderer();
+  var ctx = canvas.ctx;
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#ff0000';    
+  
+  
+  var length = 10;
+  
+  ctx.beginPath();
+  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
+  ctx.lineTo(Globals.origin[0] + length, Globals.origin[1]);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
+  ctx.lineTo(Globals.origin[0] - length, Globals.origin[1]);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
+  ctx.lineTo(Globals.origin[0], Globals.origin[1] + length);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
+  ctx.lineTo(Globals.origin[0], Globals.origin[1] - length);
+  ctx.stroke();
+}
+
 // Adds post world.render() effects including property windows, springs, vectors, and highlights.
 function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
+  var originObject = Globals.originObject;
+  
   if(isKeyframe && Globals.useKeyframes){
     viewportToKeyCanvas(Globals.keyframe); 
     displayVariableValues(selectedBody); 
@@ -353,11 +385,14 @@ function postRender(isKeyframe){
     checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].vectors;
   }
   
+  drawOrigin();
   drawLines();
   drawVectors();
 
   if(selectedBody) { highlightSelection(selectedBody); }
-  drawProperties();
+  if(originObject === 0 || originObject) {     
+    highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
+  }
 }
 
 // Sets the world state to the currently selected frame and renders it.

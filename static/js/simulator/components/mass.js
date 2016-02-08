@@ -28,10 +28,17 @@ function addMass(data){
           });
           
   // Upon being added, a map of variables associated with this mass is added to the globals
-  variableMap.push({x0:data.x, xf: data.x, vx0:0, vxf:0, ax:0,
-                    y0:data.y, yf: data.y, vy0:0, vyf:0, ay:0,
-                    m:1});
-  
+  addToVariableMap(
+    {
+      posx: data.x, 
+      posy: data.y,
+      velx: 0,
+      vely: 0,
+      accx: 0,
+      accy: 0
+    }
+  );
+                  
   // Assign constants
   bodyConstants[bodyConstants.length-1].mass = 1.0;
   bodyConstants[bodyConstants.length-1].size = 100;

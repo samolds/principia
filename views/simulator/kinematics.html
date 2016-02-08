@@ -1,6 +1,9 @@
 {{ define "title" }} - Simulator{{ end }}
 
 {{ define "scripts" }}
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/lib/eq-solver.js"></script>
 <script src="/static/js/simulator/globals.js"></script>
@@ -28,9 +31,7 @@
 <script src="/static/js/forms.js"></script>
 <script src="/static/js/view.js"></script>
 
-<script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+
 {{ end }}
 
 {{ define "content" }}
@@ -43,17 +44,17 @@
         <div class="row">
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
           <div class="col s8">
-            <div class="" >
+            <div id="" >
               <h5>Keyframes:
               <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
               </h5>
               <div class="">
                 <div class="" id="keyframelist">
-                  <ul>
+                  <ul id="keyframe-list">
                     <li>
                       <div class="keyframe-tile">
                         <div class="remove-keyframe-btn">
-                          <a class="btn-floating btn-small waves-effect waves-light red" id="remove-keyframe"><i class="fa fa-times"></i></a>
+                          <a class="btn-floating btn-small waves-effect waves-light red" id="remove-keyframe-0" ><i class="fa fa-times"></i></a>
                         </div>
                           <h6>Frame 1: </h6>
                           <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
@@ -65,65 +66,20 @@
                        </div>
                     </li>
                     <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                      </div> 
-                      <div class="input-field">
-                            <input id="keyframe-1-dt" type="text" value="?"></input>
-                            <label for="keyframe-1-dt" class="active">dt</label>
-                      </div>
-                    </li>
-                    <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                       </div> 
-                       <div class="input-field">
-                            <input id="keyframe-2-dt" type="text" value="?"></input>
-                            <label for="keyframe-2-dt" class="active">dt</label>
+                      <div class="keyframe-tile">
+                        <div class="remove-keyframe-btn">
+                          <a class="btn-floating btn-small waves-effect waves-light red" id="remove-keyframe-1"><i class="fa fa-times"></i></a>
+                        </div>
+                          <h6>Frame 2: </h6>
+                          <canvas id="keyframe-1" class="keyframe" ></canvas>
+                     
+                        <div class="input-field">
+                              <input id="keyframe-1-dt" type="text" value="?"></input>
+                              <label for="keyframe-1-dt" class="active">dt</label>
+                        </div>
                        </div>
                     </li>
-                    <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                       </div> 
-                       <div class="input-field">
-                            <input id="keyframe-1-dt" type="text" value="?"></input>
-                            <label for="keyframe-1-dt" class="active">dt</label>
-                       </div>
-                    </li>
-                    <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                       </div> 
-                       <div class="input-field">
-                            <input id="keyframe-1-dt" type="text" value="?"></input>
-                            <label for="keyframe-1-dt" class="active">dt</label>
-                       </div>
-                    </li>
-                    <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                       </div> 
-                       <div class="input-field">
-                            <input id="keyframe-1-dt" type="text" value="?"></input>
-                            <label for="keyframe-1-dt" class="active">dt</label>
-                       </div>
-                    </li>
-                    <li>
-                      <div>
-                        <h6>Frame 2:</h6>
-                          <canvas id="keyframe-1" class="keyframe"></canvas>
-                       </div> 
-                       <div class="input-field">
-                            <input id="keyframe-1-dt" type="text" value="?"></input>
-                            <label for="keyframe-1-dt" class="active">dt</label>
-                       </div>
-                    </li>
+                  
                   </ul>
                 </div>
 
