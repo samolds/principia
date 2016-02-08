@@ -200,6 +200,8 @@ function updatePropertyRedraw(property, value){
     
     // Convert back to default PhysicsJS origin
     point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
+
+    point = [convertUnit(point[0], "posx", true), convertUnit(point[1], "posy", true)]
     
     // Update properties within simulator, draw, and return
     onPropertyChanged("posx", point[0], false);
@@ -211,6 +213,7 @@ function updatePropertyRedraw(property, value){
   // Convert back to default PhysicsJS origin, update properties, and draw
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
+  value = convertUnit(value, property, true);
   onPropertyChanged(property, value, true);
   drawMaster();
 }
@@ -225,6 +228,9 @@ function updateCoords(coord_sys){
       $('#x-position-label').html("r Position");
       $('#y-position-label').html("Θ Position");
     }
+    
+    // Redraw (forces update of displayed values)
+    drawMaster();
   }
 
 function addKeyframe(){
@@ -285,4 +291,21 @@ function updateOrigin(coordinate, value){
   else {
     Globals.origin[1] = value;
   }
+  
+  // Redraw (forces update of displayed values)
+  drawMaster();
+}
+
+function updateLengthUnit(factor){
+  Globals.lengthFactor = parseFloat(factor);
+  
+  // Redraw (forces update of displayed values)
+  drawMaster();
+}
+
+function updateTimeUnit(factor){
+  Globals.timeFactor = parseFloat(factor);
+  
+  // Redraw (forces update of displayed values)
+  drawMaster();
 }

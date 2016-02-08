@@ -90,6 +90,12 @@ var Globals = {
   // Coordinate system currently used (Cartesian or Polar)
   coordinateSystem: "cartesian",
   
+  // Factor to multiply displayed lengths by
+  lengthFactor: 1.0,
+  
+  // Factor to multiply displayed times by
+  timeFactor: 1.0,
+  
   // Number of keyframes for current simulation
   numKeyframes: 2,
 

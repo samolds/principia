@@ -84,3 +84,16 @@ function polar2Cartesian(point){
 function rad2deg(rads) { return 57.2957795131 * rads; }
 
 function deg2rad(degs) { return 0.01745329251 * degs; }
+
+function convertUnit(value, type, invert){
+  // No conversion for degrees
+  if(type.slice(-1) == "y" && Globals.coordinateSystem == "polar")
+    return value;
+  
+  if(type == "posx" || type == "posy")
+    return invert? value * 1.0/Globals.lengthFactor :
+                   value * Globals.lengthFactor;
+  else
+    return invert? value * 1.0/Globals.lengthFactor * Globals.timeFactor :
+                   value * Globals.lengthFactor * 1.0/Globals.timeFactor;
+}

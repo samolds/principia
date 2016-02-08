@@ -4,15 +4,14 @@ import (
 	"time"
 )
 
-// Belong to Simulation
-type Comment struct {
+// Belong to Simulation or Comment
+type Rating struct {
 	KeyName string // UniqueID used to get Key
 
-	Contents      string
+	Score         int8
 	CreationDate  time.Time
 	AuthorKeyName string // Used to get Author Key
-	// Ratings by descendant
 
-	// AncestorKey = Simulation
+	// AncestorKey = Thing that was rated
 	// Using AncecstorKey for strong consistency
 }
