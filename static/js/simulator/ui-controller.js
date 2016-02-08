@@ -150,7 +150,7 @@ function selectKeyframe(event){
   }
 //add highlight
   $("#" + event.target.id).attr("style","border:4px solid #0000cc");
- 
+
  //TODO: handle transparent for general case
   // if(frame == 0){
   //   for(var i=0; i<Globals.world.getBodies().length; i++)
@@ -215,15 +215,6 @@ function updatePropertyRedraw(property, value){
   drawMaster();
 }
 
-// function showRemoveKeyframeBtn(event){
-//   $('.remove-keyframe-btn').style.visibility = "visible";
-//   console.log("yo yo yo");
-// }
-// function hideRemoveKeyframeBtn(event){
-//   $('.remove-keyframe-btn').style.visibility = "hidden";
-//   console.log("yo yo yo");
-// }
-
 function updateCoords(coord_sys){
     Globals.coordinateSystem = coord_sys;
     if(coord_sys == "cartesian"){
@@ -247,7 +238,7 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
   $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
-                       "   <a class='btn-floating btn-small waves-effect waves-light red' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red delete-kf-btn' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
                       "  </div> " +
                        "   <h6>Frame " + Globals.numKeyframes + ": </h6> " +
                        "   <canvas id='keyframe-"+ Globals.numKeyframes +"' class='keyframe' ></canvas> " +
@@ -265,6 +256,8 @@ if (Globals.numKeyframes == Globals.maxNumKeyframes)
 }
 
 function removeKeyframe(event){
+  console.log("hi");
+
   var frame = event.target;  
   
   var index = parseInt(frame.parentNode.id.split("-")[2]) - 1;
