@@ -8,7 +8,7 @@
           <div class="col s8">
 
             <!-- Only post a comment if logged in and simulation is saved -->
-            {{ if and (.CurrentUser)}}
+            {{ if .IsLoggedIn }}
             <div class="row">
               <div class="col s2">
                 <i class="medium fa fa-user"></i>

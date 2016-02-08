@@ -70,4 +70,9 @@ $(document).ready(function(){
   $('#glob-yorigin').on("change", function(){ updateOrigin("y", $('#glob-yorigin').val()); });
   
   $('#coord-sys').on("change", function(){ updateCoords( $('#coord-sys').val()); }); 
+  
+  // Events for handling changing the unit
+  $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
+  $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
+  
 });

@@ -14,7 +14,7 @@
   <div class="card-panel">
 
     <div class="row">
-      <div class="col s4">
+      <div class="col s10">
         <h3 class="page-header">My Profile</h3>
       </div>
       <div class="col s2 right pad-sides" style="margin: 1.46rem 0 1.168rem 0">
@@ -26,28 +26,32 @@
       <div class="col s6">
         <div class="input-field col s12">
           <label for="user-email" id="user-email-label">User Email</label>
-          <input disabled value="{{.CurrentUser.Email}}" id="user-email" type="text" class="validate">
+          <input disabled value="{{ .User.Email }}" id="user-email" type="text" class="validate">
         </div>
         <div class="input-field col s12">
           <label for="user-display-name" id="user-email-label">Display name</label>
-          <input id="user-display-name" value="{{.CurrentUser.DisplayName}}" type="text" class="validate">
+          <input id="user-display-name" value="{{ .User.DisplayName }}" type="text" class="validate">
         </div>
       </div>
       <div class="input-field col s6">
         <div class="file-field">
-          <div id="profile-pic-container">
-            <img id="profile-pic" style="height: 100%; width: 100%" src="http://wallpapercave.com/wp/N1OF7RI.png" alt="Profile Picture" />
+          <div id="profile-pic-container" class="valign-wrapper">
+            <div class="valign center-align" style="width: 100%;">
+              <i class="fa fa-user large"></i>
+            </div>
           </div>
-          <input type='file' onchange="readURL(this);" />
-          <div class="file-path-wrapper">
-            <input class="file-path validate" type="text" placeholder="Upload An Image">
-          </div>
+          <!--
+            <input type='file' onchange="readURL(this);" />
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="Upload An Image">
+            </div>
+          -->
         </div>
       </div>
     </div>
     <div class="row">
       <div class="input-field col s12">
-        <textarea id="user-interests" class="materialize-textarea" length="120">{{.CurrentUser.Interests}}</textarea>
+        <textarea id="user-interests" class="materialize-textarea" length="120">{{ .User.Interests }}</textarea>
         <label for="user-interests">Areas Of Interest:</label>
       </div>
     </div>

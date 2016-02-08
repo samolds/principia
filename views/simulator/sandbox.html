@@ -12,10 +12,10 @@
 <script src="/static/js/simulator/modules/sandbox.js"></script>
 
 <script>
-  KinematicsSandbox.initModule({{.Data.sim.Contents}});
-  var globalSimulationId = {{ .Data.sim.Id }}; // I know this is janky
-  if (!globalSimulationId) { // TODO: Clean this up. This is a temporary
-    globalSimulationId = null; // holder while refactoring.
+  KinematicsSandbox.initModule({{ .Data.simulation.Simulator }});
+  var GlobalKeyNames = {
+    User: {{ .User.KeyName }},
+    Simulation: {{ .Data.simulation.KeyName }},
   }
 </script>
 
@@ -35,7 +35,7 @@
   </div>
 </div>
 
-{{ if .Data.sim.Id }}
+{{ if .Data.simulation.KeyName }}
   <div class="main-container simulator-container">
     {{ template "commentsFrag" . }}
   </div>

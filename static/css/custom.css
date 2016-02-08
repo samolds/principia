@@ -66,6 +66,10 @@
   background-color: #003366;
 }
 
+.page-header {
+  word-break: break-word;
+}
+
 /* for blue links on about cards */
   .card-action a.dark-link-blue,
   .card-action a.dark-link-blue:link,
@@ -157,7 +161,7 @@ ul.toollist li {
 body {
   background-color: #bbb;
   background-image: url("/static/img/background.png");
-  background: -webkit-linear-gradient(rgba(0,255,255,0), rgba(255,0,0,1)); /* For Safari 5.1 to 6.0 */
+  background: -webkit-linear-gradient(rgba(245,245,245,0), rgba(245,245,245,1)); /* For Safari 5.1 to 6.0 */
   background: -o-linear-gradient(white, #f5f5f5); /* For Opera 11.1 to 12.0 */
   background: -moz-linear-gradient(white, #f5f5f5); /* For Firefox 3.6 to 15 */
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, rgba(0, 0, 0, 0.65) 100%), url('/static/img/background.png') no-repeat;
@@ -386,6 +390,10 @@ input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !impo
 }
 
 /* change font awesome glyphicons size */
+i.fa.fa-size-tiny {
+  font-size: 1em;
+}
+
 i.fa.fa-size-small {
   font-size: 1.5em;
 }
@@ -404,3 +412,24 @@ i.fa.fa-size-medium {
   word-break: normal;
 }
 /* end toast overwrite */
+
+.private-checkbox {
+  margin-top: 26px;
+}
+
+/* home page card title */
+.home-card-title {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  padding: 20px;
+}
+
+.home-card-subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 20px;
+}
+/* end home page card title */
+

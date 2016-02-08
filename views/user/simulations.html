@@ -4,15 +4,14 @@
 <div class="container narrow">
   <div class="card-panel">
     <h3 class="page-header">My Simulations</h3>
-    {{ if .Data.sims }}
+    {{ if .Data.simulations }}
       <ul>
-        {{ range $simulation := .Data.sims }}
-          <li><a href="/simulator/{{ $simulation.Type }}/{{$simulation.Id}}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
+        {{ range $simulation := .Data.simulations }}
+          <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
         {{ end }}
       </ul>
     {{ else }}
       <p>Nothing?!</p>
-      <p>😔 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠</p>
     {{ end }}
   </div>
 </div>

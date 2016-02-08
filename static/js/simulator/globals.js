@@ -89,6 +89,15 @@ var Globals = {
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  
+
+  // Factor to multiply displayed lengths by
+  lengthFactor: 1.0,
+  
+  // Factor to multiply displayed times by
+  timeFactor: 1.0,
+  
+  // Number of keyframes for current simulation
+  numKeyframes: 2,
   
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,

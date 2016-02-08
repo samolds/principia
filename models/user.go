@@ -4,11 +4,14 @@ import (
 	"time"
 )
 
+// Root Object
 type User struct {
+	KeyName  string // UniqueID used to get Key
+	GoogleID string
+
 	DisplayName string
-	Interests   string `datastore:",noindex"` // Don't index this field => max size = 1MB
+	Interests   string
 	Email       string
 	Admin       bool
 	JoinDate    time.Time
-	ID          string `datastore:"-"` // Ignore this field
 }

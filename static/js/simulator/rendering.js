@@ -49,9 +49,9 @@ function displayVariableValues(body){
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
     
+    // TODO fix unit conversions
     $('#properties-position-x').val(position[0].toFixed(precision));
-    $('#properties-position-y').val(position[1].toFixed(precision));
-    
+    $('#properties-position-y').val(position[1].toFixed(precision));    
     $('#properties-velocity-x').val(velocity[0].toFixed(precision));
     $('#properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
     $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
@@ -67,12 +67,14 @@ function displayElementValues(bod){
     var selected = constants.img;
     $('#properties-img option[value=' + selected +']').attr('selected', 'selected');
     var precision = Globals.dPrecision;
-
     
     // Convert to user coordinate system before displaying position
     var position = physics2Origin([st.pos.x, st.pos.y]);
     var velocity = [st.vel.x, st.vel.y];
     var acceleration = [st.acc.x, st.acc.y];
+    
+    // Convert to user unit
+    position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
@@ -84,10 +86,11 @@ function displayElementValues(bod){
     $('#properties-position-x').val(position[0].toFixed(precision));
     $('#properties-position-y').val(position[1].toFixed(precision));
 
-    $('#properties-velocity-x').val(velocity[0].toFixed(precision));
-    $('#properties-velocity-y').val(velocity[1].toFixed(precision));
-    $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
-    $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
+    $('#properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
+    $('#properties-velocity-y').val(convertUnit(velocity[1], "vely", false).toFixed(precision));
+    $('#properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
+    $('#properties-acceleration-y').val(convertUnit(acceleration[1], "accy", false).toFixed(precision));
+
     $('#properties-mass').val(constants.mass);
     $('#properties-size').val(constants.size);
     $('#properties-nickname').val(constants.nickname);

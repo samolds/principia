@@ -27,16 +27,17 @@ func init() {
 	router.HandleFunc("/simulator", simulator.BrowseHandler)
 	router.HandleFunc("/simulator/browse", simulator.BrowseHandler)
 	router.HandleFunc("/simulator/sandbox", simulator.NewSandboxHandler)
-	router.HandleFunc("/simulator/sandbox/{simulatorId:[0-9]+}", simulator.EditSandboxHandler)
+	router.HandleFunc("/simulator/sandbox/{simulationID:[0-9]+}", simulator.EditSandboxHandler)
 	router.HandleFunc("/simulator/kinematics", simulator.NewKinematicsHandler)
-	router.HandleFunc("/simulator/kinematics/{simulatorId:[0-9]+}", simulator.EditKinematicsHandler)
+	router.HandleFunc("/simulator/kinematics/{simulationID:[0-9]+}", simulator.EditKinematicsHandler)
 
 	// User pages
-	router.HandleFunc("/user/{userId:[0-9]+}", user.ProfileHandler)
-	router.HandleFunc("/user/{userId:[0-9]+}/simulations", user.SimulationsHandler)
+	router.HandleFunc("/user/{userID:[0-9]+}", user.ProfileHandler)
+	router.HandleFunc("/user/{userID:[0-9]+}/simulations", user.SimulationsHandler)
 
 	// API Endpoint (Returns JSON)
-	router.HandleFunc("/api/simulator/{simulatorId:[0-9]+}/comments", api.CommentHandler)
+	router.HandleFunc("/api/simulator/{simulationID:[0-9]+}/comments", api.CommentHandler)
+	router.HandleFunc("/api/simulator/{simulationID:[0-9]+}/ratings", api.RatingHandler)
 
 	// Test pages
 	router.HandleFunc("/test/{testPage:[a-z]+}", controllers.TestHandler)
