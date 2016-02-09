@@ -85,7 +85,7 @@ function attemptSimulation(){
     Globals.variableMap[0][0].velx = result[0];
     Globals.variableMap[0][0].vely = result[1];
     
-    // If results are sound, the user can play the simulation  
+    // If results are sound, the user can play the simulation    
     simulate();
     
     Globals.keyframeStates[1][0].pos.x = Globals.states[0][Globals.totalFrames].pos.x;
@@ -204,10 +204,10 @@ function attemptSimulation(){
           }
           */
           
-          Globals.keyframeTimes[keyframe2] = results[1]["t"];
+          Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
           $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
           if(keyframe2 == nKF-1)
-            Globals.totalFrames = results[1]["t"]/Globals.world.timestep();          
+            Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
         }
                
         keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
@@ -239,7 +239,11 @@ function attemptSimulation(){
   } // End for-each pass
   
   $('#simulatorFrameRange')[0].max = Globals.totalFrames;
-
+  
+  // Associate keyframes with a real frame
+  for(var i=1; i < nKF; i++)
+    Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
+  
   // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
   for(var i=nKF-1; i >= 0; i--){
     setStateKF(i);
@@ -333,6 +337,18 @@ function simulate(){
   for (i = 0; i < Globals.totalFrames+1; i++){    
     for (j = 0; j < Globals.world.getBodies().length; j++){
       // Clone the state information for the current body
+      
+      // Added 2/8/16: Swap to new keyframe state at appropriate indices before proceeding
+      if(($.inArray(i, Globals.keyframes) != -1))
+      {
+        // Restore objects to their keyframe state
+        var kfStates = Globals.keyframeStates[kIndex(i)];
+        for (var b = 0; b < Globals.world.getBodies().length; b++) {
+          Globals.world.getBodies()[b].state = cloneState(kfStates[b]);
+          Globals.world.getBodies()[b].state["old"] = cloneState(old);
+        }
+      }
+      
       var curState = Globals.world.getBodies()[j].state;
       var saveState = cloneState(curState);
 
