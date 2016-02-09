@@ -131,27 +131,6 @@
 .properties-label{display: initial;}
 
 /*for scrollable tool list*/
-ul.toollist {
-  overflow-x: -moz-scrollbars-vertical;
-  overflow-x: scroll;
-  white-space: nowrap;
-  vertical-align: middle;
-  
-  background-color: #29b6f6;
-}
-
-ul.toollist li {
-  border: 2px dotted black;
-  
-  display: inline-block;
-  width: 100px;
-  height: 100px;
-  text-align: center;
-  vertical-align: middle;
-
-  background-color: #29b6f6;
-}
-
 .scrollable-tools {
   white-space: nowrap;
   overflow-x: -moz-scrollbars-vertical;
@@ -218,6 +197,7 @@ body {
     list-style-type: none;
     white-space: nowrap;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 #keyframelist li{
