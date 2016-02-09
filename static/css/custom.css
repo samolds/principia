@@ -222,18 +222,51 @@ body {
 
 #keyframelist li{
     display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    max-height: 255px;
+    min-height: 255px;
+    vertical-align: top;
 }
 
 .keyframe-tile{
-border: 2px solid #888;
-
+  margin: 0px;
+  margin-right: 10px;
+  padding: 0px;
+  vertical-align: top;
 }
 
+.keyframe-tile:hover .delete-kf-btn{
+  /*display: inline-block;*/
+  visibility: visible;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: auto;
+}
+
+.delete-kf-btn{
+  cursor: pointer;
+  visibility: hidden;
+  margin: 0px;
+  padding: 0px;
+
+}
+.kf-btn-placeholder{
+  visibility: hidden;
+}
 .remove-keyframe-btn{
+  margin: 0px;
+  padding:0px;
   position:relative;
   left: 125px;
   top:50px;
-  
+  width: 37px;
+}
+
+.remove-keyframe-btn:hover .delete-kf-btn {
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
 }
 
 /*this is to vertically space tab icons*/
@@ -249,8 +282,6 @@ border: 2px solid #888;
 .tabs li a:hover i{
   color: #90caf9;
 }
-
-
 
 /* simulator properties window */
   .prop-window {
@@ -433,4 +464,3 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
-

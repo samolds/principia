@@ -36,16 +36,21 @@ $(document).ready(function(){
   $('#properties-img').on("change", function(){ updatePropertyRedraw('image', $('#properties-img option:selected')[0].value); });
   
   // Event for clicking solve button
-  $('#solve-btn').on('click', function() { attemptSimulation(); });
+  $('#solve-btn').on('click', function() {     
+    attemptSimulation();
+    
+    // Update format of solution details
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  });
   
   // Events for selecting mini-canvases representing keyframes
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
-  $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
-  $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
+  // $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
+  // $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
-  $('#remove-keyframe').on("click", function(event) { removeKeyframe(event); } );
+  $('#remove-keyframe-1').on("click", function(event) { removeKeyframe(event); } );
   
   // Events for handling updating "dt" on keyframe 1
   $('#keyframe-1-dt').on("change", function(){ 
