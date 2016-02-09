@@ -89,6 +89,10 @@ function rad2deg(rads) { return 57.2957795131 * rads; }
 function deg2rad(degs) { return 0.01745329251 * degs; }
 
 function convertUnit(value, type, invert){
+  
+  if(value == "" || isNaN(value)) 
+    return value;
+  
   // No conversion for degrees
   if(type.slice(-1) == "y" && Globals.coordinateSystem == "polar")
     return value;
