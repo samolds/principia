@@ -40,9 +40,6 @@ function handleUIDragStop(event, ui){
 
   var data = { 'x': cx-vleft, 'y': cy-vtop};
 
-  console.log("Origin:" + data.x + ", " + data.y  );
-  
-  
   var world = Globals.world;
   var bodies = world.getBodies();
   var delta = Globals.delta;
