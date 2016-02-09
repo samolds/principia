@@ -270,6 +270,8 @@ function addToVariableMap(variable){
   }
 }
 
+// Pushes a duplicate variable map and keyframe state; used when
+// adding a new keyframe so that it ends up with the same bodies.
 function pushDuplicates(){
   // Previous keyframe, with one variable map per body
   var lastMap = Globals.variableMap[Globals.numKeyframes-1];
@@ -359,7 +361,7 @@ function setState(n){
   var bodies = Globals.world.getBodies();
   for (var i = 0; i < bodies.length; i++){
     bodies[i].state = Globals.states[i][n];
-    if(i == Globals.originObject){
+    if(i === Globals.originObject){
       Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
     }
   }
