@@ -34,6 +34,9 @@ function displayVariableValues(body){
     var velocity = [variables["velx"], variables["vely"]];
     var acceleration = [variables["accx"], variables["accy"]];
     
+    // Use user unit
+    position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
+    
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
       position = cartesian2Polar([position[0], position[1]]);
