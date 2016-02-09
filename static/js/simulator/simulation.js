@@ -12,9 +12,10 @@ function attemptSimulation(){
   var keyframeStates = Globals.keyframeStates;
   var nKF            = Globals.numKeyframes;
   var constants      = Globals.bodyConstants;
+  var pre            = Globals.dPrecision;
     
   if(Globals.originObject === 0 || Globals.originObject){
-    var pre = Globals.dPrecision;
+    
     // Hard-coded example for using polar coordinates
     
     // Disable collisions
@@ -114,6 +115,9 @@ function attemptSimulation(){
     return;
   }
   
+  // Disable collisions
+  world.getBodies()[0].treatment = "ghost";
+  
   // Do (N-1) passes, ensuring each adjacent pair of keyframes is dealt with
   // and data is potentially propagated from first and last keyframes in worst case.
   for(var pass=0; pass < nKF-1; pass++){
@@ -201,7 +205,7 @@ function attemptSimulation(){
           */
           
           Globals.keyframeTimes[keyframe2] = results[1]["t"];
-          $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2]);          
+          $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
           if(keyframe2 == nKF-1)
             Globals.totalFrames = results[1]["t"]/Globals.world.timestep();          
         }
