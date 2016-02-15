@@ -19,3 +19,15 @@ function showVectors() {
   
   drawMaster();
 }
+
+function showPVAGraph() {
+  var checkbox = document.getElementById('pvagraph-checkbox');
+
+  if(checkbox.checked) {
+    $("#pvaGraphContainer").show();
+  } else {
+    $("#pvaGraphContainer").hide();
+  }
+  
+  updatePVAChart();
+}

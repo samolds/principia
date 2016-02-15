@@ -313,13 +313,20 @@ function pushDuplicates(){
 function simulate(){
   var i;
   var j;
+  console.log("Called Simulate");
 
   // Reset timeline if it is running
   Globals.frame = 0;
   if (Globals.running) { toggleSimulator(); }
   $("#simulatorFrameRange").val(0);
 
-  Globals.states = [];  // Clear states global
+  Globals.states = [];  // Clear states globals
+
+  // Used for state graph
+  Globals.positionStates = [];
+  Globals.velocityStates = [];
+  Globals.accelStates = [];
+
   Globals.world._time = 0;
 
   var old = defaultState();
@@ -331,6 +338,9 @@ function simulate(){
     Globals.world.getBodies()[i].state["old"] = cloneState(old);
     Globals.world.getBodies()[i]._started = undefined;
     Globals.states[i] = [];
+    Globals.positionStates[i] = [];
+    Globals.velocityStates[i] = [];
+    Globals.accelStates[i] = [];
   }
   
   // For each frame and then for each body in the simulation
@@ -355,9 +365,23 @@ function simulate(){
       // Save state information and advance the simulator
       if (i != 0){ saveState["old"] = Globals.states[j][i-1]; }
       Globals.states[j].push(saveState);
+      Globals.positionStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].pos.y, 2) + Math.pow(Globals.states[j][i].pos.x, 2))
+      });
+      Globals.velocityStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].vel.y, 2) + Math.pow(Globals.states[j][i].vel.x, 2))
+      });
+      Globals.accelStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].acc.y, 2) + Math.pow(Globals.states[j][i].acc.x, 2))
+      });
     }
     Globals.world.step();
   }
+
+  debugger;
 }
 
 // Updates a variable in the specified body to have the specified value

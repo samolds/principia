@@ -433,8 +433,8 @@ i.fa.fa-size-medium {
 /* home page card title */
 .home-card-title {
   position: absolute;
-  bottom: 10px;
-  left: 0;
+  left: 0;  bottom: 10px;
+
   padding: 20px;
 }
 
@@ -445,3 +445,13 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
+
+#pvaGraphContainer {
+  /*padding-left: 75px;*/
+  display: none;
+}
+
+#pvaGraph {
+  height: 300px; 
+  width:100%;
+}

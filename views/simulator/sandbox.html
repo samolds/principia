@@ -22,72 +22,47 @@
 
   window.onload = function () {
 
-    positionData =     [];
-    velocityData =     [];
-    accelerationData = [];
-
-    chart = new CanvasJS.Chart("chartContainer",{
-      axisX:{
-        maximum: 4000,
-      },
+    chart = new CanvasJS.Chart("pvaGraph",{
+      // axisX:{
+      //   maximum: 4000,
+      // },
       data: [{ 
         type: "line",
         showInLegend: true,
         name: "Position",
-        dataPoints: positionData
+        dataPoints: []
       },
       {       
         type: "line",
         showInLegend: true,
         name: "Acceleration" ,
-        dataPoints: velocityData
+        dataPoints: []
       },
       {       
         type: "line",
         showInLegend: true,
         name: "Velocity" ,
-        dataPoints: accelerationData
+        dataPoints: []
       }]
     });
 
     updatePVAChart = function () {
-      var dataLength = 4000; // number of dataPoints visible at any point
 
       if(!Globals.selectedBody) {
+        chart.options.data[0].dataPoints = [];
+        chart.options.data[1].dataPoints = [];
+        chart.options.data[2].dataPoints = [];
+        chart.render();
         return;
       }
 
-      positionData.push({
-        x: Globals.frame,
-        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].pos.y, 2) + Math.pow(Globals.states[0][Globals.frame].pos.x, 2))
-      });
+      // TODO: Retrieve index of the selected body here
+      var selectedBodyIndex = 0;
 
-      velocityData.push({
-        x: Globals.frame,
-        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].vel.y, 2) + Math.pow(Globals.states[0][Globals.frame].vel.x, 2))
-      });
+      chart.options.data[0].dataPoints = Globals.positionStates[selectedBodyIndex].slice(0, Globals.frame + 1);
+      chart.options.data[1].dataPoints = Globals.accelStates[selectedBodyIndex].slice(0, Globals.frame + 1);
+      chart.options.data[2].dataPoints = Globals.velocityStates[selectedBodyIndex].slice(0, Globals.frame + 1);
 
-      accelerationData.push({
-        x: Globals.frame,
-        y: Math.sqrt(Math.pow(Globals.states[0][Globals.frame].acc.y, 2) + Math.pow(Globals.states[0][Globals.frame].acc.x, 2))
-      });
-
-      if (positionData.length > dataLength)
-      {
-        debugger;
-        positionData.shift();        
-      }
-      if (velocityData.length > dataLength)
-      {
-        debugger;
-        velocityData.shift();        
-      }
-      if (accelerationData.length > dataLength)
-      {
-        debugger;
-        accelerationData.shift();        
-      }
-      
       chart.render();   
     };
   }
