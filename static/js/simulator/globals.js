@@ -110,6 +110,8 @@ var Globals = {
               "/static/img/logo/logo.png",
               "/static/img/toolbox/weight.png",
               "/static/img/toolbox/car.png",
+              "/static/img/toolbox/sailboat.png",
+              "/static/img/toolbox/speedboat.png",
               "/static/img/toolbox/mascot.png",
               "/static/img/toolbox/tranquilizer.png",
               "/static/img/toolbox/jogger.png",

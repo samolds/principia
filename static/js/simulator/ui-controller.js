@@ -40,9 +40,6 @@ function handleUIDragStop(event, ui){
 
   var data = { 'x': cx-vleft, 'y': cy-vtop};
 
-  console.log("Origin:" + data.x + ", " + data.y  );
-  
-  
   var world = Globals.world;
   var bodies = world.getBodies();
   var delta = Globals.delta;
@@ -112,14 +109,14 @@ function onRangeUpdate(){
   
   // Highlight mini canvas
   if(Globals.keyframe === 0 || Globals.keyframe)
-  {
-    var frame = Globals.keyframe > 0? 1: 0; //TODO map frame to appropriate index
-    $("#" + "keyframe-" + frame).attr("style","border:4px solid #0000cc");
+  {    
+    $("#" + "keyframe-" + Globals.keyframe).attr("style","border:4px solid #0000cc");
   }
   else
   {
-    $("#" + "keyframe-0").attr("style","");
-    $("#" + "keyframe-1").attr("style","");
+    for(var i=0; i < Globals.numKeyframes; i++){
+      $("#" + "keyframe-" + i).attr("style","");
+    }    
   }
   
   drawMaster();
