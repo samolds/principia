@@ -319,7 +319,7 @@ function simulate(){
   if (Globals.running) { toggleSimulator(); }
   $("#simulatorFrameRange").val(0);
 
-  Globals.states = [];  // Clear states globals
+  Globals.states = [];  // Clear states global
 
   // Used for state graph
   Globals.positionStates = [];

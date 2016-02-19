@@ -433,8 +433,8 @@ i.fa.fa-size-medium {
 /* home page card title */
 .home-card-title {
   position: absolute;
-  left: 0;  bottom: 10px;
-
+  left: 0;
+  bottom: 10px;
   padding: 20px;
 }
 
