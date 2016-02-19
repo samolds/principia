@@ -387,6 +387,9 @@ function postRender(isKeyframe){
   if(selectedBody){
     var checkbox = document.getElementById('vector-checkbox');
     checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].vectors;
+
+    checkbox = document.getElementById('pvagraph-checkbox');
+    checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].showGraph;
   }
   
   drawOrigin();

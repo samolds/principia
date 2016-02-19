@@ -446,12 +446,7 @@ i.fa.fa-size-medium {
 }
 /* end home page card title */
 
-#pvaGraphContainer {
-  /*padding-left: 75px;*/
-  display: none;
-}
-
-#pvaGraph {
-  height: 300px; 
+#positionGraph, #vaGraph {
+  height: 275px;
   width:100%;
 }

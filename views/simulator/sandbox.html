@@ -18,55 +18,6 @@
     User: {{ .User.KeyName }},
     Simulation: {{ .Data.simulation.KeyName }},
   }
-
-
-  window.onload = function () {
-
-    chart = new CanvasJS.Chart("pvaGraph",{
-      // axisX:{
-      //   maximum: 4000,
-      // },
-      data: [{ 
-        type: "line",
-        showInLegend: true,
-        name: "Position",
-        dataPoints: []
-      },
-      {       
-        type: "line",
-        showInLegend: true,
-        name: "Acceleration" ,
-        dataPoints: []
-      },
-      {       
-        type: "line",
-        showInLegend: true,
-        name: "Velocity" ,
-        dataPoints: []
-      }]
-    });
-
-    updatePVAChart = function () {
-
-      if(!Globals.selectedBody) {
-        chart.options.data[0].dataPoints = [];
-        chart.options.data[1].dataPoints = [];
-        chart.options.data[2].dataPoints = [];
-        chart.render();
-        return;
-      }
-
-      // TODO: Retrieve index of the selected body here
-      var selectedBodyIndex = 0;
-
-      chart.options.data[0].dataPoints = Globals.positionStates[selectedBodyIndex].slice(0, Globals.frame + 1);
-      chart.options.data[1].dataPoints = Globals.accelStates[selectedBodyIndex].slice(0, Globals.frame + 1);
-      chart.options.data[2].dataPoints = Globals.velocityStates[selectedBodyIndex].slice(0, Globals.frame + 1);
-
-      chart.render();   
-    };
-  }
-
 </script>
 
 <script src="/static/js/simulator/base.js"></script>

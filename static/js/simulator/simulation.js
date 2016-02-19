@@ -313,7 +313,6 @@ function pushDuplicates(){
 function simulate(){
   var i;
   var j;
-  console.log("Called Simulate");
 
   // Reset timeline if it is running
   Globals.frame = 0;
@@ -380,8 +379,6 @@ function simulate(){
     }
     Globals.world.step();
   }
-
-  debugger;
 }
 
 // Updates a variable in the specified body to have the specified value

@@ -172,6 +172,18 @@
                 </label>
               </div>
             </div>
+            <div class="intput-field col s6">
+              <br />
+              <span>PVA Graph</span>
+              <div class="switch">
+                <label>
+                  Off
+                  <input id="pvagraph-checkbox" type="checkbox" onchange="showPVAGraph()">
+                  <span class="lever"></span>
+                  On
+                </label>
+              </div>
+            </div>
         </div>
       </div>
     </div>
@@ -246,20 +258,6 @@
             </div>
           </div> 
         </div>
-        <div class="row">
-          <div class="intput-field col s6">
-          <br />
-            <span>PVA Graph</span>
-            <div class="switch">
-              <label>
-                Off
-                <input id="pvagraph-checkbox" type="checkbox" onchange="showPVAGraph()">
-                <span class="lever"></span>
-                On
-              </label>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -268,7 +266,8 @@
 <!-- Graphing acceleration velocity and position -->
 <div class="row">
   <div id="pvaGraphContainer" class="col s12">
-    <div id="pvaGraph"></div>
+    <div id="positionGraph"></div>
+    <div id="vaGraph"></div>
   </div>
 </div>
 
