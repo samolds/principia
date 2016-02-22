@@ -72,7 +72,7 @@ function applySpringForces(body) {
     if(constants.attachedTo){
       var attached = Globals.world.getBodies()[constants.attachedTo];
       
-      if(body2Constant(attached).ctype != "kinematics1D-spring") return a;
+      if(body2Constant(attached).ctype != "kinematics1D-spring-child") return a;
       
       var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
       var spring = Globals.world.getBodies()[spring_idx]; // The parent element represents the equilibrium point
