@@ -71,6 +71,9 @@ function applySpringForces(body) {
     // Skip bodies not attached to a spring
     if(constants.attachedTo){
       var attached = Globals.world.getBodies()[constants.attachedTo];
+      
+      if(body2Constant(attached).ctype != "kinematics1D-spring") return a;
+      
       var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
       var spring = Globals.world.getBodies()[spring_idx]; // The parent element represents the equilibrium point
       var properties = body2Constant(spring);
@@ -94,6 +97,10 @@ function detachSpring(body){
   if(body2Constant(body).attachedTo || body2Constant(body).attachedTo === 0)
   {
     var attachedTo = world.getBodies()[body2Constant(body).attachedTo];
+    
+    // Don't detach from pulleys
+    if(body2Constant(attachedTo).ctype == "kinematics1D-pulley") return;
+    
     if(distance(body.state.pos.x, body.state.pos.y, attachedTo.state.pos.x, attachedTo.state.pos.y) > delta) {        
         delete body2Constant(attachedTo).attachedBody;
         delete body2Constant(body).attachedTo;
