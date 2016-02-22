@@ -18,4 +18,34 @@ function showVectors() {
   }
   
   drawMaster();
+
+  // Show that we've made changes that we need to now save
+  outOfSync();
+}
+
+function showPVAGraph() {
+  var checkbox = document.getElementById('pvagraph-checkbox');
+
+  if(checkbox.checked)
+  {
+    //show graph;
+    Globals.bodyConstants[bIndex(Globals.selectedBody)].showGraph = true;
+  }
+  else
+  {
+    //dont show graph;
+    Globals.bodyConstants[bIndex(Globals.selectedBody)].showGraph = false;
+  }
+
+  allHidden = graphBodyIndices().length === 0;
+
+  if(allHidden){
+    $("#pvaGraphContainer").hide();
+  } else {
+    $("#pvaGraphContainer").show();
+    updatePVAChart();
+  }
+  
+  // Show that we've made changes that we need to now save
+  outOfSync();
 }
