@@ -133,9 +133,42 @@ function displayElementValues(bod){
 function drawLines(){
   var bodies = Globals.world.getBodies();
   var bodyConst = Globals.bodyConstants;
-  for (var i = 0; i < bodies.length; i++)
+  for (var i = 0; i < bodies.length; i++){
+    
+    // If the current body has a parent, it is assumed to be a spring-child.
+    // Connect them.
     if(bodyConst[i].parent || bodyConst[i].parent === 0)
       drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
+    
+    // If the current body is attached to something and that something is a pulley...    
+    if((bodyConst[i].attachedTo || bodyConst[i].attachedTo === 0) && bodyConst[bodyConst[i].attachedTo].ctype == "kinematics1D-pulley"){
+      drawRopeLine(bodies[bodyConst[i].attachedTo], bodies[i]);
+    }
+  }
+}
+
+// b1 is pulley, b2 is attached mass
+function drawRopeLine(b1, b2){
+  var canvas = Globals.world.renderer();
+  var ctx = canvas.ctx;
+  
+  ctx.strokeStyle = '#111111'; // Black
+  ctx.lineWidth = 4;
+  
+  // Get the coordinates of each body
+  var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
+  var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
+  
+  // Get modifier based on pulley radius and which side of the pulley it is on
+  var radius = Globals.bodyConstants[bIndex(b1)].radius;
+  if(Globals.bodyConstants[bIndex(b2)].side == "left")
+    radius *= -1;
+  
+  ctx.beginPath();
+  ctx.moveTo(x1 + radius,y1);  
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  
 }
 
 // Draws a sine wave between the two specified bodies
