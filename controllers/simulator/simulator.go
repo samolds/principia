@@ -80,6 +80,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 	data := map[string]interface{}{
 		"simulation": simulation,
 		"isOwner":    true,
+		"isExistingSim": false,
 	}
 
 	controllers.BaseHandler(w, r, template, data)
@@ -122,6 +123,17 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
+	if r.Method == "DELETE" {
+		// Delete the simulation in the datastore
+		err = datastore.Delete(ctx, simulationKey)
+
+		if err != nil {
+			// Could not place the simulation in the datastore
+			controllers.ErrorHandler(w, "Could not delete existing simulation: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
 	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
 
@@ -138,6 +150,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		"simulationAuthor":        author,
 		"simulationAuthorDisplay": authorDisplay,
 		"isOwner":                 isOwner,
+		"isExistingSim":           true,
 	}
 
 	controllers.BaseHandler(w, r, template, data)

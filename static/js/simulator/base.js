@@ -51,7 +51,7 @@ function updatePVAChart() {
   arr.forEach(function(index){
 
     var name = Globals.bodyConstants[index].nickname;
-    if(name === "") {
+    if(!name) {
       name = index;
     }
 
