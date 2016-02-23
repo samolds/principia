@@ -88,6 +88,9 @@ $(document).ready(function(){
   //$('#viewport').on("click")
   $( '#viewport' ).on("contextmenu", function(event){ contextMenuListener(event); } );
   $( '#viewport' ).on("click", function(event){ clickListener(event); } );
+  //for tabs
+  $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
+
   // Events for properties window
   $('#properties-position-x').on("change", function(){ updatePropertyRedraw('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ updatePropertyRedraw('posy', $('#properties-position-y').val()); }); 

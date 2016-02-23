@@ -511,31 +511,22 @@ function getPosition(e) {
   }
 }
 
-// function positionMenu(e) {
-//   menuPosition = getPosition(e);
-//   menuPositionX = menuPosition.x + "px";
-//   menuPositionY = menuPosition.y + "px";
-
-//   menu.style.left = menuPositionX;
-//   menu.style.top = menuPositionY;
-// }
 
 
-
-  var menuPosition;
- var menuPositionX;
- var menuPositionY;
-var clickCoords;
-var clickCoordsX;
-var clickCoordsY;
-  var menuWidth;
-var menuHeight;
-var canvasWidth;
-var canvasHeight;
 
 // updated positionMenu function
 function positionMenu(e) {
 
+var menuPosition;
+var menuPositionX;
+var menuPositionY;
+var clickCoords;
+var clickCoordsX;
+var clickCoordsY;
+var menuWidth;
+var menuHeight;
+var canvasWidth;
+var canvasHeight;
 
 var canvas = document.getElementById("viewport");
 
@@ -571,4 +562,33 @@ var canvas = document.getElementById("viewport");
     menu.style.top = clickCoordsY + "px";
   }
 }
+
+function populateOverview(e) {
+
+  var bodies = Globals.world.getBodies();
+  var consts = Globals.bodyConstants;
+  var $list = $("#overview-list");
+
+  for(var i = 0; i < bodies.length; i++)
+  {
+    $list.append(
+    "<li >" +
+      "<div class ='row'>"+
+       "<div class = ' col s4'> "+
+          "<img src='/static/img/logo/logo.png' width='20' component='kinematics1D-mass'>"+
+       "</div>"+
+       "<div class = 'col s4'>"+
+        consts[i].nickname +
+       "</div>"+
+       "<div class = 'col s4'>"+
+        "<i class='fa fa-trash' ></i>"+
+       "</div>" +
+      "<div>"+
+    "</li>"
+    );
+  }
+
+
+}
+
 
