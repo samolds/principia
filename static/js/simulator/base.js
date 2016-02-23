@@ -20,6 +20,68 @@ function exportToJson(){
   return JSON.stringify(json);
 }
 
+function registerPVAChartEvents() {
+  positionChart = new CanvasJS.Chart("positionGraph",{
+      // // axisX:{
+      // //   maximum: 4000,
+      // // },
+    });
+
+    vaChart = new CanvasJS.Chart("vaGraph",{
+      // // axisX:{
+      // //   maximum: 4000,
+      // // },
+    });
+
+    updatePVAChart();
+}
+
+function updatePVAChart() {
+
+  arr = graphBodyIndices();
+
+  if(arr.length == 0) {
+    $('#pvaGraphContainer').hide();
+    return;
+  }
+
+  positionChart.options.data = [];
+  vaChart.options.data = [];
+
+  arr.forEach(function(index){
+
+    var name = Globals.bodyConstants[index].nickname;
+    if(name === "") {
+      name = index;
+    }
+
+    positionChart.options.data.push({
+      type: "line",
+      showInLegend: true,
+      name: "Position " + name,
+      dataPoints: Globals.positionStates[index].slice(0, Globals.frame + 1)
+    });
+
+    vaChart.options.data.push({
+      type: "line",
+      showInLegend: true,
+      name: "Acceleration " + name,
+      dataPoints: Globals.accelStates[index].slice(0, Globals.frame + 1)
+    });
+
+    vaChart.options.data.push({
+      type: "line",
+      showInLegend: true,
+      name: "Velocity " + name,
+      dataPoints: Globals.velocityStates[index].slice(0, Globals.frame + 1)
+    });
+
+  });
+
+  positionChart.render();
+  vaChart.render();
+};
+
 // Entry point for this application. Registers events. The module is initialized in the HTML file for now.
 $(document).ready(function(){
   //Events for canvas
@@ -79,4 +141,6 @@ $(document).ready(function(){
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
   
+  // Position, Velocity, Acceleration Graph Set Up
+  registerPVAChartEvents();
 });

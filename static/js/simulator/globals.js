@@ -31,6 +31,15 @@ var Globals = {
   // states[0] will always match keyframeStates[0]
   states: [],
 
+  // Position values for the position line graph
+  positionStates: [],
+
+  // Velocity values for the velocity line graph
+  velocityStates: [],
+
+  // Acceleration values for the acceleration line graph
+  accelStates: [],
+
   // Currently selected keyframe INDEX (without respect to timeline/states frames)
   keyframe: 0,
   

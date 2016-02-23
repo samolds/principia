@@ -88,6 +88,21 @@
             </div>
           </div>
         </div>
+        
+        <div class="row">
+          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
+            <div class="dummy"></div>
+            <div class="toolbox-item">
+              <img src="/static/img/toolbox/pulley.png" class="draggable" width="40" component="kinematics1D-pulley">
+            </div>
+          </div>
+          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px; ">
+            <div class="dummy"></div>
+            <div class="toolbox-item"> 
+              <img src="/static/img/toolbox/rope.png" class="draggable" width="55" component="kinematics1D-rope">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -172,6 +187,18 @@
                 </label>
               </div>
             </div>
+            <div class="intput-field col s6">
+              <br />
+              <span>PVA Graph</span>
+              <div class="switch">
+                <label>
+                  Off
+                  <input id="pvagraph-checkbox" type="checkbox" onchange="showPVAGraph()">
+                  <span class="lever"></span>
+                  On
+                </label>
+              </div>
+            </div>
         </div>
       </div>
     </div>
@@ -246,9 +273,16 @@
             </div>
           </div> 
         </div>
-
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Graphing acceleration velocity and position -->
+<div class="row">
+  <div id="pvaGraphContainer" class="col s12">
+    <div id="positionGraph"></div>
+    <div id="vaGraph"></div>
   </div>
 </div>
 

@@ -320,6 +320,12 @@ function simulate(){
   $("#simulatorFrameRange").val(0);
 
   Globals.states = [];  // Clear states global
+
+  // Used for state graph
+  Globals.positionStates = [];
+  Globals.velocityStates = [];
+  Globals.accelStates = [];
+
   Globals.world._time = 0;
 
   var old = defaultState();
@@ -331,6 +337,9 @@ function simulate(){
     Globals.world.getBodies()[i].state["old"] = cloneState(old);
     Globals.world.getBodies()[i]._started = undefined;
     Globals.states[i] = [];
+    Globals.positionStates[i] = [];
+    Globals.velocityStates[i] = [];
+    Globals.accelStates[i] = [];
   }
   
   // For each frame and then for each body in the simulation
@@ -355,6 +364,18 @@ function simulate(){
       // Save state information and advance the simulator
       if (i != 0){ saveState["old"] = Globals.states[j][i-1]; }
       Globals.states[j].push(saveState);
+      Globals.positionStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].pos.y, 2) + Math.pow(Globals.states[j][i].pos.x, 2))
+      });
+      Globals.velocityStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].vel.y, 2) + Math.pow(Globals.states[j][i].vel.x, 2))
+      });
+      Globals.accelStates[j].push({ 
+        x: i,
+        y: Math.sqrt(Math.pow(Globals.states[j][i].acc.y, 2) + Math.pow(Globals.states[j][i].acc.x, 2))
+      });
     }
     Globals.world.step();
   }
@@ -507,13 +528,13 @@ function onPropertyChanged(property, value, doSimulate){
   // Rerun the simulation using updated properties if not using keyframes
   if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
     
-    if(Globals.bodyConstants[i].alpha)
+    if(i != -1 && Globals.bodyConstants[i].alpha)
       delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
     
     simulate();  
   }
   
-  if($('#properties-position-x').val() != "" && $('#properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
+  if(i != -1 && $('#properties-position-x').val() != "" && $('#properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
      delete Globals.bodyConstants[i].alpha;
 
    resetSaveButton();
@@ -534,6 +555,7 @@ Physics.integrator('principia-integrator', function( parent ){
     // TODO: Apply forces to modify acceleration before integrating velocity    
     for ( var i = 0, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
+      var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
       var state = body.state;        
       state.old = cloneState(body.state);
@@ -545,6 +567,56 @@ Physics.integrator('principia-integrator', function( parent ){
         state.vel.x += Globals.gravity[0];
         state.vel.y += Globals.gravity[1];
       }
+      
+      // Deal with pulleys
+      if((consts.attachedTo === 0 || consts.attachedTo) 
+        && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley"){
+        
+        var pulley = bodies[consts.attachedTo];
+        var pulleyConsts = body2Constant(pulley);
+        
+        // Make sure pulley has two bodies attached before applying special rules
+        if(pulleyConsts.attachedBodyRight === 0 || pulleyConsts.attachedBodyRight){
+        
+          // Undo effect of gravity  
+          state.vel.y -= Globals.gravity[1];         
+
+          // Get mass of each body
+          var m1 = Globals.bodyConstants[pulleyConsts.attachedBodyLeft].mass;
+          var m2 = Globals.bodyConstants[pulleyConsts.attachedBodyRight].mass;          
+          
+          // Magnitude of acceleration
+          var pulley_a = (m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
+
+          // Ready to accelerate up, reverse direction if this is the heavier mass
+          if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
+            pulley_a *= -1;
+
+          // Ready to accelerate down, reverse direction if this is the lighter mass
+          if(pulley_a > 0 && (consts.mass == m1 && m1 < m2) || (consts.mass == m2 && m2 < m1) )
+            pulley_a *= -1;
+             
+          // Just for fun, animate the pulley spinning
+          if(m1 > m2)
+            pulley.state.angular.vel = (m1 - m2)/20.0;
+          else if(m2 > m1)
+            pulley.state.angular.vel = (m2 - m1)/20.0;
+             
+          // Handle reaching the top?
+          if((m1 < m2 && bodies[pulleyConsts.attachedBodyLeft].state.pos.y <= pulley.state.pos.y) ||(m1 > m2 && bodies[pulleyConsts.attachedBodyRight].state.pos.y <= pulley.state.pos.y)){
+            pulley_a = 0;
+            pulley.state.angular.vel = 0;
+            
+            bodies[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
+            bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
+            
+          }
+             
+          // Add effect of pulley
+          state.vel.y += pulley_a;
+        }
+      }
+      
       state.angular.vel += state.angular.acc;
     }
   },
@@ -570,8 +642,10 @@ Physics.integrator('principia-integrator', function( parent ){
       // Attached element must tag along
       if(body2Constant(body).attachedTo){
         var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo];
-        attachedTo.state.pos.x = state.pos.x;
-        attachedTo.state.pos.y = state.pos.y;
+        if(body2Constant(attachedTo).ctype != "kinematics1D-pulley"){
+          attachedTo.state.pos.x = state.pos.x;
+          attachedTo.state.pos.y = state.pos.y;
+        }
       }
       
       state.angular.pos += state.angular.vel;

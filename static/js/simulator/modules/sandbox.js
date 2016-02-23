@@ -41,6 +41,10 @@ function initWorld() {
             var component = addMass(data);
             attachSpring(component);
             break;
+            
+          case "kinematics1D-pulley":
+            addPulley(data);
+            break;
         }
       
         if(data.blockSimulation == 'undefined' || !data.blockSimulation) {
@@ -106,6 +110,8 @@ function initWorld() {
         
         attachSpring(data.body);
         detachSpring(data.body);
+        
+        attachPulley(data.body);
         
         // Resimulate for sandbox mode
         simulate();
