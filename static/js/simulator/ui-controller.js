@@ -358,3 +358,216 @@ function updateTimeUnit(factor){
   // Redraw (forces update of displayed values)
   drawMaster();
 }
+
+// (function() {
+
+//   "use strict";
+
+//   var taskItems = document.querySelectorAll(".task");
+
+//   for(var j=0; j<bodies.length; j++){
+//     var body = bodies[j];
+//     contextMenuListener(body)
+//     }
+//   }
+
+
+//   function contextMenuListener(el) {
+//     el.addEventListener( "contextmenu", function(e) {
+//       console.log(e, el);
+//     });
+//   }
+
+// })();
+
+var menu = document.querySelector(".context-menu");
+var menuState = 0;
+var activeClassName = "context-menu--active";
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+
+}
+
+function toggleMenuOn() {
+  if ( menuState !== 1 ) {
+    menuState = 1;
+    menu.classList.add(active);
+  }
+}
+
+function toggleMenuOff() {
+  if ( menuState !== 0 ) {
+    menuState = 0;
+    menu.classList.remove(activeClassName);
+  }
+}
+
+
+
+function contextMenuListener(event) {
+    
+console.log("hello");
+
+  if(Globals.selectedBody)
+  {
+
+    var canvas = document.getElementById("viewport");
+    var body = Globals.selectedBody;  
+    var pos = getMousePos(canvas, event);
+    var posx = pos.x;
+    var posy = pos.y;
+    //override normal context menu
+    event.preventDefault();
+
+    var img = body.view;
+    var halfw = img["width"] / 2;
+    var halfh = img["height"] / 2;
+
+    //get click x and y
+    //get body x and y
+    //create square,  see if contextMenuclick is in square
+    //
+    var loc = body.state.pos;
+    var rectRight= loc.x + halfw;
+    var rectBottom= loc.y + halfh;
+    var rectx = loc.x - halfw;
+    var recty = loc.y - halfh; 
+
+    // check each rect for hits
+    console.log("rectx: " + rectx);
+    console.log("recty: " + recty);
+    console.log("rectBottom: " + rectBottom);
+    console.log("rectRight: " + rectRight);
+
+    // if this rect is hit, display an alert
+    if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
+      {//there is an object selected show context menu:
+        toggleMenuOn();  
+        positionMenu(event);
+      }
+    else
+    {
+        toggleMenuOff();
+    }
+  }
+  else
+    {
+        toggleMenuOff();
+    }
+}
+
+
+function contextListener() {
+  document.addEventListener( "contextmenu", function(e) {
+    if ( contextMenuListener( e) ) {
+      e.preventDefault();
+      toggleMenuOn();
+    } else {
+      toggleMenuOff();
+    }
+  });
+}
+
+function clickListener(e) 
+{
+  
+    var button = e.which || e.button;
+    if ( button === 1 ) 
+    {
+      toggleMenuOff();
+    }
+
+}
+
+// var menuPosition;
+// var menuPositionX;
+// var menuPositionY;
+
+function getPosition(e) {
+  var posx = 0;
+  var posy = 0;
+
+  if (!e) var e = window.event;
+
+  if (e.pageX || e.pageY) {
+    posx = e.pageX;
+    posy = e.pageY;
+  } else if (e.clientX || e.clientY) {
+    posx = e.clientX + document.body.scrollLeft + 
+                       document.documentElement.scrollLeft;
+    posy = e.clientY + document.body.scrollTop + 
+                       document.documentElement.scrollTop;
+  }
+
+  return {
+    x: posx,
+    y: posy
+  }
+}
+
+// function positionMenu(e) {
+//   menuPosition = getPosition(e);
+//   menuPositionX = menuPosition.x + "px";
+//   menuPositionY = menuPosition.y + "px";
+
+//   menu.style.left = menuPositionX;
+//   menu.style.top = menuPositionY;
+// }
+
+
+
+  var menuPosition;
+ var menuPositionX;
+ var menuPositionY;
+var clickCoords;
+var clickCoordsX;
+var clickCoordsY;
+  var menuWidth;
+var menuHeight;
+var canvasWidth;
+var canvasHeight;
+
+// updated positionMenu function
+function positionMenu(e) {
+
+
+var canvas = document.getElementById("viewport");
+
+  clickCoords = getPosition(e);
+  clickCoordsX = clickCoords.x;
+  clickCoordsY = clickCoords.y;
+
+  menuWidth = menu.offsetWidth + 4;
+  menuHeight = menu.offsetHeight + 4;
+
+  canvasWidth = canvas.clientWidth;
+  canvasHeight = canvas.clientHeight;
+
+  console.log("clickCoords: " + clickCoords );
+  console.log("clickCoordsX: " + clickCoordsX );
+  console.log("clickCoordsY: " + clickCoordsY );
+  console.log("menuWidth: " + menuWidth );
+  console.log("menuHeight: " + menuHeight );
+  console.log("canvasWidth: " + canvasWidth );
+  console.log("canvasHeight: " + canvasHeight );
+
+
+
+  if ( (canvasWidth - clickCoordsX) < menuWidth ) {
+    menu.style.left = canvasWidth - menuWidth + "px";
+  } else {
+    menu.style.left = clickCoordsX + "px";
+  }
+
+  if ( (canvasHeight - clickCoordsY) < menuHeight ) {
+    menu.style.top = canvasHeight  + "px";
+  } else {
+    menu.style.top = clickCoordsY + "px";
+  }
+}
+

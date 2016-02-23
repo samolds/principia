@@ -445,3 +445,20 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
+
+/* simulator window context menu */
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  background-color: white;
+  border: solid;
+  border-width: 1px;
+  padding: 10px;
+}
+
+.context-menu--active {
+  display: block;
+}
+
+/* end simulator window context menu */

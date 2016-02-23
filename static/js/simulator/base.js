@@ -22,6 +22,10 @@ function exportToJson(){
 
 // Entry point for this application. Registers events. The module is initialized in the HTML file for now.
 $(document).ready(function(){
+  //Events for canvas
+  //$('#viewport').on("click")
+  $( '#viewport' ).on("contextmenu", function(event){ contextMenuListener(event); } );
+  $( '#viewport' ).on("click", function(event){ clickListener(event); } );
   // Events for properties window
   $('#properties-position-x').on("change", function(){ updatePropertyRedraw('posx', $('#properties-position-x').val()); }); 
   $('#properties-position-y').on("change", function(){ updatePropertyRedraw('posy', $('#properties-position-y').val()); }); 

@@ -266,4 +266,40 @@
     </div>
   </div>
 </div>
+
+<!--
+  This is the context menu:
+-->
+<div class="context-menu">
+  <span>Object Properties</span>
+  <ul class="context-menu-items">
+    <li class="context-menu-item">
+      <span>Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+    <li class="context-menu-item">
+      <span>Graph</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="graph-checkbox" type="checkbox" onchange="showGraph()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+  </ul>
+
+</div>  
+
+
+
+
 {{ end }}
