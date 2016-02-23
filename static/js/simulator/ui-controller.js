@@ -516,14 +516,10 @@ function getPosition(e) {
 
 // updated positionMenu function
 function positionMenu(e) {
-
-var menuPosition;
-var menuPositionX;
-var menuPositionY;
 var clickCoords;
 var clickCoordsX;
 var clickCoordsY;
-var menuWidth;
+ var menuWidth;
 var menuHeight;
 var canvasWidth;
 var canvasHeight;
@@ -531,8 +527,16 @@ var canvasHeight;
 var canvas = document.getElementById("viewport");
 
   clickCoords = getPosition(e);
-  clickCoordsX = clickCoords.x;
-  clickCoordsY = clickCoords.y;
+  clickX = clickCoords.x;
+  clickY = clickCoords.y;
+
+  // Left and top of canvas window
+  var vleft = $("#" + Globals.canvasId).position().left;
+  var vtop = $("#" + Globals.canvasId).position().top;
+
+  var data = { 'x': clickX-vleft, 'y': clickY-vtop};
+  var x = data.x;
+  var y = data.y;
 
   menuWidth = menu.offsetWidth + 4;
   menuHeight = menu.offsetHeight + 4;
@@ -541,25 +545,29 @@ var canvas = document.getElementById("viewport");
   canvasHeight = canvas.clientHeight;
 
   console.log("clickCoords: " + clickCoords );
-  console.log("clickCoordsX: " + clickCoordsX );
-  console.log("clickCoordsY: " + clickCoordsY );
+  console.log("clickCoordsX: " + x );
+  console.log("clickCoordsY: " + y );
   console.log("menuWidth: " + menuWidth );
   console.log("menuHeight: " + menuHeight );
   console.log("canvasWidth: " + canvasWidth );
   console.log("canvasHeight: " + canvasHeight );
 
-
-
-  if ( (canvasWidth - clickCoordsX) < menuWidth ) {
-    menu.style.left = canvasWidth - menuWidth + "px";
+  
+  
+  if ( (canvasWidth - x) < menuWidth ) {
+    menu.style.left = canvasWidth - menuWidth + vleft + "px";
+    console.log("1");
   } else {
-    menu.style.left = clickCoordsX + "px";
+    menu.style.left = x + vleft + "px";
+    console.log("2");
   }
 
-  if ( (canvasHeight - clickCoordsY) < menuHeight ) {
-    menu.style.top = canvasHeight  + "px";
+  if ( (canvasHeight - y) < menuHeight ) {
+    menu.style.top = canvasHeight - menuHeight + vtop  + "px";
+    console.log("3");
   } else {
-    menu.style.top = clickCoordsY + "px";
+    menu.style.top = y + vtop +"px";
+    console.log("4");
   }
 }
 
@@ -569,26 +577,55 @@ function populateOverview(e) {
   var consts = Globals.bodyConstants;
   var $list = $("#overview-list");
 
+  $list.html("");
+
   for(var i = 0; i < bodies.length; i++)
   {
-    $list.append(
+    var img;
+    //img = bodies[i].view;
+    switch(consts[i].ctype)
+    {
+      case "kinematics1D-mass":
+        img = Globals.massImages[consts[i].img];
+        break;
+      case "kinematics1D-pulley":
+        img = "/static/img/toolbox/pulley.png";
+        break;
+      case "kinematics1D-spring":
+      case "kinematics1D-spring-child":
+        img = "/static/img/toolbox/spring.png";
+        break;
+    }
+     $list.append(
     "<li >" +
       "<div class ='row'>"+
-       "<div class = ' col s4'> "+
-          "<img src='/static/img/logo/logo.png' width='20' component='kinematics1D-mass'>"+
+       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'> "+
+          "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
-       "<div class = 'col s4'>"+
+       "<div class = 'col s4' onclick = 'selectBody(" + i + ", false)'>"+
         consts[i].nickname +
        "</div>"+
-       "<div class = 'col s4'>"+
+       "<div class = 'col s4' onclick = 'deleteBody(" + i + ", false)'>"+
         "<i class='fa fa-trash' ></i>"+
        "</div>" +
       "<div>"+
     "</li>"
     );
   }
+}
 
+function deleteBody(bodyIndex){
+
+  console.log("Body " + bodyIndex + "deleted!");
 
 }
+
+function selectBody(bodyIndex, switchTab){
+  Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
+  if(switchTab) drawProperties();
+  drawMaster();
+}
+
+
 
 
