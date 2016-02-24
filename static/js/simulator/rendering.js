@@ -56,10 +56,16 @@ function displayVariableValues(body){
     // TODO fix unit conversions
     $('#general-properties-position-x').val(position[0].toFixed(precision));
     $('#general-properties-position-y').val(position[1].toFixed(precision));
-    $('#pointmass-properties-velocity-x').val(velocity[0].toFixed(precision));
-    $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
-    $('#pointmass-properties-acceleration-x').val(acceleration[0].toFixed(precision));
-    $('#pointmass-properties-acceleration-y').val(acceleration[1].toFixed(precision));
+
+    if(velocity[0]) {
+      $('#pointmass-properties-velocity-x').val(velocity[0].toFixed(precision));
+      $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
+    }
+
+    if(acceleration[0]) {
+      $('#pointmass-properties-acceleration-x').val(acceleration[0].toFixed(precision));
+      $('#pointmass-properties-acceleration-y').val(acceleration[1].toFixed(precision));
+    }
   } 
 }
 
@@ -451,6 +457,7 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
   }
+
   if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }

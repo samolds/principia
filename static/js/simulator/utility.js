@@ -117,3 +117,8 @@ function convertUnit(value, type, invert){
     return invert? value * 1.0/Globals.lengthFactor * Globals.timeFactor :
                    value * Globals.lengthFactor * 1.0/Globals.timeFactor;
 }
+
+function getLabel(body)
+{
+  return 1;
+}
