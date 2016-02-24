@@ -92,6 +92,12 @@
           <li class="toolbox-item-container valign-wrapper">
             <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
           </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley">
+          </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope">
+          </li>
         </ul>
       </div>
     </div>
@@ -197,6 +203,19 @@
               </div>
             </div>
           </li>
+          <li class="property-item">
+            <div class="input-field">
+              <span>PVA Graph</span>
+              <div class="switch">
+                <label>
+                  Off
+                  <input id="pointmass-properties-pvagraph" type="checkbox"></input>
+                  <span class="lever"></span>
+                  On
+                </label>
+              </div>
+            </div>
+          </li>
         </ul>
 
         <!-- Ramp properties! -->
@@ -289,6 +308,14 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Graphing acceleration velocity and position -->
+<div class="row">
+  <div id="pvaGraphContainer" class="col s12">
+    <div id="positionGraph"></div>
+    <div id="vaGraph"></div>
   </div>
 </div>
 

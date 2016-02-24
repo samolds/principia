@@ -37,13 +37,14 @@ function initWorld() {
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
-      
           case "kinematics1D-mass":
             addMass(data);
             break;
-
           case "kinematics1D-ramp":
             addRamp(data);
+            break
+          case "kinematics1D-pulley":
+            addPulley(data);
             break;
         }
     

@@ -119,7 +119,8 @@ function onRangeUpdate(){
     }    
   }
   
-  drawMaster();  
+  drawMaster();
+  updatePVAChart();
 }
 
 // Toggles the state of the simulator between running and paused
@@ -166,7 +167,7 @@ function selectKeyframe(event){
     //remove highlight
     $("#" + "keyframe-"+i).attr("style","");
   }
-//add highlight
+  //add highlight
   $("#" + event.target.id).attr("style","border:4px solid #0000cc");
 
  //TODO: handle transparent for general case

@@ -444,8 +444,8 @@ i.fa.fa-size-medium {
 /* home page card title */
 .home-card-title {
   position: absolute;
-  bottom: 10px;
   left: 0;
+  bottom: 10px;
   padding: 20px;
 }
 
@@ -456,3 +456,8 @@ i.fa.fa-size-medium {
   padding: 20px;
 }
 /* end home page card title */
+
+#positionGraph, #vaGraph {
+  height: 275px;
+  width:100%;
+}

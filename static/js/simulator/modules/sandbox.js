@@ -36,14 +36,15 @@ function initWorld() {
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
-      
           case "kinematics1D-mass":
             var component = addMass(data);
             attachSpring(component);
             break;
-
           case "kinematics1D-ramp":
             addRamp(data);
+            break;
+          case "kinematics1D-pulley":
+            addPulley(data);
             break;
         }
       
@@ -110,6 +111,8 @@ function initWorld() {
         
         attachSpring(data.body);
         detachSpring(data.body);
+        
+        attachPulley(data.body);
         
         // Resimulate for sandbox mode
         simulate();

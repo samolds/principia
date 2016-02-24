@@ -31,6 +31,19 @@ function cloneState(state){
 //Returns the index of the specified body within the world
 function bIndex(body){ return Globals.world.getBodies().indexOf(body); }
 
+// Returns and array of all body indices where showGraph === true
+function graphBodyIndices(){
+  result = [];
+
+  Globals.bodyConstants.forEach(function(body, i) {
+      if(body.showGraph) {
+        result.push(i);
+      }
+  });
+
+  return result;
+}
+
 //Returns the index of the specified frame as a keyframe
 function kIndex(frame) { return Globals.keyframes.indexOf(frame); }
 
