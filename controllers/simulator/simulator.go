@@ -122,6 +122,17 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
+	if r.Method == "DELETE" {
+		// Delete the simulation in the datastore
+		err = datastore.Delete(ctx, simulationKey)
+
+		if err != nil {
+			// Could not place the simulation in the datastore
+			controllers.ErrorHandler(w, "Could not delete existing simulation: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
 	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
 
