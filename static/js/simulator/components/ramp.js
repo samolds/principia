@@ -39,6 +39,7 @@ function addRamp(data){
   bodyConstants[bodyConstants.length-1].width = 100.0;
   bodyConstants[bodyConstants.length-1].height = -60.0;
   bodyConstants[bodyConstants.length-1].angle = -30.964;
+  bodyConstants[bodyConstants.length-1].nickname = "ramp " + getLabel(component);
   
   // Add the component to the world and update all keyframes
   world.add(component);    

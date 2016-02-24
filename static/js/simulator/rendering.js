@@ -58,7 +58,7 @@ function displayVariableValues(body){
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     if(velocity[0]) {
-      $('#pointmass-properties-velocity-x').val(velocity[0].toFixed(precision));
+      $('#pointmass-properties-velocity-y').val((velocity[0] == "?")? "":velocity[0].toFixed(precision));
       $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
     }
 

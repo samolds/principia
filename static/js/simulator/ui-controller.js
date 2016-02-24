@@ -523,6 +523,9 @@ function populateOverview(e) {
       case "kinematics1D-pulley":
         img = "/static/img/toolbox/pulley.png";
         break;
+      case "kinematics1D-ramp":
+        img = "/static/img/toolbox/ramp.png";
+        break;
       case "kinematics1D-spring":
       case "kinematics1D-spring-child":
         img = "/static/img/toolbox/spring.png";
@@ -555,7 +558,3 @@ function selectBody(bodyIndex, switchTab){
   if(switchTab) drawProperties();
   drawMaster();
 }
-
-
-
-
