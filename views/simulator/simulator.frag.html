@@ -15,7 +15,7 @@
     <div class="col s1 right pad-sides">
       <h4>
         <a class="waves-effect waves-light btn-floating red darken-1" id="delete-button"
-        onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/user/{{.User.KeyName}}/simulations', null)">
+        onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
         <i class="fa fa-remove"></i></a></h4>
     </div>
     {{ end }}
@@ -118,13 +118,11 @@
 
         <!-- Properties that apply to all components -->
         <ul class="property-window-list hide" id="general-properties">
-          <li class="property-item">
+          <li class="property-item-long">
             <div class="input-field">
               <input type="text" id="general-properties-nickname" placeholder=""></input>
               <label for="general-properties-nickname" class="active">Nickname</label>
             </div>
-          </li>
-          <li class="property-item">
           </li>
           <li class="property-item">
             <div class="input-field">

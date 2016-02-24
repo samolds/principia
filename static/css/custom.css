@@ -376,6 +376,12 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     margin: 2px;
   }
 
+  .property-item-long {
+    height: 70px;
+    width: 90%;
+    padding: 0px 5px;
+  }
+
   .property-item {
     height: 70px;
     width: 45%;

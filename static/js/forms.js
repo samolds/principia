@@ -79,13 +79,17 @@ function deleteSimulation(simUrl, redirectUrl, element) {
       url: simUrl,
       type: 'DELETE',
       success: function(result) {
-        if(!redirectUrl) {
-          // Either redirect or show toast and remove from list..
+        if (redirectUrl) {
+          // Redirect
+          window.location.href = redirectUrl;
+        } else {
+          // Show toast and remove from list..
           successToast("Simulation was deleted");
           $(element).hide();
-        } else {
-          window.location.href = redirectUrl;
         }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        failToast(xhr.responseText);
       }
   });
 }
