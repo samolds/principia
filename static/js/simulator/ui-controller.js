@@ -429,26 +429,13 @@ function contextMenuListener(event) {
   }
 }
 
-function contextListener() {
-  document.addEventListener( "contextmenu", function(e) {
-    if ( contextMenuListener( e) ) {
-      e.preventDefault();
-      toggleMenuOn();
-    } else {
-      toggleMenuOff();
-    }
-  });
-}
-
 function clickListener(e) 
 {
-  
     var button = e.which || e.button;
     if ( button === 1 ) 
     {
       toggleMenuOff();
     }
-
 }
 
 function getPosition(e) {
@@ -544,13 +531,13 @@ function populateOverview(e) {
      $list.append(
     "<li >" +
       "<div class ='row'>"+
-       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'> "+
+       "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
        "<div class = 'col s4' onclick = 'selectBody(" + i + ", false)'>"+
         consts[i].nickname +
        "</div>"+
-       "<div class = 'col s4' onclick = 'deleteBody(" + i + ", false)'>"+
+       "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
         "<i class='fa fa-trash' ></i>"+
        "</div>" +
       "<div>"+
