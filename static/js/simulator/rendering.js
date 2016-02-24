@@ -69,7 +69,7 @@ function displayElementValues(bod){
     var st = bod.state;
     var constants = Globals.bodyConstants[Globals.world.getBodies().indexOf(bod)];
     var selected = constants.img;
-    $('#masspoint-properties-img option[value=' + selected +']').attr('selected', 'selected');
+    $('#pointmass-properties-img option[value=' + selected +']').attr('selected', 'selected');
     var precision = Globals.dPrecision;
     
     // Convert to user coordinate system before displaying position

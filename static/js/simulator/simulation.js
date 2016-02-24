@@ -603,7 +603,7 @@ function onPropertyChanged(property, value, doSimulate){
     simulate();  
   }
   
-  if(i != -1 && $('#masspoint-properties-position-x').val() != "" && $('#masspoint-properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
+  if(i != -1 && $('#pointmass-properties-position-x').val() != "" && $('#pointmass-properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
      delete Globals.bodyConstants[i].alpha;
 
    resetSaveButton();
