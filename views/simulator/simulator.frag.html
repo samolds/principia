@@ -76,6 +76,8 @@
       <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
       <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
       <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
+      <li class="tab col s4 "><a class="property-tab blue-text valign" href="#overview" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></a></li>
+
       <div class="indicator blue" style="z-index: 1;"></div>
     </ul>
 
@@ -284,6 +286,22 @@
         </div>
       </div>
     </div>
+
+  <div id="overview">
+      <div class="center-align">
+        <h5 class="pad-sides">Scene Overview</h5>
+        <div class="row" >
+          <ul id ="overview-list">
+            
+          </ul>
+
+        </div>    
+      </div>
+  </div>
+    
+
+
+
   </div>
 </div>
 
@@ -309,4 +327,40 @@
     </div>
   </div>
 </div>
+
+<!--
+  This is the context menu:
+-->
+<div class="context-menu">
+  <span>Object Properties</span>
+  <ul class="context-menu-items">
+    <li class="context-menu-item">
+      <span>Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+    <li class="context-menu-item">
+      <span>Graph</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="graph-checkbox" type="checkbox" onchange="showGraph()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+  </ul>
+
+</div>  
+
+
+
+
 {{ end }}

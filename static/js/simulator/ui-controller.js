@@ -359,3 +359,203 @@ function updateTimeUnit(factor){
   // Redraw (forces update of displayed values)
   drawMaster();
 }
+
+var menu = document.querySelector(".context-menu");
+var menuState = 0;
+var activeClassName = "context-menu--active";
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+
+function toggleMenuOn() {
+  if ( menuState !== 1 ) {
+    menuState = 1;
+    menu.classList.add(active);
+  }
+}
+
+function toggleMenuOff() {
+  if ( menuState !== 0 ) {
+    menuState = 0;
+    menu.classList.remove(activeClassName);
+  }
+}
+
+function contextMenuListener(event) {
+  if(Globals.selectedBody)
+  {
+    var canvas = document.getElementById("viewport");
+    var body = Globals.selectedBody;  
+    var pos = getMousePos(canvas, event);
+    var posx = pos.x;
+    var posy = pos.y;
+    //override normal context menu
+    event.preventDefault();
+
+    var img = body.view;
+    var halfw = img["width"] / 2;
+    var halfh = img["height"] / 2;
+
+    //get click x and y
+    //get body x and y
+    //create square,  see if contextMenuclick is in square
+    //
+    var loc = body.state.pos;
+    var rectRight= loc.x + halfw;
+    var rectBottom= loc.y + halfh;
+    var rectx = loc.x - halfw;
+    var recty = loc.y - halfh; 
+
+    // check each rect for hits
+    // if this rect is hit, display an alert
+    if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
+      {//there is an object selected show context menu:
+        toggleMenuOn();  
+        positionMenu(event);
+      }
+    else
+    {
+        toggleMenuOff();
+    }
+  }
+  else
+  {
+      toggleMenuOff();
+  }
+}
+
+function clickListener(e) 
+{
+    var button = e.which || e.button;
+    if ( button === 1 ) 
+    {
+      toggleMenuOff();
+    }
+}
+
+function getPosition(e) {
+  var posx = 0;
+  var posy = 0;
+
+  if (!e) var e = window.event;
+
+  if (e.pageX || e.pageY) {
+    posx = e.pageX;
+    posy = e.pageY;
+  } else if (e.clientX || e.clientY) {
+    posx = e.clientX + document.body.scrollLeft + 
+                       document.documentElement.scrollLeft;
+    posy = e.clientY + document.body.scrollTop + 
+                       document.documentElement.scrollTop;
+  }
+
+  return {
+    x: posx,
+    y: posy
+  }
+}
+
+// updated positionMenu function
+function positionMenu(e) {
+  var clickCoords;
+  var clickCoordsX;
+  var clickCoordsY;
+  var menuWidth;
+  var menuHeight;
+  var canvasWidth;
+  var canvasHeight;
+  var canvas = document.getElementById("viewport");
+  clickCoords = getPosition(e);
+  clickX = clickCoords.x;
+  clickY = clickCoords.y;
+
+  // Left and top of canvas window
+  var vleft = $("#" + Globals.canvasId).position().left;
+  var vtop = $("#" + Globals.canvasId).position().top;
+
+  var data = { 'x': clickX-vleft, 'y': clickY-vtop};
+  var x = data.x;
+  var y = data.y;
+
+  menuWidth = menu.offsetWidth + 4;
+  menuHeight = menu.offsetHeight + 4;
+
+  canvasWidth = canvas.clientWidth;
+  canvasHeight = canvas.clientHeight;
+  
+  if ( (canvasWidth - x) < menuWidth ) {
+    menu.style.left = canvasWidth - menuWidth + vleft + "px";
+  } 
+  else {
+    menu.style.left = x + vleft + "px";
+  }
+
+  if ( (canvasHeight - y) < menuHeight ) {
+    menu.style.top = canvasHeight - menuHeight + vtop  + "px";
+  } 
+  else {
+    menu.style.top = y + vtop +"px";
+  }
+}
+
+function populateOverview(e) {
+
+  var bodies = Globals.world.getBodies();
+  var consts = Globals.bodyConstants;
+  var $list = $("#overview-list");
+
+  $list.html("");
+
+  for(var i = 0; i < bodies.length; i++)
+  {
+    var img;
+    //img = bodies[i].view;
+    switch(consts[i].ctype)
+    {
+      case "kinematics1D-mass":
+        img = Globals.massImages[consts[i].img];
+        break;
+      case "kinematics1D-pulley":
+        img = "/static/img/toolbox/pulley.png";
+        break;
+      case "kinematics1D-spring":
+      case "kinematics1D-spring-child":
+        img = "/static/img/toolbox/spring.png";
+        break;
+    }
+     $list.append(
+    "<li >" +
+      "<div class ='row'>"+
+       "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
+          "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
+       "</div>"+
+       "<div class = 'col s4' onclick = 'selectBody(" + i + ", false)'>"+
+        consts[i].nickname +
+       "</div>"+
+       "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
+        "<i class='fa fa-trash' ></i>"+
+       "</div>" +
+      "<div>"+
+    "</li>"
+    );
+  }
+}
+
+function deleteBody(bodyIndex){
+  console.log("Body " + bodyIndex + "deleted!");
+}
+
+function selectBody(bodyIndex, switchTab){
+  Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
+  if(switchTab) drawProperties();
+  drawMaster();
+}
+
+
+
+

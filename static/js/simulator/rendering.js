@@ -55,11 +55,18 @@ function displayVariableValues(body){
     
     // TODO fix unit conversions
     $('#properties-position-x').val(position[0].toFixed(precision));
-    $('#properties-position-y').val(position[1].toFixed(precision));    
-    $('#properties-velocity-x').val(velocity[0].toFixed(precision));
-    $('#properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
-    $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
-    $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
+    $('#properties-position-y').val(position[1].toFixed(precision));  
+
+    if(velocity[0])
+    {  
+      $('#properties-velocity-x').val(velocity[0].toFixed(precision));
+      $('#properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
+    }
+    if(acceleration[0])
+    {
+      $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
+      $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
+    }
   } 
 }
 
@@ -423,6 +430,7 @@ function postRender(isKeyframe){
 
     checkbox = document.getElementById('pvagraph-checkbox');
     checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].showGraph;
+
   }
   
   drawOrigin();
@@ -430,6 +438,7 @@ function postRender(isKeyframe){
   drawVectors();
 
   if(selectedBody) { highlightSelection(selectedBody); }
+ // if(selectedBody) {checkForContextMenu(selectedBody); }
   if(originObject === 0 || originObject) {     
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }

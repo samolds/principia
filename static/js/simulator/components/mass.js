@@ -45,6 +45,7 @@ function addMass(data){
   bodyConstants[bodyConstants.length-1].img  = 0;  
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].showGraph = false;
+  bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
   
   // Add the component to the world and update all keyframes
   world.add(component);    

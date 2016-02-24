@@ -135,3 +135,8 @@ var Globals = {
   
   maxNumKeyframes: 5
 };
+
+//context menu 
+var menu = document.querySelector("#context-menu");
+var menuState = 0;
+var active = "context-menu--active";
