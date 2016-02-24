@@ -20,8 +20,8 @@ function addRamp(data){
             },
             vertices: [
               { x: 0, y: 0 },
-              { x: 100, y: 0 },
-              { x: 0, y: -60 }
+              { x: 100.0, y: 0 },
+              { x: 0, y: -60.0 }
             ]
           });
           
@@ -29,17 +29,16 @@ function addRamp(data){
   addToVariableMap({
       posx: data.x, 
       posy: data.y,
-      velx: 0,
-      vely: 0,
-      accx: 0,
-      accy: 0
+      width: 100.0,
+      height: -60.0,
+      angle: -30.964,
     }
   );
                   
   // Assign constants
-  bodyConstants[bodyConstants.length-1].width = 100;
-  bodyConstants[bodyConstants.length-1].height = -60;
-  bodyConstants[bodyConstants.length-1].angle = -31;
+  bodyConstants[bodyConstants.length-1].width = 100.0;
+  bodyConstants[bodyConstants.length-1].height = -60.0;
+  bodyConstants[bodyConstants.length-1].angle = -30.964;
   
   // Add the component to the world and update all keyframes
   world.add(component);    

@@ -544,54 +544,65 @@ function onPropertyChanged(property, value, doSimulate){
         }
         break;
       case 'width':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -500.0 || valuef > 500.0)
+          break;
+
         // Get all of the other vertices except for the "width" vertex
         var newVertices = body.vertices.filter(function(vert) { return vert.x === 0; });
         var height = body.vertices.filter(function(vert) { return vert.y !== 0; })[0].y;
 
-        newVertices.push({x: value, y: 0}); // Add the new vertex for the width
+        newVertices.push({x: valuef, y: 0}); // Add the new vertex for the width
         body.vertices = newVertices;
         body.geometry.setVertices(newVertices);
         body.view = null;
 
-        var newAngle = Math.atan(height / value) * (180.0 / Math.PI);
-        Globals.bodyConstants[i]["width"] = value;
-        Globals.bodyConstants[i]["angle"] = newAngle;
+        var newAngle = Math.atan(height / valuef) * (180.0 / Math.PI);
+        Globals.bodyConstants[i]["width"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
         break;
       case 'height':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -500.0 || valuef > 500.0)
+          break;
+
         // Get all of the other vertices except for the "height" vertex
         var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
         var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
 
-        newVertices.push({x: 0, y: value}); // Add the new vertex for the height
+        newVertices.push({x: 0, y: valuef}); // Add the new vertex for the height
         body.vertices = newVertices;
         body.geometry.setVertices(newVertices);
         body.view = null;
 
-        var newAngle = Math.atan(value / width) * (180.0 / Math.PI);
-        Globals.bodyConstants[i]["height"] = value;
-        Globals.bodyConstants[i]["angle"] = newAngle;
+        var newAngle = Math.atan(valuef / width) * (180.0 / Math.PI);
+        Globals.bodyConstants[i]["height"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
         break;
       case 'angle':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -89.0 || valuef > 89.0)
+          break;
+
         // Get all of the other vertices except for the "height" vertex
         var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
         var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
 
         // Calculate the new height of the triangle using the width and the angle
-        var newHeight = Math.tan(value * (Math.PI / 180.0)) * Math.abs(width);
+        var newHeight = Math.tan(valuef * (Math.PI / 180.0)) * Math.abs(width);
 
         newVertices.push({x: 0, y: newHeight}); // Add the new vertex for the height
         body.vertices = newVertices;
         body.geometry.setVertices(newVertices);
         body.view = null;
 
-        Globals.bodyConstants[i]["angle"] = value;
-        Globals.bodyConstants[i]["height"] = newHeight;
+        Globals.bodyConstants[i]["angle"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["height"] = newHeight.toFixed(Globals.dPrecision);
         break;
       default:
         Globals.bodyConstants[i][property] = value;
         break;
     }
-    outOfSync();
   }
   
   // Rerun the simulation using updated properties if not using keyframes
