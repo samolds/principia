@@ -360,27 +360,6 @@ function updateTimeUnit(factor){
   drawMaster();
 }
 
-// (function() {
-
-//   "use strict";
-
-//   var taskItems = document.querySelectorAll(".task");
-
-//   for(var j=0; j<bodies.length; j++){
-//     var body = bodies[j];
-//     contextMenuListener(body)
-//     }
-//   }
-
-
-//   function contextMenuListener(el) {
-//     el.addEventListener( "contextmenu", function(e) {
-//       console.log(e, el);
-//     });
-//   }
-
-// })();
-
 var menu = document.querySelector(".context-menu");
 var menuState = 0;
 var activeClassName = "context-menu--active";
@@ -391,7 +370,6 @@ function getMousePos(canvas, evt) {
     x: evt.clientX - rect.left,
     y: evt.clientY - rect.top
   };
-
 }
 
 function toggleMenuOn() {
@@ -408,15 +386,9 @@ function toggleMenuOff() {
   }
 }
 
-
-
 function contextMenuListener(event) {
-    
-console.log("hello");
-
   if(Globals.selectedBody)
   {
-
     var canvas = document.getElementById("viewport");
     var body = Globals.selectedBody;  
     var pos = getMousePos(canvas, event);
@@ -440,11 +412,6 @@ console.log("hello");
     var recty = loc.y - halfh; 
 
     // check each rect for hits
-    console.log("rectx: " + rectx);
-    console.log("recty: " + recty);
-    console.log("rectBottom: " + rectBottom);
-    console.log("rectRight: " + rectRight);
-
     // if this rect is hit, display an alert
     if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
       {//there is an object selected show context menu:
@@ -457,11 +424,10 @@ console.log("hello");
     }
   }
   else
-    {
-        toggleMenuOff();
-    }
+  {
+      toggleMenuOff();
+  }
 }
-
 
 function contextListener() {
   document.addEventListener( "contextmenu", function(e) {
@@ -485,10 +451,6 @@ function clickListener(e)
 
 }
 
-// var menuPosition;
-// var menuPositionX;
-// var menuPositionY;
-
 function getPosition(e) {
   var posx = 0;
   var posy = 0;
@@ -511,21 +473,16 @@ function getPosition(e) {
   }
 }
 
-
-
-
 // updated positionMenu function
 function positionMenu(e) {
-var clickCoords;
-var clickCoordsX;
-var clickCoordsY;
- var menuWidth;
-var menuHeight;
-var canvasWidth;
-var canvasHeight;
-
-var canvas = document.getElementById("viewport");
-
+  var clickCoords;
+  var clickCoordsX;
+  var clickCoordsY;
+  var menuWidth;
+  var menuHeight;
+  var canvasWidth;
+  var canvasHeight;
+  var canvas = document.getElementById("viewport");
   clickCoords = getPosition(e);
   clickX = clickCoords.x;
   clickY = clickCoords.y;
@@ -543,31 +500,19 @@ var canvas = document.getElementById("viewport");
 
   canvasWidth = canvas.clientWidth;
   canvasHeight = canvas.clientHeight;
-
-  console.log("clickCoords: " + clickCoords );
-  console.log("clickCoordsX: " + x );
-  console.log("clickCoordsY: " + y );
-  console.log("menuWidth: " + menuWidth );
-  console.log("menuHeight: " + menuHeight );
-  console.log("canvasWidth: " + canvasWidth );
-  console.log("canvasHeight: " + canvasHeight );
-
-  
   
   if ( (canvasWidth - x) < menuWidth ) {
     menu.style.left = canvasWidth - menuWidth + vleft + "px";
-    console.log("1");
-  } else {
+  } 
+  else {
     menu.style.left = x + vleft + "px";
-    console.log("2");
   }
 
   if ( (canvasHeight - y) < menuHeight ) {
     menu.style.top = canvasHeight - menuHeight + vtop  + "px";
-    console.log("3");
-  } else {
+  } 
+  else {
     menu.style.top = y + vtop +"px";
-    console.log("4");
   }
 }
 
@@ -615,9 +560,7 @@ function populateOverview(e) {
 }
 
 function deleteBody(bodyIndex){
-
   console.log("Body " + bodyIndex + "deleted!");
-
 }
 
 function selectBody(bodyIndex, switchTab){

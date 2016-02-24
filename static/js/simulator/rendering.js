@@ -255,40 +255,6 @@ function drawSpringLine(b1, b2){
   ctx.stroke();
 }
 
-function checkForContextMenu(body, event){
-  var img = body.view;
-  var halfw = img["width"] / 2;
-  var halfh = img["height"] / 2;
-
-  //get click x and y
-  //get body x and y
-  //create square,  see if contextMenuclick is in square
-
-
-  var x=parseInt(e.clientX-offsetX);
-  var y=parseInt(e.clientY-offsetY);
-
-  //
-  var loc = body.state.pos;
-  rectRight= loc.x + halfw;
-  rectBottom= loc.y + halfh;
-  rectx = loc.x - halfw;
-  recty = loc.y - halfh; 
-
-
-  // check each rect for hits
-      var rect=rects[i];
-      var rectRight=rect.x+rect.width;
-      var rectBottom=rect.y+rect.height;
-
-      // if this rect is hit, display an alert
-      if(x>=rectx && x<=rectRight && y>=recty && y<=rectBottom  ){
-          alert("Context menu request on the rectangle.");
-      }
-
-
-}
-
 // Draws highlight box around selected element
 function highlightSelection(body, color, modifier){
   var img = body.view;
