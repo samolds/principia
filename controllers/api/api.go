@@ -17,7 +17,7 @@ import (
 //
 // Just returns an error code and message. Doesn't try to render an
 // entire template
-func apiErrorResponse(w http.ResponseWriter, err string, code int) {
+func ApiErrorResponse(w http.ResponseWriter, err string, code int) {
 	http.Error(w, err, code)
 }
 
@@ -36,7 +36,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := q.GetAll(ctx, &comments)
 
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -47,7 +47,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		user, err := utils.GetCurrentUser(ctx)
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -66,7 +66,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = datastore.Put(ctx, key, &comment)
 
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -86,7 +86,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := q.GetAll(ctx, &ratings)
 
 	if err != nil {
-		apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+		ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -109,7 +109,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		user, err := utils.GetCurrentUser(ctx)
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -118,7 +118,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 				ratingsKey := datastore.NewKey(ctx, "Rating", ratings[i].KeyName, 0, simulationKey)
 
 				if err != nil {
-					apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+					ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
 
@@ -132,7 +132,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 
 		score, err := strconv.ParseInt(r.FormValue("Score"), 10, 8)
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -148,7 +148,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = datastore.Put(ctx, key, &rating)
 
 		if err != nil {
-			apiErrorResponse(w, err.Error(), http.StatusInternalServerError)
+			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}

@@ -200,29 +200,29 @@ function updatePropertyRedraw(property, value){
     var point;
     
     if(property == "posx") {
-      other = $('#properties-position-y').val();
+      other = $('#general-properties-position-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "posy") {
-      other = $('#properties-position-x').val();
+      other = $('#general-properties-position-x').val();
       point = polar2Cartesian([other, value]);
     }
     
     if(property == "velx") {
-      other = $('#properties-velocity-y').val();
+      other = $('#pointmass-properties-velocity-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "vely") {
-      other = $('#properties-velocity-x').val();
+      other = $('#pointmass-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
     
     if(property == "accx") {
-      other = $('#properties-acceleration-y').val();
+      other = $('#pointmass-properties-acceleration-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "accy") {
-      other = $('#properties-acceleration-x').val();
+      other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
     
@@ -523,6 +523,9 @@ function populateOverview(e) {
       case "kinematics1D-pulley":
         img = "/static/img/toolbox/pulley.png";
         break;
+      case "kinematics1D-ramp":
+        img = "/static/img/toolbox/ramp.png";
+        break;
       case "kinematics1D-spring":
       case "kinematics1D-spring-child":
         img = "/static/img/toolbox/spring.png";
@@ -555,7 +558,3 @@ function selectBody(bodyIndex, switchTab){
   if(switchTab) drawProperties();
   drawMaster();
 }
-
-
-
-

@@ -18,8 +18,7 @@ function addSpring(data)
               y: data.y,           
               radius: 6,
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#000000',
               }
             });
             
@@ -29,8 +28,7 @@ function addSpring(data)
               y: data.y,             
               radius: 6,                    
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#000000',
               }
             });
             

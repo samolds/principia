@@ -37,11 +37,12 @@ function initWorld() {
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
-      
           case "kinematics1D-mass":
             addMass(data);
             break;
-            
+          case "kinematics1D-ramp":
+            addRamp(data);
+            break
           case "kinematics1D-pulley":
             addPulley(data);
             break;
@@ -262,10 +263,15 @@ function initWorld() {
       if(type != "kinematics1D-spring-child")
         Globals.world.emit('addComponent', data);
       Globals.bodyConstants[i] = tempBC[i];
-      
+
       Globals.selectedBody = Globals.world.getBodies()[Globals.world.getBodies().length-1];
-      if(type == "kinematics1D-mass")
+      if (type == "kinematics1D-mass") {
         onPropertyChanged("image", tempBC[i].img, false);
+        onPropertyChanged("size", tempBC[i].size, false);
+      } else if (type == "kinematics1D-ramp") {
+        onPropertyChanged("width", tempBC[i].width, false);
+        onPropertyChanged("height", tempBC[i].height, false);
+      }
       Globals.selectedBody = false;
     }
     
