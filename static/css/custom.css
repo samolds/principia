@@ -461,3 +461,10 @@ i.fa.fa-size-medium {
   height: 275px;
   width:100%;
 }
+
+.fa-lg-custom {
+  font-size: 1.33333em;
+  /* Covers all browsers */
+  cursor: pointer;
+  cursor: hand;
+}

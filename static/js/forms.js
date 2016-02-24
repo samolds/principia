@@ -74,6 +74,22 @@ function saveSimulation(){
 
 }
 
+function deleteSimulation(simUrl, redirectUrl, element) {
+  $.ajax({
+      url: simUrl,
+      type: 'DELETE',
+      success: function(result) {
+        if(!redirectUrl) {
+          // Either redirect or show toast and remove from list..
+          successToast("Simulation was deleted");
+          $(element).hide();
+        } else {
+          window.location.href = redirectUrl;
+        }
+      }
+  });
+}
+
 function saveUser() {
     simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
 
