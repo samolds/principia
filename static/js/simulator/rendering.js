@@ -53,12 +53,12 @@ function displayVariableValues(body){
     }
     
     // TODO fix unit conversions
-    $('#properties-position-x').val(position[0].toFixed(precision));
-    $('#properties-position-y').val(position[1].toFixed(precision));    
-    $('#properties-velocity-x').val(velocity[0].toFixed(precision));
-    $('#properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
-    $('#properties-acceleration-x').val(acceleration[0].toFixed(precision));
-    $('#properties-acceleration-y').val(acceleration[1].toFixed(precision));
+    $('#general-properties-position-x').val(position[0].toFixed(precision));
+    $('#general-properties-position-y').val(position[1].toFixed(precision));
+    $('#pointmass-properties-velocity-x').val(velocity[0].toFixed(precision));
+    $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
+    $('#pointmass-properties-acceleration-x').val(acceleration[0].toFixed(precision));
+    $('#pointmass-properties-acceleration-y').val(acceleration[1].toFixed(precision));
   } 
 }
 
@@ -68,7 +68,7 @@ function displayElementValues(bod){
     var st = bod.state;
     var constants = Globals.bodyConstants[Globals.world.getBodies().indexOf(bod)];
     var selected = constants.img;
-    $('#properties-img option[value=' + selected +']').attr('selected', 'selected');
+    $('#masspoint-properties-img option[value=' + selected +']').attr('selected', 'selected');
     var precision = Globals.dPrecision;
     
     // Convert to user coordinate system before displaying position
@@ -86,45 +86,43 @@ function displayElementValues(bod){
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
       
-    $('#properties-position-x').val(position[0].toFixed(precision));
-    $('#properties-position-y').val(position[1].toFixed(precision));
-
-    $('#properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
-    $('#properties-velocity-y').val(convertUnit(velocity[1], "vely", false).toFixed(precision));
-    $('#properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
-    $('#properties-acceleration-y').val(convertUnit(acceleration[1], "accy", false).toFixed(precision));
-
-    $('#properties-mass').val(constants.mass);
-    $('#properties-size').val(constants.size);
-    $('#properties-nickname').val(constants.nickname);
     if (constants.nickname) {
-      $('#properties-nickname-title').text(constants.nickname + " ");
+      $('#general-properties-nickname-title').text(constants.nickname + " ");
     } else {
-      $('#properties-nickname-title').text("");
+      $('#general-properties-nickname-title').text("");
     }
-    
-    if(constants.ctype == "kinematics1D-mass"){
-      $('#properties-img-container')[0].classList.remove("hide");
-      $('#properties-size-container')[0].classList.remove("hide");
-    }
-    else {
-      if(!$('#properties-img')[0].classList.contains("hide")){
-        $('#properties-img-container')[0].classList.add("hide");
-        $('#properties-size-container')[0].classList.add("hide");
-      }
-    }
+
+    $('#general-properties-nickname').val(constants.nickname);
+    $('#general-properties-position-x').val(position[0].toFixed(precision));
+    $('#general-properties-position-y').val(position[1].toFixed(precision));
+
+    $('#pointmass-properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
+    $('#pointmass-properties-velocity-y').val(convertUnit(velocity[1], "vely", false).toFixed(precision));
+    $('#pointmass-properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
+    $('#pointmass-properties-acceleration-y').val(convertUnit(acceleration[1], "accy", false).toFixed(precision));
+    $('#pointmass-properties-mass').val(constants.mass);
+    $('#pointmass-properties-size').val(constants.size);
+
+    $('#ramp-properties-width').val(constants.width);
+    $('#ramp-properties-height').val(constants.height);
+    $('#ramp-properties-angle').val(constants.angle);
     
   } else {
-    $('#properties-position-x').val("");
-    $('#properties-position-y').val("");
-    $('#properties-velocity-x').val("");
-    $('#properties-velocity-y').val("");
-    $('#properties-acceleration-x').val("");
-    $('#properties-acceleration-y').val("");
-    $('#properties-mass').val("");
-    $('#properties-nickname').val("");
-    $('#properties-size').val("");
-    $('#properties-nickname-title').text("");    
+    $('#general-properties-nickname').val("");
+    $('#general-properties-nickname-title').text("");
+    $('#general-properties-position-x').val("");
+    $('#general-properties-position-y').val("");
+
+    $('#pointmass-properties-velocity-x').val("");
+    $('#pointmass-properties-velocity-y').val("");
+    $('#pointmass-properties-acceleration-x').val("");
+    $('#pointmass-properties-acceleration-y').val("");
+    $('#pointmass-properties-mass').val("");
+    $('#pointmass-properties-size').val("");
+
+    $('#ramp-properties-width').val("");
+    $('#ramp-properties-height').val("");
+    $('#ramp-properties-angle').val("");
   }
 }
 
@@ -216,14 +214,17 @@ function drawSpringLine(b1, b2){
 
 // Draws highlight box around selected element
 function highlightSelection(body, color, modifier){
-  var img = body.view;
-  var halfw = img["width"] / 2;
-  var halfh = img["height"] / 2;
+  var bodyDim = body.aabb();
+  var width = bodyDim.hw * 2;
+  var height = bodyDim.hh * 2;
   var canvas = Globals.world.renderer();
 
-  if(modifier){
-    halfw += modifier;
-    halfh += modifier;
+  if (modifier) {
+    width += modifier;
+    height += modifier;
+  } else {
+    width += 10;
+    height += 10;
   }
   
   // Default to red
@@ -235,8 +236,10 @@ function highlightSelection(body, color, modifier){
   
   canvas.ctx.lineWidth = 2;
 
-  var loc = body.state.pos;
-  canvas.ctx.strokeRect(loc.x-halfw*2, loc.y-halfh*2, halfw*4, halfh*4);
+  var centerX = bodyDim.x - (width / 2);
+  var centerY = bodyDim.y - (height / 2);
+
+  canvas.ctx.strokeRect(centerX, centerY, width, height);
 }
 
 // Opens the properties tab
@@ -383,17 +386,35 @@ function postRender(isKeyframe){
     displayElementValues(selectedBody);
   }
   
-  if(selectedBody){
-    var checkbox = document.getElementById('vector-checkbox');
-    checkbox.checked = Globals.bodyConstants[bIndex(selectedBody)].vectors;
-  }
-  
   drawOrigin();
   drawLines();
   drawVectors();
 
-  if(selectedBody) { highlightSelection(selectedBody); }
-  if(originObject === 0 || originObject) {     
+  if (selectedBody) {
+    highlightSelection(selectedBody);
+
+    var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
+    $('#general-properties').addClass('hide');
+    $('#pointmass-properties').addClass('hide');
+    $('#ramp-properties').addClass('hide');
+    $('#general-properties').removeClass('hide');
+
+    switch (bodConstants.ctype) {
+      case 'kinematics1D-mass':
+        $('#pointmass-properties').removeClass('hide');
+        break;
+      case 'kinematics1D-ramp':
+        $('#ramp-properties').removeClass('hide');
+        break;
+      case 'kinematics1D-spring':
+        break;
+    }
+  } else {
+    $('#general-properties').addClass('hide');
+    $('#pointmass-properties').addClass('hide');
+    $('#ramp-properties').addClass('hide');
+  }
+  if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }
 }

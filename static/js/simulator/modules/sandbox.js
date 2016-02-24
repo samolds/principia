@@ -41,6 +41,10 @@ function initWorld() {
             var component = addMass(data);
             attachSpring(component);
             break;
+
+          case "kinematics1D-ramp":
+            addRamp(data);
+            break;
         }
       
         if(data.blockSimulation == 'undefined' || !data.blockSimulation) {
@@ -53,7 +57,7 @@ function initWorld() {
       // constrain objects to these bounds
       edgeBounce = Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds,
-        restitution: 0.99,
+        restitution: 0.8,
         cof: 0.8
       });
 

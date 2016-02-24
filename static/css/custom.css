@@ -362,25 +362,36 @@ input[type=range]::-webkit-slider-thumb {
 input[type=checkbox] .lever::-webkit-slider-thumb {
   background-color: #2196f3 !important;
 }
-input[type= checkbox]:checked::-webkit-slider-thumb{ background-color: red !important; }
 
-.toolbox-item img{
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%)
-}
+/* properties panel toolbox and properties */
+  .property-window-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    list-style-image: none;
+  }
 
-.dummy {
-  padding-top: 100%; /* forces 1:1 aspect ratio */
-}
+  .property-window-list li {
+    float: left;
+    margin: 2px;
+  }
 
-.toolbox-item-container{
-  position: relative; 
-  margin: 2px;
-}
+  .property-item {
+    height: 70px;
+    width: 45%;
+    padding: 0px 5px;
+  }
+
+  .toolbox-item-container {
+    width: 100px;
+    height: 100px;
+    background-color: #f5f5f5;
+  }
+
+  .toolbox-item {
+    padding: 15px;
+  }
+/* end properties panel */
 
 /* solution details box */
 .solution-details-container {

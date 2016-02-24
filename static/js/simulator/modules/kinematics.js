@@ -41,6 +41,10 @@ function initWorld() {
           case "kinematics1D-mass":
             addMass(data);
             break;
+
+          case "kinematics1D-ramp":
+            addRamp(data);
+            break;
         }
     
         drawMaster();

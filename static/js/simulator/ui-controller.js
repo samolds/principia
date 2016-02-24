@@ -199,29 +199,29 @@ function updatePropertyRedraw(property, value){
     var point;
     
     if(property == "posx") {
-      other = $('#properties-position-y').val();
+      other = $('#general-properties-position-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "posy") {
-      other = $('#properties-position-x').val();
+      other = $('#general-properties-position-x').val();
       point = polar2Cartesian([other, value]);
     }
     
     if(property == "velx") {
-      other = $('#properties-velocity-y').val();
+      other = $('#masspoint-properties-velocity-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "vely") {
-      other = $('#properties-velocity-x').val();
+      other = $('#masspoint-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
     
     if(property == "accx") {
-      other = $('#properties-acceleration-y').val();
+      other = $('#masspoint-properties-acceleration-y').val();
       point = polar2Cartesian([value, other]);
     }
     else if(property == "accy") {
-      other = $('#properties-acceleration-x').val();
+      other = $('#masspoint-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
     
