@@ -11,12 +11,9 @@ function drawLoop(){
 
   // Update range, draw simulation at that frame, and increment counter
   $("#simulatorFrameRange").val(Globals.frame)
-  setState(Globals.frame);
-  if(Globals.useKeyframes)
-    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false; 
   
-  $("#" + "keyframe-0").attr("style","");
-  $("#" + "keyframe-1").attr("style","");
+  Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  highlightKeycanvas(Globals.keyframe);
   
   drawMaster();
   updatePVAChart();
@@ -58,8 +55,8 @@ function displayVariableValues(body){
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     if(velocity[0]) {
-      $('#pointmass-properties-velocity-y').val((velocity[0] == "?")? "":velocity[0].toFixed(precision));
-      $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":velocity[1].toFixed(precision));
+      $('#pointmass-properties-velocity-x').val((velocity[0] == "?")? "":velocity[0].toFixed(precision));
+      $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":(-1 * velocity[1]).toFixed(precision));
     }
 
     if(acceleration[0]) {
@@ -104,9 +101,9 @@ function displayElementValues(bod){
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     $('#pointmass-properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
-    $('#pointmass-properties-velocity-y').val(convertUnit(velocity[1], "vely", false).toFixed(precision));
+    $('#pointmass-properties-velocity-y').val((-1 * convertUnit(velocity[1], "vely", false)).toFixed(precision));
     $('#pointmass-properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
-    $('#pointmass-properties-acceleration-y').val(convertUnit(acceleration[1], "accy", false).toFixed(precision));
+    $('#pointmass-properties-acceleration-y').val((-1 * convertUnit(acceleration[1], "accy", false)).toFixed(precision));
     $('#pointmass-properties-mass').val(constants.mass);
     $('#pointmass-properties-size').val(constants.size);
 
@@ -379,7 +376,7 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
 
 // Copy global canvas into canvas for keyframe n
 function viewportToKeyCanvas(n){
-  //if(n > 0) n = 1; //TODO: Map n to the appropriate keyframe index
+  if(n === false) n = lastKF();  
   var canvas = $('#' + Globals.canvasId)[0].children[0];  
   var keycanvas = $("#keyframe-" + n)[0];
   keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
@@ -421,21 +418,11 @@ function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
   var originObject = Globals.originObject;
   
-  if(isKeyframe && Globals.useKeyframes){
-    viewportToKeyCanvas(Globals.keyframe); 
-    displayVariableValues(selectedBody); 
-  }
-  else {
-    displayElementValues(selectedBody);
-  }
-  
   drawOrigin();
   drawLines();
   drawVectors();
 
-  if (selectedBody) {
-    highlightSelection(selectedBody);
-
+  if (selectedBody) {    
     var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
     $('#general-properties').addClass('hide');
     $('#pointmass-properties').addClass('hide');
@@ -458,9 +445,33 @@ function postRender(isKeyframe){
     $('#ramp-properties').addClass('hide');
   }
 
+  if(isKeyframe){
+    viewportToKeyCanvas(Globals.keyframe);
+    displayVariableValues(selectedBody); 
+  }
+  else {
+    displayElementValues(selectedBody);
+  }
+  
+  if(selectedBody)
+    highlightSelection(selectedBody);
+  
   if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }
+}
+
+// Draws a blue highlight around the nth mini-keyframe canvas
+// Removes all highlights if n === false
+function highlightKeycanvas(n)
+{
+  // Remove highlight on all keyframes
+  for(var i=0; i < Globals.numKeyframes; i++)
+    $("#" + "keyframe-" + i).attr("style","");
+  
+  // Add highlight to nth keyframe
+  if(n !== false)
+    $("#" + "keyframe-" + n).attr("style","border:4px solid #0000cc");
 }
 
 // Sets the world state to the currently selected frame and renders it.
@@ -469,12 +480,12 @@ function drawMaster(){
   var frame = Globals.frame;
   var keyframe = Globals.keyframe;
   
-  if((keyframe || keyframe === 0) && Globals.useKeyframes){
+  if(keyframe !== false){
     setStateKF(keyframe);
     world.render();
     postRender(true);
   }
-  else if(frame === 0 || frame) {
+  else if(frame !== false) {
     setState(frame);
     world.render();
     postRender(false);

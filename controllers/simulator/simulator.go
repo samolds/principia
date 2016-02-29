@@ -157,14 +157,6 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	controllers.BaseHandler(w, r, template, data)
 }
 
-func NewSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	newGenericHandler(w, r, "sandbox", "simulator/sandbox")
-}
-
-func EditSandboxHandler(w http.ResponseWriter, r *http.Request) {
-	editGenericHandler(w, r, "sandbox", "simulator/sandbox")
-}
-
 func NewKinematicsHandler(w http.ResponseWriter, r *http.Request) {
 	newGenericHandler(w, r, "kinematics", "simulator/kinematics")
 }
