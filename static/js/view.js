@@ -20,7 +20,7 @@ function showVectors() {
   drawMaster();
 
   // Show that we've made changes that we need to now save
-  outOfSync();
+  resetSaveButton();
 }
 
 function showPVAGraph() {
@@ -47,5 +47,5 @@ function showPVAGraph() {
   }
   
   // Show that we've made changes that we need to now save
-  outOfSync();
+  resetSaveButton();
 }

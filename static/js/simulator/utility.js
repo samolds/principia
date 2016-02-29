@@ -35,11 +35,12 @@ function bIndex(body){ return Globals.world.getBodies().indexOf(body); }
 function graphBodyIndices(){
   result = [];
 
-  Globals.bodyConstants.forEach(function(body, i) {
-      if(body.showGraph) {
-        result.push(i);
-      }
-  });
+  for (var index = 0, len = Globals.bodyConstants.length; index < len; index++) {
+    bodyConstant = Globals.bodyConstants[index];
+    if(bodyConstant.showGraph) {
+      result.push(index);
+    }
+  }
 
   return result;
 }
