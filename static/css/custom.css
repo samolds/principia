@@ -172,6 +172,14 @@ body {
     border-bottom: 1px solid #29b6f6;
     box-shadow: 0 1px 0 0 #29b6f6;
   }
+
+  .input-field > label {
+    left: 0rem;
+  }
+
+  .switch > label {
+    padding-top: .75rem;
+  }
 /* end custom form */
 
 
