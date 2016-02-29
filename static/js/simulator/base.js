@@ -101,18 +101,31 @@ function updatePVAChart() {
 
 // Entry point for this application. Registers events. The module is initialized in the HTML file for now.
 $(document).ready(function(){
-  // Events for properties window
-  $('#properties-position-x').on("change", function(){ updatePropertyRedraw('posx', $('#properties-position-x').val()); }); 
-  $('#properties-position-y').on("change", function(){ updatePropertyRedraw('posy', $('#properties-position-y').val()); }); 
-  $('#properties-velocity-x').on("change", function(){ updatePropertyRedraw('velx', $('#properties-velocity-x').val()); }); 
-  $('#properties-velocity-y').on("change", function(){ updatePropertyRedraw('vely', $('#properties-velocity-y').val()); }); 
-  $('#properties-acceleration-x').on("change", function(){ updatePropertyRedraw('accx', $('#properties-acceleration-x').val()); });
-  $('#properties-acceleration-y').on("change", function(){ updatePropertyRedraw('accy', $('#properties-acceleration-y').val()); });
+  //Events for canvas
+  //$('#viewport').on("click")
+  $( '#viewport' ).on("contextmenu", function(event){ contextMenuListener(event); } );
+  $( '#viewport' ).on("click", function(event){ clickListener(event); } );
+  //for tabs
+  $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
 
-  $('#properties-size').on("change", function(){updatePropertyRedraw('size', $('#properties-size').val()); });
-  $('#properties-mass').on("change", function(){ updatePropertyRedraw('mass', $('#properties-mass').val()); }); 
-  $('#properties-nickname').on("change", function(){ updatePropertyRedraw('nickname', $('#properties-nickname').val()); }); 
-  $('#properties-img').on("change", function(){ updatePropertyRedraw('image', $('#properties-img option:selected')[0].value); });
+  // Events for properties window
+  $('#general-properties-position-x').on("change", function(){ updatePropertyRedraw('posx', $('#general-properties-position-x').val()); });
+  $('#general-properties-position-y').on("change", function(){ updatePropertyRedraw('posy', $('#general-properties-position-y').val()); });
+  $('#general-properties-nickname').on("change", function(){ updatePropertyRedraw('nickname', $('#general-properties-nickname').val()); });
+
+  $('#pointmass-properties-velocity-x').on("change", function(){ updatePropertyRedraw('velx', $('#pointmass-properties-velocity-x').val()); });
+  $('#pointmass-properties-velocity-y').on("change", function(){ updatePropertyRedraw('vely', $('#pointmass-properties-velocity-y').val()); });
+  $('#pointmass-properties-acceleration-x').on("change", function(){ updatePropertyRedraw('accx', $('#pointmass-properties-acceleration-x').val()); });
+  $('#pointmass-properties-acceleration-y').on("change", function(){ updatePropertyRedraw('accy', $('#pointmass-properties-acceleration-y').val()); });
+  $('#pointmass-properties-size').on("change", function(){ updatePropertyRedraw('size', $('#pointmass-properties-size').val()); });
+  $('#pointmass-properties-mass').on("change", function(){ updatePropertyRedraw('mass', $('#pointmass-properties-mass').val()); });
+  $('#pointmass-properties-img').on("change", function(){ updatePropertyRedraw('image', $('#pointmass-properties-img option:selected')[0].value); });
+  $('#pointmass-properties-vector').on("change", function(){ updatePropertyRedraw('vectors', ($('#pointmass-properties-vector')[0].checked ? 1 : 0) ); });
+  $('#pointmass-properties-pvagraph').on("change", function(){ updatePropertyRedraw('pvagraph', ($('#pointmass-properties-pvagraph')[0].checked ? 1 : 0) ); });
+
+  $('#ramp-properties-width').on("change", function(){ updatePropertyRedraw('width', $('#ramp-properties-width').val()); });
+  $('#ramp-properties-height').on("change", function(){ updatePropertyRedraw('height', $('#ramp-properties-height').val()); });
+  $('#ramp-properties-angle').on("change", function(){ updatePropertyRedraw('angle', $('#ramp-properties-angle').val()); });
   
   // Event for clicking solve button
   $('#solve-btn').on('click', function() {     

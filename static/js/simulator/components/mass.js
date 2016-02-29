@@ -11,7 +11,7 @@ function addMass(data){
   
   // Default image: use Principia logo. Can be changed from select element.
   var img = document.createElement("img");
-  img.setAttribute("src", "/static/img/logo/logo.png");
+  img.setAttribute("src", "/static/img/toolbox/mass.png");
   img.setAttribute("width", "50");
   img.setAttribute("height", "50");
   
@@ -22,8 +22,8 @@ function addMass(data){
             radius: 25,
             view: img,
             styles: {
-              fillStyle: '#716cc4',
-              angleIndicator: '#3b3e6b'
+              fillStyle: '#4d4d4d',
+              angleIndicator: '#ffffff'
             }
           });
           
@@ -41,10 +41,11 @@ function addMass(data){
                   
   // Assign constants
   bodyConstants[bodyConstants.length-1].mass = 1.0;
-  bodyConstants[bodyConstants.length-1].size = 100;
+  bodyConstants[bodyConstants.length-1].size = 25;
   bodyConstants[bodyConstants.length-1].img  = 0;  
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].showGraph = false;
+  bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
   
   // Add the component to the world and update all keyframes
   world.add(component);    

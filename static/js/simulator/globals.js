@@ -116,7 +116,7 @@ var Globals = {
   
   // Paths to images used for drawing point mass
   massImages: [
-              "/static/img/logo/logo.png",
+              "/static/img/toolbox/mass.png",
               "/static/img/toolbox/weight.png",
               "/static/img/toolbox/car.png",
               "/static/img/toolbox/sailboat.png",
@@ -127,7 +127,8 @@ var Globals = {
               "/static/img/team/dalton.png",
               "/static/img/team/danny.png",
               "/static/img/team/matthew.png",
-              "/static/img/team/sam.png"
+              "/static/img/team/sam.png",
+              "/static/img/logo/logo.png",
               ],
 
 // Number of frames to attempt to simulate before declaring simulation failure
@@ -135,3 +136,8 @@ var Globals = {
   
   maxNumKeyframes: 5
 };
+
+//context menu 
+var menu = document.querySelector("#context-menu");
+var menuState = 0;
+var active = "context-menu--active";

@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"controllers"
+	"controllers/api"
 	"controllers/utils"
 	"lib/gorilla/mux"
 	"models"
@@ -102,7 +103,18 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
-	if r.Method == "POST" {
+	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
+	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
+
+	var author models.User
+	err = datastore.Get(ctx, authorKey, &author)
+
+	authorDisplay := author.Email
+	if author.DisplayName != "" {
+		authorDisplay = author.DisplayName
+	}
+
+	if r.Method == "POST" && isOwner {
 		simulation.Name = r.FormValue("Name")
 		simulation.Simulator = r.FormValue("Contents")
 		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
@@ -113,7 +125,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 
 		if err != nil {
 			// Could not place the simulation in the datastore
-			controllers.ErrorHandler(w, "Could not save existing simulation: "+err.Error(), http.StatusInternalServerError)
+			api.ApiErrorResponse(w, "Could not save existing simulation: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -122,26 +134,17 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
-	if r.Method == "DELETE" {
+	if r.Method == "DELETE" && isOwner {
 		// Delete the simulation in the datastore
 		err = datastore.Delete(ctx, simulationKey)
 
 		if err != nil {
 			// Could not place the simulation in the datastore
-			controllers.ErrorHandler(w, "Could not delete existing simulation: "+err.Error(), http.StatusInternalServerError)
+			api.ApiErrorResponse(w, "Could not delete existing simulation: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
 
-	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
-	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
-
-	var author models.User
-	err = datastore.Get(ctx, authorKey, &author)
-
-	authorDisplay := author.Email
-	if author.DisplayName != "" {
-		authorDisplay = author.DisplayName
+		return
 	}
 
 	data := map[string]interface{}{

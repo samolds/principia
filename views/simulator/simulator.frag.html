@@ -1,4 +1,5 @@
 {{ define "simulatorFrag" }}
+<!---------- Title above simulator window ---------->
 <div class="row">
   {{ if and (.IsLoggedIn) (.Data.isOwner) }}
     <div class="input-field col s6">
@@ -14,7 +15,7 @@
     <div class="col s1 right pad-sides">
       <h4>
         <a class="waves-effect waves-light btn-floating red darken-1" id="delete-button"
-        onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/user/{{.User.KeyName}}/simulations', null)">
+        onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
         <i class="fa fa-remove"></i></a></h4>
     </div>
     {{ end }}
@@ -66,16 +67,25 @@
   {{ end }}
 </div>
 
+<!---------- Simulator and property window  ---------->
 <div class="row">
+
+  <!-- Simulator -->
   <div class="col s8">
     <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
     <div style="height: 500px;" id="viewport" class="white card"></div>
   </div>
+
+
+  <!-- Property Window -->
   <div class="col s4 card scrollable-tools" style="height: 500px;">
+    <!-- Tabs -->
     <ul class="tabs">
       <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
       <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
       <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
+      <li class="tab col s4 "><a class="property-tab blue-text valign" href="#overview" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></a></li>
+
       <div class="indicator blue" style="z-index: 1;"></div>
     </ul>
 
@@ -83,132 +93,161 @@
     <div id="toolbox">
       <div class="center-align">
         <h5 class="pad-sides">Toolbox</h5>
-        <div class="row">
-          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
-            <div class="dummy"></div>
-            <div class="toolbox-item">
-              <img src="/static/img/logo/logo.png" class="draggable" width="40" component="kinematics1D-mass">
-            </div>
-          </div>
-          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px; ">
-            <div class="dummy"></div>
-            <div class="toolbox-item"> 
-              <img src="/static/img/toolbox/spring.png" class="draggable" width="55" component="kinematics1D-spring">
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
-            <div class="dummy"></div>
-            <div class="toolbox-item">
-              <img src="/static/img/toolbox/pulley.png" class="draggable" width="40" component="kinematics1D-pulley">
-            </div>
-          </div>
-          <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px; ">
-            <div class="dummy"></div>
-            <div class="toolbox-item"> 
-              <img src="/static/img/toolbox/rope.png" class="draggable" width="55" component="kinematics1D-rope">
-            </div>
-          </div>
-        </div>
+        <ul class="property-window-list">
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+          </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
+          </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
+          </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley">
+          </li>
+          <li class="toolbox-item-container valign-wrapper">
+            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope">
+          </li>
+        </ul>
       </div>
     </div>
 
     <!-- Properties window for each element -->
     <div id="elementprops">
       <div class="center-align">
-        <h5 class="pad-sides"><span id="properties-nickname-title"></span>Element Properties</h5>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="properties-position-x" placeholder=""></input>
-            <label for="properties-position-x" class="active" id="x-position-label">X Position</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="number" id="properties-position-y" placeholder=""></input>
-            <label for="properties-position-y" class="active" id="y-position-label">Y Position</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="properties-velocity-x" placeholder=""></input>
-            <label for="properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="number" id="properties-velocity-y" placeholder=""></input>
-            <label for="properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="properties-acceleration-x" placeholder=""></input>
-            <label for="properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="number" id="properties-acceleration-y" placeholder=""></input>
-            <label for="properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="properties-mass" placeholder=""></input>
-            <label for="properties-mass" class="active">Mass</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="text" id="properties-nickname" placeholder=""></input>
-            <label for="properties-nickname" class="active">Nickname</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6" id="properties-img-container">                     
-            <select id="properties-img" class="browser-default">
-              <option disabled>Display As:</option>
-              <option value="0" selected="selected">Logo</option>
-              <option value="1">Weight</option>
-              <option value="2">Car</option>
-              <option value="3">Sail Boat</option>
-              <option value="4">Speed Boat</option>
-              <option value="5">Mascot</option>
-              <option value="6">Dart</option>
-              <option value="7">Jogger</option>
-              <option value="8">Dalton</option>
-              <option value="9">Danny</option>
-              <option value="10">Matthew</option>
-              <option value="11">Sam</option>
-            </select>
-            <label for="properties-img" class="active">Display As</label>
-          </div>
-          <div class="input-field col s6" id="properties-size-container" class="">
-            <input type="text" id="properties-size" placeholder=""></input>
-            <label for="properties-size" class="active">Size</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="intput-field col s6">
-            <br />
+        <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
+
+        <!-- Properties that apply to all components -->
+        <ul class="property-window-list hide" id="general-properties">
+          <li class="property-item-long">
+            <div class="input-field">
+              <input type="text" id="general-properties-nickname" placeholder=""></input>
+              <label for="general-properties-nickname" class="active">Nickname</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="general-properties-position-x" placeholder=""></input>
+              <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="general-properties-position-y" placeholder=""></input>
+              <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Properties that apply to point mass components -->
+        <ul class="property-window-list hide" id="pointmass-properties">
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="pointmass-properties-velocity-x" placeholder=""></input>
+              <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="pointmass-properties-velocity-y" placeholder=""></input>
+              <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="pointmass-properties-acceleration-x" placeholder=""></input>
+              <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="pointmass-properties-acceleration-y" placeholder=""></input>
+              <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="pointmass-properties-mass" placeholder=""></input>
+              <label for="pointmass-properties-mass" class="active">Mass</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="text" id="pointmass-properties-size" placeholder=""></input>
+              <label for="pointmass-properties-size" class="active">Size</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <select id="pointmass-properties-img" class="browser-default">
+                <option disabled>Display As:</option>
+                <option value="0" selected="selected">Mass</option>
+                <option value="1">Weight</option>
+                <option value="2">Car</option>
+                <option value="3">Sail Boat</option>
+                <option value="4">Speed Boat</option>
+                <option value="5">Mascot</option>
+                <option value="6">Dart</option>
+                <option value="7">Jogger</option>
+                <option value="8">Dalton</option>
+                <option value="9">Danny</option>
+                <option value="10">Matthew</option>
+                <option value="11">Sam</option>
+                <option value="12">Logo</option>
+              </select>
+              <label for="pointmass-properties-img" class="active">Display As</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
               <span>Vectors</span>
               <div class="switch">
                 <label>
                   Off
-                  <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+                  <input id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
                   <span class="lever"></span>
                   On
                 </label>
               </div>
             </div>
-            <div class="intput-field col s6">
-              <br />
+          </li>
+          <li class="property-item">
+            <div class="input-field">
               <span>PVA Graph</span>
               <div class="switch">
                 <label>
                   Off
-                  <input id="pvagraph-checkbox" type="checkbox" onchange="showPVAGraph()">
+                  <input id="pointmass-properties-pvagraph" type="checkbox"></input>
                   <span class="lever"></span>
                   On
                 </label>
               </div>
             </div>
-        </div>
+          </li>
+        </ul>
+
+        <!-- Ramp properties! -->
+        <ul class="property-window-list hide" id="ramp-properties">
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="ramp-properties-width" placeholder=""></input>
+              <label for="ramp-properties-width" class="active">Width</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="ramp-properties-height" placeholder=""></input>
+              <label for="ramp-properties-height" class="active">Height</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="ramp-properties-angle" placeholder=""></input>
+              <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -227,12 +266,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s12">        
+          <div class="input-field col s6">
             <select id="coord-sys" class="browser-default">
-              <option disabled>Coordinate System</option>
+              <option disabled>Coordinate System:</option>
               <option value="cartesian" selected="selected">Cartesian</option>
               <option value="polar" >Polar</option>
             </select>
+            <label for="coord-sys" class="active">Coordinate System</label>
           </div>
         </div>
         <div class="row">
@@ -248,6 +288,7 @@
               <option value="1.09361" >Yards</option>
               <option value="0.000621371" >Miles</option>
             </select>
+            <label for="glob-length-unit" class="active">Length Unit</label>
           </div>
           <div class="input-field col s6">
             <select id="glob-time-unit" class="browser-default">
@@ -257,33 +298,41 @@
               <option value="0.01666666667" >Minutes</option>
               <option value="0.00027777778" >Hours</option>              
             </select>
+            <label for="glob-time-unit" class="active">Time Unit</label>
           </div>
         </div>
         <div class="row">
-          <div id="toolbox">
-            <div class="center-align">
-              <h5 class="pad-sides">Toolbox</h5>
-              <div class="row">
-                <div class="col s4 toolbox-item-container" style="background-color: #f5f5f5; width:100px; height:100px;">
-                  <div class="dummy"></div>
-                  <div class="toolbox-item">
-                    <img src="/static/img/toolbox/target.jpg" class="ui-draggable" width="40" >
-                  </div>
-                </div>
-                <div class="input-field col s4">
-                  <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
-                  <label for="glob-xorigin" class="active">Origin X</label>
-                </div>
-                <div class="input-field col s4">
-                  <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
-                  <label for="glob-yorigin" class="active">Origin Y</label>
-                </div>
-              </div>
-            </div>
-          </div> 
+          <div class="col s4 toolbox-item-container valign-wrapper">
+            <img class="toolbox-item ui-draggable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
+          </div>
+
+          <div class="input-field col s4">
+            <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
+            <label for="glob-xorigin" class="active">Origin X</label>
+          </div>
+          <div class="input-field col s4">
+            <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
+            <label for="glob-yorigin" class="active">Origin Y</label>
+          </div>
         </div>
       </div>
     </div>
+
+  <div id="overview">
+      <div class="center-align">
+        <h5 class="pad-sides">Scene Overview</h5>
+        <div class="row" >
+          <ul id ="overview-list">
+            
+          </ul>
+
+        </div>    
+      </div>
+  </div>
+    
+
+
+
   </div>
 </div>
 
@@ -309,4 +358,40 @@
     </div>
   </div>
 </div>
+
+<!--
+  This is the context menu:
+-->
+<div class="context-menu">
+  <span>Object Properties</span>
+  <ul class="context-menu-items">
+    <li class="context-menu-item">
+      <span>Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+    <li class="context-menu-item">
+      <span>Graph</span>
+      <div class="switch">
+        <label>
+          Off
+          <input id="graph-checkbox" type="checkbox" onchange="showGraph()">
+          <span class="lever"></span>
+          On
+        </label>
+      </div> 
+    </li>
+  </ul>
+
+</div>  
+
+
+
+
 {{ end }}

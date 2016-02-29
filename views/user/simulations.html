@@ -17,7 +17,7 @@
                 <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a>
               </div>
               <div class='col s1'>
-                <a  class='' onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)"><i class="fa fa-trash-o fa-lg-custom"></i></a>
+                <a onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)"><i class="fa fa-trash-o fa-lg-custom"></i></a>
               </div>
             </div>
           </li>

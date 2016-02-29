@@ -464,7 +464,7 @@ function onPropertyChanged(property, value, doSimulate){
 
   var canvas = document.getElementById('viewport');
   var canvas2d = canvas.children[0].getContext('2d');
-  if (body) {
+  if (body && value !== false) {
     switch(property)
     {    
       case 'posx':
@@ -504,21 +504,101 @@ function onPropertyChanged(property, value, doSimulate){
         break;
       case 'image':
         var img = document.createElement("img");
-        img.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
-        img.setAttribute("height", Globals.bodyConstants[i].size/100 * 50);
+        img.setAttribute("width", Globals.bodyConstants[i].size * 2);
+        img.setAttribute("height", Globals.bodyConstants[i].size * 2);
         img.setAttribute("src", Globals.massImages[valuef]);
         body.view = img;
         body.view.onload = function() { updateKeyframes(); drawMaster(); }  
         Globals.bodyConstants[i].img = valuef;
         return;      
       case 'size':
-        if(valuef < 50 || valuef > 500 || isNaN(valuef)) valuef = 100;
         Globals.bodyConstants[i]["size"] = valuef;
-        body.view.setAttribute("width", Globals.bodyConstants[i].size/100 * 50);
-        body.view.setAttribute("height", Globals.bodyConstants[i].size/100 * 50);
-        body.radius = Globals.bodyConstants[i].size/100 * 25;
+        body.view.setAttribute("width", Globals.bodyConstants[i].size * 2);
+        body.view.setAttribute("height", Globals.bodyConstants[i].size * 2);
+        body.radius = Globals.bodyConstants[i].size;
+        body.geometry.radius = Globals.bodyConstants[i].size;
         body.view.onload = function() { drawMaster(); }      
-        return;
+        //body.view = null;
+        break;
+      case 'vectors':
+        if (value) { // show vectors
+          Globals.bodyConstants[bIndex(body)].vectors = true;
+        } else { // dont show vectors
+          Globals.bodyConstants[bIndex(body)].vectors = false;
+        }
+        break;
+      case 'pvagraph':
+        if (value) { // show graph;
+          Globals.bodyConstants[bIndex(body)].showGraph = true;
+        } else { // dont show graph;
+          Globals.bodyConstants[bIndex(body)].showGraph = false;
+        }
+
+        allHidden = graphBodyIndices().length === 0;
+
+        if(allHidden){
+          $("#pvaGraphContainer").hide();
+        } else {
+          $("#pvaGraphContainer").show();
+          updatePVAChart();
+        }
+        break;
+      case 'width':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -500.0 || valuef > 500.0)
+          break;
+
+        // Get all of the other vertices except for the "width" vertex
+        var newVertices = body.vertices.filter(function(vert) { return vert.x === 0; });
+        var height = body.vertices.filter(function(vert) { return vert.y !== 0; })[0].y;
+
+        newVertices.push({x: valuef, y: 0}); // Add the new vertex for the width
+        body.vertices = newVertices;
+        body.geometry.setVertices(newVertices);
+        body.view = null;
+
+        var newAngle = Math.atan(height / valuef) * (180.0 / Math.PI);
+        Globals.bodyConstants[i]["width"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
+        break;
+      case 'height':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -500.0 || valuef > 500.0)
+          break;
+
+        // Get all of the other vertices except for the "height" vertex
+        var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
+        var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
+
+        newVertices.push({x: 0, y: valuef}); // Add the new vertex for the height
+        body.vertices = newVertices;
+        body.geometry.setVertices(newVertices);
+        body.view = null;
+
+        var newAngle = Math.atan(valuef / width) * (180.0 / Math.PI);
+        Globals.bodyConstants[i]["height"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
+        break;
+      case 'angle':
+        // TODO: Wrap some of this up in an helper function
+        if (valuef < -89.0 || valuef > 89.0)
+          break;
+
+        // Get all of the other vertices except for the "height" vertex
+        var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
+        var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
+
+        // Calculate the new height of the triangle using the width and the angle
+        var newHeight = Math.tan(valuef * (Math.PI / 180.0)) * Math.abs(width);
+
+        newVertices.push({x: 0, y: newHeight}); // Add the new vertex for the height
+        body.vertices = newVertices;
+        body.geometry.setVertices(newVertices);
+        body.view = null;
+
+        Globals.bodyConstants[i]["angle"] = valuef.toFixed(Globals.dPrecision);
+        Globals.bodyConstants[i]["height"] = newHeight.toFixed(Globals.dPrecision);
+        break;
       default:
         Globals.bodyConstants[i][property] = value;
         break;
@@ -534,7 +614,7 @@ function onPropertyChanged(property, value, doSimulate){
     simulate();  
   }
   
-  if(i != -1 && $('#properties-position-x').val() != "" && $('#properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
+  if(i != -1 && $('#pointmass-properties-position-x').val() != "" && $('#pointmass-properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
      delete Globals.bodyConstants[i].alpha;
 
    resetSaveButton();

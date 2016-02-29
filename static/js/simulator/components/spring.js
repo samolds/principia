@@ -18,8 +18,7 @@ function addSpring(data)
               y: data.y,           
               radius: 6,
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#000000',
               }
             });
             
@@ -29,8 +28,7 @@ function addSpring(data)
               y: data.y,             
               radius: 6,                    
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#000000',
               }
             });
             
@@ -57,6 +55,8 @@ function addSpring(data)
   bodyConstants[bodyConstants.length-1].vectors = false;
   bodyConstants[bodyConstants.length-2].k = 0.01;
   bodyConstants[bodyConstants.length-2].vectors = false;
+  bodyConstants[bodyConstants.length-1].nickname = "spring " + (getLabel(component));
+  bodyConstants[bodyConstants.length-2].nickname = "spring " + (getLabel(component)) + " end";
   
   updateKeyframes([component, componentChild]);
   

@@ -36,12 +36,13 @@ function initWorld() {
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
-      
           case "kinematics1D-mass":
             var component = addMass(data);
             attachSpring(component);
             break;
-            
+          case "kinematics1D-ramp":
+            addRamp(data);
+            break;
           case "kinematics1D-pulley":
             addPulley(data);
             break;
@@ -57,7 +58,7 @@ function initWorld() {
       // constrain objects to these bounds
       edgeBounce = Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds,
-        restitution: 0.99,
+        restitution: 0.8,
         cof: 0.8
       });
 
@@ -184,8 +185,13 @@ function initWorld() {
       Globals.bodyConstants[i] = tempBC[i];
       
       Globals.selectedBody = Globals.world.getBodies()[Globals.world.getBodies().length-1];
-      if(type == "kinematics1D-mass")
+      if (type == "kinematics1D-mass") {
         onPropertyChanged("image", tempBC[i].img, false);
+        onPropertyChanged("size", tempBC[i].size, false);
+      } else if (type == "kinematics1D-ramp") {
+        onPropertyChanged("width", tempBC[i].width, false);
+        onPropertyChanged("height", tempBC[i].height, false);
+      }
       Globals.selectedBody = false;
     }
     

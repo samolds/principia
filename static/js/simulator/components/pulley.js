@@ -29,7 +29,9 @@ function addPulley(data){
   // Variables associated with pulley
   addToVariableMap(
     {
-      r: dRadius
+      r: dRadius,
+      posx: data.x, 
+      posy: data.y
     }
   );
   
@@ -46,6 +48,8 @@ function addPulley(data){
   bodyConstants[bodyConstants.length-1].right_open = true;
   
   bodyConstants[bodyConstants.length-1].vectors = false;
+
+  bodyConstants[bodyConstants.length-1].nickname = "pulley " + (getLabel(component));
   
   updateKeyframes([component]);
   
