@@ -518,10 +518,15 @@ function onPropertyChanged(property, value){
         var img = document.createElement("img");
         img.setAttribute("width", Globals.bodyConstants[i].size * 2);
         img.setAttribute("height", Globals.bodyConstants[i].size * 2);
-        img.setAttribute("src", Globals.massImages[valuef]);
+        if(isNaN(valuef)) {
+          img.setAttribute("src", value);
+          Globals.bodyConstants[i].img = value;
+        } else {
+          img.setAttribute("src", Globals.massImages[valuef]);
+          Globals.bodyConstants[i].img = valuef;
+        }
         body.view = img;
         body.view.onload = function() { updateKeyframes(); drawMaster(); }  
-        Globals.bodyConstants[i].img = valuef;
         return;      
       case 'size':
         Globals.bodyConstants[i]["size"] = valuef;

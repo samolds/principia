@@ -12,17 +12,24 @@ function addPulley(data){
 
   // Default radius
   var dRadius = 50;  
+
+  // Default image: use pointmass image. Can be changed from select element.
+  var img = document.createElement("img");
+  img.setAttribute("src", "/static/img/toolbox/pulley.png");
+  img.setAttribute("width", "100");
+  img.setAttribute("height", "100");
   
   // Generate the primary component (equilibrium point) and its child (point stretched to)
   // Note that 'ghost' is a new treatment that ignores collisions
   var component = Physics.body('circle', {
               treatment:"ghost",
               x: data.x,
-              y: data.y,           
+              y: data.y,
               radius: dRadius,
+              view: img,
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#4d4d4d',
+                angleIndicator: '#ffffff'
               }
             });
 
@@ -50,6 +57,9 @@ function addPulley(data){
   bodyConstants[bodyConstants.length-1].vectors = false;
 
   bodyConstants[bodyConstants.length-1].nickname = "pulley " + (getLabel(component));
+
+  bodyConstants[bodyConstants.length-1].img = "/static/img/toolbox/pulley.png";
+  bodyConstants[bodyConstants.length-1].size = dRadius;
   
   updateKeyframes([component]);
   
@@ -114,6 +124,7 @@ function attachPulley(body){
 // Assumes that the caller has already identified 'state' as being attached to the pulley.
 function applyPulley(pulley, state)
 {
+  var bodies = Globals.world.getBodies();
   var pulleyConsts = body2Constant(pulley);
         
   // Make sure pulley has two bodies attached before applying special rules
@@ -130,11 +141,11 @@ function applyPulley(pulley, state)
     var pulley_a = (m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
 
     // Ready to accelerate up, reverse direction if this is the heavier mass
-    if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
+    if(pulley_a < 0 && (pulleyConsts.mass == m1 && m1 > m2) || (pulleyConsts.mass == m2 && m2 > m1) )
       pulley_a *= -1;
 
     // Ready to accelerate down, reverse direction if this is the lighter mass
-    if(pulley_a > 0 && (consts.mass == m1 && m1 < m2) || (consts.mass == m2 && m2 < m1) )
+    if(pulley_a > 0 && (pulleyConsts.mass == m1 && m1 < m2) || (pulleyConsts.mass == m2 && m2 < m1) )
       pulley_a *= -1;
        
     // Just for fun, animate the pulley spinning
@@ -148,8 +159,8 @@ function applyPulley(pulley, state)
       pulley_a = 0;
       pulley.state.angular.vel = 0;
       
-      Globals.world.getBodies()[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
-      Globals.world.getBodies()[pulleyConsts.attachedBodyRight].state.vel.y = 0;            
+      bodies[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
+      bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
     }
        
     // Add effect of pulley

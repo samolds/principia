@@ -564,7 +564,8 @@ function deleteBody(bodyIndex){
     Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
     Globals.selectedBody = false;
 
-    // Begin Spring specific logic!
+    // Begin Spring and Pulley specific logic!
+
     // We already deleted one of the ends of the spring, but now we
     // have to delete the other end
     if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
@@ -613,10 +614,12 @@ function deleteBody(bodyIndex){
       }
     }
 
-    // If the component deleted was a spring, we need to loop through any of
-    // the existing components to check if any of them were attached to the
-    // spring. If they were we need to delete the reference
-    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+    // If the component deleted was a spring or pulley, we need to loop through
+    // any of the existing components to check if any of them were attached to
+    // the spring or pulley. If they were we need to delete the reference
+    if (bodToDelete.ctype.indexOf("spring") !== -1 || bodToDelete.ctype.indexOf("pulley") !== -1) {
+      // For Springs get the actual reference if it was
+      // the parent or child spring node that was deleted
       var refToDelete = bodyIndex;
       if (bodToDelete.child !== undefined) {
         refToDelete = bodToDelete.child;
@@ -638,9 +641,18 @@ function deleteBody(bodyIndex){
         if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
          delete bod.attachedBody;
         }
+        // For Pulleys
+        if (bod.attachedBodyLeft !== undefined && bod.attachedBodyLeft === bodyIndex) {
+         delete bod.attachedBodyLeft;
+         bod.left_open = true;
+        }
+        if (bod.attachedBodyRight !== undefined && bod.attachedBodyRight === bodyIndex) {
+         delete bod.attachedBodyRight;
+         bod.right_open = true;
+        }
       }
     }
-    // End Spring specific logic!
+    // End Spring and Pulley specific logic!
 
     simulate();
     drawMaster();
