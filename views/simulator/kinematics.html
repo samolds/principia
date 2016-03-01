@@ -47,44 +47,35 @@
 
         <div class="row">
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-          <div class="col s8">
-            <div>
-              <h5>Keyframes:
+          <div class="col s6">
+            <h5>Keyframes:
               <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
-              </h5>
-              <div>
-                <div id="keyframelist">
-                  <ul id="keyframe-list">
-                    <li>
-                      <div class="keyframe-tile">
-                        <div class="remove-keyframe-btn">
-                          <a class="btn-floating btn-small waves-effect waves-light red kf-btn-placeholder" id="remove-keyframe-0"><i class="fa fa-times"></i></a>
-                        </div>
-                          <h6>Frame 1: </h6>
-                          <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
-                     
-                          <div class="input-field">
-                              <input id="keyframe-0-dt" type="text" readonly value="0"></input>
-                              <label for="keyframe-0-dt" class="active">dt</label>
-                          </div>
-                       </div>
-                    </li>                  
-                  </ul>
-                </div>
-             </div>
+            </h5>
 
-              <div class="col s6">
-                <h6>Solution details:</h6>
-                <div class="row solution-details-container" style="overflow:auto;">
-                  <p id="solution-details" style="white-space: pre-wrap;"></p>                  
-                </div>
-              </div>
+            <div id="keyframelist">
+              <ul id="keyframe-list">
+                <li>
+                  <div class="keyframe-tile">
+                    <div class="remove-keyframe-btn">
+                      <a class="btn-floating btn-small waves-effect waves-light red kf-btn-placeholder" id="remove-keyframe-0"><i class="fa fa-times"></i></a>
+                    </div>
+                    <h6>Frame 1: </h6>
+                    <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
+                    <div class="input-field">
+                      <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+                      <label for="keyframe-0-dt" class="active">dt</label>
+                    </div>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div class="col s4">
-            <h5>Example Problem:</h5>
-            <img src="/static/img/example-problem.png" class="responsive-img">
+          <div class="col s6">
+            <div class="card-panel yellow lighten-4 solution-details-container">
+              <h5>Solution details:</h5>
+              <span id="solution-details"></span>
+            </div>
           </div>
         </div>
       </div>
