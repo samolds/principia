@@ -644,6 +644,7 @@ function deleteBody(bodyIndex){
 
     simulate();
     drawMaster();
+    updateKeyframes();
     populateOverview();
   }
 }

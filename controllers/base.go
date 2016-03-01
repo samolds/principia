@@ -36,11 +36,12 @@ var (
 		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
 		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
 
-		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),		
+		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
-		"user/simulations":     template.Must(template.ParseFiles(base, userDir+"simulations.html")),
-		"user/profile":         template.Must(template.ParseFiles(base, userDir+"profile.html")),
-		
+
+		"user/simulations": template.Must(template.ParseFiles(base, userDir+"simulations.html")),
+		"user/profile":     template.Must(template.ParseFiles(base, userDir+"profile.html")),
+
 		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
 	}
 )
