@@ -550,7 +550,84 @@ function populateOverview(e) {
 }
 
 function deleteBody(bodyIndex){
-  console.log("Body " + bodyIndex + "deleted!");
+  if (bodyIndex === undefined) {
+    bodyIndex = bIndex(Globals.selectedBody);
+  }
+
+  if (bodyIndex > -1) {
+    var bodToDelete = Globals.bodyConstants[bodyIndex];
+    Globals.bodyConstants.splice(bodyIndex, 1);
+
+    var len = Globals.keyframeStates.length;
+    for (var i = 0; i < len; i++) {
+      Globals.keyframeStates[i].splice(bodyIndex, 1);
+    }
+
+    Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
+    Globals.selectedBody = false;
+
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      Globals.bodyConstants.splice(bodToDelete.parent, 1);
+      len = Globals.keyframeStates.length;
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.parent, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.parent]);
+    } else if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      Globals.bodyConstants.splice(bodToDelete.child - 1, 1);
+      len = Globals.keyframeStates.length;
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.child - 1, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.child - 1]);
+    }
+
+    len = Globals.bodyConstants.length;
+    var decSize = 1;
+    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      decSize = 2;
+    }
+
+    for (i = bodyIndex - 1; i < len; i++) {
+      bod = Globals.bodyConstants[i];
+      if (bod.ctype.indexOf("spring-child") !== -1) {
+        bod.parent -= decSize;
+      } else if (bod.ctype.indexOf("spring") !== -1) {
+        bod.child -= decSize;
+      }
+    }
+
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedTo !== undefined && bod.attachedTo === bodyIndex) {
+         delete bod.attachedTo;
+        }
+      }
+    }
+
+    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedTo !== undefined && bod.attachedTo === bodyIndex + 1) {
+         delete bod.attachedTo;
+        }
+      }
+    }
+
+    if (bodToDelete.ctype.indexOf("mass") !== -1) {
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
+         delete bod.attachedBody;
+        }
+      }
+    }
+
+    simulate();
+    drawMaster();
+    populateOverview();
+  }
 }
 
 function selectBody(bodyIndex, switchTab){
