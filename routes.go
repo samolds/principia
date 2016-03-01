@@ -26,8 +26,6 @@ func init() {
 	// Simulators
 	router.HandleFunc("/simulator", simulator.BrowseHandler)
 	router.HandleFunc("/simulator/browse", simulator.BrowseHandler)
-	router.HandleFunc("/simulator/sandbox", simulator.NewSandboxHandler)
-	router.HandleFunc("/simulator/sandbox/{simulationID:[0-9]+}", simulator.EditSandboxHandler)
 	router.HandleFunc("/simulator/kinematics", simulator.NewKinematicsHandler)
 	router.HandleFunc("/simulator/kinematics/{simulationID:[0-9]+}", simulator.EditKinematicsHandler)
 

@@ -69,8 +69,7 @@ function handleUIDragStop(event, ui){
 }
 
 // Event fired when user is done dragging component from toolbox
-function handleDragStop(event, ui){
-  if(!Globals.canAdd()) return;
+function handleDragStop(event, ui){  
   var type = ui.helper[0].getAttribute("component");
 
   // Left and top of helper img
@@ -103,12 +102,12 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
+  
   // Update keyframe variable if the selected frame is also a keyframe
-  if(Globals.useKeyframes)
-    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
   
   // Highlight mini canvas
-  if(Globals.keyframe === 0 || Globals.keyframe)
+  if(Globals.keyframe !== false)
   {    
     $("#" + "keyframe-" + Globals.keyframe).attr("style","border:4px solid #0000cc");
   }
@@ -131,16 +130,12 @@ function toggleSimulator(){
   
   // Set frame delay based on total number of delays.
   // TODO: Consider having the user specify this via global options
-  if(Globals.totalFrames <= 20) Globals.delay = 25;
-  else if(Globals.totalFrames <= 50) Globals.delay = 25;
-  else if(Globals.totalFrames <= 1000) Globals.delay = 25;
-  else Globals.delay = 25;
+  Globals.delay = 25;
   
   if (Globals.running) {
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
     $("#play-pause-icon").removeClass("fa-play")
-    $("#play-pause-icon").addClass("fa-pause")
-    Globals.selectedKeyframe = false;
+    $("#play-pause-icon").addClass("fa-pause")    
   } 
   else {
     clearInterval(Globals.anim);
@@ -160,32 +155,30 @@ function toggleSimulator(){
 // Handler for clicking a mini canvas and setting state to that keyframe
 function selectKeyframe(event){
 	var frame = event.target.id.split("-")[1];
-	Globals.keyframe = parseInt(frame);
+	Globals.keyframe = parseInt(frame);  
+  highlightKeycanvas(frame);
   
-  for(var i = 0; i<Globals.numKeyframes; i++)
+  if(Globals.timelineReady)
   {
-    //remove highlight
-    $("#" + "keyframe-"+i).attr("style","");
+    Globals.frame = Globals.keyframes[Globals.keyframe];
+    $("#simulatorFrameRange").val(Globals.frame);
   }
-  //add highlight
-  $("#" + event.target.id).attr("style","border:4px solid #0000cc");
 
- //TODO: handle transparent for general case
-  // if(frame == 0){
-  //   for(var i=0; i<Globals.world.getBodies().length; i++)
-  //     if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
-  //       delete Globals.bodyConstants[i].alpha;
-  //     else
-  //       Globals.bodyConstants[i].alpha = 0.5;
-  // }
-  // else{
-  //   for(var i=0; i<Globals.world.getBodies().length; i++)
-  //     if(!isNaN(Globals.variableMap[i].xf) && !isNaN(Globals.variableMap[i].yf))
-  //       delete Globals.bodyConstants[i].alpha;
-  //     else
-  //       Globals.bodyConstants[i].alpha = 0.5;
-  // }
-   
+  // Handle assigning transparency to objects with unknown positions
+  var variables = Globals.variableMap;
+  for(var i=0; i < Globals.world.getBodies().length; i++)
+  {
+    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy))
+    {
+      if(Globals.bodyConstants[i].alpha)
+        delete Globals.bodyConstants[i].alpha;
+    }
+    else
+    {
+      Globals.bodyConstants[i].alpha = 0.5;  
+    }
+  }
+  
   // Draw master will set state appropriately and display it
 	drawMaster();
 }
@@ -306,7 +299,7 @@ function addKeyframe(){
 function removeKeyframe(event){
   var eventFrame = event.target;  
   
-  var index = parseInt(eventFrame.parentNode.id.split("-")[2]) - 1;
+  var index = parseInt(eventFrame.parentNode.id.split("-")[2]);
   
   // Shift keyframe times, states, indices, variableMap
   Globals.variableMap.splice(index, 1);

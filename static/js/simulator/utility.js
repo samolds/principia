@@ -122,3 +122,14 @@ function getLabel(body)
 {
   return 1;
 }
+
+function lastKF()
+{
+  for(var frame = Globals.frame; frame >= 0; frame--)
+  {
+    var keyframe = ($.inArray(frame, Globals.keyframes) != -1)? kIndex(frame): false;
+    
+    if(keyframe !== false)
+      return keyframe;
+  }
+}

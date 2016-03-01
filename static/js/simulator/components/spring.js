@@ -124,8 +124,8 @@ function attachSpring(body){
     
     if(distance(body.state.pos.x, body.state.pos.y, attachBody.state.pos.x, attachBody.state.pos.y) <= delta){
       if(body2Constant(body).ctype == "kinematics1D-mass" && body2Constant(attachBody).ctype == "kinematics1D-spring-child"){
-        body2Constant(attachBody).attachedBody = bodies.indexOf(body);
-        body2Constant(body).attachedTo = bodies.indexOf(attachBody);
+        body2Constant(attachBody).attachedBody = bIndex(body);
+        body2Constant(body).attachedTo = bIndex(attachBody);
         
         kState[i].pos.x = attachBody.state.pos.x;
         kState[i].pos.y = attachBody.state.pos.y;
