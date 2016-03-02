@@ -165,7 +165,7 @@ function refreshCommentsList() {
       }
     }
 
-    if (json === null || json.length === 0) {
+    if ((json === null || json.length === 0) && GlobalKeyNames.User === "") {
       $("#comments-frag").hide();
     }
 
