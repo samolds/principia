@@ -111,8 +111,11 @@ $(document).ready(function(){
   $('#ramp-properties-angle').on("change", function(){ updatePropertyRedraw('angle', $('#ramp-properties-angle').val()); });
   
   // Event for clicking solve button
-  $('#solve-btn').on('click', function() {     
-    attemptSimulation();
+  $('#playpause').on('click', function() {
+    if (Globals.keyframeStates.length > 1 && !Globals.timelineReady) {
+      attemptSimulation();
+    }
+    toggleSimulator();
     
     // Update format of solution details
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);

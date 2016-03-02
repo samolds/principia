@@ -16,7 +16,9 @@
       <h4>
         <a class="waves-effect waves-light btn-floating red darken-1" id="delete-button"
         onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
-        <i class="fa fa-remove"></i></a></h4>
+          <i class="fa fa-remove"></i>
+        </a>
+      </h4>
     </div>
     {{ end }}
     <div class="col s1 right pad-sides">
@@ -122,7 +124,7 @@
 
         <!-- Properties that apply to all components -->
         <ul class="property-window-list hide" id="general-properties">
-          <li class="property-item-long">
+          <li class="property-item">
             <div class="input-field">
               <input type="text" id="general-properties-nickname" placeholder=""></input>
               <label for="general-properties-nickname" class="active">Nickname</label>
@@ -130,13 +132,18 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="general-properties-position-x" placeholder=""></input>
+              <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()">Remove <i class="fa fa-trash"></i></a>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="general-properties-position-x" placeholder="" title="Enter a number"></input>
               <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="general-properties-position-y" placeholder=""></input>
+              <input type="number" id="general-properties-position-y" placeholder="" title="Enter a number"></input>
               <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
             </div>
           </li>
@@ -146,31 +153,31 @@
         <ul class="property-window-list hide" id="pointmass-properties">
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-x" placeholder=""></input>
+              <input type="number" id="pointmass-properties-velocity-x" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-y" placeholder=""></input>
+              <input type="number" id="pointmass-properties-velocity-y" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-x" placeholder=""></input>
+              <input type="number" id="pointmass-properties-acceleration-x" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-y" placeholder=""></input>
+              <input type="number" id="pointmass-properties-acceleration-y" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="pointmass-properties-mass" placeholder=""></input>
+              <input type="number" id="pointmass-properties-mass" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-mass" class="active">Mass</label>
             </div>
           </li>
@@ -233,19 +240,19 @@
         <ul class="property-window-list hide" id="ramp-properties">
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="ramp-properties-width" placeholder=""></input>
+              <input type="number" id="ramp-properties-width" placeholder="" title="Enter a number"></input>
               <label for="ramp-properties-width" class="active">Width</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="ramp-properties-height" placeholder=""></input>
+              <input type="number" id="ramp-properties-height" placeholder="" title="Enter a number"></input>
               <label for="ramp-properties-height" class="active">Height</label>
             </div>
           </li>
           <li class="property-item">
             <div class="input-field">
-              <input type="number" id="ramp-properties-angle" placeholder=""></input>
+              <input type="number" id="ramp-properties-angle" placeholder="" title="Enter a number"></input>
               <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
             </div>
           </li>
@@ -259,11 +266,11 @@
         <h5 class="pad-sides">Global Properties</h5>
         <div class="row">
           <div class="input-field col s6">
-            <input type="number" id="glob-xaccel" placeholder=""></input>
+            <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
             <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
           </div>
           <div class="input-field col s6">
-            <input type="number" id="glob-yaccel" placeholder=""></input>
+            <input type="number" id="glob-yaccel" placeholder="" title="Enter a number"></input>
             <label for="glob-yaccel" class="active">Vertical Acceleration</label>
           </div>
         </div>
@@ -309,11 +316,11 @@
           </div>
 
           <div class="input-field col s4">
-            <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
+            <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-xorigin" class="active">Origin X</label>
           </div>
           <div class="input-field col s4">
-            <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
+            <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-yorigin" class="active">Origin Y</label>
           </div>
         </div>
@@ -349,7 +356,7 @@
 <div class="row">
   <div class="col s1">
     <div class="help-tooltip-container">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
         <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
       </button>
       <div id="help-tooltip-play" class="help-tooltip card">
