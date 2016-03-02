@@ -9,7 +9,7 @@ function addMass(data){
   var bodyConstants = Globals.bodyConstants;
   var variableMap = Globals.variableMap;
   
-  // Default image: use Principia logo. Can be changed from select element.
+  // Default image: use pointmass image. Can be changed from select element.
   var img = document.createElement("img");
   img.setAttribute("src", "/static/img/toolbox/mass.png");
   img.setAttribute("width", "50");

@@ -12,17 +12,24 @@ function addPulley(data){
 
   // Default radius
   var dRadius = 50;  
+
+  // Default image: use pointmass image. Can be changed from select element.
+  var img = document.createElement("img");
+  img.setAttribute("src", "/static/img/toolbox/pulley.png");
+  img.setAttribute("width", "100");
+  img.setAttribute("height", "100");
   
   // Generate the primary component (equilibrium point) and its child (point stretched to)
   // Note that 'ghost' is a new treatment that ignores collisions
   var component = Physics.body('circle', {
               treatment:"ghost",
               x: data.x,
-              y: data.y,           
+              y: data.y,
               radius: dRadius,
+              view: img,
               styles: {
-                fillStyle: '#6c71c4',
-                angleIndicator: '#3b3e6b'
+                fillStyle: '#4d4d4d',
+                angleIndicator: '#ffffff'
               }
             });
 
@@ -50,6 +57,9 @@ function addPulley(data){
   bodyConstants[bodyConstants.length-1].vectors = false;
 
   bodyConstants[bodyConstants.length-1].nickname = "pulley " + (getLabel(component));
+
+  bodyConstants[bodyConstants.length-1].img = "/static/img/toolbox/pulley.png";
+  bodyConstants[bodyConstants.length-1].size = dRadius;
   
   updateKeyframes([component]);
   
@@ -112,8 +122,9 @@ function attachPulley(body){
 
 // Applies pulley physics to the specified state object using specified pulley.
 // Assumes that the caller has already identified 'state' as being attached to the pulley.
-function applyPulley(pulley, state)
+function applyPulley(pulley, state, consts)
 {
+  var bodies = Globals.world.getBodies();
   var pulleyConsts = body2Constant(pulley);
         
   // Make sure pulley has two bodies attached before applying special rules
@@ -148,8 +159,8 @@ function applyPulley(pulley, state)
       pulley_a = 0;
       pulley.state.angular.vel = 0;
       
-      Globals.world.getBodies()[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
-      Globals.world.getBodies()[pulleyConsts.attachedBodyRight].state.vel.y = 0;            
+      bodies[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
+      bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
     }
        
     // Add effect of pulley

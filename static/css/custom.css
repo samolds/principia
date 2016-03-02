@@ -401,9 +401,8 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
 
 /* solution details box */
 .solution-details-container {
-  background-color: #e0e0e0;
   height: 300px;
-  width: 600px;
+  overflow: auto;
 }
 
 /* Profile Page */

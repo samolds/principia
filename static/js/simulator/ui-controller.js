@@ -543,7 +543,122 @@ function populateOverview(e) {
 }
 
 function deleteBody(bodyIndex){
-  console.log("Body " + bodyIndex + "deleted!");
+  // If called without a parameter, get the index of the currently selected body
+  if (bodyIndex === undefined) {
+    bodyIndex = bIndex(Globals.selectedBody);
+  }
+
+  // Make sure there is a valid index selected to attempt to delete
+  if (bodyIndex > -1) {
+    // Get the body constants to delete and remove it from bodyConstants
+    var bodToDelete = Globals.bodyConstants[bodyIndex];
+    Globals.bodyConstants.splice(bodyIndex, 1);
+
+    // Remove the body from all of the keyframes
+    var len = Globals.keyframeStates.length;
+    for (var i = 0; i < len; i++) {
+      Globals.keyframeStates[i].splice(bodyIndex, 1);
+    }
+
+    // Remove the body from the physicsjs world and deselect it
+    Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
+    Globals.selectedBody = false;
+
+    // Begin Spring and Pulley specific logic!
+
+    // We already deleted one of the ends of the spring, but now we
+    // have to delete the other end
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      // Delete the parent of the child spring that was just deleted from
+      // bodyConstants, the keyframes, and the physicsjs world
+      Globals.bodyConstants.splice(bodToDelete.parent, 1);
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.parent, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.parent]);
+    } else if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      // Delete the child of the parent spring that was just deleted from
+      // bodyConstants, the keyframes, and the physicsjs world
+      Globals.bodyConstants.splice(bodToDelete.child - 1, 1);
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.child - 1, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.child - 1]);
+    }
+
+    // We need to update the indexes of referenced components in the list of all
+    // of the remaining body constants. If the deleted body was a spring, we have
+    // to decrement the referenced index by 2, otherwise we just decrement it by 1
+    len = Globals.bodyConstants.length;
+    var decSize = 1;
+    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      decSize = 2;
+    }
+
+    // We want to update the referring indices of all of the components after the
+    // one that was deleted, unless it was a spring child, then we'll need to step
+    // back a step since the child and previous parent will have been deleted
+    var startIndex = bodyIndex;
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      startIndex--;
+    }
+
+    // Loop through all bodies after the deleted body to update any indices that
+    // reference changed index
+    for (i = startIndex; i < len; i++) {
+      bod = Globals.bodyConstants[i];
+      if (bod.ctype.indexOf("spring-child") !== -1) {
+        bod.parent -= decSize;
+      } else if (bod.ctype.indexOf("spring") !== -1) {
+        bod.child -= decSize;
+      }
+    }
+
+    // If the component deleted was a spring or pulley, we need to loop through
+    // any of the existing components to check if any of them were attached to
+    // the spring or pulley. If they were we need to delete the reference
+    if (bodToDelete.ctype.indexOf("spring") !== -1 || bodToDelete.ctype.indexOf("pulley") !== -1) {
+      // For Springs get the actual reference if it was
+      // the parent or child spring node that was deleted
+      var refToDelete = bodyIndex;
+      if (bodToDelete.child !== undefined) {
+        refToDelete = bodToDelete.child;
+      }
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedTo !== undefined && bod.attachedTo === refToDelete) {
+         delete bod.attachedTo;
+        }
+      }
+    }
+
+    // If the component deleted was a pointmass, we need to loop through all of the
+    // remaining components (specifically any springs) to check to see if any of the
+    // springs were attached to this pointmass. If they were we delete the reference
+    if (bodToDelete.ctype.indexOf("mass") !== -1) {
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
+         delete bod.attachedBody;
+        }
+        // For Pulleys
+        if (bod.attachedBodyLeft !== undefined && bod.attachedBodyLeft === bodyIndex) {
+         delete bod.attachedBodyLeft;
+         bod.left_open = true;
+        }
+        if (bod.attachedBodyRight !== undefined && bod.attachedBodyRight === bodyIndex) {
+         delete bod.attachedBodyRight;
+         bod.right_open = true;
+        }
+      }
+    }
+    // End Spring and Pulley specific logic!
+
+    simulate();
+    drawMaster();
+    updateKeyframes();
+    populateOverview();
+  }
 }
 
 function selectBody(bodyIndex, switchTab){
