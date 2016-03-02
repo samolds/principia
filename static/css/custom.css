@@ -224,8 +224,7 @@ body {
   vertical-align: auto;
 }
 
-.delete-kf-btn{
-  cursor: pointer;
+.delete-kf-btn {
   visibility: hidden;
   margin: 0px;
   padding: 0px;
@@ -391,7 +390,11 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   .toolbox-item-container {
     width: 100px;
     height: 100px;
-    background-color: #f5f5f5;
+    background-color: #b9f6ca;
+  }
+
+  .toolbox-item-container:hover {
+    background-color: #69f0ae;
   }
 
   .toolbox-item {
@@ -429,6 +432,10 @@ i.fa.fa-size-small {
 
 i.fa.fa-size-medium {
   font-size: 2em;
+}
+
+i.fa.fa-size-large {
+  font-size: 3em;
 }
 /* end font awesome size change */
 
@@ -486,7 +493,56 @@ i.fa.fa-size-medium {
 
 .fa-lg-custom {
   font-size: 1.33333em;
-  /* Covers all browsers */
+}
+
+.clickable {
   cursor: pointer;
   cursor: hand;
+}
+
+#help-tooltips {
+  padding-left: 14px;
+}
+
+.help-tooltip-container {
+  position: relative;
+}
+
+.help-tooltip {
+  display: none;
+  position: absolute;
+  color: #000000;
+  background-color: #ffd54f;
+  padding: 5px 5px;
+  z-index: 15;
+  white-space: normal;
+}
+
+.help-tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+#help-tooltip-properties {
+  top: -85px;
+  right: 25px;
+  width: 275px;
+}
+
+#help-tooltip-toolbox {
+  top: 310px;
+  right: 75px;
+  width: 200px;
+}
+
+#help-tooltip-simulator {
+  top: 200px;
+  left: 200px;
+  width: 300px;
+}
+
+#help-tooltip-play {
+  top: -15px;
+  left: 40px;
+  width: 300px;
 }
