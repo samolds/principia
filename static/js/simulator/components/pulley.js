@@ -122,7 +122,7 @@ function attachPulley(body){
 
 // Applies pulley physics to the specified state object using specified pulley.
 // Assumes that the caller has already identified 'state' as being attached to the pulley.
-function applyPulley(pulley, state)
+function applyPulley(pulley, state, consts)
 {
   var bodies = Globals.world.getBodies();
   var pulleyConsts = body2Constant(pulley);
@@ -141,11 +141,11 @@ function applyPulley(pulley, state)
     var pulley_a = (m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
 
     // Ready to accelerate up, reverse direction if this is the heavier mass
-    if(pulley_a < 0 && (pulleyConsts.mass == m1 && m1 > m2) || (pulleyConsts.mass == m2 && m2 > m1) )
+    if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
       pulley_a *= -1;
 
     // Ready to accelerate down, reverse direction if this is the lighter mass
-    if(pulley_a > 0 && (pulleyConsts.mass == m1 && m1 < m2) || (pulleyConsts.mass == m2 && m2 < m1) )
+    if(pulley_a > 0 && (consts.mass == m1 && m1 < m2) || (consts.mass == m2 && m2 < m1) )
       pulley_a *= -1;
        
     // Just for fun, animate the pulley spinning
