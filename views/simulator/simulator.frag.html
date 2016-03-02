@@ -66,273 +66,301 @@
     {{ end }}
   {{ end }}
 </div>
+<!---------- End Title above simulator window ---------->
+
+<a id="help-tooltips" class="clickable"><i class="fa fa-question fa-size-medium"></i></a>
 
 <!---------- Simulator and property window  ---------->
 <div class="row">
-
   <!-- Simulator -->
   <div class="col s8">
     <!-- This div has to have the id "viewport" for PhysicsJS to render here -->
     <div style="height: 500px;" id="viewport" class="white card"></div>
   </div>
 
-
   <!-- Property Window -->
   <div class="col s4 card scrollable-tools" style="height: 500px;">
-    <!-- Tabs -->
-    <ul class="tabs">
-      <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
-      <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
-      <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
-      <li class="tab col s4 "><a class="property-tab blue-text valign" href="#overview" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></a></li>
+    <div class="help-tooltip-container">
+      <!-- Tabs -->
+      <ul id="property-tabs" class="tabs">
+        <li class="tab col s4 valign-wrapper"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
+        <li class="tab col s4"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
+        <li class="tab col s4"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
+        <li class="tab col s4 "><a class="property-tab blue-text valign" href="#overview" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></a></li>
 
-      <div class="indicator blue" style="z-index: 1;"></div>
-    </ul>
+        <div class="indicator blue" style="z-index: 1;"></div>
+      </ul>
 
-    <!-- Toolbox -->
-    <div id="toolbox">
-      <div class="center-align">
-        <h5 class="pad-sides">Toolbox</h5>
-        <ul class="property-window-list">
-          <li class="toolbox-item-container valign-wrapper">
-            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
-          </li>
-          <li class="toolbox-item-container valign-wrapper">
-            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
-          </li>
-          <li class="toolbox-item-container valign-wrapper">
-            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
-          </li>
-          <li class="toolbox-item-container valign-wrapper">
-            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley">
-          </li>
-          <li class="toolbox-item-container valign-wrapper">
-            <img class="toolbox-item draggable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope">
-          </li>
-        </ul>
+      <!-- Toolbox -->
+      <div class="help-tooltip-container">
+        <div id="toolbox">
+          <div class="center-align">
+            <h5 class="pad-sides">Toolbox</h5>
+            <ul class="property-window-list">
+              <li class="toolbox-item-container valign-wrapper" title="Point Mass">
+                <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+              </li>
+              <li class="toolbox-item-container valign-wrapper" title="Ramp">
+                <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
+              </li>
+              <li class="toolbox-item-container valign-wrapper" title="Spring">
+                <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
+              </li>
+              <li class="toolbox-item-container valign-wrapper" title="Pulley">
+                <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley"/>
+              </li>
+              <li class="toolbox-item-container valign-wrapper" title="Rope">
+                <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope"/>
+              </li>
+            </ul>
+          </div>
+          <div class="clear"></div>
+          <div id="help-tooltip-toolbox" class="help-tooltip card">
+            <p>Drag any of the desired components above into the simulator!</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Properties window for each element -->
-    <div id="elementprops">
-      <div class="center-align">
-        <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
+      <!-- Properties window for each element -->
+      <div id="elementprops">
+        <div class="center-align">
+          <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
 
-        <!-- Properties that apply to all components -->
-        <ul class="property-window-list hide" id="general-properties">
-          <li class="property-item-long">
-            <div class="input-field">
-              <input type="text" id="general-properties-nickname" placeholder=""></input>
-              <label for="general-properties-nickname" class="active">Nickname</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="general-properties-position-x" placeholder=""></input>
-              <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="general-properties-position-y" placeholder=""></input>
-              <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
-            </div>
-          </li>
-        </ul>
-
-        <!-- Properties that apply to point mass components -->
-        <ul class="property-window-list hide" id="pointmass-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-x" placeholder=""></input>
-              <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-y" placeholder=""></input>
-              <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-x" placeholder=""></input>
-              <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-y" placeholder=""></input>
-              <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-mass" placeholder=""></input>
-              <label for="pointmass-properties-mass" class="active">Mass</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="text" id="pointmass-properties-size" placeholder=""></input>
-              <label for="pointmass-properties-size" class="active">Size</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <select id="pointmass-properties-img" class="browser-default">
-                <option disabled>Display As:</option>
-                <option value="0" selected="selected">Mass</option>
-                <option value="1">Weight</option>
-                <option value="2">Car</option>
-                <option value="3">Sail Boat</option>
-                <option value="4">Speed Boat</option>
-                <option value="5">Mascot</option>
-                <option value="6">Dart</option>
-                <option value="7">Jogger</option>
-                <option value="8">Dalton</option>
-                <option value="9">Danny</option>
-                <option value="10">Matthew</option>
-                <option value="11">Sam</option>
-                <option value="12">Logo</option>
-              </select>
-              <label for="pointmass-properties-img" class="active">Display As</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <span>Vectors</span>
-              <div class="switch">
-                <label>
-                  Off
-                  <input id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
-                  <span class="lever"></span>
-                  On
-                </label>
+          <!-- Properties that apply to all components -->
+          <ul class="property-window-list hide" id="general-properties">
+            <li class="property-item-long">
+              <div class="input-field">
+                <input type="text" id="general-properties-nickname" placeholder=""></input>
+                <label for="general-properties-nickname" class="active">Nickname</label>
               </div>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <span>PVA Graph</span>
-              <div class="switch">
-                <label>
-                  Off
-                  <input id="pointmass-properties-pvagraph" type="checkbox"></input>
-                  <span class="lever"></span>
-                  On
-                </label>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="general-properties-position-x" placeholder=""></input>
+                <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
               </div>
-            </div>
-          </li>
-        </ul>
-
-        <!-- Ramp properties! -->
-        <ul class="property-window-list hide" id="ramp-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-width" placeholder=""></input>
-              <label for="ramp-properties-width" class="active">Width</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-height" placeholder=""></input>
-              <label for="ramp-properties-height" class="active">Height</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-angle" placeholder=""></input>
-              <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Hideable global properties window for each element -->
-    <div id="globalprops">
-      <div class="center-align">
-        <h5 class="pad-sides">Global Properties</h5>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="glob-xaccel" placeholder=""></input>
-            <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="number" id="glob-yaccel" placeholder=""></input>
-            <label for="glob-yaccel" class="active">Vertical Acceleration</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <select id="coord-sys" class="browser-default">
-              <option disabled>Coordinate System:</option>
-              <option value="cartesian" selected="selected">Cartesian</option>
-              <option value="polar" >Polar</option>
-            </select>
-            <label for="coord-sys" class="active">Coordinate System</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <select id="glob-length-unit" class="browser-default">
-              <option disabled>Length Unit</option>
-              <option value="1000.0" >Millimeters</option>
-              <option value="100.0" >Centimeters</option>
-              <option value="1.0" selected="selected">Meters</option>
-              <option value="0.001" >Kilometers</option>
-              <option value="39.3701" >Inches</option>
-              <option value="3.28084" >Feet</option>
-              <option value="1.09361" >Yards</option>
-              <option value="0.000621371" >Miles</option>
-            </select>
-            <label for="glob-length-unit" class="active">Length Unit</label>
-          </div>
-          <div class="input-field col s6">
-            <select id="glob-time-unit" class="browser-default">
-              <option disabled>Time Unit</option>
-              <option value="1000.0" >Milliseconds</option>
-              <option value="1.0" selected="selected">Seconds</option>
-              <option value="0.01666666667" >Minutes</option>
-              <option value="0.00027777778" >Hours</option>              
-            </select>
-            <label for="glob-time-unit" class="active">Time Unit</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s4 toolbox-item-container valign-wrapper">
-            <img class="toolbox-item ui-draggable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
-          </div>
-
-          <div class="input-field col s4">
-            <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
-            <label for="glob-xorigin" class="active">Origin X</label>
-          </div>
-          <div class="input-field col s4">
-            <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
-            <label for="glob-yorigin" class="active">Origin Y</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  <div id="overview">
-      <div class="center-align">
-        <h5 class="pad-sides">Scene Overview</h5>
-        <div class="row" >
-          <ul id ="overview-list">
-            
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="general-properties-position-y" placeholder=""></input>
+                <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
+              </div>
+            </li>
           </ul>
 
-        </div>    
+          <!-- Properties that apply to point mass components -->
+          <ul class="property-window-list hide" id="pointmass-properties">
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="pointmass-properties-velocity-x" placeholder=""></input>
+                <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="pointmass-properties-velocity-y" placeholder=""></input>
+                <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="pointmass-properties-acceleration-x" placeholder=""></input>
+                <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="pointmass-properties-acceleration-y" placeholder=""></input>
+                <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="pointmass-properties-mass" placeholder=""></input>
+                <label for="pointmass-properties-mass" class="active">Mass</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="text" id="pointmass-properties-size" placeholder=""></input>
+                <label for="pointmass-properties-size" class="active">Size</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <select id="pointmass-properties-img" class="browser-default">
+                  <option disabled>Display As:</option>
+                  <option value="0" selected="selected">Mass</option>
+                  <option value="1">Weight</option>
+                  <option value="2">Car</option>
+                  <option value="3">Sail Boat</option>
+                  <option value="4">Speed Boat</option>
+                  <option value="5">Mascot</option>
+                  <option value="6">Dart</option>
+                  <option value="7">Jogger</option>
+                  <option value="8">Dalton</option>
+                  <option value="9">Danny</option>
+                  <option value="10">Matthew</option>
+                  <option value="11">Sam</option>
+                  <option value="12">Logo</option>
+                </select>
+                <label for="pointmass-properties-img" class="active">Display As</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <span>Vectors</span>
+                <div class="switch">
+                  <label>
+                    Off
+                    <input id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
+                    <span class="lever"></span>
+                    On
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <span>PVA Graph</span>
+                <div class="switch">
+                  <label>
+                    Off
+                    <input id="pointmass-properties-pvagraph" type="checkbox"></input>
+                    <span class="lever"></span>
+                    On
+                  </label>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <!-- Ramp properties! -->
+          <ul class="property-window-list hide" id="ramp-properties">
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="ramp-properties-width" placeholder=""></input>
+                <label for="ramp-properties-width" class="active">Width</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="ramp-properties-height" placeholder=""></input>
+                <label for="ramp-properties-height" class="active">Height</label>
+              </div>
+            </li>
+            <li class="property-item">
+              <div class="input-field">
+                <input type="number" id="ramp-properties-angle" placeholder=""></input>
+                <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
+
+      <!-- Hideable global properties window for each element -->
+      <div id="globalprops">
+        <div class="center-align">
+          <h5 class="pad-sides">Global Properties</h5>
+          <div class="row">
+            <div class="input-field col s6">
+              <input type="number" id="glob-xaccel" placeholder=""></input>
+              <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
+            </div>
+            <div class="input-field col s6">
+              <input type="number" id="glob-yaccel" placeholder=""></input>
+              <label for="glob-yaccel" class="active">Vertical Acceleration</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <select id="coord-sys" class="browser-default">
+                <option disabled>Coordinate System:</option>
+                <option value="cartesian" selected="selected">Cartesian</option>
+                <option value="polar" >Polar</option>
+              </select>
+              <label for="coord-sys" class="active">Coordinate System</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <select id="glob-length-unit" class="browser-default">
+                <option disabled>Length Unit</option>
+                <option value="1000.0" >Millimeters</option>
+                <option value="100.0" >Centimeters</option>
+                <option value="1.0" selected="selected">Meters</option>
+                <option value="0.001" >Kilometers</option>
+                <option value="39.3701" >Inches</option>
+                <option value="3.28084" >Feet</option>
+                <option value="1.09361" >Yards</option>
+                <option value="0.000621371" >Miles</option>
+              </select>
+              <label for="glob-length-unit" class="active">Length Unit</label>
+            </div>
+            <div class="input-field col s6">
+              <select id="glob-time-unit" class="browser-default">
+                <option disabled>Time Unit</option>
+                <option value="1000.0" >Milliseconds</option>
+                <option value="1.0" selected="selected">Seconds</option>
+                <option value="0.01666666667" >Minutes</option>
+                <option value="0.00027777778" >Hours</option>
+              </select>
+              <label for="glob-time-unit" class="active">Time Unit</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s4 toolbox-item-container valign-wrapper">
+              <img class="toolbox-item ui-draggable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
+            </div>
+
+            <div class="input-field col s4">
+              <input type="number" id="glob-xorigin" placeholder="" value="0"></input>
+              <label for="glob-xorigin" class="active">Origin X</label>
+            </div>
+            <div class="input-field col s4">
+              <input type="number" id="glob-yorigin" placeholder="" value="0"></input>
+              <label for="glob-yorigin" class="active">Origin Y</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview with a dynamically populated list of all active elements -->
+      <div id="overview">
+        <div class="center-align">
+          <h5 class="pad-sides">Scene Overview</h5>
+          <div class="row" >
+            <ul id ="overview-list"></ul>
+          </div>
+        </div>
+      </div>
+      <div id="help-tooltip-simulator" class="help-tooltip card">
+        <p>Drag any component from the toolbox into the simulator, select it, give it some velocity, then click play!</p>
+      </div>
+      <div id="help-tooltip-properties" class="help-tooltip card">
+        <p>Navigate between the Toolbox, the Element Properties, the Global Properties, and the Overview panels.</p>
+      </div>
+    </div>
   </div>
-    
+</div>
+<!---------- End Simulator and property window  ---------->
 
 
-
+<!-- Play button and slider -->
+<div class="row">
+  <div class="col s1">
+    <div class="help-tooltip-container">
+      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
+        <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+      </button>
+      <div id="help-tooltip-play" class="help-tooltip card">
+        <p>Click play or scrub to a specific frame with the slider!</p>
+      </div>
+    </div>
+  </div>
+  <div class="col s11">
+    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
   </div>
 </div>
 
@@ -341,21 +369,6 @@
   <div id="pvaGraphContainer" class="col s12">
     <div id="positionGraph"></div>
     <div id="vaGraph"></div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <div class="row">
-      <div class="col s1">
-        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" onclick="toggleSimulator()" id="playpause">
-          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
-        </button>
-      </div>
-      <div class="col s11">
-        <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-      </div>
-    </div>
   </div>
 </div>
 

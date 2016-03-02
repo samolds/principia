@@ -138,6 +138,8 @@ $(document).ready(function(){
   // Events for handling changing the unit
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
+
+  $('#help-tooltips').on("click", function() { displayTooltips(); });
   
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();
