@@ -526,7 +526,7 @@ function populateOverview(e) {
     }
      $list.append(
     "<li >" +
-      "<div class ='row'>"+
+      "<div class ='row clickable'>"+
        "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
