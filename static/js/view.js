@@ -4,18 +4,25 @@ $(document).ready(function(){
 });
 
 function displayTooltips() {
-  window.location.hash = '#help-tooltips';
+  var tooltipToggle = $('#help-tooltips').children();
 
-  if ($('#help-tooltip-simulator').css('display') === 'none') {
+  if (tooltipToggle.hasClass('fa-question')) {
+    // Scroll to 20px above the tooltip toggle
+    window.scroll(0, (tooltipToggle.position().top - 50))
+
+    $('#toolbox-tab').click();
     $('#help-tooltip-simulator').show();
     $('#help-tooltip-properties').show();
-    $('#toolbox-tab').click();
     $('#help-tooltip-toolbox').show();
     $('#help-tooltip-play').show();
+    tooltipToggle.removeClass('fa-question');
+    tooltipToggle.addClass('fa-times');
   } else {
     $('#help-tooltip-simulator').hide();
     $('#help-tooltip-properties').hide();
     $('#help-tooltip-toolbox').hide();
     $('#help-tooltip-play').hide();
+    tooltipToggle.removeClass('fa-times');
+    tooltipToggle.addClass('fa-question');
   }
 }
