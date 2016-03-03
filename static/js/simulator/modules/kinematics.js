@@ -13,7 +13,7 @@ function initWorld() {
       var edgeBounce;
       var renderer;
       var integrator;    
-      world.timestep(0.1); // TODO: should base timestep on dt option
+      world.timestep(0.5); // TODO: should base timestep on dt option
             
       // create a renderer
       renderer = Physics.renderer('canvas', {el: canvasId});
