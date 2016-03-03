@@ -15,6 +15,7 @@ function displayTooltips() {
     $('#help-tooltip-properties').show();
     $('#help-tooltip-toolbox').show();
     $('#help-tooltip-play').show();
+    $('#help-tooltip-keyframes').show();
     tooltipToggle.removeClass('fa-question');
     tooltipToggle.addClass('fa-times');
   } else {
@@ -22,6 +23,7 @@ function displayTooltips() {
     $('#help-tooltip-properties').hide();
     $('#help-tooltip-toolbox').hide();
     $('#help-tooltip-play').hide();
+    $('#help-tooltip-keyframes').hide();
     tooltipToggle.removeClass('fa-times');
     tooltipToggle.addClass('fa-question');
   }
