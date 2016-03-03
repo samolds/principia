@@ -75,8 +75,7 @@ function initWorld() {
   
   world.on('interact:move', function( data ){
     if(data.body) {
-      if(!Globals.canEdit()) return;
-      
+            
       if(bIndex(data.body) === Globals.originObject)
       {
         Globals.origin = [data.x, data.y];
@@ -85,7 +84,7 @@ function initWorld() {
       }
       
       Globals.didMove = true;
-      onPropertyChanged("posx", data.x);
+      onPropertyChanged("posx", data.x);          
       onPropertyChanged("posy", data.y);
       drawMaster();
     }
@@ -97,40 +96,42 @@ function initWorld() {
         
         // Make move as complete
         Globals.didMove = false;
-        
-        // Update keyframe
-        var kStates = Globals.keyframeStates[Globals.keyframe];
-        var i = bIndex(data.body);
+
+        // Resimulate if there is only one keyframe
         onPropertyChanged("posx", data.x);
-        onPropertyChanged("posy", data.y);       
+        onPropertyChanged("posy", data.y);
+        
+        if(Globals.bodyConstants[bIndex(data.body)].ctype == "kinematics1D-mass")
+        {
+          attachSpring(data.body);
+          detachSpring(data.body);
+          attachPulley(data.body);
+        }
+
+        drawMaster();
     }
   });
   
-      world.on('interact:poke', function( data ){        
-        Globals.selectedBody = false;
-        document.getElementById("toolbox-tab").click();
-        drawMaster();
-      });
-      
-      // add things to the world
-      world.add([
-        Physics.behavior('interactive', {el: renderer.container}),       
-        Physics.behavior('body-impulse-response'),
-        Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune'),
-        edgeBounce
-      ]);
-    });
+  world.on('interact:poke', function( data ){        
+    Globals.selectedBody = false;
+    document.getElementById("toolbox-tab").click();
+    drawMaster();
+  });
+    
+  // add things to the world
+  world.add([
+    Physics.behavior('interactive', {el: renderer.container}),       
+    Physics.behavior('body-impulse-response'),
+    Physics.behavior('body-collision-detection'),
+    Physics.behavior('sweep-prune'),
+    edgeBounce
+    ]);
+  });
 } // end initWorld
 
   function initModule(json) {
     Globals.world = initWorld();
-    Globals.canEdit = function(){ return (Globals.keyframe ||
-                                          Globals.keyframe === 0 ||
-                                          (Globals.frame == Globals.totalFrames) && Globals.totalFrames != 0); }
-    Globals.canAdd =  function(){ return  Globals.keyframe === 0; }
-    Globals.useKeyframes = true;
-    
+            
     // How the solver object works:
     // Try to assign a value to each key using known variables
     // Repeat until no new values can be assigned
@@ -265,7 +266,7 @@ function initWorld() {
       Globals.bodyConstants[i] = tempBC[i];
 
       Globals.selectedBody = Globals.world.getBodies()[Globals.world.getBodies().length-1];
-      if (type == "kinematics1D-mass") {
+      if (type == "kinematics1D-mass" || type == "kinematics1D-pulley") {
         onPropertyChanged("image", tempBC[i].img, false);
         onPropertyChanged("size", tempBC[i].size, false);
       } else if (type == "kinematics1D-ramp") {

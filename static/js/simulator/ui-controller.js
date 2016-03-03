@@ -69,8 +69,7 @@ function handleUIDragStop(event, ui){
 }
 
 // Event fired when user is done dragging component from toolbox
-function handleDragStop(event, ui){
-  if(!Globals.canAdd()) return;
+function handleDragStop(event, ui){  
   var type = ui.helper[0].getAttribute("component");
 
   // Left and top of helper img
@@ -103,12 +102,12 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
+  
   // Update keyframe variable if the selected frame is also a keyframe
-  if(Globals.useKeyframes)
-    Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
   
   // Highlight mini canvas
-  if(Globals.keyframe === 0 || Globals.keyframe)
+  if(Globals.keyframe !== false)
   {    
     $("#" + "keyframe-" + Globals.keyframe).attr("style","border:4px solid #0000cc");
   }
@@ -131,16 +130,12 @@ function toggleSimulator(){
   
   // Set frame delay based on total number of delays.
   // TODO: Consider having the user specify this via global options
-  if(Globals.totalFrames <= 20) Globals.delay = 25;
-  else if(Globals.totalFrames <= 50) Globals.delay = 25;
-  else if(Globals.totalFrames <= 1000) Globals.delay = 25;
-  else Globals.delay = 25;
+  Globals.delay = 25;
   
   if (Globals.running) {
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
     $("#play-pause-icon").removeClass("fa-play")
-    $("#play-pause-icon").addClass("fa-pause")
-    Globals.selectedKeyframe = false;
+    $("#play-pause-icon").addClass("fa-pause")    
   } 
   else {
     clearInterval(Globals.anim);
@@ -160,32 +155,30 @@ function toggleSimulator(){
 // Handler for clicking a mini canvas and setting state to that keyframe
 function selectKeyframe(event){
 	var frame = event.target.id.split("-")[1];
-	Globals.keyframe = parseInt(frame);
+	Globals.keyframe = parseInt(frame);  
+  highlightKeycanvas(frame);
   
-  for(var i = 0; i<Globals.numKeyframes; i++)
+  if(Globals.timelineReady)
   {
-    //remove highlight
-    $("#" + "keyframe-"+i).attr("style","");
+    Globals.frame = Globals.keyframes[Globals.keyframe];
+    $("#simulatorFrameRange").val(Globals.frame);
   }
-  //add highlight
-  $("#" + event.target.id).attr("style","border:4px solid #0000cc");
 
- //TODO: handle transparent for general case
-  // if(frame == 0){
-  //   for(var i=0; i<Globals.world.getBodies().length; i++)
-  //     if(!isNaN(Globals.variableMap[i].x0) && !isNaN(Globals.variableMap[i].y0))
-  //       delete Globals.bodyConstants[i].alpha;
-  //     else
-  //       Globals.bodyConstants[i].alpha = 0.5;
-  // }
-  // else{
-  //   for(var i=0; i<Globals.world.getBodies().length; i++)
-  //     if(!isNaN(Globals.variableMap[i].xf) && !isNaN(Globals.variableMap[i].yf))
-  //       delete Globals.bodyConstants[i].alpha;
-  //     else
-  //       Globals.bodyConstants[i].alpha = 0.5;
-  // }
-   
+  // Handle assigning transparency to objects with unknown positions
+  var variables = Globals.variableMap;
+  for(var i=0; i < Globals.world.getBodies().length; i++)
+  {
+    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy))
+    {
+      if(Globals.bodyConstants[i].alpha)
+        delete Globals.bodyConstants[i].alpha;
+    }
+    else
+    {
+      Globals.bodyConstants[i].alpha = 0.5;  
+    }
+  }
+  
   // Draw master will set state appropriately and display it
 	drawMaster();
 }
@@ -284,7 +277,7 @@ function addKeyframe(){
   $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
-                       "   <a class='btn-floating btn-small waves-effect waves-light red delete-kf-btn' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
+                       "   <a class='btn-floating btn-small waves-effect waves-light red delete-kf-btn clickable' id='remove-keyframe-" + Globals.numKeyframes + "'><i class='fa fa-times'></i></a> " +
                       "  </div> " +
                        "   <h6>Frame " + (Globals.numKeyframes+1) + ": </h6> " +
                        "   <canvas id='keyframe-"+ (Globals.numKeyframes) +"' class='keyframe' ></canvas> " +
@@ -306,7 +299,7 @@ function addKeyframe(){
 function removeKeyframe(event){
   var eventFrame = event.target;  
   
-  var index = parseInt(eventFrame.parentNode.id.split("-")[2]) - 1;
+  var index = parseInt(eventFrame.parentNode.id.split("-")[2]);
   
   // Shift keyframe times, states, indices, variableMap
   Globals.variableMap.splice(index, 1);
@@ -533,7 +526,7 @@ function populateOverview(e) {
     }
      $list.append(
     "<li >" +
-      "<div class ='row'>"+
+      "<div class ='row clickable'>"+
        "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
@@ -550,7 +543,122 @@ function populateOverview(e) {
 }
 
 function deleteBody(bodyIndex){
-  console.log("Body " + bodyIndex + "deleted!");
+  // If called without a parameter, get the index of the currently selected body
+  if (bodyIndex === undefined) {
+    bodyIndex = bIndex(Globals.selectedBody);
+  }
+
+  // Make sure there is a valid index selected to attempt to delete
+  if (bodyIndex > -1) {
+    // Get the body constants to delete and remove it from bodyConstants
+    var bodToDelete = Globals.bodyConstants[bodyIndex];
+    Globals.bodyConstants.splice(bodyIndex, 1);
+
+    // Remove the body from all of the keyframes
+    var len = Globals.keyframeStates.length;
+    for (var i = 0; i < len; i++) {
+      Globals.keyframeStates[i].splice(bodyIndex, 1);
+    }
+
+    // Remove the body from the physicsjs world and deselect it
+    Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
+    Globals.selectedBody = false;
+
+    // Begin Spring and Pulley specific logic!
+
+    // We already deleted one of the ends of the spring, but now we
+    // have to delete the other end
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      // Delete the parent of the child spring that was just deleted from
+      // bodyConstants, the keyframes, and the physicsjs world
+      Globals.bodyConstants.splice(bodToDelete.parent, 1);
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.parent, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.parent]);
+    } else if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      // Delete the child of the parent spring that was just deleted from
+      // bodyConstants, the keyframes, and the physicsjs world
+      Globals.bodyConstants.splice(bodToDelete.child - 1, 1);
+      for (i = 0; i < len; i++) {
+        Globals.keyframeStates[i].splice(bodToDelete.child - 1, 1);
+      }
+      Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.child - 1]);
+    }
+
+    // We need to update the indexes of referenced components in the list of all
+    // of the remaining body constants. If the deleted body was a spring, we have
+    // to decrement the referenced index by 2, otherwise we just decrement it by 1
+    len = Globals.bodyConstants.length;
+    var decSize = 1;
+    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+      decSize = 2;
+    }
+
+    // We want to update the referring indices of all of the components after the
+    // one that was deleted, unless it was a spring child, then we'll need to step
+    // back a step since the child and previous parent will have been deleted
+    var startIndex = bodyIndex;
+    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+      startIndex--;
+    }
+
+    // Loop through all bodies after the deleted body to update any indices that
+    // reference changed index
+    for (i = startIndex; i < len; i++) {
+      bod = Globals.bodyConstants[i];
+      if (bod.ctype.indexOf("spring-child") !== -1) {
+        bod.parent -= decSize;
+      } else if (bod.ctype.indexOf("spring") !== -1) {
+        bod.child -= decSize;
+      }
+    }
+
+    // If the component deleted was a spring or pulley, we need to loop through
+    // any of the existing components to check if any of them were attached to
+    // the spring or pulley. If they were we need to delete the reference
+    if (bodToDelete.ctype.indexOf("spring") !== -1 || bodToDelete.ctype.indexOf("pulley") !== -1) {
+      // For Springs get the actual reference if it was
+      // the parent or child spring node that was deleted
+      var refToDelete = bodyIndex;
+      if (bodToDelete.child !== undefined) {
+        refToDelete = bodToDelete.child;
+      }
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedTo !== undefined && bod.attachedTo === refToDelete) {
+         delete bod.attachedTo;
+        }
+      }
+    }
+
+    // If the component deleted was a pointmass, we need to loop through all of the
+    // remaining components (specifically any springs) to check to see if any of the
+    // springs were attached to this pointmass. If they were we delete the reference
+    if (bodToDelete.ctype.indexOf("mass") !== -1) {
+      for (i = 0; i < len; i++) {
+        bod = Globals.bodyConstants[i];
+        if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
+         delete bod.attachedBody;
+        }
+        // For Pulleys
+        if (bod.attachedBodyLeft !== undefined && bod.attachedBodyLeft === bodyIndex) {
+         delete bod.attachedBodyLeft;
+         bod.left_open = true;
+        }
+        if (bod.attachedBodyRight !== undefined && bod.attachedBodyRight === bodyIndex) {
+         delete bod.attachedBodyRight;
+         bod.right_open = true;
+        }
+      }
+    }
+    // End Spring and Pulley specific logic!
+
+    simulate();
+    drawMaster();
+    updateKeyframes();
+    populateOverview();
+  }
 }
 
 function selectBody(bodyIndex, switchTab){

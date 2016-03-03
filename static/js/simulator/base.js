@@ -114,9 +114,9 @@ $(document).ready(function(){
   $('#general-properties-nickname').on("change", function(){ updatePropertyRedraw('nickname', $('#general-properties-nickname').val()); });
 
   $('#pointmass-properties-velocity-x').on("change", function(){ updatePropertyRedraw('velx', $('#pointmass-properties-velocity-x').val()); });
-  $('#pointmass-properties-velocity-y').on("change", function(){ updatePropertyRedraw('vely', $('#pointmass-properties-velocity-y').val()); });
+  $('#pointmass-properties-velocity-y').on("change", function(){ updatePropertyRedraw('vely', -1 * $('#pointmass-properties-velocity-y').val()); });
   $('#pointmass-properties-acceleration-x').on("change", function(){ updatePropertyRedraw('accx', $('#pointmass-properties-acceleration-x').val()); });
-  $('#pointmass-properties-acceleration-y').on("change", function(){ updatePropertyRedraw('accy', $('#pointmass-properties-acceleration-y').val()); });
+  $('#pointmass-properties-acceleration-y').on("change", function(){ updatePropertyRedraw('accy', -1 * $('#pointmass-properties-acceleration-y').val()); });
   $('#pointmass-properties-size').on("change", function(){ updatePropertyRedraw('size', $('#pointmass-properties-size').val()); });
   $('#pointmass-properties-mass').on("change", function(){ updatePropertyRedraw('mass', $('#pointmass-properties-mass').val()); });
   $('#pointmass-properties-img').on("change", function(){ updatePropertyRedraw('image', $('#pointmass-properties-img option:selected')[0].value); });
@@ -128,8 +128,11 @@ $(document).ready(function(){
   $('#ramp-properties-angle').on("change", function(){ updatePropertyRedraw('angle', $('#ramp-properties-angle').val()); });
   
   // Event for clicking solve button
-  $('#solve-btn').on('click', function() {     
-    attemptSimulation();
+  $('#playpause').on('click', function() {
+    if (Globals.keyframeStates.length > 1 && !Globals.timelineReady) {
+      attemptSimulation();
+    }
+    toggleSimulator();
     
     // Update format of solution details
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
@@ -138,19 +141,8 @@ $(document).ready(function(){
   // Events for selecting mini-canvases representing keyframes
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
-  $('#keyframe-1').on("click", function(event) { selectKeyframe(event); } );
-  // $('.remove-keyframe-btn').on("mouseenter", function(event) { showRemoveKeyframeBtn(event); });
-  // $('.remove-keyframe-btn').on("mouseout", function(event) { hideRemoveKeyframeBtn(event); });
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
-  $('#remove-keyframe-1').on("click", function(event) { removeKeyframe(event); } );
   
-  // Events for handling updating "dt" on keyframe 1
-  $('#keyframe-1-dt').on("change", function(){ 
-    Globals.keyframeTimes[1] = parseFloat($('#keyframe-1-dt').val()) || "?"; 
-    $('#keyframe-1-dt').val(Globals.keyframeTimes[1]);
-    if(Globals.keyframeTimes[1] == "?") Globals.keyframeTimes[1] = false;
-  });
-
   // Events for handling global acceleration (gravity)
   $('#glob-xaccel').val(Globals.gravity[0]);
   $('#glob-yaccel').val(Globals.gravity[1]);  
@@ -166,6 +158,8 @@ $(document).ready(function(){
   // Events for handling changing the unit
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
+
+  $('#help-tooltips').on("click", function() { displayTooltips(); });
   
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();

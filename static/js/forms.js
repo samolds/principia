@@ -146,40 +146,36 @@ function saveRating() {
 // Called after saveComment() has finished
 // posting a new comment OR on initial page load
 function refreshCommentsList() {
+  $.get("/api/simulator/" + GlobalKeyNames.Simulation + "/comments", function(json) {
+    var result = "";
+    json = JSON.parse(json);
+    if (json) {
+      for (var i = 0; i < json.length; i++) {
+        var comment = json[i];
+        result +=  "<div class='row'>";
+        result +=   "<div class='col s2'>";
+        result +=    "<i class='medium fa fa-user'></i>";
+        result +=  "</div>";
+        result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
+        result +=    "<div class='row'>";
+        result +=      "<div class='all-point'></div>";
+        result +=      "<div class='col  s12'>";
+        result +=         "<p class=''>" +comment.Contents+"</p> ";
+        result +=      "</div></div></div></div>";
+      }
+    }
 
-    $.get("/api/simulator/" + GlobalKeyNames.Simulation + "/comments", function(json) {
-        var result = "";
-        json = JSON.parse(json);
-        if (json) {
+    if ((json === null || json.length === 0) && GlobalKeyNames.User === "") {
+      $("#comments-frag").hide();
+    }
 
-          for(var i = 0; i < json.length; i++) {
-              var comment = json[i];
-
-              result +=  "<div class='row'>";
-              result +=   "<div class='col s2'>";
-              result +=    "<i class='medium fa fa-user'></i>";
-              result +=  "</div>";
-              result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
-              result +=    "<div class='row'>";
-              result +=      "<div class='all-point'></div>";
-              result +=      "<div class='col  s12'>";
-              result +=         "<p class=''>" +comment.Contents+"</p> ";
-              result +=      "</div></div></div></div>";
-
-          }
-        }
-
-      $( "#comments" ).html( result );
-
-      $("#comment-load-gif").hide();
-      // Reset the comment box text
-      $("#comment-contents").val("");
-
-    })
-    .fail(function() {
-      $("#comment-load-gif").hide();
-    });    
-
+    $("#comments").html(result);
+    $("#comment-load-gif").hide();
+    $("#comment-contents").val("");
+  })
+  .fail(function() {
+    $("#comment-load-gif").hide();
+  });
 }
 
 // Called after saveRating() has finished

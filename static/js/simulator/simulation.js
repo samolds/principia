@@ -13,9 +13,10 @@ function attemptSimulation(){
   var nKF            = Globals.numKeyframes;
   var constants      = Globals.bodyConstants;
   var pre            = Globals.dPrecision;
-    
-  if(Globals.originObject === 0 || Globals.originObject){
-    
+  
+  // Handle case that an object has been selected as the origin
+  if(Globals.originObject !== false)
+  {
     // Hard-coded example for using polar coordinates
     
     // Disable collisions
@@ -53,8 +54,6 @@ function attemptSimulation(){
     // Plug t back into either equation of motion for a heading
     var heading = rad2deg(Math.acos((x0 + vx*t)/(C*t)));
     
-    
-  
     // MathJax output, assign appropriate globals to allow simulation to run    
     $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
     $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
@@ -115,155 +114,152 @@ function attemptSimulation(){
     return;
   }
   
-  // Disable collisions
-  world.getBodies()[0].treatment = "ghost";
-  
-  // Do (N-1) passes, ensuring each adjacent pair of keyframes is dealt with
-  // and data is potentially propagated from first and last keyframes in worst case.
-  for(var pass=0; pass < nKF-1; pass++){
-    for(var keyframe1 = 0; keyframe1 < nKF - 1; keyframe1++)
-    {
-      // Pick a pair of adjacent keyframes
-      var keyframe2 = keyframe1 + 1;
-        
-      // Store the time associated with each keyframe
-      var t1 = Globals.keyframeTimes[keyframe1];        
-      var t2 = Globals.keyframeTimes[keyframe2];
-        
-      // Store the variables and constants associated with each body for each keyframe
-      var kf1_variables = Globals.variableMap[keyframe1];
-      var kf2_variables = Globals.variableMap[keyframe2];
-                
-      // For each body...
-      for(var body = 0; body < constants.length; body++){ 
-        // Constants associated with one body
-        var bc = constants[body];
+  // Handle multi-keyframe case
+  if(nKF > 1)
+  {
+    // Do (N-1) passes, ensuring each adjacent pair of keyframes is dealt with
+    // and data is potentially propagated from first and last keyframes in worst case.
+    for(var pass=0; pass < nKF-1; pass++){
+      for(var keyframe1 = 0; keyframe1 < nKF - 1; keyframe1++)
+      {
+        // Pick a pair of adjacent keyframes
+        var keyframe2 = keyframe1 + 1;
           
-        // For now, solver will only fill in unknowns for point mass
-        if(!bc.ctype == "kinematics1D-mass"){
-          continue;
-        }
-        
-        // Store positions
-        var x0 = kf1_variables[body].posx;
-        var xf = kf2_variables[body].posx;          
-        var y0 = kf1_variables[body].posy;
-        var yf = kf2_variables[body].posy;
-        
-        // Store velocities
-        var vx0 = kf1_variables[body].velx;
-        var vxf = kf2_variables[body].velx;
-        var vy0 = kf1_variables[body].vely;
-        var vyf = kf2_variables[body].vely;
-        
-        // Store acceleration
-        var ax = kf1_variables[body].accx;
-        var ay = kf1_variables[body].accy;
-        
-        // Store time
-        var t = Globals.keyframeTimes[keyframe2];
-                    
-        // Prepare solver input
-        var variables = { x0:x0, xf:xf, 
-                          y0:y0, yf:yf,
-                          vx0:vx0, vxf:vxf,
-                          vy0:vy0, vyf:vyf,
-                          ax:ax, ay:ay,
-                          t:t
-        };
+        // Store the time associated with each keyframe
+        var t1 = Globals.keyframeTimes[keyframe1];        
+        var t2 = Globals.keyframeTimes[keyframe2];
           
-        // Remove unknown values from solver input
-        // The solver should return the unknown values
-        var removals = [];
-        for(var key in variables){
-          if(variables[key] == "?" || variables[key] === false || isNaN(variables[key]))
-            removals.push(key);
-        }
-        for(var j=0; j<removals.length; j++){
-          delete variables[removals[j]];
-        }
-      
-        // Run solver if previous step resulted in any removals (relate equations to origin here?)      
-        var results = solver.solve(variables);
+        // Store the variables and constants associated with each body for each keyframe
+        var kf1_variables = Globals.variableMap[keyframe1];
+        var kf2_variables = Globals.variableMap[keyframe2];
                   
-        // Missing results on final pass
-        if(!results[0] && pass == nKF-2){
-          $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.";
-          Globals.timelineReady = false;
-          return;
-        }        
+        // For each body...
+        for(var body = 0; body < constants.length; body++){ 
+          // Constants associated with one body
+          var bc = constants[body];
+            
+          // For now, solver will only fill in unknowns for point mass
+          if(!bc.ctype == "kinematics1D-mass"){
+            continue;
+          }
           
-        // Note: Consistency check should ensure "solved" times are all equal
-        if(!Globals.keyframeTimes[keyframe2]){
+          // Store positions
+          var x0 = kf1_variables[body].posx;
+          var xf = kf2_variables[body].posx;          
+          var y0 = kf1_variables[body].posy;
+          var yf = kf2_variables[body].posy;
           
-          /*
-          if(results[1]["t"] < 0){
-            $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + keyframe2 + "!";
+          // Store velocities
+          var vx0 = kf1_variables[body].velx;
+          var vxf = kf2_variables[body].velx;
+          var vy0 = kf1_variables[body].vely;
+          var vyf = kf2_variables[body].vely;
+          
+          // Store acceleration
+          var ax = kf1_variables[body].accx;
+          var ay = kf1_variables[body].accy;
+          
+          // Store time
+          var t = Globals.keyframeTimes[keyframe2];
+                      
+          // Prepare solver input
+          var variables = { x0:x0, xf:xf, 
+                            y0:y0, yf:yf,
+                            vx0:vx0, vxf:vxf,
+                            vy0:vy0, vyf:vyf,
+                            ax:ax, ay:ay,
+                            t:t
+          };
+            
+          // Remove unknown values from solver input
+          // The solver should return the unknown values
+          var removals = [];
+          for(var key in variables){
+            if(variables[key] == "?" || variables[key] === false || isNaN(variables[key]))
+              removals.push(key);
+          }
+          for(var j=0; j<removals.length; j++){
+            delete variables[removals[j]];
+          }
+        
+          // Run solver if previous step resulted in any removals (relate equations to origin here?)      
+          var results = solver.solve(variables);
+                    
+          // Missing results on final pass
+          if(!results[0] && pass == nKF-2){
+            $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.";
             Globals.timelineReady = false;
             return;
+          }        
+            
+          // Note: Consistency check should ensure "solved" times are all equal
+          if(!Globals.keyframeTimes[keyframe2]){
+            
+            /*
+            if(results[1]["t"] < 0){
+              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + keyframe2 + "!";
+              Globals.timelineReady = false;
+              return;
+            }
+            */
+            
+            Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
+            $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
+            if(keyframe2 == nKF-1)
+              Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
           }
-          */
-          
-          Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
-          $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
-          if(keyframe2 == nKF-1)
-            Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
-        }
-               
-        keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
-        keyframeStates[keyframe1][body]["pos"]["y"] = results[1]["y0"];
-        keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
-        keyframeStates[keyframe1][body]["vel"]["y"] = results[1]["vy0"];
+                 
+          keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
+          keyframeStates[keyframe1][body]["pos"]["y"] = results[1]["y0"];
+          keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
+          keyframeStates[keyframe1][body]["vel"]["y"] = results[1]["vy0"];
 
-        kf1_variables[body].posx = results[1]["x0"];
-        kf1_variables[body].posy = results[1]["y0"];
-        kf1_variables[body].velx = results[1]["vx0"];
-        kf1_variables[body].vely = results[1]["vy0"];
-        
-        keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
-        keyframeStates[keyframe2][body]["pos"]["y"] = results[1]["yf"];
-        keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
-        keyframeStates[keyframe2][body]["vel"]["y"] = results[1]["vyf"];
-        
-        kf2_variables[body].posx = results[1]["xf"];
-        kf2_variables[body].posy = results[1]["yf"];
-        kf2_variables[body].velx = results[1]["vxf"];
-        kf2_variables[body].vely = results[1]["vyf"];
-        
-        if(bc.alpha)
-          delete bc.alpha;
-        
-        
-      } // End for-each body
-    } // End for-each keyframe
-  } // End for-each pass
-  
-  $('#simulatorFrameRange')[0].max = Globals.totalFrames;
-  
-  // Associate keyframes with a real frame
-  for(var i=1; i < nKF; i++)
-    Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
-  
-  // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
-  for(var i=nKF-1; i >= 0; i--){
-    setStateKF(i);
-    world.render();
-    viewportToKeyCanvas(i);
+          kf1_variables[body].posx = results[1]["x0"];
+          kf1_variables[body].posy = results[1]["y0"];
+          kf1_variables[body].velx = results[1]["vx0"];
+          kf1_variables[body].vely = results[1]["vy0"];
+          
+          keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
+          keyframeStates[keyframe2][body]["pos"]["y"] = results[1]["yf"];
+          keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
+          keyframeStates[keyframe2][body]["vel"]["y"] = results[1]["vyf"];
+          
+          kf2_variables[body].posx = results[1]["xf"];
+          kf2_variables[body].posy = results[1]["yf"];
+          kf2_variables[body].velx = results[1]["vxf"];
+          kf2_variables[body].vely = results[1]["vyf"];
+          
+          if(bc.alpha)
+            delete bc.alpha;
+          
+          
+        } // End for-each body
+      } // End for-each keyframe
+    } // End for-each pass
+    
+    $('#simulatorFrameRange')[0].max = Globals.totalFrames;
+    
+    // Associate keyframes with a real frame
+    for(var i=1; i < nKF; i++)
+      Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
+    
+    // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
+    for(var i=nKF-1; i >= 0; i--){
+      setStateKF(i);
+      world.render();
+      viewportToKeyCanvas(i);
+    }
   }
   
   // Run the simulation using the solved keyframes
+  // If results are sound, the user can play the simulation
   simulate();
   
-  // If results are sound, the user can play the simulation  
-  $("#" + "keyframe-0").attr("style","border:4px solid #0000cc");
-  for(var i=1; i < nKF; i++)
-    $("#" + "keyframe-" + i).attr("style","");
-  
-  Globals.keyframe = 0;
-  Globals.timelineReady = true;
+  // Update the simulation render
   drawMaster(); 
 }
 
+// Creates a shallow copy of the specified variable
 function cloneVariable(variable){
   var out = {};
   for(var key in variable)
@@ -273,9 +269,8 @@ function cloneVariable(variable){
 
 // Adds a variable object to each keyframe
 function addToVariableMap(variable){
-  for(var i=0; i < Globals.numKeyframes; i++){
+  for(var i=0; i < Globals.numKeyframes; i++)
     Globals.variableMap[i].push(cloneVariable(variable));
-  }
 }
 
 // Pushes a duplicate variable map and keyframe state; used when
@@ -296,17 +291,15 @@ function pushDuplicates(){
     KF.push(cloneState(state));
   }
   
-  Globals.keyframeStates.push(KF);
- 
-  // If mini-canvases exist, paint to them now
-  if(Globals.useKeyframes){
-    setStateKF(Globals.numKeyframes);
-    Globals.world.render();
-    viewportToKeyCanvas(Globals.numKeyframes);
-  }
-    
+  Globals.keyframeStates.push(KF);  
   Globals.keyframes.push(false);
   Globals.keyframeTimes.push(false);
+  
+  Globals.keyframe = Globals.numKeyframes;
+  highlightKeycanvas(Globals.keyframe);
+  drawMaster();
+  
+  Globals.timelineReady = false;
 }
 
 // Having solved for all variable, iterates through the simulation states and saves all resulting frames.
@@ -314,6 +307,10 @@ function simulate(){
   var i;
   var j;
 
+  // Hard-code simulating max frames if there is one keyframe
+  if(Globals.numKeyframes == 1)
+    Globals.totalFrames = Globals.maxFrames;
+  
   // Reset timeline if it is running
   Globals.frame = 0;
   if (Globals.running) { toggleSimulator(); }
@@ -379,12 +376,16 @@ function simulate(){
     }
     Globals.world.step();
   }
+  
+  highlightKeycanvas(0);    
+  Globals.keyframe = 0;
+  Globals.timelineReady = true;
 }
 
 // Updates a variable in the specified body to have the specified value
 function updateVariable(body, variable, value){
   var variableMap = Globals.variableMap;
-  var keyframe = Globals.keyframe;
+  var keyframe = Globals.keyframe !== false? Globals.keyframe: lastKF();
   var i = bIndex(body);
   value = parseFloat(value);  
   variableMap[keyframe][i][variable] = isNaN(value)? "?": value;
@@ -425,34 +426,45 @@ function updateKeyframes(components){
     }
  
     // If mini-canvases exist, paint to them now
-    if(Globals.useKeyframes){
+    //if(Globals.useKeyframes){
       setStateKF(i);
       world.render();
       viewportToKeyCanvas(i);
-    }
-  } 
+    //}
+  }
+
+  // With one keyframe, immediately resimulate using new object
+  if(nKF == 1) attemptSimulation();
 }
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-// doSimulate can be set to true to immediately resimulate with the changed property
-function onPropertyChanged(property, value, doSimulate){
-  if(!Globals.canEdit()) return;
+function onPropertyChanged(property, value){
   
-  // Invalidate the timeline if in keyframe mode
-  if(Globals.useKeyframes) Globals.timelineReady = false;
+  var keyframe = Globals.keyframe;
+  
+  // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
+  if(keyframe === false) keyframe = lastKF();
+  
+  
+  // Invalidate the timeline if there is more than one keyframe
+  if(Globals.numKeyframes > 1) 
+    Globals.timelineReady = false;
+  
+  // Resimulate whenever there is only one keyframe
+  var doSimulate = (Globals.numKeyframes == 1);
   
   var world = Globals.world;
   var bodies = world.getBodies();
   var body = Globals.selectedBody;  
   var i = world.getBodies().indexOf(body);
-  var kState = Globals.keyframeStates[Globals.keyframe];
+  var kState = Globals.keyframeStates[keyframe];
   
   // Parse the value, assigning NaN if the parse fails
   var valuef = parseFloat(value);
  
   // Attempt to update the corresponding variable
-  if(Globals.useKeyframes && body) updateVariable(body, property, value);
+  if(body) updateVariable(body, property, value);
 
   if(!isNaN(valuef))
   {
@@ -506,10 +518,15 @@ function onPropertyChanged(property, value, doSimulate){
         var img = document.createElement("img");
         img.setAttribute("width", Globals.bodyConstants[i].size * 2);
         img.setAttribute("height", Globals.bodyConstants[i].size * 2);
-        img.setAttribute("src", Globals.massImages[valuef]);
+        if(isNaN(valuef)) {
+          img.setAttribute("src", value);
+          Globals.bodyConstants[i].img = value;
+        } else {
+          img.setAttribute("src", Globals.massImages[valuef]);
+          Globals.bodyConstants[i].img = valuef;
+        }
         body.view = img;
         body.view.onload = function() { updateKeyframes(); drawMaster(); }  
-        Globals.bodyConstants[i].img = valuef;
         return;      
       case 'size':
         Globals.bodyConstants[i]["size"] = valuef;
@@ -606,7 +623,7 @@ function onPropertyChanged(property, value, doSimulate){
   }
   
   // Rerun the simulation using updated properties if not using keyframes
-  if(!Globals.useKeyframes && !Globals.didMove && doSimulate) {
+  if(Globals.numKeyframes == 1 && !Globals.didMove && doSimulate) {
     
     if(i != -1 && Globals.bodyConstants[i].alpha)
       delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
@@ -649,52 +666,11 @@ Physics.integrator('principia-integrator', function( parent ){
       }
       
       // Deal with pulleys
-      if((consts.attachedTo === 0 || consts.attachedTo) 
-        && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley"){
-        
+      if((typeof consts.attachedTo !== 'undefined') 
+        && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley")
+      {        
         var pulley = bodies[consts.attachedTo];
-        var pulleyConsts = body2Constant(pulley);
-        
-        // Make sure pulley has two bodies attached before applying special rules
-        if(pulleyConsts.attachedBodyRight === 0 || pulleyConsts.attachedBodyRight){
-        
-          // Undo effect of gravity  
-          state.vel.y -= Globals.gravity[1];         
-
-          // Get mass of each body
-          var m1 = Globals.bodyConstants[pulleyConsts.attachedBodyLeft].mass;
-          var m2 = Globals.bodyConstants[pulleyConsts.attachedBodyRight].mass;          
-          
-          // Magnitude of acceleration
-          var pulley_a = (m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
-
-          // Ready to accelerate up, reverse direction if this is the heavier mass
-          if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
-            pulley_a *= -1;
-
-          // Ready to accelerate down, reverse direction if this is the lighter mass
-          if(pulley_a > 0 && (consts.mass == m1 && m1 < m2) || (consts.mass == m2 && m2 < m1) )
-            pulley_a *= -1;
-             
-          // Just for fun, animate the pulley spinning
-          if(m1 > m2)
-            pulley.state.angular.vel = (m1 - m2)/20.0;
-          else if(m2 > m1)
-            pulley.state.angular.vel = (m2 - m1)/20.0;
-             
-          // Handle reaching the top?
-          if((m1 < m2 && bodies[pulleyConsts.attachedBodyLeft].state.pos.y <= pulley.state.pos.y) ||(m1 > m2 && bodies[pulleyConsts.attachedBodyRight].state.pos.y <= pulley.state.pos.y)){
-            pulley_a = 0;
-            pulley.state.angular.vel = 0;
-            
-            bodies[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
-            bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
-            
-          }
-             
-          // Add effect of pulley
-          state.vel.y += pulley_a;
-        }
+        applyPulley(pulley, state, consts);
       }
       
       state.angular.vel += state.angular.acc;

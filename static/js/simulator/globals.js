@@ -4,10 +4,6 @@
 */
 var Globals = {
 
-  // Indicates whether to use the keyframe system (enables solving for unknowns) or
-  // just simulate the maximum number of frames using only known values
-  useKeyframes: false,
-
   // Current PhysicJS world
   world: {},  
 
@@ -22,7 +18,7 @@ var Globals = {
   anim: {},
 
   // Flag indicating that the timeline is ready for a user to play/pause/scrub
-  timelineReady: false,
+  timelineReady: true,
 
   // Flag for when simulator is currently running
   running: false,
@@ -40,20 +36,20 @@ var Globals = {
   // Acceleration values for the acceleration line graph
   accelStates: [],
 
-  // Currently selected keyframe INDEX (without respect to timeline/states frames)
+  // Currently selected keyframe INDEX (without respect to timeline/states frames), FALSE if not on keyframe
   keyframe: 0,
   
   // State at each keyframe (One inner array per keyframe)
-  keyframeStates: [[],[]],
+  keyframeStates: [[]],
 
   // Time associated with each keyframe (false if unknown)
-  keyframeTimes: [0, false],
+  keyframeTimes: [0],
 
   // Index of key frames within timeline (i.e. states) (false if not associated with timeline frame yet)
-  keyframes: [0, false],
+  keyframes: [0],
 
   // Number of keyframes for current simulation
-  numKeyframes: 2,
+  numKeyframes: 1,
   
   // Number of frames in current simulation
   totalFrames: 0,
@@ -69,7 +65,7 @@ var Globals = {
 
   // For each keyframe:
   // A list of bodies and their associated variable values  
-  variableMap: [[],[]],
+  variableMap: [[]],
 
   // Equation solver for currently loaded module
   // Current approach: Using eq-solver library, which uses eval function and map of variables to equations used to solve them
@@ -78,12 +74,6 @@ var Globals = {
 
   // Force of gravity in [x,y]
   gravity: [0,0],
-
-  // Function used to determine if the user is allowed to edit an existing component
-  canEdit: function() { return true; }, 
-
-  // Function used to determine if the user is allowed to add a new component
-  canAdd: function() { return true; },
 
   // Zero-point for this simulation, object coordinates are displayed relative to this point
   // Internally, still use PhysicsJS default coordinate system (0 is upper-left, y-axis is down)
@@ -106,7 +96,7 @@ var Globals = {
   timeFactor: 1.0,
   
   // Number of keyframes for current simulation
-  numKeyframes: 2,
+  numKeyframes: 1,
   
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,
