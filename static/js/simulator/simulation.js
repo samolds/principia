@@ -55,6 +55,10 @@ function attemptSimulation(){
     var heading = rad2deg(Math.acos((x0 + vx*t)/(C*t)));
     
     // MathJax output, assign appropriate globals to allow simulation to run    
+    MathJax.Hub.queue.Push(function()
+    {
+    
+    
     $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
     $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
     $("#solution-details")[0].textContent += ("[1] $x_2 + {v_x}_2*t = {v}_1 * cos( \\theta ) * t$\n");
@@ -71,7 +75,7 @@ function attemptSimulation(){
     $("#solution-details")[0].textContent += ("Known values:\n");
     $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
     $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
-                
+    });            
     Globals.keyframeTimes[1] = t;
     $('#keyframe-1-dt').val(t.toFixed(pre));                   
     Globals.totalFrames = Math.floor(t/Globals.world.timestep());
@@ -87,14 +91,18 @@ function attemptSimulation(){
     // If results are sound, the user can play the simulation    
     simulate();
     
-    Globals.keyframeStates[1][0].pos.x = Globals.states[0][Globals.totalFrames].pos.x;
-    Globals.keyframeStates[1][0].pos.y = Globals.states[0][Globals.totalFrames].pos.y;
-    Globals.keyframeStates[1][0].vel.x = Globals.states[0][Globals.totalFrames].vel.x;
-    Globals.keyframeStates[1][0].vel.y = Globals.states[0][Globals.totalFrames].vel.y;
-    Globals.keyframeStates[1][1].pos.x = Globals.states[1][Globals.totalFrames].pos.x;
-    Globals.keyframeStates[1][1].pos.y = Globals.states[1][Globals.totalFrames].pos.y;
-    Globals.keyframeStates[1][1].vel.x = Globals.states[1][Globals.totalFrames].vel.x;
-    Globals.keyframeStates[1][1].vel.y = Globals.states[1][Globals.totalFrames].vel.y;
+    // Final position of both boats
+    var fx = Globals.keyframeStates[0][1].pos.x + vx * t;
+    var fy = Globals.keyframeStates[0][1].pos.y + vy * t;
+    
+    Globals.keyframeStates[1][0].pos.x = fx;
+    Globals.keyframeStates[1][0].pos.y = fy;
+    Globals.keyframeStates[1][0].vel.x = result[0];
+    Globals.keyframeStates[1][0].vel.y = result[1];
+    Globals.keyframeStates[1][1].pos.x = fx;
+    Globals.keyframeStates[1][1].pos.y = fy;
+    Globals.keyframeStates[1][1].vel.x = vx;
+    Globals.keyframeStates[1][1].vel.y = vy;
     
     // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
     for(var i=nKF-1; i >= 0; i--){
@@ -110,7 +118,11 @@ function attemptSimulation(){
     Globals.timelineReady = true;
     drawMaster(); 
     
+
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+
+
+    
     return;
   }
   
@@ -394,8 +406,11 @@ function updateVariable(body, variable, value){
 // Set the state of the world to match keyframe n
 function setStateKF(n){
   var bodies = Globals.world.getBodies();
-  for (var i = 0; i < bodies.length; i++)
-    bodies[i].state = Globals.keyframeStates[n][i]; 
+  for (var i = 0; i < bodies.length; i++){
+    bodies[i].state = Globals.keyframeStates[n][i];
+    if(i === Globals.originObject)
+      Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
+  }
 }
 
 // Set the state of the world to match simulation frame n
@@ -403,9 +418,8 @@ function setState(n){
   var bodies = Globals.world.getBodies();
   for (var i = 0; i < bodies.length; i++){
     bodies[i].state = Globals.states[i][n];
-    if(i === Globals.originObject){
+    if(i === Globals.originObject)
       Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
-    }
   }
 }
 
@@ -542,6 +556,13 @@ function onPropertyChanged(property, value){
           Globals.bodyConstants[bIndex(body)].vectors = true;
         } else { // dont show vectors
           Globals.bodyConstants[bIndex(body)].vectors = false;
+        }
+        break;
+      case 'vectors_ttt':
+        if (value) { // show vectors
+          Globals.bodyConstants[bIndex(body)].vectors_ttt = true;
+        } else { // dont show vectors
+          Globals.bodyConstants[bIndex(body)].vectors_ttt = false;
         }
         break;
       case 'pvagraph':

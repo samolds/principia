@@ -196,7 +196,7 @@ function updatePropertyRedraw(property, value){
       other = $('#general-properties-position-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "posy") {
+    else if(property == "posy") {      
       other = $('#general-properties-position-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -206,6 +206,7 @@ function updatePropertyRedraw(property, value){
       point = polar2Cartesian([value, other]);
     }
     else if(property == "vely") {
+      value *= -1; // Un-invert y vel. value because it's really an angle (only y vel/acc are inverted in base.js)
       other = $('#pointmass-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -215,6 +216,7 @@ function updatePropertyRedraw(property, value){
       point = polar2Cartesian([value, other]);
     }
     else if(property == "accy") {
+      value *= -1; // Un-invert y acc. value because it's really an angle (only y vel/acc are inverted in base.js)
       other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }

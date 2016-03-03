@@ -133,3 +133,5 @@ function lastKF()
       return keyframe;
   }
 }
+
+function magnitude(x, y){ return Math.sqrt(x*x + y*y); }

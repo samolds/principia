@@ -44,6 +44,7 @@ function addMass(data){
   bodyConstants[bodyConstants.length-1].size = 25;
   bodyConstants[bodyConstants.length-1].img  = 0;  
   bodyConstants[bodyConstants.length-1].vectors = true;
+  bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
   

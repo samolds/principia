@@ -104,6 +104,7 @@ $(document).ready(function(){
   $('#pointmass-properties-mass').on("change", function(){ updatePropertyRedraw('mass', $('#pointmass-properties-mass').val()); });
   $('#pointmass-properties-img').on("change", function(){ updatePropertyRedraw('image', $('#pointmass-properties-img option:selected')[0].value); });
   $('#pointmass-properties-vector').on("change", function(){ updatePropertyRedraw('vectors', ($('#pointmass-properties-vector')[0].checked ? 1 : 0) ); });
+  $('#pointmass-properties-vector-ttt').on("change", function(){ updatePropertyRedraw('vectors_ttt', ($('#pointmass-properties-vector-ttt')[0].checked ? 1 : 0) ); });
   $('#pointmass-properties-pvagraph').on("change", function(){ updatePropertyRedraw('pvagraph', ($('#pointmass-properties-pvagraph')[0].checked ? 1 : 0) ); });
 
   $('#ramp-properties-width').on("change", function(){ updatePropertyRedraw('width', $('#ramp-properties-width').val()); });
@@ -130,7 +131,7 @@ $(document).ready(function(){
   $('#glob-xaccel').val(Globals.gravity[0]);
   $('#glob-yaccel').val(Globals.gravity[1]);  
   $('#glob-xaccel').on("change", function(){ updatePropertyRedraw('gravityx', $('#glob-xaccel').val()); }); 
-  $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', $('#glob-yaccel').val()); });
+  $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', -1 * $('#glob-yaccel').val()); });
   
   // Events for handling updating the origin (w.r.t. the default coordinate space, i.e. 0,0 always means top-left)
   $('#glob-xorigin').on("change", function(){ updateOrigin("x", $('#glob-xorigin').val()); });
