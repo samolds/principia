@@ -45,38 +45,55 @@ function updatePVAChart() {
     return;
   }
 
+  // Mod by the number of bodies we need to draw
+  if(Globals.frame % arr.length !== 0) {
+    return;
+  }
+
   positionChart.options.data = [];
   vaChart.options.data = [];
+  min = Math.max(Globals.frame - 99, 0)
+  max = Globals.frame + 1;
 
-  arr.forEach(function(index){
+  for (var index = 0, len = arr.length; index < len; index++) {
 
     var name = Globals.bodyConstants[index].nickname;
+
     if(!name) {
       name = index;
+    }
+
+    if(!Globals.timelineReady) {
+      dp1 = [];
+      dp2 = [];
+      dp3 = [];
+    } else {
+      dp1 = Globals.positionStates[index].slice(min, max);
+      dp2 = Globals.accelStates[index].slice(min, max);
+      dp3 = Globals.velocityStates[index].slice(min, max);
     }
 
     positionChart.options.data.push({
       type: "line",
       showInLegend: true,
       name: "Position " + name,
-      dataPoints: Globals.positionStates[index].slice(0, Globals.frame + 1)
+      dataPoints: dp1
     });
 
     vaChart.options.data.push({
       type: "line",
       showInLegend: true,
       name: "Acceleration " + name,
-      dataPoints: Globals.accelStates[index].slice(0, Globals.frame + 1)
+      dataPoints: dp2
     });
 
     vaChart.options.data.push({
       type: "line",
       showInLegend: true,
       name: "Velocity " + name,
-      dataPoints: Globals.velocityStates[index].slice(0, Globals.frame + 1)
+      dataPoints: dp3
     });
-
-  });
+  }
 
   positionChart.render();
   vaChart.render();

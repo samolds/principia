@@ -247,9 +247,3 @@ function losefocus() {
     document.getElementById("simulation-name-label").style.display = "none";
 
 }
-
-function outOfSync()
-{
-    $("#save-button").removeClass( "green" )
-    $("#save-button").addClass( "blue" )
-}
