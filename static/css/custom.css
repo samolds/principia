@@ -172,6 +172,14 @@ body {
     border-bottom: 1px solid #29b6f6;
     box-shadow: 0 1px 0 0 #29b6f6;
   }
+
+  .input-field > label {
+    left: 0rem;
+  }
+
+  .switch > label {
+    padding-top: .75rem;
+  }
 /* end custom form */
 
 
@@ -388,17 +396,45 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   }
 
   .toolbox-item-container {
+    position: relative;
     width: 100px;
     height: 100px;
-    background-color: #b9f6ca;
+    background-color: #e8f5e9;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toolbox-item-container .card-reveal {
+    background-color: #a5d6a7;
+    white-space: normal;
+    text-align: left;
+    padding: 5px;
+    margin: 0px;
+  }
+
+  .toolbox-item-container .card-reveal p {
+    padding: 0px;
+    margin: 0px;
+    font-size: 0.9em;
+  }
+
+  .toolbox-item-container .valign-wrapper {
+    height: inherit;
   }
 
   .toolbox-item-container:hover {
-    background-color: #69f0ae;
+    background-color: #c8e6c9;
   }
 
   .toolbox-item {
     padding: 15px;
+  }
+
+  .toolbox-tooltip {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    z-index: 1;
   }
 /* end properties panel */
 
@@ -504,6 +540,16 @@ i.fa.fa-size-large {
   padding-left: 14px;
 }
 
+a#help-tooltips,
+a#help-tooltips:link,
+a#help-tooltips:visited {
+  color: #ff8f00;
+}
+
+a#help-tooltips:hover {
+  color: #ff6f00;
+}
+
 .help-tooltip-container {
   position: relative;
 }
@@ -545,4 +591,10 @@ i.fa.fa-size-large {
   top: -15px;
   left: 40px;
   width: 300px;
+}
+
+#help-tooltip-keyframes {
+  top: -35px;
+  left: 175px;
+  width: 330px;
 }

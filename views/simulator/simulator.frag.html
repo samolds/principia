@@ -4,9 +4,9 @@
   {{ if and (.IsLoggedIn) (.Data.isOwner) }}
     <div class="input-field col s6">
       {{ if .Data.simulation.Name }}
-        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="outOfSync()"></input>
+        <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="resetSaveButton()"></input>
       {{ else }}
-        <input id="simulation-name" type="text" value="New Simulation" onkeypress="outOfSync()"></input>
+        <input id="simulation-name" type="text" value="New Simulation" onkeypress="resetSaveButton()"></input>
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
     </div>
@@ -30,9 +30,9 @@
         <label>
           Public
           {{ if .Data.simulation.IsPrivate }}
-            <input id="simulation-is-private" checked="true" type="checkbox" onclick="outOfSync()">
+            <input id="simulation-is-private" checked="true" type="checkbox" onclick="resetSaveButton()">
           {{ else }}
-            <input id="simulation-is-private" type="checkbox" onclick="outOfSync()">
+            <input id="simulation-is-private" type="checkbox" onclick="resetSaveButton()">
           {{ end }}
           <span class="lever"></span>
           Private
@@ -97,20 +97,55 @@
       <div class="center-align">
         <h5 class="pad-sides">Toolbox</h5>
         <ul class="property-window-list">
-          <li class="toolbox-item-container valign-wrapper" title="Point Mass">
-            <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+          <li class="toolbox-item-container card" title="Point Mass">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+            </div>
           </li>
-          <li class="toolbox-item-container valign-wrapper" title="Ramp">
-            <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
+          <li class="toolbox-item-container card" title="Ramp">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Ramps are static and affect the movement of point mass objects.</p>
+            </div>
           </li>
-          <li class="toolbox-item-container valign-wrapper" title="Spring">
-            <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
+          <li class="toolbox-item-container card" title="Spring">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Attatch a point mass to the right end of a spring to see it in action.</p>
+            </div>
           </li>
-          <li class="toolbox-item-container valign-wrapper" title="Pulley">
-            <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley"/>
+          <li class="toolbox-item-container card" title="Pulley">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/pulley.png" component="kinematics1D-pulley"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Drag two point mass objects into a pulley to attach them. Then drag one below, give them weights, set gravity and give it a whirl.</p>
+            </div>
           </li>
-          <li class="toolbox-item-container valign-wrapper" title="Rope">
-            <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope"/>
+          <li class="toolbox-item-container card" title="Rope">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/rope.png" component="kinematics1D-rope"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>These are currently in progress of being added.</p>
+            </div>
           </li>
         </ul>
       </div>
