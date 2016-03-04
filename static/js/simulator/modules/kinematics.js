@@ -344,8 +344,8 @@ function initWorld() {
     
     updateCoords(Globals.coordinateSystem);
     if(Globals.coordinateSystem == "polar"){
-      //$("#coord-sys").children()[1] // Remove selected attribute
-      //$("#coord-sys").children()[2] // Add selected attribute
+      $("#coord-sys").children()[1].removeAttribute("selected");
+      $("#coord-sys").children()[2].setAttribute("selected", "selected");
     }
     
     if(Globals.timelineReady)
