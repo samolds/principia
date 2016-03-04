@@ -82,7 +82,7 @@ function initWorld() {
       // constrain objects to these bounds
       edgeBounce = Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds,
-        restitution: 0.99,
+        restitution: 0.8,
         cof: 0.8
       });
 

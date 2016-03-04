@@ -619,7 +619,7 @@ function onPropertyChanged(property, value){
         break;
       case 'angle':
         // TODO: Wrap some of this up in an helper function
-        if (valuef < -89.0 || valuef > 89.0)
+        if (valuef < -89.0 || valuef > 89.0 || valuef == 0.0)
           break;
 
         // Get all of the other vertices except for the "height" vertex

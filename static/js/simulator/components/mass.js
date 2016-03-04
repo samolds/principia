@@ -19,6 +19,7 @@ function addMass(data){
   var component = Physics.body('circle', {
             x: data.x,
             y: data.y,
+            restitution: 0.8,
             radius: 25,
             view: img,
             styles: {
