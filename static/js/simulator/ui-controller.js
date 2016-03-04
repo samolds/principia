@@ -40,31 +40,7 @@ function handleUIDragStop(event, ui){
 
   var data = { 'x': cx-vleft, 'y': cy-vtop};
 
-  var world = Globals.world;
-  var bodies = world.getBodies();
-  var delta = Globals.delta;
-    
-  // Attach the origin to a body if within delta pixels
-  var detach = true;
-  for(var j=0; j<bodies.length; j++){
-    var body = bodies[j];
-    if(distance(body.state.pos.x, body.state.pos.y, data.x, data.y) <= delta){
-      detach = false;
-      Globals.originObject = j;
-      
-      // Update data to point to object position
-      data.x = body.state.pos.x;
-      data.y = body.state.pos.y;
-    }
-  }
-  
-  if(detach && (Globals.originObject === 0 || Globals.originObject))  
-    Globals.originObject = false;
-    
-  Globals.origin = [data.x, data.y];  
-  $("#glob-xorigin").val(data.x) ; 
-  $("#glob-yorigin").val(data.y) ;
-  
+  moveOrigin(data);  
   drawMaster();
 }
 
@@ -166,7 +142,7 @@ function selectKeyframe(event){
 
   // Handle assigning transparency to objects with unknown positions
   var variables = Globals.variableMap;
-  for(var i=0; i < Globals.world.getBodies().length; i++)
+  for(var i=1; i < Globals.world.getBodies().length; i++)
   {
     if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy))
     {
@@ -187,7 +163,8 @@ function selectKeyframe(event){
 function updatePropertyRedraw(property, value){
 
   // Special case for Polar coordinates
-  if(Globals.coordinateSystem == "polar"){
+  if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
+    
     
     // Convert from Polar input to Cartesian coordinate
     var point;
@@ -329,16 +306,6 @@ function removeKeyframe(event){
   if(index == Globals.keyframe){
     // select Globals.keyframe -1
   }
-}
-
-function updateOrigin(coordinate, value){
-  if(coordinate == "x")
-    Globals.origin[0] = value;
-  else 
-    Globals.origin[1] = value;
-  
-  // Redraw (forces update of displayed values)
-  drawMaster();
 }
 
 function updateLengthUnit(factor){
@@ -506,7 +473,7 @@ function populateOverview(e) {
 
   $list.html("");
 
-  for(var i = 0; i < bodies.length; i++)
+  for(var i = 1; i < bodies.length; i++)
   {
     var img;
     //img = bodies[i].view;

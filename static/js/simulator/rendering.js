@@ -262,6 +262,10 @@ function drawSpringLine(b1, b2){
 
 // Draws highlight box around selected element
 function highlightSelection(body, color, modifier){
+  
+  // Special case: don't highlight origin
+  if(bIndex(body) === 0) return;
+  
   var bodyDim = body.aabb();
   var width = bodyDim.hw * 2;
   var height = bodyDim.hh * 2;
@@ -449,42 +453,11 @@ function viewportToKeyCanvas(n){
   keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
 }
 
-function drawOrigin(){
-  var canvas = Globals.world.renderer();
-  var ctx = canvas.ctx;
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = '#ff0000';    
-  
-  
-  var length = 10;
-  
-  ctx.beginPath();
-  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
-  ctx.lineTo(Globals.origin[0] + length, Globals.origin[1]);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
-  ctx.lineTo(Globals.origin[0] - length, Globals.origin[1]);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
-  ctx.lineTo(Globals.origin[0], Globals.origin[1] + length);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.moveTo(Globals.origin[0], Globals.origin[1]);
-  ctx.lineTo(Globals.origin[0], Globals.origin[1] - length);
-  ctx.stroke();
-}
-
 // Adds post world.render() effects including property windows, springs, vectors, and highlights.
 function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
   var originObject = Globals.originObject;
   
-  drawOrigin();
   drawLines();
   drawVectors();
 

@@ -478,7 +478,7 @@ function onPropertyChanged(property, value){
   var valuef = parseFloat(value);
  
   // Attempt to update the corresponding variable
-  if(body) updateVariable(body, property, value);
+  if(body && bIndex(body) !== 0) updateVariable(body, property, value);
 
   if(!isNaN(valuef))
   {
@@ -671,7 +671,7 @@ Physics.integrator('principia-integrator', function( parent ){
   integrateVelocities: function( bodies, dt ){
     
     // TODO: Apply forces to modify acceleration before integrating velocity    
-    for ( var i = 0, l = bodies.length; i < l; ++i ){
+    for ( var i = 1, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
@@ -700,7 +700,7 @@ Physics.integrator('principia-integrator', function( parent ){
 
   // Position increases by velocity * dt + 1/2 acceleration * dt**2
   integratePositions: function( bodies, dt ){
-    for ( var i = 0, l = bodies.length; i < l; ++i ){
+    for ( var i = 1, l = bodies.length; i < l; ++i ){
       var body = bodies[ i ];
       var state = body.state;
       var temp = cloneState(body.state);

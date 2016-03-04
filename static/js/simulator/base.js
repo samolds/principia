@@ -14,7 +14,9 @@ function exportToJson(){
     variableMap:Globals.variableMap,
     totalFrames:Globals.totalFrames,
     maxFrames:Globals.maxFrames,
-    timelineReady:Globals.timelineReady
+    timelineReady:Globals.timelineReady,
+    origin:Globals.origin,
+    coordinateSystem: Globals.coordinateSystem
   }
   
   return JSON.stringify(json);
@@ -134,8 +136,8 @@ $(document).ready(function(){
   $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', -1 * $('#glob-yaccel').val()); });
   
   // Events for handling updating the origin (w.r.t. the default coordinate space, i.e. 0,0 always means top-left)
-  $('#glob-xorigin').on("change", function(){ updateOrigin("x", $('#glob-xorigin').val()); });
-  $('#glob-yorigin').on("change", function(){ updateOrigin("y", $('#glob-yorigin').val()); });
+  $('#glob-xorigin').on("change", function(){ moveOriginScalar("x", $('#glob-xorigin').val()); });
+  $('#glob-yorigin').on("change", function(){ moveOriginScalar("y", $('#glob-yorigin').val()); });
   
   $('#coord-sys').on("change", function(){ updateCoords( $('#coord-sys').val()); }); 
   
@@ -144,6 +146,10 @@ $(document).ready(function(){
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
 
   $('#help-tooltips').on("click", function() { displayTooltips(); });
+  
+  $("#elementprops-tab").on("click", function() { 
+    if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
+  });
   
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();

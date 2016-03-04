@@ -8443,7 +8443,9 @@ Physics.behavior('interactive', function( parent ){
                         touch = e.changedTouches[touchIndex];
                         touchId = touch.identifier || touch.pointerId || "mouse";
                         pos = { idx: touchId, x: touch.pageX - offset.left, y: touch.pageY - offset.top };
-                        body = self._world.findOne({ $at: new Physics.vector( pos ), $in: self.getTargets() });
+                        
+                        // Modified by MADADASA: Body must be visible to grab
+                        body = self._world.findOne({ $at: new Physics.vector( pos ), $in: self.getTargets(), hidden:false });
 
                         if ( body ){
                             // we're trying to grab a body
