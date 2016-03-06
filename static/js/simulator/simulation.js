@@ -56,26 +56,25 @@ function attemptSimulation(){
     
     // MathJax output, assign appropriate globals to allow simulation to run    
     MathJax.Hub.queue.Push(function()
-    {
+    {    
+      $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
+      $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
+      $("#solution-details")[0].textContent += ("[1] $x_2 + {v_x}_2*t = {v}_1 * cos( \\theta ) * t$\n");
+      $("#solution-details")[0].textContent += ("[2] $y_2 + {v_y}_2*t = {v}_1 * sin( \\theta ) * t$\n");
+      $("#solution-details")[0].textContent += ("Known values:\n");
+      $("#solution-details")[0].textContent += ("$v_1$ = " + C.toFixed(pre) + "\n");
+      $("#solution-details")[0].textContent += ("$x_2$ = " + x0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* cos(" + polar_pos[1].toFixed(pre) + ") )\n");
+      $("#solution-details")[0].textContent += ("$y_2$ = " + -y0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* sin(" + polar_pos[1].toFixed(pre) + ") )\n");
+      $("#solution-details")[0].textContent += ("${v_x}_2$ = " + vx.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* cos(" + polar_vel[1].toFixed(pre) + ") )\n");
+      $("#solution-details")[0].textContent += ("${v_y}_2$ = " + -vy.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* sin(" + polar_vel[1].toFixed(pre) + ") )\n");
+      
+      $("#solution-details")[0].textContent += ("Solved for heading, it is " + (90-heading).toFixed(pre) + ".\n");
+      $("#solution-details")[0].textContent += ("Use EQ[1] := $x_2 + {v_x}_2*t = {v}_1 * cos(\\theta) * t$\n");
+      $("#solution-details")[0].textContent += ("Known values:\n");
+      $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
+      $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
+    });
     
-    
-    $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
-    $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
-    $("#solution-details")[0].textContent += ("[1] $x_2 + {v_x}_2*t = {v}_1 * cos( \\theta ) * t$\n");
-    $("#solution-details")[0].textContent += ("[2] $y_2 + {v_y}_2*t = {v}_1 * sin( \\theta ) * t$\n");
-    $("#solution-details")[0].textContent += ("Known values:\n");
-    $("#solution-details")[0].textContent += ("$v_1$ = " + C.toFixed(pre) + "\n");
-    $("#solution-details")[0].textContent += ("$x_2$ = " + x0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* cos(" + polar_pos[1].toFixed(pre) + ") )\n");
-    $("#solution-details")[0].textContent += ("$y_2$ = " + -y0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* sin(" + polar_pos[1].toFixed(pre) + ") )\n");
-    $("#solution-details")[0].textContent += ("${v_x}_2$ = " + vx.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* cos(" + polar_vel[1].toFixed(pre) + ") )\n");
-    $("#solution-details")[0].textContent += ("${v_y}_2$ = " + -vy.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* sin(" + polar_vel[1].toFixed(pre) + ") )\n");
-    
-    $("#solution-details")[0].textContent += ("Solved for heading, it is " + (90-heading).toFixed(pre) + ".\n");
-    $("#solution-details")[0].textContent += ("Use EQ[1] := $x_2 + {v_x}_2*t = {v}_1 * cos(\\theta) * t$\n");
-    $("#solution-details")[0].textContent += ("Known values:\n");
-    $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
-    $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
-    });            
     Globals.keyframeTimes[1] = t;
     $('#keyframe-1-dt').val(t.toFixed(pre));                   
     Globals.totalFrames = Math.floor(t/Globals.world.timestep());
@@ -105,10 +104,10 @@ function attemptSimulation(){
     Globals.keyframeStates[1][1].vel.y = vy;
     
     // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
-    for(var i=nKF-1; i >= 0; i--){
-      setStateKF(i);
-      world.render();
-      viewportToKeyCanvas(i);
+    Globals.frame = false;
+    for(var i=nKF-1; i >= 0; i--){      
+      Globals.keyframe = i;
+      drawMaster();
     }
     
     $("#" + "keyframe-0").attr("style","border:4px solid #0000cc");
@@ -187,7 +186,7 @@ function attemptSimulation(){
           // The solver should return the unknown values
           var removals = [];
           for(var key in variables){
-            if(variables[key] == "?" || variables[key] === false || isNaN(variables[key]))
+            if(isNaN(variables[key]))
               removals.push(key);
           }
           for(var j=0; j<removals.length; j++){
@@ -204,16 +203,15 @@ function attemptSimulation(){
             return;
           }        
             
-          // Note: Consistency check should ensure "solved" times are all equal
+          // Consistency check: time should always progress forward
           if(!Globals.keyframeTimes[keyframe2]){
-            
-            /*
-            if(results[1]["t"] < 0){
+                        
+            if(results[1]["t"] <= 0 || results[1]["t"] <= Globals.keyframeTimes[keyframe1]){
               $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + keyframe2 + "!";
               Globals.timelineReady = false;
               return;
             }
-            */
+            
             
             Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
             $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
@@ -256,10 +254,10 @@ function attemptSimulation(){
       Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
     
     // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
+    Globals.frame = false;
     for(var i=nKF-1; i >= 0; i--){
-      setStateKF(i);
-      world.render();
-      viewportToKeyCanvas(i);
+      Globals.keyframe = i;
+      drawMaster();
     }
   }
   
@@ -396,11 +394,8 @@ function simulate(){
 
 // Updates a variable in the specified body to have the specified value
 function updateVariable(body, variable, value){
-  var variableMap = Globals.variableMap;
-  var keyframe = Globals.keyframe !== false? Globals.keyframe: lastKF();
-  var i = bIndex(body);
-  value = parseFloat(value);  
-  variableMap[keyframe][i][variable] = isNaN(value)? "?": value;
+  var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
+  Globals.variableMap[keyframe][bIndex(body)][variable] = isNaN(value)? "?": value;
 }
 
 // Set the state of the world to match keyframe n
@@ -416,7 +411,12 @@ function setStateKF(n){
 // Set the state of the world to match simulation frame n
 function setState(n){
   var bodies = Globals.world.getBodies();
-  for (var i = 0; i < bodies.length; i++){
+  
+  // Special case: Use the previous keyframe to place the origin
+  // This may be overwritten in the loop if there is an origin object
+  bodies[0].state = Globals.keyframeStates[lastKF()][0];
+  
+  for (var i = 1; i < bodies.length; i++){
     bodies[i].state = Globals.states[i][n];
     if(i === Globals.originObject)
       Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
@@ -440,222 +440,142 @@ function updateKeyframes(components){
     }
  
     // If mini-canvases exist, paint to them now
-    //if(Globals.useKeyframes){
-      setStateKF(i);
-      world.render();
-      viewportToKeyCanvas(i);
-    //}
+    Globals.keyframe = i;
+    drawMaster();    
   }
 
   // With one keyframe, immediately resimulate using new object
   if(nKF == 1) attemptSimulation();
 }
 
+function updateGravity(coordinate, value){
+  value = parseFloat(value);  
+  if(isNaN(value)) return;
+  
+  // TODO: Handle unit conversion
+  
+  if(coordinate == "x")
+    Globals.gravity[0] = value;
+  else
+    Globals.gravity[1] = value;
+  
+  if(Globals.numKeyframes > 1)
+    Globals.timelineReady = false;
+  else
+    attemptSimulation();
+}
+
+function updateSize(body, value){
+  if(!body) return;
+  value = parseInt(value);
+  value = isNaN(value)? body2Constant(body).size: clamp(10, value, 100);
+  var i = bIndex(body);
+  Globals.bodyConstants[i].size = value;
+  body.view.setAttribute("width", Globals.bodyConstants[i].size * 2);
+  body.view.setAttribute("height", Globals.bodyConstants[i].size * 2);
+  body.radius = Globals.bodyConstants[i].size;
+  body.geometry.radius = Globals.bodyConstants[i].size;
+  drawMaster();
+}
+
+function updateImage(body, value){
+  if(!body) return;
+  
+  var i = bIndex(body);
+
+  // Create image element to be used
+  var img = document.createElement("img");
+  img.setAttribute("width", Globals.bodyConstants[i].size * 2);
+  img.setAttribute("height", Globals.bodyConstants[i].size * 2);
+  
+  // Associate body with its image
+  Globals.bodyConstants[i].img = isNaN(value)? value: parseInt(value);
+  
+  // Set the image element to display appropriately
+  if(bodyType(body) !== "kinematics1D-mass")
+    img.setAttribute("src", value);
+  else
+    img.setAttribute("src", Globals.massImages[parseInt(value)]);  
+  
+  // Update body's display and redraw
+  body.view = img;
+  body.view.onload = function() { drawMaster(); }  
+}
+
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-function onPropertyChanged(property, value){
+function onPropertyChanged(i, property, value){
   
-  var keyframe = Globals.keyframe;
+  var body = Globals.world.getBodies()[i];
+  if(!body) return;
   
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
-  if(keyframe === false) keyframe = lastKF();
-  
-  
-  // Invalidate the timeline if there is more than one keyframe
-  if(Globals.numKeyframes > 1) 
-    Globals.timelineReady = false;
-  
-  // Resimulate whenever there is only one keyframe
-  var doSimulate = (Globals.numKeyframes == 1);
-  
-  var world = Globals.world;
-  var bodies = world.getBodies();
-  var body = Globals.selectedBody;  
-  var i = world.getBodies().indexOf(body);
+  var keyframe = Globals.keyframe;  
+  if(keyframe === false) keyframe = lastKF();  
   var kState = Globals.keyframeStates[keyframe];
   
-  // Parse the value, assigning NaN if the parse fails
-  var valuef = parseFloat(value);
- 
+  // Reparse the value, assigning NaN if the parse fails
+  value = parseFloat(value);
+  
+  // Must be updating one of these properties to allow setting to NaN 
+  var allowed_variables =
+  [
+    "posx", "posy", "velx", "vely", "accx", "accy"
+  ];
+  
+  // If the value is NaN but not allowed to be a variable, don't update it.
+  if($.inArray(property, allowed_variables) === -1 && isNaN(value)) return;
+  
+  // Use the old value to prevent unknowns in the single keyframe case.
+  if(isNaN(value) && Globals.numKeyframes === 1) value = getOldValue(body, property);
+    
+  // Invalidate the timeline
+  dirty();
+  
   // Attempt to update the corresponding variable
-  if(body && bIndex(body) !== 0) updateVariable(body, property, value);
-
-  if(!isNaN(valuef))
-  {
-    if(property == 'gravityx')
-      Globals.gravity[0] = valuef;        
-    if(property == 'gravityy')      
-      Globals.gravity[1] = valuef;
-  }
-
-  var canvas = document.getElementById('viewport');
-  var canvas2d = canvas.children[0].getContext('2d');
-  if (body && value !== false) {
-    switch(property)
-    {    
-      case 'posx':
-
-        if(isNaN(valuef))
-          body2Constant(body).alpha = 0.5;
-        else {                    
-          body.state.pos.x = valuef;          
-          kState[i].pos.x = valuef;
-          
-          if(i === Globals.originObject)          
-            Globals.origin[0] = valuef;
-        }
+  if(bIndex(body) !== 0) updateVariable(body, property, value);
+ 
+  // Don't do anything else if the value is unknown
+  if(isNaN(value)) return;
+ 
+  // Otherwise update the keyframe state or body constants with known value:
+  switch(property){
+    // Position updates
+    case 'posx':
+        body.state.pos.x = value;
+        kState[i].pos.x = value;
+        if(i === Globals.originObject) Globals.origin[0] = value;
         break;
-      case 'posy':
-        if(isNaN(valuef))
-          body2Constant(body).alpha = 0.5;
-        else {
-          body.state.pos.y = valuef;
-          kState[i].pos.y = valuef;
-          
-          if(i === Globals.originObject)          
-            Globals.origin[1] = valuef;
-        }
+    case 'posy':
+        value = swapYpos(value, false);
+        body.state.pos.y = value;
+        kState[i].pos.y = value;
+        if(i === Globals.originObject) Globals.origin[1] = value;
         break;
-      case 'velx':
-        kState[i].vel.x = valuef;
-        break;
-      case 'vely':
-        kState[i].vel.y = valuef;
-        break;
-      case 'accx':
-        kState[i].acc.x = valuef;
-        break;
-      case 'accy':
-        kState[i].acc.y = valuef;
-        break;
-      case 'image':
-        var img = document.createElement("img");
-        img.setAttribute("width", Globals.bodyConstants[i].size * 2);
-        img.setAttribute("height", Globals.bodyConstants[i].size * 2);
-        if(isNaN(valuef)) {
-          img.setAttribute("src", value);
-          Globals.bodyConstants[i].img = value;
-        } else {
-          img.setAttribute("src", Globals.massImages[valuef]);
-          Globals.bodyConstants[i].img = valuef;
-        }
-        body.view = img;
-        body.view.onload = function() { updateKeyframes(); drawMaster(); }  
-        return;      
-      case 'size':
-        Globals.bodyConstants[i]["size"] = valuef;
-        body.view.setAttribute("width", Globals.bodyConstants[i].size * 2);
-        body.view.setAttribute("height", Globals.bodyConstants[i].size * 2);
-        body.radius = Globals.bodyConstants[i].size;
-        body.geometry.radius = Globals.bodyConstants[i].size;
-        body.view.onload = function() { drawMaster(); }      
-        //body.view = null;
-        break;
-      case 'vectors':
-        if (value) { // show vectors
-          Globals.bodyConstants[bIndex(body)].vectors = true;
-        } else { // dont show vectors
-          Globals.bodyConstants[bIndex(body)].vectors = false;
-        }
-        break;
-      case 'vectors_ttt':
-        if (value) { // show vectors
-          Globals.bodyConstants[bIndex(body)].vectors_ttt = true;
-        } else { // dont show vectors
-          Globals.bodyConstants[bIndex(body)].vectors_ttt = false;
-        }
-        break;
-      case 'pvagraph':
-        if (value) { // show graph;
-          Globals.bodyConstants[bIndex(body)].showGraph = true;
-        } else { // dont show graph;
-          Globals.bodyConstants[bIndex(body)].showGraph = false;
-        }
-
-        allHidden = graphBodyIndices().length === 0;
-
-        if(allHidden){
-          $("#pvaGraphContainer").hide();
-        } else {
-          $("#pvaGraphContainer").show();
-          updatePVAChart();
-        }
-        break;
-      case 'width':
-        // TODO: Wrap some of this up in an helper function
-        if (valuef < -500.0 || valuef > 500.0)
-          break;
-
-        // Get all of the other vertices except for the "width" vertex
-        var newVertices = body.vertices.filter(function(vert) { return vert.x === 0; });
-        var height = body.vertices.filter(function(vert) { return vert.y !== 0; })[0].y;
-
-        newVertices.push({x: valuef, y: 0}); // Add the new vertex for the width
-        body.vertices = newVertices;
-        body.geometry.setVertices(newVertices);
-        body.view = null;
-
-        var newAngle = Math.atan(height / valuef) * (180.0 / Math.PI);
-        Globals.bodyConstants[i]["width"] = valuef.toFixed(Globals.dPrecision);
-        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
-        break;
-      case 'height':
-        // TODO: Wrap some of this up in an helper function
-        if (valuef < -500.0 || valuef > 500.0)
-          break;
-
-        // Get all of the other vertices except for the "height" vertex
-        var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
-        var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
-
-        newVertices.push({x: 0, y: valuef}); // Add the new vertex for the height
-        body.vertices = newVertices;
-        body.geometry.setVertices(newVertices);
-        body.view = null;
-
-        var newAngle = Math.atan(valuef / width) * (180.0 / Math.PI);
-        Globals.bodyConstants[i]["height"] = valuef.toFixed(Globals.dPrecision);
-        Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
-        break;
-      case 'angle':
-        // TODO: Wrap some of this up in an helper function
-        if (valuef < -89.0 || valuef > 89.0 || valuef == 0.0)
-          break;
-
-        // Get all of the other vertices except for the "height" vertex
-        var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
-        var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
-
-        // Calculate the new height of the triangle using the width and the angle
-        var newHeight = Math.tan(valuef * (Math.PI / 180.0)) * Math.abs(width);
-
-        newVertices.push({x: 0, y: newHeight}); // Add the new vertex for the height
-        body.vertices = newVertices;
-        body.geometry.setVertices(newVertices);
-        body.view = null;
-
-        Globals.bodyConstants[i]["angle"] = valuef.toFixed(Globals.dPrecision);
-        Globals.bodyConstants[i]["height"] = newHeight.toFixed(Globals.dPrecision);
-        break;
-      default:
-        Globals.bodyConstants[i][property] = value;
-        break;
-    }
-  }
-  
-  // Rerun the simulation using updated properties if not using keyframes
-  if(Globals.numKeyframes == 1 && !Globals.didMove && doSimulate) {
+      
+    // Velocity and acceleration updates:
+    case 'velx': kState[i].vel.x = value; break;
+    case 'vely': kState[i].vel.y = value; break;
+    case 'accx': kState[i].acc.x = value; break;
+    case 'accy': kState[i].acc.y = value; break;
     
-    if(i != -1 && Globals.bodyConstants[i].alpha)
-      delete Globals.bodyConstants[i].alpha; // No alpha value if need to simulate
-    
-    simulate();  
-  }
-  
-  if(i != -1 && $('#pointmass-properties-position-x').val() != "" && $('#pointmass-properties-position-y').val() != "" && Globals.bodyConstants[i].alpha)
-     delete Globals.bodyConstants[i].alpha;
+    // Ramp-specific updates:
+    case 'width':        
+    case 'height':        
+    case 'angle':
+    case 'orientation':
+      updateRamp(body, property, value);        
+      break;
 
-   resetSaveButton();
+    // Default case:
+    default: Globals.bodyConstants[i][property] = value; break;
+  }
+}
+
+function dirty(){
+  if(Globals.numKeyframes == 1) return;  
+  Globals.timelineReady = false;
+  resetSaveButton();
 }
 
 function resetSaveButton(){

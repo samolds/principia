@@ -53,7 +53,7 @@ function displayVariableValues(body){
     var mod = (Globals.coordinateSystem == "cartesian")? -1: 1;
     
     // TODO fix unit conversions
-    $('#general-properties-position-x').val(position[0].toFixed(precision));
+    $('#general-properties-position-x').val(position[0].toFixed(precision));    
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     if(velocity[0]) {
@@ -102,6 +102,9 @@ function displayElementValues(bod){
 
     $('#general-properties-nickname').val(constants.nickname);
     $('#general-properties-position-x').val(position[0].toFixed(precision));
+    
+    if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], true);
+    
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     // Invert coordinate system if using cartesian coordinates for y value
@@ -180,6 +183,14 @@ function drawRopeLine(b1, b2){
   ctx.moveTo(x1 + radius,y1);  
   ctx.lineTo(x2,y2);
   ctx.stroke();
+  
+}
+
+function setNoSelect(value){
+  if(value)
+    $("*").addClass('no-select');
+  else
+    $("*").removeClass('no-select');
   
 }
 
@@ -406,7 +417,7 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
       var angle = getAngle(x, y);      
       var quadrant = getQuadrant(angle);
       var color = (quadrant == 1)? clr1: (quadrant == 3)? clr2: clr3;
-      var N  = 15;
+      var N  = magnitude(x, y) <= 20? 5: 15;      
       var THETA = (quadrant == 1 || quadrant == 4)?
                                                   deg2rad(45) - deg2rad(angle):
                                                   deg2rad(45) + deg2rad(angle);
@@ -502,8 +513,7 @@ function postRender(isKeyframe){
 
 // Draws a blue highlight around the nth mini-keyframe canvas
 // Removes all highlights if n === false
-function highlightKeycanvas(n)
-{
+function highlightKeycanvas(n){
   // Remove highlight on all keyframes
   for(var i=0; i < Globals.numKeyframes; i++)
     $("#" + "keyframe-" + i).attr("style","");

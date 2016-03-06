@@ -128,9 +128,27 @@ function toggleSimulator(){
   }
 }
 
+// Sets a boolean property to the specified value
+function updateBooleanProperty(body, property, value){
+  Globals.bodyConstants[bIndex(body)][property] = value;
+  
+  // Convert truthy/falsy into strictly true/false
+  value = value? true: false;
+  
+  // Special case: Handle showing/hiding the graph div
+  if(property === "showGraph"){
+    var allHidden = (graphBodyIndices().length === 0);
+    if(allHidden){ $("#pvaGraphContainer").hide(); }         
+    else { $("#pvaGraphContainer").show(); updatePVAChart(); }
+  }
+  
+  drawMaster();
+}
+
 // Handler for clicking a mini canvas and setting state to that keyframe
-function selectKeyframe(event){
-	var frame = event.target.id.split("-")[1];
+// n can either be a string containing a dash followed by the keyframe number or the number itself
+function selectKeyframe(n){
+	var frame = isNaN(n)? n.target.id.split("-")[1]: n;
 	Globals.keyframe = parseInt(frame);  
   highlightKeycanvas(frame);
   
@@ -142,15 +160,12 @@ function selectKeyframe(event){
 
   // Handle assigning transparency to objects with unknown positions
   var variables = Globals.variableMap;
-  for(var i=1; i < Globals.world.getBodies().length; i++)
-  {
-    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy))
-    {
+  for(var i=1; i < Globals.world.getBodies().length; i++){
+    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy)){
       if(Globals.bodyConstants[i].alpha)
         delete Globals.bodyConstants[i].alpha;
     }
-    else
-    {
+    else{
       Globals.bodyConstants[i].alpha = 0.5;  
     }
   }
@@ -160,7 +175,7 @@ function selectKeyframe(event){
 }
 
 // Wrapper for updating properties followed by immediate resimulate and redraw
-function updatePropertyRedraw(property, value){
+function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
   if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
@@ -219,7 +234,10 @@ function updatePropertyRedraw(property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(property, value, true);
+  onPropertyChanged(bIndex(body), property, value);
+  
+  if(Globals.numKeyframes == 1) attemptSimulation();
+  
   drawMaster();
 }
 

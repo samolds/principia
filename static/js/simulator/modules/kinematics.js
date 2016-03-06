@@ -103,8 +103,8 @@ function initWorld() {
   
   world.on('interact:move', function( data ){
     if(data.body) {
-            
-      if(bIndex(data.body) === Globals.originObject || bIndex(data.body) === 0)
+      var index = bIndex(data.body);
+      if(bIndex(data.body) === Globals.originObject || index === 0)
       {
         Globals.origin = [data.x, data.y];
         $("#glob-xorigin").val(data.x) ; 
@@ -112,8 +112,9 @@ function initWorld() {
       }
       
       Globals.didMove = true;
-      onPropertyChanged("posx", data.x);          
-      onPropertyChanged("posy", data.y);
+      setNoSelect(true);
+      onPropertyChanged(index, "posx", data.x);
+      onPropertyChanged(index, "posy", swapYpos(data.y, false));
       
       if(bIndex(data.body) === 0){        
         document.getElementById("globalprops-tab").click();
@@ -126,24 +127,30 @@ function initWorld() {
   world.on('interact:release', function( data ){    
     // Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
     if(data.body && Globals.didMove){
-        
+        var index = bIndex(data.body);
         // Make move as complete
         Globals.didMove = false;
-
-        // Resimulate if there is only one keyframe
-        onPropertyChanged("posx", data.x);
-        onPropertyChanged("posy", data.y);
+        setNoSelect(false);
         
-        if(Globals.bodyConstants[bIndex(data.body)].ctype == "kinematics1D-mass")
+        data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
+        data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
+        
+        onPropertyChanged(index, "posx", data.x);
+        onPropertyChanged(index, "posy", swapYpos(data.y, false));
+        
+        if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
         {
           attachSpring(data.body);
           detachSpring(data.body);
           attachPulley(data.body);          
         }
         
-        if(Globals.bodyConstants[bIndex(data.body)].ctype == "kinematics1D-origin")
+        if(Globals.bodyConstants[index].ctype == "kinematics1D-origin")
           moveOrigin({"x":data.x, "y":data.y});
 
+        // Resimulate if there is only one keyframe
+        if(Globals.numKeyframes == 1) attemptSimulation();
+        
         drawMaster();
     }
   });
@@ -274,7 +281,10 @@ function initWorld() {
       }       
     });
     
-    drawMaster();
+    if(Globals.world.getBodies()[0].view.complete)
+      drawMaster();
+    else
+      Globals.world.getBodies()[0].view.onload = function() { drawMaster(); };
     
      if(!json || json == "{}")
       return;
@@ -310,12 +320,15 @@ function initWorld() {
       Globals.bodyConstants[i] = tempBC[i];
 
       Globals.selectedBody = Globals.world.getBodies()[Globals.world.getBodies().length-1];
+      var index = Globals.world.getBodies().length-1;
       if (type == "kinematics1D-mass" || type == "kinematics1D-pulley") {
-        onPropertyChanged("image", tempBC[i].img, false);
-        onPropertyChanged("size", tempBC[i].size, false);
+        onPropertyChanged(index, "image", tempBC[i].img);
+        onPropertyChanged(index, "size", tempBC[i].size);
       } else if (type == "kinematics1D-ramp") {
-        onPropertyChanged("width", tempBC[i].width, false);
-        onPropertyChanged("height", tempBC[i].height, false);
+        onPropertyChanged(index, "width", tempBC[i].width);
+        onPropertyChanged(index, "height", tempBC[i].height);
+        onPropertyChanged(index, "angle", tempBC[i].angle);
+        onPropertyChanged(index, "orientation", tempBC[i].orientation);
       }
       Globals.selectedBody = false;
     }
@@ -338,8 +351,8 @@ function initWorld() {
     
     
     for(var i=tempKF.length-1; i>=0; i--){
-      setStateKF(i);
-      viewportToKeyCanvas(i);
+      Globals.keyframe = i;
+      drawMaster();
     }
     
     updateCoords(Globals.coordinateSystem);
