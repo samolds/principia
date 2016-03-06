@@ -35,16 +35,19 @@ function moveOrigin(data){
     Globals.world.getBodies()[0].hidden = false;
   }
   
+  for(var i=0; i < Globals.keyframeStates.length; i++){
+    Globals.keyframeStates[i][0].pos.x = data.x;
+    Globals.keyframeStates[i][0].pos.y = data.y;
+  }
+  
+  data.y = swapYpos(data.y, false);
   Globals.origin[0] = data.x;
   Globals.origin[1] = data.y;
   
   $("#glob-xorigin").val(data.x); 
   $("#glob-yorigin").val(data.y);
   
-  for(var i=0; i < Globals.keyframeStates.length; i++){
-    Globals.keyframeStates[i][0].pos.x = Globals.origin[0];
-    Globals.keyframeStates[i][0].pos.y = Globals.origin[1];
-  }
+  
   drawMaster();
 }
 
@@ -56,11 +59,12 @@ function moveOriginScalar(coordinate, value){
   if(isNaN(value)) return;
   
   if(coordinate == "x"){
-    Globals.origin[0] = value;
+    Globals.origin[0] = value;    
   }
   else {
     Globals.origin[1] = value;
   }
+  Globals.origin[1] = swapYpos(Globals.origin[1], false);
   
   moveOrigin({"x":Globals.origin[0],"y":Globals.origin[1]});
 }

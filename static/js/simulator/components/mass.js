@@ -32,7 +32,7 @@ function addMass(data){
   addToVariableMap(
     {
       posx: data.x, 
-      posy: data.y,
+      posy: swapYpos(data.y, false),
       velx: 0,
       vely: 0,
       accx: 0,

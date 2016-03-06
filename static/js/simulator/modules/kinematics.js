@@ -41,7 +41,7 @@ function initWorld() {
       var origin = Physics.body('circle', {
                 treatment:"ghost",
                 x: Globals.origin[0],
-                y: Globals.origin[1],
+                y: swapYpos(Globals.origin[1], false),
                 radius: 25,
                 view: img,
                 styles: {
@@ -105,10 +105,10 @@ function initWorld() {
     if(data.body) {
       var index = bIndex(data.body);
       if(bIndex(data.body) === Globals.originObject || index === 0)
-      {
-        Globals.origin = [data.x, data.y];
+      {        
+        Globals.origin = [data.x, swapYpos(data.y, false)];
         $("#glob-xorigin").val(data.x) ; 
-        $("#glob-yorigin").val(data.y) ;
+        $("#glob-yorigin").val(swapYpos(data.y, false)) ;
       }
       
       Globals.didMove = true;
@@ -347,7 +347,7 @@ function initWorld() {
         Globals.keyframeStates[i][j].angular = {acc:angular.acc,vel:angular.vel,pos:angular.pos};
       }
       
-      moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
+      moveOrigin({"x":restore["origin"][0], "y":swapYpos(restore["origin"][1], false)});
     
     
     for(var i=tempKF.length-1; i>=0; i--){
