@@ -45,7 +45,8 @@ function addPulley(data){
   
   
   world.add(component);
-  
+  updateKeyframes([component]);
+  Globals.pulleyBodyCounter++;
   
   bodyConstants[bodyConstants.length-1].radius = dRadius;  
   bodyConstants[bodyConstants.length-1].attach_left  = [data.x - dRadius, data.y];
@@ -60,9 +61,7 @@ function addPulley(data){
 
   bodyConstants[bodyConstants.length-1].img = "/static/img/toolbox/pulley.png";
   bodyConstants[bodyConstants.length-1].size = dRadius;
-  
-  updateKeyframes([component]);
-  
+
   return [component];
 }
 

@@ -84,7 +84,15 @@ var Globals = {
   
   // Coordinate system currently used (Cartesian or Polar)
   coordinateSystem: "cartesian",
-  
+
+  massBodyCounter: 0,
+
+  pulleyBodyCounter: 0,
+
+  rampBodyCounter: 0,
+
+  springBodyCounter: 0,
+
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  

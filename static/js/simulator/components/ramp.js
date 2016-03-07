@@ -34,6 +34,11 @@ function addRamp(data){
       angle: -30.964,
     }
   );
+
+  // Add the component to the world and update all keyframes
+  world.add(component);
+  updateKeyframes([component]);
+  Globals.rampBodyCounter++;
                   
   // Assign constants
   bodyConstants[bodyConstants.length-1].width = 100.0;
@@ -41,10 +46,6 @@ function addRamp(data){
   bodyConstants[bodyConstants.length-1].angle = -30.964;
   bodyConstants[bodyConstants.length-1].orientation = "right";
   bodyConstants[bodyConstants.length-1].nickname = "ramp " + getLabel(component);
-  
-  // Add the component to the world and update all keyframes
-  world.add(component);    
-  updateKeyframes([component]);
   
   return component;
 }
@@ -75,12 +76,12 @@ function setRampWidth(body, value){
     body.view = null;
 
     var newAngle = Math.atan(height / value) * (180.0 / Math.PI);
-    Globals.bodyConstants[i]["width"] = value.toFixed(Globals.dPrecision);
-    Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
+    Globals.bodyConstants[bIndex(body)]["width"] = value.toFixed(Globals.dPrecision);
+    Globals.bodyConstants[bIndex(body)]["angle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
 function setRampHeight(body, value){
-  if (value <= 0 || value > 500.0)
+  if (value <= -500.0 || value > 500.0)
     return;
   
   // Get all of the other vertices except for the "height" vertex
@@ -93,8 +94,8 @@ function setRampHeight(body, value){
   body.view = null;
 
   var newAngle = Math.atan(value / width) * (180.0 / Math.PI);
-  Globals.bodyConstants[i]["height"] = value.toFixed(Globals.dPrecision);
-  Globals.bodyConstants[i]["angle"] = newAngle.toFixed(Globals.dPrecision);
+  Globals.bodyConstants[bIndex(body)]["height"] = value.toFixed(Globals.dPrecision);
+  Globals.bodyConstants[bIndex(body)]["angle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
 function setRampAngle(body, value){

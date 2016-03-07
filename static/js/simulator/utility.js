@@ -117,7 +117,14 @@ function convertUnit(value, type, invert){
 }
 
 function getLabel(body){
-  return 1;
+
+  switch(bodyType(body)){
+    case 'kinematics1D-mass':   return Globals.massBodyCounter;
+    case 'kinematics1D-pulley': return Globals.pulleyBodyCounter;
+    case 'kinematics1D-ramp':   return Globals.rampBodyCounter;
+    case 'kinematics1D-spring': return Globals.springBodyCounter;
+  }
+  return 0;
 }
 
 function bodyType(body) { return body2Constant(body).ctype; }

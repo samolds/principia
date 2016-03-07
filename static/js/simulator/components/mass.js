@@ -39,6 +39,11 @@ function addMass(data){
       accy: 0
     }
   );
+
+  // Add the component to the world and update all keyframes
+  world.add(component);
+  updateKeyframes([component]);
+  Globals.massBodyCounter++;
                   
   // Assign constants
   bodyConstants[bodyConstants.length-1].mass = 1.0;
@@ -48,10 +53,6 @@ function addMass(data){
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
-  
-  // Add the component to the world and update all keyframes
-  world.add(component);    
-  updateKeyframes([component]);
   
   return component;
 }

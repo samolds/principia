@@ -49,6 +49,8 @@ function addSpring(data)
   
   world.add(component);
   world.add(componentChild);
+  updateKeyframes([component, componentChild]);
+  Globals.springBodyCounter++;
   
   bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
   bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
@@ -57,8 +59,6 @@ function addSpring(data)
   bodyConstants[bodyConstants.length-2].vectors = false;
   bodyConstants[bodyConstants.length-1].nickname = "spring " + (getLabel(component));
   bodyConstants[bodyConstants.length-2].nickname = "spring " + (getLabel(component)) + " end";
-  
-  updateKeyframes([component, componentChild]);
   
   return [component, componentChild];
 }
