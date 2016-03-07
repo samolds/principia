@@ -113,8 +113,8 @@ function setRampAngle(body, value){
   body.geometry.setVertices(newVertices);
   body.view = null;
 
-  Globals.bodyConstants[i]["angle"] = value.toFixed(Globals.dPrecision);
-  Globals.bodyConstants[i]["height"] = newHeight.toFixed(Globals.dPrecision);
+  Globals.bodyConstants[bIndex(body)]["angle"] = value.toFixed(Globals.dPrecision);
+  Globals.bodyConstants[bIndex(body)]["height"] = newHeight.toFixed(Globals.dPrecision);
 }
 
 function setRampOrientation(body, value){
