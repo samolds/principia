@@ -99,7 +99,7 @@ function setRampHeight(body, value){
 
 function setRampAngle(body, value){
   if (value < -89.0 || value > 89.0 || value == 0.0)
-    break;
+    return;
 
   // Get all of the other vertices except for the "height" vertex
   var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });

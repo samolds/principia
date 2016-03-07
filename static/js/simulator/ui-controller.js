@@ -514,10 +514,10 @@ function populateOverview(e) {
      $list.append(
     "<li >" +
       "<div class ='row clickable'>"+
-       "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
+       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
-       "<div class = 'col s4' onclick = 'selectBody(" + i + ", false)'>"+
+       "<div class = 'col s4' onclick = 'selectBody(" + i + ")'>"+
         consts[i].nickname +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
@@ -648,8 +648,12 @@ function deleteBody(bodyIndex){
   }
 }
 
-function selectBody(bodyIndex, switchTab){
+function selectBody(bodyIndex){
   Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
-  if(switchTab) drawProperties();
+  if(bodyIndex !== 0) 
+    $("#elementprops-tab").click();
+  else
+    $("#globalprops-tab").click();
+    
   drawMaster();
 }

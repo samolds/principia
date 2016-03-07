@@ -97,14 +97,14 @@ function initWorld() {
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
       world.on('interact:grab', function( data ){        
         if(data.body){          
-          selectBody(bIndex(data.body), bIndex(data.body) !== 0); // Only switch tabs if not the origin!
+          selectBody(bIndex(data.body), bIndex(data.body) === 0); // Only switch tabs if not the origin!
         }
       });
   
   world.on('interact:move', function( data ){
     if(data.body) {
       var index = bIndex(data.body);
-      if(bIndex(data.body) === Globals.originObject || index === 0)
+      if(index === Globals.originObject || index === 0)
       {        
         Globals.origin = [data.x, swapYpos(data.y, false)];
         $("#glob-xorigin").val(data.x) ; 
