@@ -148,6 +148,15 @@ function selectKeyframe(n){
     Globals.frame = Globals.keyframes[Globals.keyframe];
     $("#simulatorFrameRange").val(Globals.frame);
   }
+  
+  if(Globals.selectedBody !== false){  
+    selectPropertyInputType(Globals.selectedBody, "posx");
+    selectPropertyInputType(Globals.selectedBody, "posy");
+    selectPropertyInputType(Globals.selectedBody, "velx");
+    selectPropertyInputType(Globals.selectedBody, "vely");
+    selectPropertyInputType(Globals.selectedBody, "accx");
+    selectPropertyInputType(Globals.selectedBody, "accy");
+  }
 
   assignAlpha();
   
@@ -244,6 +253,40 @@ function updatePropertyRedraw(body, property, value){
   drawMaster();
 }
 
+function setPropertyInputType(body, property){
+  var index = bIndex(body);
+  var type = isNaN(Globals.variableMap[Globals.keyframe][index][property])? "text": "number";
+  var readonly = (type == "text");
+  
+  switch(property)
+  {
+    case "posx":
+      $('#general-properties-position-x').attr("type", type); 
+      $('#general-properties-position-x').prop("readonly", readonly);
+      break;
+    case "posy":
+      $('#general-properties-position-y').attr("type", type);
+      $('#general-properties-position-y').prop("readonly", readonly);
+      break;
+    case "velx":
+      $('#pointmass-properties-velocity-x').attr("type", type);
+      $('#pointmass-properties-velocity-x').prop("readonly", readonly);
+      break;
+    case "vely":
+      $('#pointmass-properties-velocity-y').attr("type", type);
+      $('#pointmass-properties-velocity-y').prop("readonly", readonly);
+      break;
+    case "accx":
+      $('#pointmass-properties-acceleration-x').attr("type", type);
+      $('#pointmass-properties-acceleration-x').prop("readonly", readonly);
+      break;
+    case "accy":
+      $('#pointmass-properties-acceleration-y').attr("type", type);
+      $('#pointmass-properties-acceleration-y').prop("readonly", readonly);
+      break;
+  }
+}
+
 function toggleUnknown(body, property){
   if(Globals.keyframe === false) {
     var frame = lastKF();
@@ -254,66 +297,12 @@ function toggleUnknown(body, property){
   var index = bIndex(body);
   if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
     onPropertyChanged(index, property, 0);
-    
-    switch(property)
-    {
-      case "posx":
-        $('#general-properties-position-x').attr("type", "number"); 
-        $('#general-properties-position-x').prop("readonly", false);
-        break;
-      case "posy":
-        $('#general-properties-position-y').attr("type", "number");
-        $('#general-properties-position-y').prop("readonly", false);
-        break;
-      case "velx":
-        $('#pointmass-properties-velocity-x').attr("type", "number");
-        $('#pointmass-properties-velocity-x').prop("readonly", false);
-        break;
-      case "vely":
-        $('#pointmass-properties-velocity-y').attr("type", "number");
-        $('#pointmass-properties-velocity-y').prop("readonly", false);
-        break;
-      case "accx":
-        $('#pointmass-properties-acceleration-x').attr("type", "number");
-        $('#pointmass-properties-acceleration-x').prop("readonly", false);
-        break;
-      case "accy":
-        $('#pointmass-properties-acceleration-y').attr("type", "text");
-        $('#pointmass-properties-acceleration-y').prop("readonly", false);
-        break;
-    }
   }
   else{
     onPropertyChanged(index, property, Number.NaN);
-  
-    switch(property)
-    {
-      case "posx":
-        $('#general-properties-position-x').attr("type", "text"); 
-        $('#general-properties-position-x').prop("readonly", true);
-        break;
-      case "posy":
-        $('#general-properties-position-y').attr("type", "text");
-        $('#general-properties-position-y').prop("readonly", true);
-        break;
-      case "velx":
-        $('#pointmass-properties-velocity-x').attr("type", "text");
-        $('#pointmass-properties-velocity-x').prop("readonly", true);
-        break;
-      case "vely":
-        $('#pointmass-properties-velocity-y').attr("type", "text");
-        $('#pointmass-properties-velocity-y').prop("readonly", true);
-        break;
-      case "accx":
-        $('#pointmass-properties-acceleration-x').attr("type", "text");
-        $('#pointmass-properties-acceleration-x').prop("readonly", true);
-        break;
-      case "accy":
-        $('#pointmass-properties-acceleration-y').attr("type", "text");
-        $('#pointmass-properties-acceleration-y').prop("readonly", true);
-        break;
-    }
   }
+  
+  setPropertyInputType(body, property)
   
   drawMaster();
 }
@@ -764,6 +753,14 @@ function deleteBody(bodyIndex){
 
 function selectBody(bodyIndex){
   Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
+  
+  selectPropertyInputType(Globals.selectedBody, "posx");
+  selectPropertyInputType(Globals.selectedBody, "posy");
+  selectPropertyInputType(Globals.selectedBody, "velx");
+  selectPropertyInputType(Globals.selectedBody, "vely");
+  selectPropertyInputType(Globals.selectedBody, "accx");
+  selectPropertyInputType(Globals.selectedBody, "accy");
+    
   if(bodyIndex !== 0) 
     $("#elementprops-tab").click();
   else
