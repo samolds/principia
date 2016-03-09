@@ -63,8 +63,8 @@ function displayVariableValues(body){
     }
 
     if(acceleration[0]) {
-      $('#pointmass-properties-acceleration-x').val(acceleration[0].toFixed(precision));
-      $('#pointmass-properties-acceleration-y').val(acceleration[1].toFixed(precision));
+      $('#pointmass-properties-acceleration-x').val((acceleration[0] == "?")? "":acceleration[0].toFixed(precision));
+      $('#pointmass-properties-acceleration-y').val((acceleration[1] == "?")? "":acceleration[1].toFixed(precision));
     }
     
     if(isNaN(position[0])) $('#general-properties-position-x').val("Unknown");
