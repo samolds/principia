@@ -170,45 +170,45 @@
               <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()">Remove <i class="fa fa-trash"></i></a>
             </div>
           </li>
-          <li class="property-item">
+          <li class="property-item" principia-property="posx">
             <div class="input-field">
               <input type="number" id="general-properties-position-x" placeholder="" title="Enter a number"></input>
               <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
-            </div> 
+            </div>            
           </li>
-          <li class="property-item">
+          <li class="property-item" principia-property="posy">
             <div class="input-field">
               <input type="number" id="general-properties-position-y" placeholder="" title="Enter a number"></input>
               <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
-            </div>
+            </div>            
           </li>
         </ul>
 
         <!-- Properties that apply to point mass components -->
         <ul class="property-window-list hide" id="pointmass-properties">
-          <li class="property-item">
+          <li class="property-item" principia-property="velx">
             <div class="input-field">
               <input type="number" id="pointmass-properties-velocity-x" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
-            </div>
+            </div>            
           </li>
-          <li class="property-item">
+          <li class="property-item" principia-property="vely">
             <div class="input-field">
               <input type="number" id="pointmass-properties-velocity-y" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
-            </div>
+            </div>            
           </li>
-          <li class="property-item">
+          <li class="property-item" principia-property="accx">
             <div class="input-field">
               <input type="number" id="pointmass-properties-acceleration-x" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
-            </div>
+            </div>            
           </li>
-          <li class="property-item">
+          <li class="property-item" principia-property="accy">
             <div class="input-field">
               <input type="number" id="pointmass-properties-acceleration-y" placeholder="" title="Enter a number"></input>
               <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
-            </div>
+            </div>            
           </li>
           <li class="property-item">
             <div class="input-field">
@@ -306,15 +306,18 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <span>Orientation</span>
-              <div class="switch">
-                <label>
-                  Left
-                  <input id="ramp-properties-orientation" type="checkbox" checked="checked"></input>
-                  <span class="lever"></span>
-                  Right
-                </label>
-              </div>
+              <input type="number" id="ramp-properties-friction" placeholder="" title="Enter a number"></input>
+              <label for="ramp-properties-friction" class="active">Friction</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <a class="waves-effect waves-light btn" id="ramp-properties-flip-horz">Flip Horz.</a>
+            </div>
+          </li>          
+          <li class="property-item">
+            <div class="input-field">
+              <a class="waves-effect waves-light btn" id="ramp-properties-flip-vert">Flip Vert.</a>
             </div>
           </li>
         </ul>
