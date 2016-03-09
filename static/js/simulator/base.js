@@ -144,14 +144,20 @@ $(document).ready(function(){
   $('#pointmass-properties-img').on("change", function(){
     updateImage(Globals.selectedBody, $('#pointmass-properties-img option:selected')[0].value);
   });
-  $('#pointmass-properties-vector').on("change", function(){
-    updateBooleanProperty(Globals.selectedBody, 'vectors', ($('#pointmass-properties-vector')[0].checked) ); 
+  $('.vector-toggle').on("change", function(){
+    var isChecked = ($(this)[0].checked);
+    updateBooleanProperty(Globals.selectedBody, 'vectors',  isChecked);
+    $('.vector-toggle').prop("checked", isChecked);
   });
-  $('#pointmass-properties-vector-ttt').on("change", function(){
-    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', ($('#pointmass-properties-vector-ttt')[0].checked) );
+  $('.ttt-toggle').on("change", function(){
+    var isChecked = ($(this)[0].checked);
+    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', isChecked);
+    $('.ttt-toggle').prop("checked", isChecked);
   });
-  $('#pointmass-properties-pvagraph').on("change", function(){
-    updateBooleanProperty(Globals.selectedBody, 'showGraph', ($('#pointmass-properties-pvagraph')[0].checked) ); 
+  $('.pvagraph-toggle').on("change", function(){
+    var isChecked = ($(this)[0].checked);
+    updateBooleanProperty(Globals.selectedBody, 'showGraph', isChecked );
+    $('.pvagraph-toggle').prop("checked", isChecked);
   });
 
   // Ramp specific events

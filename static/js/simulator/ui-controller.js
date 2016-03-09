@@ -481,38 +481,42 @@ function toggleMenuOff() {
 function contextMenuListener(event) {
   if(Globals.selectedBody)
   {
-    var canvas = document.getElementById("viewport");
-    var body = Globals.selectedBody;  
-    var pos = getMousePos(canvas, event);
-    var posx = pos.x;
-    var posy = pos.y;
-    //override normal context menu
-    event.preventDefault();
+   
+      var canvas = document.getElementById("viewport");
+      var body = Globals.selectedBody;  
+      var pos = getMousePos(canvas, event);
+      var posx = pos.x;
+      var posy = pos.y;
+      //override normal context menu
+      event.preventDefault();
 
-    var img = body.view;
-    var halfw = img["width"] / 2;
-    var halfh = img["height"] / 2;
-
-    //get click x and y
-    //get body x and y
-    //create square,  see if contextMenuclick is in square
-    //
-    var loc = body.state.pos;
-    var rectRight= loc.x + halfw;
-    var rectBottom= loc.y + halfh;
-    var rectx = loc.x - halfw;
-    var recty = loc.y - halfh; 
-
-    // check each rect for hits
-    // if this rect is hit, display an alert
-    if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
-      {//there is an object selected show context menu:
-        toggleMenuOn();  
-        positionMenu(event);
-      }
-    else
+     if( bodyType(Globals.selectedBody) == "kinematics1D-mass")
     {
-        toggleMenuOff();
+      var img = body.view;
+      var halfw = img["width"] / 2;
+      var halfh = img["height"] / 2;
+
+      //get click x and y
+      //get body x and y
+      //create square,  see if contextMenuclick is in square
+      //
+      var loc = body.state.pos;
+      var rectRight= loc.x + halfw;
+      var rectBottom= loc.y + halfh;
+      var rectx = loc.x - halfw;
+      var recty = loc.y - halfh; 
+
+      // check each rect for hits
+      // if this rect is hit, display an alert
+      if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
+        {//there is an object selected show context menu:
+          toggleMenuOn();  
+          positionMenu(event);
+        }
+      else
+      {
+          toggleMenuOff();
+      }
     }
   }
   else
