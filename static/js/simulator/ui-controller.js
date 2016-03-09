@@ -657,3 +657,17 @@ function selectBody(bodyIndex){
     
   drawMaster();
 }
+
+function keyUp(e)
+{
+  if (e.keyCode == 86) Globals.vDown = false;   
+  if (e.keyCode == 65) Globals.aDown = false;      
+}
+
+function keyDown(e)
+{
+  if (e.keyCode == 86) Globals.vDown = true;
+  if (e.keyCode == 65) Globals.aDown = true;
+}
+
+

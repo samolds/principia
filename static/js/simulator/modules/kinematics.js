@@ -102,26 +102,54 @@ function initWorld() {
       });
   
   world.on('interact:move', function( data ){
-    if(data.body) {
-      var index = bIndex(data.body);
-      if(index === Globals.originObject || index === 0)
-      {        
-        Globals.origin = [data.x, swapYpos(data.y, false)];
-        $("#glob-xorigin").val(data.x) ; 
-        $("#glob-yorigin").val(swapYpos(data.y, false)) ;
-      }
-      
-      Globals.didMove = true;
-      setNoSelect(true);
-      onPropertyChanged(index, "posx", data.x);
-      onPropertyChanged(index, "posy", swapYpos(data.y, false));
-      
-      if(bIndex(data.body) === 0){        
-        document.getElementById("globalprops-tab").click();
-      }
+    if(Globals.aDown || Globals.vDown)
+    {
+      if(data.body)
+      {
+        var dx = (-data.body.state.pos.x + data.x) / 8;
+        var dy = (-data.body.state.pos.y + data.y) / 8;
+
+        if(Globals.vDown)
+        {
+          data.body.state.vel.y = dy;
+          data.body.state.vel.x = dx;
+          onPropertyChanged("velx", dx);          
+          onPropertyChanged("vely", dy);
+        }
+        if(Globals.aDown)
+        {
+          data.body.state.acc.y = dy;
+          data.body.state.acc.x = dx;
+          onPropertyChanged("accx", dx);          
+          onPropertyChanged("accy", dy);
+        }
+
+        drawMaster();
         
-      drawMaster();
+      }
     }
+    else{
+      if(data.body) {
+        var index = bIndex(data.body);
+        if(index === Globals.originObject || index === 0)
+        {        
+          Globals.origin = [data.x, swapYpos(data.y, false)];
+          $("#glob-xorigin").val(data.x) ; 
+          $("#glob-yorigin").val(swapYpos(data.y, false)) ;
+        }
+        
+        Globals.didMove = true;
+        setNoSelect(true);
+        onPropertyChanged(index, "posx", data.x);
+        onPropertyChanged(index, "posy", swapYpos(data.y, false));
+        
+        if(bIndex(data.body) === 0){        
+          document.getElementById("globalprops-tab").click();
+        }
+          
+        drawMaster();
+      }
+    } 
   });
   
   world.on('interact:release', function( data ){    

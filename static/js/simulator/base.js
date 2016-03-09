@@ -180,6 +180,9 @@ $(document).ready(function(){
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
+
+  $(document).on('keyup', function(event) {keyUp(event)});
+  $(document).on('keydown', function(event) {keyDown(event)});
   
   // Events for handling global acceleration (gravity)
   $('#glob-xaccel').val(Globals.gravity[0]); $('#glob-yaccel').val(Globals.gravity[1]);  

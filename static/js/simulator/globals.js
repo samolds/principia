@@ -93,6 +93,10 @@ var Globals = {
 
   springBodyCounter: 0,
 
+  // Flags for keys being held down
+  vDown: false,
+  aDown: false,
+
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  
@@ -134,6 +138,8 @@ var Globals = {
   
   maxNumKeyframes: 5
 };
+
+
 
 //context menu 
 var menu = document.querySelector("#context-menu");
