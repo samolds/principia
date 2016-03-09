@@ -311,7 +311,7 @@ function toggleUnknown(body, property){
     onPropertyChanged(index, property, Number.NaN);
   }
   
-  setPropertyInputType(body, property)
+  selectPropertyInputType(body, property)
   
   drawMaster();
 }
