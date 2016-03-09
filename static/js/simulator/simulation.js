@@ -643,8 +643,8 @@ Physics.integrator('principia-integrator', function( parent ){
       state.vel.y += state.acc.y * dt + spring_a[1];
       
       if(body.treatment == "dynamic"){
-        state.vel.x += Globals.gravity[0];
-        state.vel.y += Globals.gravity[1];
+        state.vel.x += Globals.gravity[0] * dt;
+        state.vel.y += Globals.gravity[1] * dt;
       }
       
       // Deal with pulleys
