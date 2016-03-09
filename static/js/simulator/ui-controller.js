@@ -253,7 +253,7 @@ function updatePropertyRedraw(body, property, value){
   drawMaster();
 }
 
-function setPropertyInputType(body, property){
+function selectPropertyInputType(body, property){
   var index = bIndex(body);
   var type = isNaN(Globals.variableMap[Globals.keyframe][index][property])? "text": "number";
   var readonly = (type == "text");
@@ -262,7 +262,7 @@ function setPropertyInputType(body, property){
   {
     case "posx":
       $('#general-properties-position-x').attr("type", type); 
-      $('#general-properties-position-x').prop("readonly", readonly);
+      $('#general-properties-position-x').prop("readonly", readonly);      
       break;
     case "posy":
       $('#general-properties-position-y').attr("type", type);
@@ -284,6 +284,15 @@ function setPropertyInputType(body, property){
       $('#pointmass-properties-acceleration-y').attr("type", type);
       $('#pointmass-properties-acceleration-y').prop("readonly", readonly);
       break;
+  }
+  
+  if(readonly){
+    if(property == "posx") $('#general-properties-position-x').val("Unknown");
+    if(property == "posy") $('#general-properties-position-y').val("Unknown");
+    if(property == "velx") $('#pointmass-properties-velocity-x').val("Unknown");
+    if(property == "vely") $('#pointmass-properties-velocity-y').val("Unknown");
+    if(property == "accx") $('#pointmass-properties-acceleration-x').val("Unknown");
+    if(property == "accy") $('#pointmass-properties-acceleration-y').val("Unknown");  
   }
 }
 
