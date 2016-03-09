@@ -326,10 +326,9 @@ function Kinematics1DModule() {
         onPropertyChanged(index, "image", tempBC[i].img);
         onPropertyChanged(index, "size", tempBC[i].size);
       } else if (type == "kinematics1D-ramp") {
-        onPropertyChanged(index, "width", tempBC[i].width);
-        onPropertyChanged(index, "height", tempBC[i].height);
-        onPropertyChanged(index, "angle", tempBC[i].angle);
-        onPropertyChanged(index, "orientation", tempBC[i].orientation);
+        setRampWidth(Globals.selectedBody, tempBC[i].width, true);
+        setRampHeight(Globals.selectedBody, tempBC[i].height, true);
+        setRampAngle(Globals.selectedBody, tempBC[i].angle, true);
       }
       Globals.selectedBody = false;
     }

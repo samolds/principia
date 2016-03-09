@@ -61,7 +61,8 @@ function updateRamp(body, property, value)
 }
 
 function setRampWidth(body, value, allow_negatives){
-    if (Math.abs(value) > 500.0 || value == 0.0)
+    value = parseFloat(value);
+    if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
       return;
     
     if(!allow_negatives)
@@ -85,7 +86,8 @@ function setRampWidth(body, value, allow_negatives){
 }
 
 function setRampHeight(body, value, allow_negatives){
-  if (Math.abs(value) > 500.0 || value == 0.0)
+  value = parseFloat(value);
+  if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
     return;
   
   if(!allow_negatives)
@@ -109,7 +111,8 @@ function setRampHeight(body, value, allow_negatives){
 }
 
 function setRampAngle(body, value, allow_negatives){
-  if (Math.abs(value) > 89.0 || value == 0.0)
+  value = parseFloat(value);
+  if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
     return;
 
   if(!allow_negatives)
