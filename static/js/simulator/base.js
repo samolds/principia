@@ -174,11 +174,17 @@ $(document).ready(function(){
     if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
   });
+
+  // enable modals
+  $('.modal-trigger').leanModal();
   
   // Event for clicking solve button
   $('#playpause').on('click', function(){
-    if (!Globals.timelineReady)
+    if (!Globals.timelineReady) {
       attemptSimulation();
+      // Show the solution details button
+      $('#solution-detail-button').show();
+    }
 
     toggleSimulator();
   });

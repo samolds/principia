@@ -2,13 +2,17 @@
 <!---------- Title above simulator window ---------->
 <div class="row">
   {{ if and (.IsLoggedIn) (.Data.isOwner) }}
-    <div class="input-field col s6">
+    <div class="input-field col s3">
       {{ if .Data.simulation.Name }}
         <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="resetSaveButton()"></input>
       {{ else }}
         <input id="simulation-name" type="text" value="New Simulation" onkeypress="resetSaveButton()"></input>
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
+    </div>
+    <div class="input-field col s3">
+      <!-- Solution Modal Trigger -->
+        <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger" href="#solutionModal" style="display:none">Solution Details</a>
     </div>
     <!-- Only show if it is NOT a new simulation-name -->
     {{ if (.Data.simulation.KeyName) }}
@@ -47,13 +51,17 @@
     </div>
     {{ end }}
   {{ else }}
-    <div class="col s6">
+    <div class="col s3">
       {{ if .Data.simulation.Name }}
         <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
         <small>By: {{ .Data.simulationAuthorDisplay }}</small>
       {{ else }}
         <h4 class="page-header">Simulation</h4>
       {{ end }}
+    </div>
+    <div class="input-field col s3">
+      <!-- Solution Modal Trigger -->
+        <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger" href="#solutionModal" style="display:none">Solution Details</a>
     </div>
     {{ if .Data.simulation.Name }}
     <div class="col s1 right pad-sides">
