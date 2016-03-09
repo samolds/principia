@@ -255,7 +255,7 @@ function updatePropertyRedraw(body, property, value){
 
 function selectPropertyInputType(body, property){
   var index = bIndex(body);
-  var type = isNaN(Globals.variableMap[Globals.keyframe][index][property])? "text": "number";
+  var type = isNaN(Globals.variableMap[getKF()][index][property])? "text": "number";
   var readonly = (type == "text");
   
   switch(property)
