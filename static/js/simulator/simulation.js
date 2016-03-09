@@ -470,6 +470,12 @@ function updateKeyframes(components){
 
   // With one keyframe, immediately resimulate using new object
   if(nKF == 1) attemptSimulation();
+  else {
+    dirty();
+    Globals.keyframe = getKF();
+    highlightKeycanvas(Globals.keyframe);
+    drawMaster();    
+  }
 }
 
 function updateGravity(coordinate, value){
@@ -610,7 +616,7 @@ function onPropertyChanged(i, property, value){
 function dirty(){
   if(Globals.numKeyframes == 1) return;  
   Globals.timelineReady = false;
-  resetSaveButton();
+  resetSaveButton();  
 }
 
 function resetSaveButton(){
