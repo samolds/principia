@@ -13,7 +13,7 @@ function drawLoop(){
   $("#simulatorFrameRange").val(Globals.frame)
   
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
-  highlightKeycanvas(Globals.keyframe);
+  highlightKeycanvas(Globals.keyframe, "yellow");
   
   drawMaster();
   updatePVAChart();
@@ -35,6 +35,7 @@ function displayVariableValues(body){
     // Use user unit
     position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
     
+    
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
       position = cartesian2Polar([position[0], position[1]]);
@@ -49,22 +50,29 @@ function displayVariableValues(body){
       
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
-    
-    var mod = (Globals.coordinateSystem == "cartesian")? -1: 1;
-    
+   
     // TODO fix unit conversions
-    $('#general-properties-position-x').val(position[0].toFixed(precision));    
+    //if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);  
+    
+    $('#general-properties-position-x').val(position[0].toFixed(precision));
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
     if(velocity[0]) {
       $('#pointmass-properties-velocity-x').val((velocity[0] == "?")? "":velocity[0].toFixed(precision));
-      $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":(mod * velocity[1]).toFixed(precision));
+      $('#pointmass-properties-velocity-y').val((velocity[1] == "?")? "":(velocity[1]).toFixed(precision));
     }
 
     if(acceleration[0]) {
       $('#pointmass-properties-acceleration-x').val(acceleration[0].toFixed(precision));
-      $('#pointmass-properties-acceleration-y').val(mod * acceleration[1].toFixed(precision));
+      $('#pointmass-properties-acceleration-y').val(acceleration[1].toFixed(precision));
     }
+    
+    if(isNaN(position[0])) $('#general-properties-position-x').val("Unknown");
+    if(isNaN(position[1])) $('#general-properties-position-y').val("Unknown");
+    if(isNaN(velocity[0])) $('#pointmass-properties-velocity-x').val("Unknown");
+    if(isNaN(velocity[1])) $('#pointmass-properties-velocity-y').val("Unknown");
+    if(isNaN(acceleration[0])) $('#pointmass-properties-acceleration-x').val("Unknown");
+    if(isNaN(acceleration[1])) $('#pointmass-properties-acceleration-y').val("Unknown");
   } 
 }
 
@@ -103,7 +111,7 @@ function displayElementValues(bod){
     $('#general-properties-nickname').val(constants.nickname);
     $('#general-properties-position-x').val(position[0].toFixed(precision));
     
-    if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], true);
+    if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);
     
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
@@ -121,9 +129,9 @@ function displayElementValues(bod){
     $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
     $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;
 
-    $('#ramp-properties-width').val(constants.width);
-    $('#ramp-properties-height').val(constants.height);
-    $('#ramp-properties-angle').val(constants.angle);
+    $('#ramp-properties-width').val(Math.abs(constants.width));
+    $('#ramp-properties-height').val(Math.abs(constants.height));
+    $('#ramp-properties-angle').val(Math.abs(constants.angle));
     
   } else {
     $('#general-properties-nickname').val("");
@@ -303,13 +311,6 @@ function highlightSelection(body, color, modifier){
   var centerY = bodyDim.y - (height / 2);
 
   canvas.ctx.strokeRect(centerX, centerY, width, height);
-}
-
-// Opens the properties tab
-function drawProperties(){
-  if (Globals.selectedBody) {
-    document.getElementById("elementprops-tab").click();
-  }
 }
 
 // Draws a vector for each body
@@ -512,15 +513,20 @@ function postRender(isKeyframe){
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas
-// Removes all highlights if n === false
-function highlightKeycanvas(n){
+// If n is not false, highlights keyframe n.
+// If n is false, this will either:
+//  1) remove all highlights (if color is falsy)
+//  2) draw a highlight on the PREVIOUS keyframe (if color is not falsy)
+function highlightKeycanvas(n, color){
   // Remove highlight on all keyframes
   for(var i=0; i < Globals.numKeyframes; i++)
     $("#" + "keyframe-" + i).attr("style","");
   
-  // Add highlight to nth keyframe
+  // Add highlight to nth keyframe if
   if(n !== false)
-    $("#" + "keyframe-" + n).attr("style","border:4px solid #0000cc");
+    $("#" + "keyframe-" + n).attr("style","border:4px solid #0000cc");  
+  else if(n === false && color)
+    $("#" + "keyframe-" + lastKF()).attr("style","border:4px solid " + color);  
 }
 
 // Sets the world state to the currently selected frame and renders it.

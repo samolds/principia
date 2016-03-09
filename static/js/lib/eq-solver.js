@@ -75,8 +75,10 @@ var Solver = (function () {
                       if(result != out[eq]){
                         var err = "Warning! Got an inconsistent result:\n";
                         err += "Original: " + eq + " = " + out[eq].toFixed(precision) + ".\n";
-                        err += "New: " +  eq + " = " + result.toFixed(precision) + ".\n"
-                        $("#solution-details")[0].textContent += err;
+                        err += "New: " +  eq + " = " + result.toFixed(precision) + ".\n";
+                        MathJax.Hub.queue.Push(function(){
+                          $("#solution-details")[0].textContent += err;
+                        });
                       }
                     }
                     
@@ -106,8 +108,9 @@ var Solver = (function () {
                       msg += this.extras[eq].prettyvars[i][j] + " = " + eval(this.extras[eq].vars[i][j]).toFixed(precision) + "\n";
                     
                     msg += "\n\n";
-                    
-                    $("#solution-details")[0].textContent += msg;
+                    MathJax.Hub.queue.Push(function(){
+                      $("#solution-details")[0].textContent += msg;
+                    });
                     
                     changed = true;
                     out[eq] = result;

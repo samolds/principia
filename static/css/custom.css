@@ -180,6 +180,22 @@ body {
   .switch > label {
     padding-top: .75rem;
   }
+  
+  .input-field-variable {
+    width: 70% 
+  }
+  
+  .input-field-unknown-container {
+    position: relative;
+    top: -57px;
+    left: 50px;
+  }
+  
+  .input-field-unknown {
+    padding: 0;
+    height: 42px;
+  }
+  
 /* end custom form */
 
 
@@ -248,12 +264,13 @@ body {
   left: 125px;
   top:50px;
   width: 37px;
+  margin-top:-37px; /* TODO: Find out what broke here? */
 }
 
 .remove-keyframe-btn:hover .delete-kf-btn {
   display: inline-block;
   margin: 0px;
-  padding: 0px;
+  padding: 0px;  
 }
 
 /*this is to vertically space tab icons*/

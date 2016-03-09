@@ -93,9 +93,10 @@ var Globals = {
 
   springBodyCounter: 0,
 
-  // Flags for keys being held down
+  // Flags for keys being held down or that vectors have been updated
   vDown: false,
   aDown: false,
+  vChanging: false,
 
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating

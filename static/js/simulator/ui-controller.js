@@ -38,7 +38,7 @@ function handleUIDragStop(event, ui){
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
 
-  var data = { 'x': cx-vleft, 'y': cy-vtop};
+  var data = { 'x': cx-vleft, 'y': swapYpos(cy-vtop, false)};
 
   moveOrigin(data);  
   drawMaster();
@@ -81,19 +81,10 @@ function onRangeUpdate(){
   
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
-  
+    
   // Highlight mini canvas
-  if(Globals.keyframe !== false)
-  {    
-    $("#" + "keyframe-" + Globals.keyframe).attr("style","border:4px solid #0000cc");
-  }
-  else
-  {
-    for(var i=0; i < Globals.numKeyframes; i++){
-      $("#" + "keyframe-" + i).attr("style","");
-    }    
-  }
-  
+  highlightKeycanvas(Globals.keyframe, "yellow");
+
   drawMaster();
   updatePVAChart();
 }
@@ -158,10 +149,18 @@ function selectKeyframe(n){
     $("#simulatorFrameRange").val(Globals.frame);
   }
 
+  assignAlpha();
+  
+  // Draw master will set state appropriately and display it
+	drawMaster();
+}
+
+function assignAlpha(){
   // Handle assigning transparency to objects with unknown positions
+  var frame = getKF();
   var variables = Globals.variableMap;
   for(var i=1; i < Globals.world.getBodies().length; i++){
-    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy)){
+    if(variables[frame][i].posx != "?" && variables[frame][i].posy != "?"){
       if(Globals.bodyConstants[i].alpha)
         delete Globals.bodyConstants[i].alpha;
     }
@@ -169,9 +168,6 @@ function selectKeyframe(n){
       Globals.bodyConstants[i].alpha = 0.5;  
     }
   }
-  
-  // Draw master will set state appropriately and display it
-	drawMaster();
 }
 
 // Wrapper for updating properties followed by immediate resimulate and redraw
@@ -179,8 +175,7 @@ function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
   if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
-    
-    
+       
     // Convert from Polar input to Cartesian coordinate
     var point;
     
@@ -212,20 +207,29 @@ function updatePropertyRedraw(body, property, value){
       other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
-    
+    var index = bIndex(body);
     // Convert back to default PhysicsJS origin, if a position was updated
     if(property.substring(0,3) == "pos")
       point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
     
     point = [convertUnit(point[0], "posx", true), convertUnit(point[1], "posy", true)]
+        
     
     // Update properties within simulator, draw, and return
-    onPropertyChanged(property.substring(0,3) + "x", point[0], false);
+    onPropertyChanged(index, property.substring(0,3) + "x", point[0]);
     
-    if(point[1] === -0)
+    if(point[1] === -0){
       point[1] = "?";
+    }
     
-    onPropertyChanged(property.substring(0,3) + "y", point[1], true);
+    if(Globals.numKeyframes > 1 && point[1] == "?"){
+      toggleUnknown(body, property.substring(0,3) + "y");
+    }
+    else {
+      onPropertyChanged(index, property.substring(0,3) + "y", point[1]);
+    }
+    
+    if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
     return;
   }
@@ -236,7 +240,80 @@ function updatePropertyRedraw(body, property, value){
   value = convertUnit(value, property, true);
   onPropertyChanged(bIndex(body), property, value);
   
-  if(Globals.numKeyframes == 1) attemptSimulation();
+  if(Globals.numKeyframes == 1) attemptSimulation();  
+  drawMaster();
+}
+
+function toggleUnknown(body, property){
+  if(Globals.keyframe === false) {
+    var frame = lastKF();
+    setStateKF(frame);
+    Globals.keyframe = frame;
+    highlightKeycanvas(Globals.keyframe);
+  }
+  var index = bIndex(body);
+  if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
+    onPropertyChanged(index, property, 0);
+    
+    switch(property)
+    {
+      case "posx":
+        $('#general-properties-position-x').attr("type", "number"); 
+        $('#general-properties-position-x').prop("readonly", false);
+        break;
+      case "posy":
+        $('#general-properties-position-y').attr("type", "number");
+        $('#general-properties-position-y').prop("readonly", false);
+        break;
+      case "velx":
+        $('#pointmass-properties-velocity-x').attr("type", "number");
+        $('#pointmass-properties-velocity-x').prop("readonly", false);
+        break;
+      case "vely":
+        $('#pointmass-properties-velocity-y').attr("type", "number");
+        $('#pointmass-properties-velocity-y').prop("readonly", false);
+        break;
+      case "accx":
+        $('#pointmass-properties-acceleration-x').attr("type", "number");
+        $('#pointmass-properties-acceleration-x').prop("readonly", false);
+        break;
+      case "accy":
+        $('#pointmass-properties-acceleration-y').attr("type", "text");
+        $('#pointmass-properties-acceleration-y').prop("readonly", false);
+        break;
+    }
+  }
+  else{
+    onPropertyChanged(index, property, Number.NaN);
+  
+    switch(property)
+    {
+      case "posx":
+        $('#general-properties-position-x').attr("type", "text"); 
+        $('#general-properties-position-x').prop("readonly", true);
+        break;
+      case "posy":
+        $('#general-properties-position-y').attr("type", "text");
+        $('#general-properties-position-y').prop("readonly", true);
+        break;
+      case "velx":
+        $('#pointmass-properties-velocity-x').attr("type", "text");
+        $('#pointmass-properties-velocity-x').prop("readonly", true);
+        break;
+      case "vely":
+        $('#pointmass-properties-velocity-y').attr("type", "text");
+        $('#pointmass-properties-velocity-y').prop("readonly", true);
+        break;
+      case "accx":
+        $('#pointmass-properties-acceleration-x').attr("type", "text");
+        $('#pointmass-properties-acceleration-x').prop("readonly", true);
+        break;
+      case "accy":
+        $('#pointmass-properties-acceleration-y').attr("type", "text");
+        $('#pointmass-properties-acceleration-y').prop("readonly", true);
+        break;
+    }
+  }
   
   drawMaster();
 }
@@ -291,6 +368,26 @@ function addKeyframe(){
   
   pushDuplicates();   
   Globals.numKeyframes++;
+  
+  if(Globals.numKeyframes == 2)
+  {
+    var variables = $("[principia-property]");
+    for(var i=0; i<variables.length; i++)
+    {
+      var li = variables[i];
+      $($(li).children()[0]).addClass("input-field-variable");
+      $(li).append(
+      "<div class=\"input-field-unknown-container\" title=\"Mark this value as unknown.\">" +
+        "<a class=\"input-field-unknown btn\"><img src=\"/static/img/toolbox/shrug.svg\" height=\"42\" width=\"30\"/></a>" +
+      "</div>");
+      
+    }
+    
+    $('.input-field-unknown').on("click", function(event){
+      var property = $(event.target).parents().eq(2).attr("principia-property");
+      toggleUnknown(Globals.selectedBody, property);
+    });
+  }
 }
 
 function removeKeyframe(event){
@@ -320,9 +417,26 @@ function removeKeyframe(event){
   $(eventFrame).parents().eq(3).remove();
   Globals.numKeyframes--;
   
+  if(Globals.numKeyframes == 1)
+  {
+    $(".input-field-variable").removeClass("input-field-variable");
+    
+    $('.input-field-unknown').off();
+    
+    var variables = $("[principia-property]");
+    for(var i=0; i<variables.length; i++)
+    {
+      var li = variables[i];
+      $(li).children()[1].remove();
+    }
+  }
+  
   // Special case: User deletes currently selected keyframe
   if(index == Globals.keyframe){
-    // select Globals.keyframe -1
+    Globals.keyframe--;
+    setStateKF(Globals.keyframe);
+    highlightKeycanvas(Globals.keyframe);
+    drawMaster();
   }
 }
 
@@ -660,14 +774,23 @@ function selectBody(bodyIndex){
 
 function keyUp(e)
 {
-  if (e.keyCode == 86) Globals.vDown = false;   
-  if (e.keyCode == 65) Globals.aDown = false;      
+  var wasSet = (Globals.aDown || Globals.vDown);
+  
+  if (e.keyCode == 86) Globals.vDown = false;
+  if (e.keyCode == 65) Globals.aDown = false;
+  
+  if(!Globals.vDown && !Globals.aDown){
+    Globals.vChanging = false;
+    if(Globals.numKeyframes == 1 && wasSet)
+      attemptSimulation();
+  }
 }
 
 function keyDown(e)
 {
   if (e.keyCode == 86) Globals.vDown = true;
   if (e.keyCode == 65) Globals.aDown = true;
+ 
+  if(Globals.vDown || Globals.aDown)
+    Globals.vChanging = true;
 }
-
-

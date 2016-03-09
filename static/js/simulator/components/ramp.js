@@ -43,8 +43,7 @@ function addRamp(data){
   // Assign constants
   bodyConstants[bodyConstants.length-1].width = 100.0;
   bodyConstants[bodyConstants.length-1].height = -60.0;
-  bodyConstants[bodyConstants.length-1].angle = -30.964;
-  bodyConstants[bodyConstants.length-1].orientation = "right";
+  bodyConstants[bodyConstants.length-1].angle = -30.964;  
   bodyConstants[bodyConstants.length-1].nickname = "ramp " + getLabel(component);
   
   return component;
@@ -55,16 +54,21 @@ function updateRamp(body, property, value)
   if(bodyType(body) !== "kinematics1D-ramp") return;
   switch(property)
   {
-    case "width":       setRampWidth(body, value); break;
-    case "height":      setRampHeight(body, value); break;
-    case "angle":       setRampAngle(body, value); break;
-    case "orientation": setRampOrientation(body, value); break;
+    case "width":       setRampWidth(body, value, false); break;
+    case "height":      setRampHeight(body, value, false); break;
+    case "angle":       setRampAngle(body, value, false); break;    
   }
 }
 
-function setRampWidth(body, value){
-    if (Math.abs(value) > 500.0)
+function setRampWidth(body, value, allow_negatives){
+    if (Math.abs(value) > 500.0 || value == 0.0)
       return;
+    
+    if(!allow_negatives)
+    {
+      if(value < 0) return;
+      value = value * Math.sign(body2Constant(body).width);
+    }
 
     // Get all of the other vertices except for the "width" vertex    
     var newVertices = body.vertices.filter(function(vert) { return vert.x === 0; });
@@ -80,9 +84,15 @@ function setRampWidth(body, value){
     Globals.bodyConstants[bIndex(body)]["angle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
-function setRampHeight(body, value){
-  if (value <= -500.0 || value > 500.0)
+function setRampHeight(body, value, allow_negatives){
+  if (Math.abs(value) > 500.0 || value == 0.0)
     return;
+  
+  if(!allow_negatives)
+  {
+    if(value < 0) return;
+    value = value * Math.sign(body2Constant(body).height);
+  }
   
   // Get all of the other vertices except for the "height" vertex
   var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
@@ -98,17 +108,28 @@ function setRampHeight(body, value){
   Globals.bodyConstants[bIndex(body)]["angle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
-function setRampAngle(body, value){
-  if (value < -89.0 || value > 89.0 || value == 0.0)
+function setRampAngle(body, value, allow_negatives){
+  if (Math.abs(value) > 89.0 || value == 0.0)
     return;
 
+  if(!allow_negatives)
+  {
+    if(value < 0) return;
+    if(body2Constant(body).width > 0)
+      value = value * Math.sign(body2Constant(body).angle);
+    
+    if(body2Constant(body).width < 0 && body2Constant(body).height < 0)
+      value = Math.abs(value);      
+  }
+  
   // Get all of the other vertices except for the "height" vertex
   var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
   var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
 
   // Calculate the new height of the triangle using the width and the angle
   var newHeight = Math.tan(value * (Math.PI / 180.0)) * Math.abs(width);
-
+  if(newHeight > 0 && body2Constant(body).height < 0) newHeight *= -1;
+  
   newVertices.push({x: 0, y: newHeight}); // Add the new vertex for the height
   body.vertices = newVertices;
   body.geometry.setVertices(newVertices);
@@ -116,8 +137,4 @@ function setRampAngle(body, value){
 
   Globals.bodyConstants[bIndex(body)]["angle"] = value.toFixed(Globals.dPrecision);
   Globals.bodyConstants[bIndex(body)]["height"] = newHeight.toFixed(Globals.dPrecision);
-}
-
-function setRampOrientation(body, value){
-  
 }

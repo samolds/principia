@@ -76,23 +76,22 @@ function cartesian2Polar(point){
   // Q1: Use theta
   // Q2, Q3: Use theta + 180
   // Q4: Use theta + 360
-  if(x < 0) theta -= 180; // Handles Q2, Q3
-  if(x > 0 && y > 0) theta -= 360; // Handles Q4 
+  if(x < 0) theta += 180; // Handles Q2, Q3
+  if(x > 0 && y < 0) theta += 360; // Handles Q4 
   
   if(x == 0)
   {
-    if(y > 0) theta = -270;
-    else if(y < 0) theta = -90;
+    if(y > 0) theta = 90;
+    else if(y < 0) theta = 270;
     else theta = 0;
   }
-  
-  // Negate theta due to inverted y-axis
-  return [magnitude(x,y), -theta];
+    
+  return [magnitude(x,y), theta];
 }
 
 function polar2Cartesian(point){
-  // Negate sin due to inverted y-axis: Also note that testing shows that there is potentially ~1e-7 rounding error
-  return [point[0] * Math.cos(deg2rad(point[1])), point[0] * -Math.sin(deg2rad(point[1]))];
+  // Note that testing shows that there is potentially ~1e-7 rounding error
+  return [point[0] * Math.cos(deg2rad(point[1])), point[0] * Math.sin(deg2rad(point[1]))];
 }
 
 function rad2deg(rads) { return 57.2957795131 * rads; }
@@ -168,3 +167,6 @@ function swapYpos(value, invert){
   var height = $("#" + Globals.canvasId).children()[0].height;
   return invert? value - height: height - value;
 }
+
+// Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
+function getKF() { return (Globals.keyframe !== false)? Globals.keyframe: lastKF(); }

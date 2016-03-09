@@ -15,113 +15,8 @@ function attemptSimulation(){
   var pre            = Globals.dPrecision;
   
   // Handle case that an object has been selected as the origin
-  if(Globals.originObject !== false)
-  {
-    // Hard-coded example for using polar coordinates
-    
-    // Disable collisions
-    world.getBodies()[0].treatment = "ghost";
-    world.getBodies()[1].treatment = "ghost";
-    
-    // Variables should be easier to generalize than the S.o.E., but for now,
-    // assume body 0 is the coast guard and body 1 is the other boat.
-    var coast_guard = Globals.world.getBodies()[0].state;
-    var other_boat  = Globals.world.getBodies()[1].state;
-    
-    // Read in x0 vx, y0 vy, C (First 4 are from other boat, C is coast guard speed)
-    var x0 = other_boat.pos.x - Globals.origin[0];
-    var y0 = other_boat.pos.y - Globals.origin[1];
-    var vx = other_boat.vel.x;   
-    var vy = other_boat.vel.y;       
-    var C  = coast_guard.vel.x;
-    
-    var polar_pos = cartesian2Polar([x0, y0]);
-    var polar_vel = cartesian2Polar([vx, vy]);
-        
-    // This is the gross hard-coded math that doesn't generalize yet, but can at least
-    // work with other values for the same type of problem.
-    var termA = 2*y0*vy + 2*x0*vx;
-    var termB = -(C*C) + vx*vx + vy*vy;    
-    
-    var term1 = termA*termA;
-    var term2 = -4*(x0*x0 + y0*y0)*termB;
-    var term3 = -termA;
-    var term4 = 2*termB;
-    
-    // Solve for the time it takes the boats to intersect using S.o.E.
-    var t = -1 * (Math.sqrt(term1 + term2) - term3)/term4;
-    
-    // Plug t back into either equation of motion for a heading
-    var heading = rad2deg(Math.acos((x0 + vx*t)/(C*t)));
-    
-    // MathJax output, assign appropriate globals to allow simulation to run    
-    MathJax.Hub.queue.Push(function()
-    {    
-      $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
-      $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
-      $("#solution-details")[0].textContent += ("[1] $x_2 + {v_x}_2*t = {v}_1 * cos( \\theta ) * t$\n");
-      $("#solution-details")[0].textContent += ("[2] $y_2 + {v_y}_2*t = {v}_1 * sin( \\theta ) * t$\n");
-      $("#solution-details")[0].textContent += ("Known values:\n");
-      $("#solution-details")[0].textContent += ("$v_1$ = " + C.toFixed(pre) + "\n");
-      $("#solution-details")[0].textContent += ("$x_2$ = " + x0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* cos(" + polar_pos[1].toFixed(pre) + ") )\n");
-      $("#solution-details")[0].textContent += ("$y_2$ = " + -y0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* sin(" + polar_pos[1].toFixed(pre) + ") )\n");
-      $("#solution-details")[0].textContent += ("${v_x}_2$ = " + vx.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* cos(" + polar_vel[1].toFixed(pre) + ") )\n");
-      $("#solution-details")[0].textContent += ("${v_y}_2$ = " + -vy.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* sin(" + polar_vel[1].toFixed(pre) + ") )\n");
-      
-      $("#solution-details")[0].textContent += ("Solved for heading, it is " + (90-heading).toFixed(pre) + ".\n");
-      $("#solution-details")[0].textContent += ("Use EQ[1] := $x_2 + {v_x}_2*t = {v}_1 * cos(\\theta) * t$\n");
-      $("#solution-details")[0].textContent += ("Known values:\n");
-      $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
-      $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
-    });
-    
-    Globals.keyframeTimes[1] = t;
-    $('#keyframe-1-dt').val(t.toFixed(pre));                   
-    Globals.totalFrames = Math.floor(t/Globals.world.timestep());
-    $('#simulatorFrameRange')[0].max = Globals.totalFrames;  
-    Globals.keyframes[1] = Globals.totalFrames;
-    
-    var result = polar2Cartesian([C, heading]);
-    Globals.keyframeStates[0][0].vel.x = result[0];
-    Globals.keyframeStates[0][0].vel.y = result[1];
-    Globals.variableMap[0][0].velx = result[0];
-    Globals.variableMap[0][0].vely = result[1];
-    
-    // If results are sound, the user can play the simulation    
-    simulate();
-    
-    // Final position of both boats
-    var fx = Globals.keyframeStates[0][1].pos.x + vx * t;
-    var fy = Globals.keyframeStates[0][1].pos.y + vy * t;
-    
-    Globals.keyframeStates[1][0].pos.x = fx;
-    Globals.keyframeStates[1][0].pos.y = fy;
-    Globals.keyframeStates[1][0].vel.x = result[0];
-    Globals.keyframeStates[1][0].vel.y = result[1];
-    Globals.keyframeStates[1][1].pos.x = fx;
-    Globals.keyframeStates[1][1].pos.y = fy;
-    Globals.keyframeStates[1][1].vel.x = vx;
-    Globals.keyframeStates[1][1].vel.y = vy;
-    
-    // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
-    Globals.frame = false;
-    for(var i=nKF-1; i >= 0; i--){      
-      Globals.keyframe = i;
-      drawMaster();
-    }
-    
-    $("#" + "keyframe-0").attr("style","border:4px solid #0000cc");
-    for(var i=1; i < nKF; i++)
-      $("#" + "keyframe-" + i).attr("style","");
-    Globals.keyframe = 0;
-    Globals.timelineReady = true;
-    drawMaster(); 
-    
-
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
-
-
-    
+  if(Globals.originObject !== false && nKF > 1){
+    collisionSolver();
     return;
   }
   
@@ -145,7 +40,7 @@ function attemptSimulation(){
         var kf2_variables = Globals.variableMap[keyframe2];
                   
         // For each body...
-        for(var body = 0; body < constants.length; body++){ 
+        for(var body = 1; body < constants.length; body++){ 
           // Constants associated with one body
           var bc = constants[body];
             
@@ -172,7 +67,8 @@ function attemptSimulation(){
           
           // Store time
           var t = Globals.keyframeTimes[keyframe2];
-                      
+          if(t === false) t = "?";
+                
           // Prepare solver input
           var variables = { x0:x0, xf:xf, 
                             y0:y0, yf:yf,
@@ -203,26 +99,27 @@ function attemptSimulation(){
             return;
           }        
             
-          // Consistency check: time should always progress forward
-          if(!Globals.keyframeTimes[keyframe2]){
-                        
-            if(results[1]["t"] <= 0 || results[1]["t"] <= Globals.keyframeTimes[keyframe1]){
-              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + keyframe2 + "!";
+          
+          if(!Globals.keyframeTimes[keyframe2]){            
+            Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
+          
+            // Consistency check: time should always progress forward
+            if(results[1]["t"] <= 0 || Globals.keyframeTimes[keyframe2] <= Globals.keyframeTimes[keyframe1]){
+              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!";
+              Globals.keyframeTimes[keyframe2] = false;
               Globals.timelineReady = false;
               return;
             }
             
-            
-            Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
             $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
             if(keyframe2 == nKF-1)
               Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
           }
                  
           keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
-          keyframeStates[keyframe1][body]["pos"]["y"] = results[1]["y0"];
+          keyframeStates[keyframe1][body]["pos"]["y"] = swapYpos(results[1]["y0"], false);
           keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
-          keyframeStates[keyframe1][body]["vel"]["y"] = results[1]["vy0"];
+          keyframeStates[keyframe1][body]["vel"]["y"] = -results[1]["vy0"];
 
           kf1_variables[body].posx = results[1]["x0"];
           kf1_variables[body].posy = results[1]["y0"];
@@ -230,9 +127,9 @@ function attemptSimulation(){
           kf1_variables[body].vely = results[1]["vy0"];
           
           keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
-          keyframeStates[keyframe2][body]["pos"]["y"] = results[1]["yf"];
+          keyframeStates[keyframe2][body]["pos"]["y"] = swapYpos(results[1]["yf"], false);
           keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
-          keyframeStates[keyframe2][body]["vel"]["y"] = results[1]["vyf"];
+          keyframeStates[keyframe2][body]["vel"]["y"] = -results[1]["vyf"];
           
           kf2_variables[body].posx = results[1]["xf"];
           kf2_variables[body].posy = results[1]["yf"];
@@ -246,7 +143,7 @@ function attemptSimulation(){
         } // End for-each body
       } // End for-each keyframe
     } // End for-each pass
-    
+            
     $('#simulatorFrameRange')[0].max = Globals.totalFrames;
     
     // Associate keyframes with a real frame
@@ -266,7 +163,121 @@ function attemptSimulation(){
   simulate();
   
   // Update the simulation render
+  drawMaster();
+  
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+}
+
+function collisionSolver(){
+  var world          = Globals.world;
+  var solver         = Globals.solver;
+  var keyframeStates = Globals.keyframeStates;
+  var nKF            = Globals.numKeyframes;
+  var constants      = Globals.bodyConstants;
+  var pre            = Globals.dPrecision;
+  
+  if(Globals.world.getBodies().length != 3) return;
+  
+  // Hard-coded example for using polar coordinates  
+  // Disable collisions
+  world.getBodies()[1].treatment = "ghost";
+  world.getBodies()[2].treatment = "ghost";
+  
+  // Variables should be easier to generalize than the S.o.E., but for now,
+  // assume body 1 is the coast guard and body 2 is the other boat.
+  var coast_guard = world.getBodies()[1].state;
+  var other_boat  = world.getBodies()[2].state;
+  
+  // Read in x0 vx, y0 vy, C (First 4 are from other boat, C is coast guard speed)
+  var x0 = other_boat.pos.x - Globals.origin[0];
+  var y0 = swapYpos(other_boat.pos.y, false) - Globals.origin[1];
+  var vx = other_boat.vel.x;
+  var vy = -other_boat.vel.y;
+  var C  = coast_guard.vel.x;
+  
+  var polar_pos = cartesian2Polar([x0, y0]);
+  var polar_vel = cartesian2Polar([vx, vy]);
+      
+  // This is the gross hard-coded math that doesn't generalize yet, but can at least
+  // work with other values for the same type of problem.
+  var termA = 2*y0*vy + 2*x0*vx;
+  var termB = -(C*C) + vx*vx + vy*vy;    
+  
+  var term1 = termA*termA;
+  var term2 = -4*(x0*x0 + y0*y0)*termB;
+  var term3 = -termA;
+  var term4 = 2*termB;
+  
+  // Solve for the time it takes the boats to intersect using S.o.E.
+  var t = -1 * (Math.sqrt(term1 + term2) - term3)/term4;
+  
+  // Plug t back into either equation of motion for a heading
+  var heading = rad2deg(Math.acos((x0 + vx*t)/(C*t)));
+  
+  // MathJax output, assign appropriate globals to allow simulation to run    
+  MathJax.Hub.queue.Push(function()
+  {    
+    $("#solution-details")[0].textContent += ("Solved for $t$, it is " + t.toFixed(pre) + ".\n");
+    $("#solution-details")[0].textContent += ("Use the following system of equations, substituting out $ \\theta $:\n");
+    $("#solution-details")[0].textContent += ("[1] $x_2 + {v_x}_2*t = {v}_1 * cos( \\theta ) * t$\n");
+    $("#solution-details")[0].textContent += ("[2] $y_2 + {v_y}_2*t = {v}_1 * sin( \\theta ) * t$\n");
+    $("#solution-details")[0].textContent += ("Known values:\n");
+    $("#solution-details")[0].textContent += ("$v_1$ = " + C.toFixed(pre) + "\n");
+    $("#solution-details")[0].textContent += ("$x_2$ = " + x0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* cos(" + polar_pos[1].toFixed(pre) + ") )\n");
+    $("#solution-details")[0].textContent += ("$y_2$ = " + -y0.toFixed(pre) + " (from "  + polar_pos[0].toFixed(pre)  + "* sin(" + polar_pos[1].toFixed(pre) + ") )\n");
+    $("#solution-details")[0].textContent += ("${v_x}_2$ = " + vx.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* cos(" + polar_vel[1].toFixed(pre) + ") )\n");
+    $("#solution-details")[0].textContent += ("${v_y}_2$ = " + -vy.toFixed(pre) + " (from "  + polar_vel[0].toFixed(pre)  + "* sin(" + polar_vel[1].toFixed(pre) + ") )\n");
+    
+    $("#solution-details")[0].textContent += ("Solved for heading, it is " + (90-heading).toFixed(pre) + ".\n");
+    $("#solution-details")[0].textContent += ("Use EQ[1] := $x_2 + {v_x}_2*t = {v}_1 * cos(\\theta) * t$\n");
+    $("#solution-details")[0].textContent += ("Known values:\n");
+    $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
+    $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
+  });
+  
+  Globals.keyframeTimes[1] = t;
+  $('#keyframe-1-dt').val(t.toFixed(pre));                   
+  Globals.totalFrames = Math.floor(t/Globals.world.timestep());
+  $('#simulatorFrameRange')[0].max = Globals.totalFrames;  
+  Globals.keyframes[1] = Globals.totalFrames;
+  
+  var result = polar2Cartesian([C, heading]);
+  
+  Globals.keyframeStates[0][1].vel.x = result[0];
+  Globals.keyframeStates[0][1].vel.y = -result[1];
+  Globals.variableMap[0][1].velx = result[0];
+  Globals.variableMap[0][1].vely = result[1];
+  
+  // If results are sound, the user can play the simulation    
+  simulate();
+  
+  // Final position of both boats
+  var fx = Globals.keyframeStates[0][1].pos.x + Globals.keyframeStates[0][1].vel.x * t;
+  var fy = Globals.keyframeStates[0][1].pos.y + Globals.keyframeStates[0][1].vel.y * t;
+  
+  Globals.keyframeStates[1][1].pos.x = fx;
+  Globals.keyframeStates[1][1].pos.y = fy;
+  Globals.keyframeStates[1][1].vel.x = result[0];
+  Globals.keyframeStates[1][1].vel.y = -result[1];
+  Globals.keyframeStates[1][2].pos.x = fx;
+  Globals.keyframeStates[1][2].pos.y = fy;
+  Globals.keyframeStates[1][2].vel.x = vx;
+  Globals.keyframeStates[1][2].vel.y = -vy;
+  
+  // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
+  Globals.frame = false;
+  for(var i=nKF-1; i >= 0; i--){      
+    Globals.keyframe = i;
+    drawMaster();
+  }
+  
+  highlightKeycanvas(0);
+  Globals.keyframe = 0;
+  Globals.timelineReady = true;
   drawMaster(); 
+  
+
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
 // Creates a shallow copy of the specified variable
@@ -395,7 +406,20 @@ function simulate(){
 // Updates a variable in the specified body to have the specified value
 function updateVariable(body, variable, value){
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
-  Globals.variableMap[keyframe][bIndex(body)][variable] = isNaN(value)? "?": value;
+  
+  
+  if(isNaN(value))
+    Globals.variableMap[keyframe][bIndex(body)][variable] = "?";
+  else {
+    Globals.variableMap[keyframe][bIndex(body)][variable] = value;
+  
+    // Swap direction for y-velocity/acceleration (position is dealt with by caller)
+    if(variable == "vely")
+      Globals.variableMap[keyframe][bIndex(body)][variable] = -value;
+    if(variable == "accy")
+      Globals.variableMap[keyframe][bIndex(body)][variable] = -value;
+  }
+    
 }
 
 // Set the state of the world to match keyframe n
@@ -404,7 +428,7 @@ function setStateKF(n){
   for (var i = 0; i < bodies.length; i++){
     bodies[i].state = Globals.keyframeStates[n][i];
     if(i === Globals.originObject)
-      Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
+      Globals.origin = [bodies[i].state.pos.x, swapYpos(bodies[i].state.pos.y, false)];
   }
 }
 
@@ -419,7 +443,7 @@ function setState(n){
   for (var i = 1; i < bodies.length; i++){
     bodies[i].state = Globals.states[i][n];
     if(i === Globals.originObject)
-      Globals.origin = [bodies[i].state.pos.x, bodies[i].state.pos.y];
+      Globals.origin = [bodies[i].state.pos.x, swapYpos(bodies[i].state.pos.y, false)];
   }
 }
 
@@ -499,8 +523,21 @@ function updateImage(body, value){
   
   // Update body's display and redraw
   body.view = img;
-  body.view.onload = function() { drawMaster(); }  
+  body.view.onload = function() { 
+    var old = getKF();
+  
+    // Also redraw all keyframes
+    for(var i=0; i<Globals.numKeyframes; i++){
+      Globals.keyframe = i;
+      drawMaster();      
+    }
+  
+    Globals.keyframe = old;  
+    drawMaster(); 
+  }
+  
 }
+
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
@@ -510,8 +547,7 @@ function onPropertyChanged(i, property, value){
   if(!body) return;
   
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
-  var keyframe = Globals.keyframe;  
-  if(keyframe === false) keyframe = lastKF();  
+  var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
   
   // Reparse the value, assigning NaN if the parse fails
@@ -534,6 +570,8 @@ function onPropertyChanged(i, property, value){
   
   // Attempt to update the corresponding variable
   if(bIndex(body) !== 0) updateVariable(body, property, value);
+  
+  assignAlpha();
  
   // Don't do anything else if the value is unknown
   if(isNaN(value)) return;
@@ -541,16 +579,14 @@ function onPropertyChanged(i, property, value){
   // Otherwise update the keyframe state or body constants with known value:
   switch(property){
     // Position updates
-    case 'posx':
+    case 'posx':        
         body.state.pos.x = value;
-        kState[i].pos.x = value;
-        if(i === Globals.originObject) Globals.origin[0] = value;
+        kState[i].pos.x = value;        
         break;
-    case 'posy':
+    case 'posy':        
         value = swapYpos(value, false);
         body.state.pos.y = value;
-        kState[i].pos.y = value;
-        if(i === Globals.originObject) Globals.origin[1] = value;
+        kState[i].pos.y = value;        
         break;
       
     // Velocity and acceleration updates:
@@ -562,8 +598,7 @@ function onPropertyChanged(i, property, value){
     // Ramp-specific updates:
     case 'width':        
     case 'height':        
-    case 'angle':
-    case 'orientation':
+    case 'angle':    
       updateRamp(body, property, value);        
       break;
 

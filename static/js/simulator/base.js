@@ -121,7 +121,7 @@ $(document).ready(function(){
   $('#general-properties-nickname').on("change", function(){ 
     updatePropertyRedraw(Globals.selectedBody, 'nickname', $('#general-properties-nickname').val()); 
   });
-
+  
   // Point mass specific events
   $('#pointmass-properties-velocity-x').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'velx', $('#pointmass-properties-velocity-x').val());
@@ -164,8 +164,15 @@ $(document).ready(function(){
   $('#ramp-properties-angle').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'angle', $('#ramp-properties-angle').val());
   });
-  $('#ramp-properties-orientation').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'orientation', $('#ramp-properties-orientation')[0].checked);
+  $('#ramp-properties-flip-horz').on("click", function(){
+    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).width, true);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
+  });
+  $('#ramp-properties-flip-vert').on("click", function(){
+    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).height, true);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
   });
   
   // Event for clicking solve button
@@ -189,7 +196,7 @@ $(document).ready(function(){
   $('#glob-xaccel').on("change", function(){ updateGravity('x', $('#glob-xaccel').val()); }); 
   $('#glob-yaccel').on("change", function(){ updateGravity('y', -1 * parseFloat($('#glob-yaccel').val())); });
   
-  // Events for handling updating the origin (w.r.t. the default coordinate space, i.e. 0,0 always means top-left)
+  // Events for handling updating the origin w.r.t. 0,0 being the bottom left
   $('#glob-xorigin').on("change", function(){ moveOriginScalar("x", $('#glob-xorigin').val()); });
   $('#glob-yorigin').on("change", function(){ moveOriginScalar("y", $('#glob-yorigin').val()); });
   
@@ -207,4 +214,7 @@ $(document).ready(function(){
   
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();
+  
+  // Configure MathJax
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 });
