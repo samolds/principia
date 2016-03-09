@@ -257,7 +257,7 @@
               <div class="switch">
                 <label>
                   Off
-                  <input id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
+                  <input class="vector-toggle" id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
                   <span class="lever"></span>
                   On
                 </label>
@@ -270,7 +270,7 @@
               <div class="switch">
                 <label>
                   Off
-                  <input id="pointmass-properties-vector-ttt" type="checkbox"></input>
+                  <input class="ttt-toggle" id="pointmass-properties-vector-ttt" type="checkbox"></input>
                   <span class="lever"></span>
                   On
                 </label>
@@ -283,7 +283,7 @@
               <div class="switch">
                 <label>
                   Off
-                  <input id="pointmass-properties-pvagraph" type="checkbox"></input>
+                  <input class="pvagraph-toggle" id="pointmass-properties-pvagraph" type="checkbox"></input>
                   <span class="lever"></span>
                   On
                 </label>
@@ -460,22 +460,33 @@
       <div class="switch">
         <label>
           Off
-          <input id="vector-checkbox" type="checkbox" onchange="showVectors()">
+          <input class="vector-toggle"id="#pointmass-properties-vector-cmenu" type="checkbox" checked="checked">
           <span class="lever"></span>
           On
         </label>
       </div> 
     </li>
     <li class="context-menu-item">
-      <span>Graph</span>
+      <span>PVA Graph</span>
       <div class="switch">
         <label>
           Off
-          <input id="graph-checkbox" type="checkbox" onchange="showGraph()">
+          <input class="pvagraph-toggle"id="#pointmass-properties-pvagraph-cmenu" type="checkbox" >
           <span class="lever"></span>
           On
         </label>
       </div> 
+    </li>
+    <li class="context-menu-item">
+      <span>Tip-to-Tail Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input class="ttt-toggle" id="#pointmass-properties-vector-ttt-cmenu" type="checkbox"></input>
+          <span class="lever"></span>
+          On
+        </label>
+      </div>    
     </li>
   </ul>
 
