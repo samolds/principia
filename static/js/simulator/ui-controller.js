@@ -667,6 +667,7 @@ function deleteBody(bodyIndex){
     // Remove the body from the physicsjs world and deselect it
     Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
     Globals.selectedBody = false;
+    toggleMenuOff(); // Hides any open context menus
 
     // Begin Spring and Pulley specific logic!
 
