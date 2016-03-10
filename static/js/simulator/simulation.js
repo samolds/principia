@@ -96,7 +96,7 @@ function attemptSimulation(){
                     
           // Missing results on final pass
           if(!results[0] && pass == nKF-2){
-            $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.";
+            $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.\n";
             Globals.timelineReady = false;
             return;
           }        
@@ -107,7 +107,7 @@ function attemptSimulation(){
           
             // Consistency check: time should always progress forward
             if(results[1]["t"] <= 0 || Globals.keyframeTimes[keyframe2] <= Globals.keyframeTimes[keyframe1]){
-              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!";
+              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!\n";
               Globals.keyframeTimes[keyframe2] = false;
               Globals.timelineReady = false;
               return;
@@ -234,7 +234,7 @@ function collisionSolver(){
     $("#solution-details")[0].textContent += ("Use EQ[1] := $x_2 + {v_x}_2*t = {v}_1 * cos(\\theta) * t$\n");
     $("#solution-details")[0].textContent += ("Known values:\n");
     $("#solution-details")[0].textContent += ("All previous values and $t$ = " + t.toFixed(pre) + "\n");
-    $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.");
+    $("#solution-details")[0].textContent += ("The heading is 90 - " + heading.toFixed(pre) + " (" + (90- heading).toFixed(pre) +") degrees east of north.\n");
   });
   
   Globals.keyframeTimes[1] = t;

@@ -461,8 +461,8 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   overflow: auto;
 }
 
-.solution-details {
-  white-space: pre-wrap;
+.solution-details-container p {
+  white-space: pre;
 }
 
 /* Profile Page */
