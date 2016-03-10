@@ -121,7 +121,7 @@ function attachPulley(body){
 
 // Applies pulley physics to the specified state object using specified pulley.
 // Assumes that the caller has already identified 'state' as being attached to the pulley.
-function applyPulley(pulley, state, consts)
+function applyPulley(pulley, state, consts, dt)
 {
   var bodies = Globals.world.getBodies();
   var pulleyConsts = body2Constant(pulley);
@@ -130,15 +130,15 @@ function applyPulley(pulley, state, consts)
   if(pulleyConsts.attachedBodyRight === 0 || pulleyConsts.attachedBodyRight){
   
     // Undo effect of gravity  
-    state.vel.y -= Globals.gravity[1];         
+    state.vel.y -= Globals.gravity[1] * dt;
 
     // Get mass of each body
     var m1 = Globals.bodyConstants[pulleyConsts.attachedBodyLeft].mass;
     var m2 = Globals.bodyConstants[pulleyConsts.attachedBodyRight].mass;          
     
     // Magnitude of acceleration
-    var pulley_a = (m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
-
+    var pulley_a = Math.abs(m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
+    
     // Ready to accelerate up, reverse direction if this is the heavier mass
     if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
       pulley_a *= -1;
@@ -162,7 +162,7 @@ function applyPulley(pulley, state, consts)
       bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
     }
        
-    // Add effect of pulley
+    // Add effect of pulley    
     state.vel.y += pulley_a;
   }
 }

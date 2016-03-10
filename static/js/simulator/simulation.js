@@ -652,7 +652,7 @@ Physics.integrator('principia-integrator', function( parent ){
         && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley")
       {        
         var pulley = bodies[consts.attachedTo];
-        applyPulley(pulley, state, consts);
+        applyPulley(pulley, state, consts, dt);
       }
       
       state.angular.vel += state.angular.acc;
