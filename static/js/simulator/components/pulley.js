@@ -137,7 +137,7 @@ function applyPulley(pulley, state, consts, dt)
     var m2 = Globals.bodyConstants[pulleyConsts.attachedBodyRight].mass;          
     
     // Magnitude of acceleration
-    var pulley_a = Math.abs(m1*Globals.gravity[1] - m2*Globals.gravity[1])/(m1+m2);          
+    var pulley_a = (m1*Globals.gravity[1]*dt - m2*Globals.gravity[1]*dt)/(m1+m2);
     
     // Ready to accelerate up, reverse direction if this is the heavier mass
     if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
