@@ -14,6 +14,8 @@ function attemptSimulation(){
   var constants      = Globals.bodyConstants;
   var pre            = Globals.dPrecision;
   
+  if(Globals.loading) return;
+  
   // Handle case that an object has been selected as the origin
   if(Globals.originObject !== false && nKF > 1){
     collisionSolver();

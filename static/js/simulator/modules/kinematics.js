@@ -291,6 +291,8 @@ function Kinematics1DModule() {
      if(!json || json == "{}")
       return;
     
+    Globals.loading = true;
+    
     var restore = $.parseJSON(json);
     for(var key in restore)
     {
@@ -364,6 +366,8 @@ function Kinematics1DModule() {
     if(Globals.timelineReady)
       simulate();
 
+    Globals.loading = false;
+    
     highlightKeycanvas(0);
     Globals.keyframe = 0;
     setStateKF(0);

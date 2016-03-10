@@ -98,6 +98,9 @@ var Globals = {
   aDown: false,
   vChanging: false,
 
+  // Flag for loading in progress
+  loading: false,
+  
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  
