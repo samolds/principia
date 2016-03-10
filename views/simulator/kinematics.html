@@ -46,14 +46,18 @@
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
           <div class="col s12">
             <div class="help-tooltip-container">
-              <h5>Keyframes:
-                <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
-              </h5>
+              <div class="row">
+                <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
+                <h5>Keyframes:
+                  <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
+                  <!-- Solution Modal Trigger -->
+                </h5>
+              </div>
               <div id="help-tooltip-keyframes" class="help-tooltip card">
                 <p>
                   Multiple keyframes are used to set up the initial and final states of your model so
                   that the frames inbetween can be solved for. You can even set up intermediate key
-                  frames. The solution will display in the "Solution Details" box.
+                  frames. The solution will display in the "Solution Details" window.
                 </p>
               </div>
             </div>
@@ -87,15 +91,13 @@
 
 
 <!-- Solution Modal Structure -->
-<div id="solutionModal" class="modal">
-  <div class="modal-content">
-    <div class="card-panel yellow lighten-4 solution-details-container">
-      <h5>Solution details:</h5>
-      <p style="white-space: pre-wrap;" id="solution-details"></p>
-    </div>
+<div id="solutionModal" class="modal yellow lighten-4">
+  <div class="modal-content solution-details-container">
+    <h5>Solution details:</h5>
+    <p id="solution-details"></p>
   </div>
-  <div class="modal-footer">
-    <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+  <div class="modal-footer yellow lighten-5">
+    <a href="#!" class="modal-action modal-close waves-effect waves-yellow btn-flat">Got it!</a>
   </div>
 </div>
 

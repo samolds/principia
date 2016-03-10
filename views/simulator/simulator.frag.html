@@ -10,10 +10,6 @@
       {{ end }}
       <label for="simulation-name" id="simulation-name-label">Simulation Name</label>
     </div>
-    <div class="input-field col s3">
-      <!-- Solution Modal Trigger -->
-        <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger" href="#solutionModal" style="display:none">Solution Details</a>
-    </div>
     <!-- Only show if it is NOT a new simulation-name -->
     {{ if (.Data.simulation.KeyName) }}
     <div class="col s1 right pad-sides">
@@ -58,10 +54,6 @@
       {{ else }}
         <h4 class="page-header">Simulation</h4>
       {{ end }}
-    </div>
-    <div class="input-field col s3">
-      <!-- Solution Modal Trigger -->
-        <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger" href="#solutionModal" style="display:none">Solution Details</a>
     </div>
     {{ if .Data.simulation.Name }}
     <div class="col s1 right pad-sides">
@@ -490,10 +482,6 @@
       </div>    
     </li>
   </ul>
-
 </div>  
-
-
-
 
 {{ end }}

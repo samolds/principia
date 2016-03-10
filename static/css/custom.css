@@ -461,6 +461,10 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   overflow: auto;
 }
 
+.solution-details {
+  white-space: pre-wrap;
+}
+
 /* Profile Page */
 #profile-pic-container {
   height: 250px; 

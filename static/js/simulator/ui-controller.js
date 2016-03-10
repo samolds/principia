@@ -376,7 +376,7 @@ function addKeyframe(){
       $($(li).children()[0]).addClass("input-field-variable");
       $(li).append(
       "<div class=\"input-field-unknown-container\" title=\"Mark this value as unknown.\">" +
-        "<a class=\"input-field-unknown btn\"><img src=\"/static/img/toolbox/shrug.svg\" height=\"42\" width=\"30\"/></a>" +
+        "<a class=\"input-field-unknown btn green accent-1\"><img src=\"/static/img/toolbox/shrug.svg\" height=\"42\" width=\"30\"/></a>" +
       "</div>");
       
     }
