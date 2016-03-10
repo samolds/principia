@@ -323,8 +323,8 @@ function Kinematics1DModule() {
       Globals.selectedBody = Globals.world.getBodies()[Globals.world.getBodies().length-1];
       var index = Globals.world.getBodies().length-1;
       if (type == "kinematics1D-mass" || type == "kinematics1D-pulley") {
-        onPropertyChanged(index, "image", tempBC[i].img);
-        onPropertyChanged(index, "size", tempBC[i].size);
+        updateImage(Globals.selectedBody, tempBC[i].img);
+        updateSize(Globals.selectedBody, tempBC[i].size);
       } else if (type == "kinematics1D-ramp") {
         setRampWidth(Globals.selectedBody, tempBC[i].width, true);
         setRampHeight(Globals.selectedBody, tempBC[i].height, true);

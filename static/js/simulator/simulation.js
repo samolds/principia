@@ -498,13 +498,18 @@ function updateGravity(coordinate, value){
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
-  value = isNaN(value)? body2Constant(body).size: clamp(10, value, 100);
+  value = isNaN(value) ? body2Constant(body).size : clamp(10, value, 100);
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
-  body.view.setAttribute("width", Globals.bodyConstants[i].size * 2);
-  body.view.setAttribute("height", Globals.bodyConstants[i].size * 2);
-  body.radius = Globals.bodyConstants[i].size;
-  body.geometry.radius = Globals.bodyConstants[i].size;
+
+  body.view.setAttribute("width", value * 2)
+  body.view.setAttribute("height", value * 2);
+  body.radius = value;
+  body.geometry.radius = value;
+
+  // Resimulate if there is only one keyframe
+  if(Globals.numKeyframes == 1) attemptSimulation();
+
   drawMaster();
 }
 
