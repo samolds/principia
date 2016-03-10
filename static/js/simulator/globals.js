@@ -84,6 +84,22 @@ var Globals = {
   
   // Coordinate system currently used (Cartesian or Polar)
   coordinateSystem: "cartesian",
+
+  massBodyCounter: 0,
+
+  pulleyBodyCounter: 0,
+
+  rampBodyCounter: 0,
+
+  springBodyCounter: 0,
+
+  // Flags for keys being held down or that vectors have been updated
+  vDown: false,
+  aDown: false,
+  vChanging: false,
+
+  // Flag for loading in progress
+  loading: false,
   
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
@@ -114,6 +130,7 @@ var Globals = {
               "/static/img/toolbox/mascot.png",
               "/static/img/toolbox/tranquilizer.png",
               "/static/img/toolbox/jogger.png",
+              "/static/img/toolbox/rocket.svg",
               "/static/img/team/dalton.png",
               "/static/img/team/danny.png",
               "/static/img/team/matthew.png",
@@ -126,6 +143,8 @@ var Globals = {
   
   maxNumKeyframes: 5
 };
+
+
 
 //context menu 
 var menu = document.querySelector("#context-menu");

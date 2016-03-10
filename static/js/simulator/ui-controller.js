@@ -38,33 +38,9 @@ function handleUIDragStop(event, ui){
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
 
-  var data = { 'x': cx-vleft, 'y': cy-vtop};
+  var data = { 'x': cx-vleft, 'y': swapYpos(cy-vtop, false)};
 
-  var world = Globals.world;
-  var bodies = world.getBodies();
-  var delta = Globals.delta;
-    
-  // Attach the origin to a body if within delta pixels
-  var detach = true;
-  for(var j=0; j<bodies.length; j++){
-    var body = bodies[j];
-    if(distance(body.state.pos.x, body.state.pos.y, data.x, data.y) <= delta){
-      detach = false;
-      Globals.originObject = j;
-      
-      // Update data to point to object position
-      data.x = body.state.pos.x;
-      data.y = body.state.pos.y;
-    }
-  }
-  
-  if(detach && (Globals.originObject === 0 || Globals.originObject))  
-    Globals.originObject = false;
-    
-  Globals.origin = [data.x, data.y];  
-  $("#glob-xorigin").val(data.x) ; 
-  $("#glob-yorigin").val(data.y) ;
-  
+  moveOrigin(data);  
   drawMaster();
 }
 
@@ -105,19 +81,10 @@ function onRangeUpdate(){
   
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
-  
+    
   // Highlight mini canvas
-  if(Globals.keyframe !== false)
-  {    
-    $("#" + "keyframe-" + Globals.keyframe).attr("style","border:4px solid #0000cc");
-  }
-  else
-  {
-    for(var i=0; i < Globals.numKeyframes; i++){
-      $("#" + "keyframe-" + i).attr("style","");
-    }    
-  }
-  
+  highlightKeycanvas(Globals.keyframe, "yellow");
+
   drawMaster();
   updatePVAChart();
 }
@@ -152,9 +119,32 @@ function toggleSimulator(){
   }
 }
 
+// Sets a boolean property to the specified value
+function updateBooleanProperty(body, property, value){
+  Globals.bodyConstants[bIndex(body)][property] = value;
+
+  if (property === "vectors") {
+    $(".vector-toggle").prop("checked", value)
+  } else if (property === "vectors_ttt") {
+    $(".ttt-toggle").prop("checked", value)
+  } else if (property === "showGraph") {
+    $(".pvagraph-toggle").prop("checked", value)
+  }
+
+  // Special case: Handle showing/hiding the graph div
+  if(property === "showGraph"){
+    var allHidden = (graphBodyIndices().length === 0);
+    if(allHidden){ $("#pvaGraphContainer").hide(); }         
+    else { $("#pvaGraphContainer").show(); updatePVAChart(); }
+  }
+  
+  drawMaster();
+}
+
 // Handler for clicking a mini canvas and setting state to that keyframe
-function selectKeyframe(event){
-	var frame = event.target.id.split("-")[1];
+// n can either be a string containing a dash followed by the keyframe number or the number itself
+function selectKeyframe(n){
+	var frame = isNaN(n)? n.target.id.split("-")[1]: n;
 	Globals.keyframe = parseInt(frame);  
   highlightKeycanvas(frame);
   
@@ -163,32 +153,43 @@ function selectKeyframe(event){
     Globals.frame = Globals.keyframes[Globals.keyframe];
     $("#simulatorFrameRange").val(Globals.frame);
   }
-
-  // Handle assigning transparency to objects with unknown positions
-  var variables = Globals.variableMap;
-  for(var i=0; i < Globals.world.getBodies().length; i++)
-  {
-    if(!isNaN(variables[frame][i].posx) && !isNaN(variables[frame][i].posy))
-    {
-      if(Globals.bodyConstants[i].alpha)
-        delete Globals.bodyConstants[i].alpha;
-    }
-    else
-    {
-      Globals.bodyConstants[i].alpha = 0.5;  
-    }
+  
+  if(Globals.selectedBody !== false){  
+    selectPropertyInputType(Globals.selectedBody, "posx");
+    selectPropertyInputType(Globals.selectedBody, "posy");
+    selectPropertyInputType(Globals.selectedBody, "velx");
+    selectPropertyInputType(Globals.selectedBody, "vely");
+    selectPropertyInputType(Globals.selectedBody, "accx");
+    selectPropertyInputType(Globals.selectedBody, "accy");
   }
+
+  assignAlpha();
   
   // Draw master will set state appropriately and display it
 	drawMaster();
 }
 
+function assignAlpha(){
+  // Handle assigning transparency to objects with unknown positions
+  var frame = getKF();
+  var variables = Globals.variableMap;
+  for(var i=1; i < Globals.world.getBodies().length; i++){
+    if(variables[frame][i].posx != "?" && variables[frame][i].posy != "?"){
+      if(Globals.bodyConstants[i].alpha)
+        delete Globals.bodyConstants[i].alpha;
+    }
+    else{
+      Globals.bodyConstants[i].alpha = 0.5;  
+    }
+  }
+}
+
 // Wrapper for updating properties followed by immediate resimulate and redraw
-function updatePropertyRedraw(property, value){
+function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
-  if(Globals.coordinateSystem == "polar"){
-    
+  if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
+       
     // Convert from Polar input to Cartesian coordinate
     var point;
     
@@ -196,7 +197,7 @@ function updatePropertyRedraw(property, value){
       other = $('#general-properties-position-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "posy") {
+    else if(property == "posy") {      
       other = $('#general-properties-position-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -206,6 +207,7 @@ function updatePropertyRedraw(property, value){
       point = polar2Cartesian([value, other]);
     }
     else if(property == "vely") {
+      value *= -1; // Un-invert y vel. value because it's really an angle (only y vel/acc are inverted in base.js)
       other = $('#pointmass-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -215,23 +217,33 @@ function updatePropertyRedraw(property, value){
       point = polar2Cartesian([value, other]);
     }
     else if(property == "accy") {
+      value *= -1; // Un-invert y acc. value because it's really an angle (only y vel/acc are inverted in base.js)
       other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
-    
+    var index = bIndex(body);
     // Convert back to default PhysicsJS origin, if a position was updated
     if(property.substring(0,3) == "pos")
       point = [origin2PhysicsScalar("x", point[0]), origin2PhysicsScalar("y", point[1])];
     
     point = [convertUnit(point[0], "posx", true), convertUnit(point[1], "posy", true)]
+        
     
     // Update properties within simulator, draw, and return
-    onPropertyChanged(property.substring(0,3) + "x", point[0], false);
+    onPropertyChanged(index, property.substring(0,3) + "x", point[0]);
     
-    if(point[1] === -0)
+    if(point[1] === -0){
       point[1] = "?";
+    }
     
-    onPropertyChanged(property.substring(0,3) + "y", point[1], true);
+    if(Globals.numKeyframes > 1 && point[1] == "?"){
+      toggleUnknown(body, property.substring(0,3) + "y");
+    }
+    else {
+      onPropertyChanged(index, property.substring(0,3) + "y", point[1]);
+    }
+    
+    if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
     return;
   }
@@ -240,7 +252,72 @@ function updatePropertyRedraw(property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(property, value, true);
+  onPropertyChanged(bIndex(body), property, value);
+  
+  if(Globals.numKeyframes == 1) attemptSimulation();  
+  drawMaster();
+}
+
+function selectPropertyInputType(body, property){
+  var index = bIndex(body);
+  var type = isNaN(Globals.variableMap[getKF()][index][property])? "text": "number";
+  var readonly = (type == "text");
+  
+  switch(property)
+  {
+    case "posx":
+      $('#general-properties-position-x').attr("type", type); 
+      $('#general-properties-position-x').prop("readonly", readonly);      
+      break;
+    case "posy":
+      $('#general-properties-position-y').attr("type", type);
+      $('#general-properties-position-y').prop("readonly", readonly);
+      break;
+    case "velx":
+      $('#pointmass-properties-velocity-x').attr("type", type);
+      $('#pointmass-properties-velocity-x').prop("readonly", readonly);
+      break;
+    case "vely":
+      $('#pointmass-properties-velocity-y').attr("type", type);
+      $('#pointmass-properties-velocity-y').prop("readonly", readonly);
+      break;
+    case "accx":
+      $('#pointmass-properties-acceleration-x').attr("type", type);
+      $('#pointmass-properties-acceleration-x').prop("readonly", readonly);
+      break;
+    case "accy":
+      $('#pointmass-properties-acceleration-y').attr("type", type);
+      $('#pointmass-properties-acceleration-y').prop("readonly", readonly);
+      break;
+  }
+  
+  if(readonly){
+    if(property == "posx") $('#general-properties-position-x').val("Unknown");
+    if(property == "posy") $('#general-properties-position-y').val("Unknown");
+    if(property == "velx") $('#pointmass-properties-velocity-x').val("Unknown");
+    if(property == "vely") $('#pointmass-properties-velocity-y').val("Unknown");
+    if(property == "accx") $('#pointmass-properties-acceleration-x').val("Unknown");
+    if(property == "accy") $('#pointmass-properties-acceleration-y').val("Unknown");  
+  }
+}
+
+function toggleUnknown(body, property){
+  if(Globals.keyframe === false) {
+    var frame = lastKF();
+    setStateKF(frame);
+    Globals.keyframe = frame;
+    highlightKeycanvas(Globals.keyframe);
+  }
+  var index = bIndex(body);
+  if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
+    onPropertyChanged(index, property, 0);
+  }
+  else{
+    onPropertyChanged(index, property, Number.NaN);
+  }
+  
+  selectPropertyInputType(body, property)
+  
   drawMaster();
 }
 
@@ -294,6 +371,26 @@ function addKeyframe(){
   
   pushDuplicates();   
   Globals.numKeyframes++;
+  
+  if(Globals.numKeyframes == 2)
+  {
+    var variables = $("[principia-property]");
+    for(var i=0; i<variables.length; i++)
+    {
+      var li = variables[i];
+      $($(li).children()[0]).addClass("input-field-variable");
+      $(li).append(
+      "<div class=\"input-field-unknown-container\" title=\"Mark this value as unknown.\">" +
+        "<a class=\"input-field-unknown btn green accent-1\"><img src=\"/static/img/toolbox/shrug.svg\" height=\"42\" width=\"30\"/></a>" +
+      "</div>");
+      
+    }
+    
+    $('.input-field-unknown').on("click", function(event){
+      var property = $(event.target).parents().eq(2).attr("principia-property");
+      toggleUnknown(Globals.selectedBody, property);
+    });
+  }
 }
 
 function removeKeyframe(event){
@@ -323,20 +420,27 @@ function removeKeyframe(event){
   $(eventFrame).parents().eq(3).remove();
   Globals.numKeyframes--;
   
+  if(Globals.numKeyframes == 1)
+  {
+    $(".input-field-variable").removeClass("input-field-variable");
+    
+    $('.input-field-unknown').off();
+    
+    var variables = $("[principia-property]");
+    for(var i=0; i<variables.length; i++)
+    {
+      var li = variables[i];
+      $(li).children()[1].remove();
+    }
+  }
+  
   // Special case: User deletes currently selected keyframe
   if(index == Globals.keyframe){
-    // select Globals.keyframe -1
+    Globals.keyframe--;
+    setStateKF(Globals.keyframe);
+    highlightKeycanvas(Globals.keyframe);
+    drawMaster();
   }
-}
-
-function updateOrigin(coordinate, value){
-  if(coordinate == "x")
-    Globals.origin[0] = value;
-  else 
-    Globals.origin[1] = value;
-  
-  // Redraw (forces update of displayed values)
-  drawMaster();
 }
 
 function updateLengthUnit(factor){
@@ -380,55 +484,55 @@ function toggleMenuOff() {
 }
 
 function contextMenuListener(event) {
-  if(Globals.selectedBody)
-  {
-    var canvas = document.getElementById("viewport");
-    var body = Globals.selectedBody;  
-    var pos = getMousePos(canvas, event);
-    var posx = pos.x;
-    var posy = pos.y;
-    //override normal context menu
-    event.preventDefault();
+  if (Globals.selectedBody === false) {
+    toggleMenuOff();
+    return
+  }
+
+  // override normal context menu
+  event.preventDefault();
+
+  var canvas = document.getElementById("viewport");
+  var body = Globals.selectedBody;
+  var pos = getMousePos(canvas, event);
+  var posx = pos.x;
+  var posy = pos.y;
+
+  if (bodyType(Globals.selectedBody) == "kinematics1D-mass") {
+    $("#pointmass-properties-vector-cmenu").prop("checked", $("#pointmass-properties-vector")[0].checked);
+    $("#pointmass-properties-vector-ttt-cmenu").prop("checked", $("#pointmass-properties-vector-ttt")[0].checked);
+    $("#pointmass-properties-pvagraph-cmenu").prop("checked", $("#pointmass-properties-pvagraph")[0].checked);
 
     var img = body.view;
     var halfw = img["width"] / 2;
     var halfh = img["height"] / 2;
 
-    //get click x and y
-    //get body x and y
-    //create square,  see if contextMenuclick is in square
-    //
+    // get click x and y
+    // get body x and y
+    // create square,  see if contextMenuclick is in square
     var loc = body.state.pos;
     var rectRight= loc.x + halfw;
     var rectBottom= loc.y + halfh;
     var rectx = loc.x - halfw;
-    var recty = loc.y - halfh; 
+    var recty = loc.y - halfh;
 
     // check each rect for hits
     // if this rect is hit, display an alert
-    if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
-      {//there is an object selected show context menu:
-        toggleMenuOn();  
-        positionMenu(event);
-      }
-    else
-    {
-        toggleMenuOff();
-    }
-  }
-  else
-  {
+    if (posx >= rectx && posx <= rectRight && posy >= recty && posy <= rectBottom) {
+      // there is an object selected, show context menu:
+      toggleMenuOn();
+      positionMenu(event);
+    } else {
       toggleMenuOff();
+    }
   }
 }
 
-function clickListener(e) 
-{
-    var button = e.which || e.button;
-    if ( button === 1 ) 
-    {
-      toggleMenuOff();
-    }
+function clickListener(e) {
+  var button = e.which || e.button;
+  if ( button === 1 ) {
+  toggleMenuOff();
+  }
 }
 
 function getPosition(e) {
@@ -504,7 +608,7 @@ function populateOverview(e) {
 
   $list.html("");
 
-  for(var i = 0; i < bodies.length; i++)
+  for(var i = 1; i < bodies.length; i++)
   {
     var img;
     //img = bodies[i].view;
@@ -527,10 +631,10 @@ function populateOverview(e) {
      $list.append(
     "<li >" +
       "<div class ='row clickable'>"+
-       "<div class = ' col s4' onclick = 'selectBody(" + i + ", false)'>"+
+       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
-       "<div class = 'col s4' onclick = 'selectBody(" + i + ", false)'>"+
+       "<div class = 'col s4' onclick = 'selectBody(" + i + ")'>"+
         consts[i].nickname +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
@@ -563,6 +667,7 @@ function deleteBody(bodyIndex){
     // Remove the body from the physicsjs world and deselect it
     Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
     Globals.selectedBody = false;
+    toggleMenuOff(); // Hides any open context menus
 
     // Begin Spring and Pulley specific logic!
 
@@ -661,8 +766,43 @@ function deleteBody(bodyIndex){
   }
 }
 
-function selectBody(bodyIndex, switchTab){
+function selectBody(bodyIndex){
   Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
-  if(switchTab) drawProperties();
+  
+  selectPropertyInputType(Globals.selectedBody, "posx");
+  selectPropertyInputType(Globals.selectedBody, "posy");
+  selectPropertyInputType(Globals.selectedBody, "velx");
+  selectPropertyInputType(Globals.selectedBody, "vely");
+  selectPropertyInputType(Globals.selectedBody, "accx");
+  selectPropertyInputType(Globals.selectedBody, "accy");
+    
+  if(bodyIndex !== 0) 
+    $("#elementprops-tab").click();
+  else
+    $("#globalprops-tab").click();
+    
   drawMaster();
+}
+
+function keyUp(e)
+{
+  var wasSet = (Globals.aDown || Globals.vDown);
+  
+  if (e.keyCode == 86) Globals.vDown = false;
+  if (e.keyCode == 65) Globals.aDown = false;
+  
+  if(!Globals.vDown && !Globals.aDown){
+    Globals.vChanging = false;
+    if(Globals.numKeyframes == 1 && wasSet)
+      attemptSimulation();
+  }
+}
+
+function keyDown(e)
+{
+  if (e.keyCode == 86) Globals.vDown = true;
+  if (e.keyCode == 65) Globals.aDown = true;
+ 
+  if(Globals.vDown || Globals.aDown)
+    Globals.vChanging = true;
 }

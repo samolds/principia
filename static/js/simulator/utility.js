@@ -49,10 +49,7 @@ function graphBodyIndices(){
 function kIndex(frame) { return Globals.keyframes.indexOf(frame); }
 
 // Returns the constants associated with the specified body
-function body2Constant(body){
-  var index = bIndex(body);
-  return Globals.bodyConstants[index];
-}
+function body2Constant(body){ return Globals.bodyConstants[bIndex(body)]; }
 
 // Transforms from user-defined coordinate system to default PhysicsJS coordinate system
 function origin2Physics(point){
@@ -79,23 +76,22 @@ function cartesian2Polar(point){
   // Q1: Use theta
   // Q2, Q3: Use theta + 180
   // Q4: Use theta + 360
-  if(x < 0) theta -= 180; // Handles Q2, Q3
-  if(x > 0 && y > 0) theta -= 360; // Handles Q4 
+  if(x < 0) theta += 180; // Handles Q2, Q3
+  if(x > 0 && y < 0) theta += 360; // Handles Q4 
   
   if(x == 0)
   {
-    if(y > 0) theta = -270;
-    else if(y < 0) theta = -90;
+    if(y > 0) theta = 90;
+    else if(y < 0) theta = 270;
     else theta = 0;
   }
-  
-  // Negate theta due to inverted y-axis
-  return [Math.sqrt(x*x + y*y), -theta];
+    
+  return [magnitude(x,y), theta];
 }
 
 function polar2Cartesian(point){
-  // Negate sin due to inverted y-axis: Also note that testing shows that there is potentially ~1e-7 rounding error
-  return [point[0] * Math.cos(deg2rad(point[1])), point[0] * -Math.sin(deg2rad(point[1]))];
+  // Note that testing shows that there is potentially ~1e-7 rounding error
+  return [point[0] * Math.cos(deg2rad(point[1])), point[0] * Math.sin(deg2rad(point[1]))];
 }
 
 function rad2deg(rads) { return 57.2957795131 * rads; }
@@ -119,18 +115,58 @@ function convertUnit(value, type, invert){
                    value * Globals.lengthFactor * 1.0/Globals.timeFactor;
 }
 
-function getLabel(body)
-{
-  return 1;
+function getLabel(body){
+
+  switch(bodyType(body)){
+    case 'kinematics1D-mass':   return Globals.massBodyCounter;
+    case 'kinematics1D-pulley': return Globals.pulleyBodyCounter;
+    case 'kinematics1D-ramp':   return Globals.rampBodyCounter;
+    case 'kinematics1D-spring': return Globals.springBodyCounter;
+  }
+  return 0;
 }
 
-function lastKF()
-{
-  for(var frame = Globals.frame; frame >= 0; frame--)
-  {
+function bodyType(body) { return body2Constant(body).ctype; }
+
+function lastKF(){
+  for(var frame = Globals.frame; frame >= 0; frame--){
     var keyframe = ($.inArray(frame, Globals.keyframes) != -1)? kIndex(frame): false;
     
     if(keyframe !== false)
       return keyframe;
   }
 }
+
+function magnitude(x, y){ return Math.sqrt(x*x + y*y); }
+
+function clamp(min, x, max) { return Math.min(Math.max(x, min), max); }
+
+function getOldValue(body, property){
+  var keyframe = Globals.keyframe;
+  if(keyframe === false) keyframe = lastKF();
+  
+  var state = Globals.keyframeStates[keyframe][bIndex(body)];
+  var constants = body2Constant(body);
+  
+  if(typeof constants[property] !== 'undefined')
+    return constants[property];
+  
+  switch(property){
+    case "posx": return state.pos.x;
+    case "posy": return state.pos.y;
+    case "velx": return state.vel.x;
+    case "vely": return state.vel.y;
+    case "accx": return state.acc.x;
+    case "accy": return state.acc.y;
+  }
+  
+  return 0;
+}
+
+function swapYpos(value, invert){
+  var height = $("#" + Globals.canvasId).children()[0].height;
+  return invert? value - height: height - value;
+}
+
+// Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
+function getKF() { return (Globals.keyframe !== false)? Globals.keyframe: lastKF(); }

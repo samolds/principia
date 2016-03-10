@@ -19,6 +19,7 @@ function addMass(data){
   var component = Physics.body('circle', {
             x: data.x,
             y: data.y,
+            restitution: 0.8,
             radius: 25,
             view: img,
             styles: {
@@ -31,25 +32,27 @@ function addMass(data){
   addToVariableMap(
     {
       posx: data.x, 
-      posy: data.y,
+      posy: swapYpos(data.y, false),
       velx: 0,
       vely: 0,
       accx: 0,
       accy: 0
     }
   );
+
+  // Add the component to the world and update all keyframes
+  world.add(component);
+  updateKeyframes([component]);
+  Globals.massBodyCounter++;
                   
   // Assign constants
   bodyConstants[bodyConstants.length-1].mass = 1.0;
   bodyConstants[bodyConstants.length-1].size = 25;
   bodyConstants[bodyConstants.length-1].img  = 0;  
   bodyConstants[bodyConstants.length-1].vectors = true;
+  bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
-  
-  // Add the component to the world and update all keyframes
-  world.add(component);    
-  updateKeyframes([component]);
   
   return component;
 }

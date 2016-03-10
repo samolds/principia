@@ -180,6 +180,22 @@ body {
   .switch > label {
     padding-top: .75rem;
   }
+  
+  .input-field-variable {
+    width: 70% 
+  }
+  
+  .input-field-unknown-container {
+    position: relative;
+    top: -57px;
+    left: 50px;
+  }
+  
+  .input-field-unknown {
+    padding: 0;
+    height: 42px;
+  }
+  
 /* end custom form */
 
 
@@ -248,12 +264,13 @@ body {
   left: 125px;
   top:50px;
   width: 37px;
+  margin-top:-37px; /* TODO: Find out what broke here? */
 }
 
 .remove-keyframe-btn:hover .delete-kf-btn {
   display: inline-block;
   margin: 0px;
-  padding: 0px;
+  padding: 0px;  
 }
 
 /*this is to vertically space tab icons*/
@@ -444,6 +461,10 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   overflow: auto;
 }
 
+.solution-details-container p {
+  white-space: pre-wrap;
+}
+
 /* Profile Page */
 #profile-pic-container {
   height: 250px; 
@@ -597,4 +618,15 @@ a#help-tooltips:hover {
   top: -35px;
   left: 175px;
   width: 330px;
+}
+
+/** via http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting **/
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* IE/Edge */
+  user-select: none;           /* non-prefixed version, currently
+                                  not supported by any browser */
 }

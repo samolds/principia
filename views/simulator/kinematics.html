@@ -12,6 +12,7 @@
 <script src="/static/js/simulator/ui-controller.js"></script>
 <script src="/static/js/simulator/rendering.js"></script>
 <script src="/static/js/simulator/utility.js"></script>
+<script src="/static/js/simulator/components/origin.js"></script>
 <script src="/static/js/simulator/components/mass.js"></script>
 <script src="/static/js/simulator/components/ramp.js"></script>
 <script src="/static/js/simulator/components/spring.js"></script>
@@ -25,10 +26,6 @@
     User: {{ .User.KeyName }},
     Simulation: {{ .Data.simulation.KeyName }},
   }
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 
 <script src="/static/js/simulator/base.js"></script>
@@ -47,27 +44,28 @@
 
         <div class="row">
           <!-- Div for switching between keyframes. Enable playback when keyframes have no unknowns. -->
-          <div class="col s6">
+          <div class="col s12">
             <div class="help-tooltip-container">
-            <h5>Keyframes:
-              <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
-            </h5>
-            <div id="help-tooltip-keyframes" class="help-tooltip card">
-              <p>
-                Multiple keyframes are used to set up the initial and final states of your model so
-                that the frames inbetween can be solved for. You can even set up intermediate key
-                frames. The solution will display in the "Solution Details" box.
-              </p>
+              <div class="row">
+                <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
+                <h5>Keyframes:
+                  <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
+                  <!-- Solution Modal Trigger -->
+                </h5>
+              </div>
+              <div id="help-tooltip-keyframes" class="help-tooltip card">
+                <p>
+                  Multiple keyframes are used to set up the initial and final states of your model so
+                  that the frames inbetween can be solved for. You can even set up intermediate key
+                  frames. The solution will display in the "Solution Details" window.
+                </p>
+              </div>
             </div>
-          </div>
 
             <div id="keyframelist">
               <ul id="keyframe-list">
                 <li>
                   <div class="keyframe-tile">
-                    <div class="remove-keyframe-btn">
-                      <a class="btn-floating btn-small waves-effect waves-light red kf-btn-placeholder" id="remove-keyframe-0"><i class="fa fa-times"></i></a>
-                    </div>
                     <h6>Frame 1: </h6>
                     <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
                     <div class="input-field">
@@ -77,13 +75,6 @@
                   </div>
                 </li>
               </ul>
-            </div>
-          </div>
-
-          <div class="col s6">
-            <div class="card-panel yellow lighten-4 solution-details-container">
-              <h5>Solution details:</h5>
-              <span id="solution-details"></span>
             </div>
           </div>
         </div>
@@ -97,4 +88,17 @@
     {{ template "commentsFrag" . }}
   </div>
 {{ end }}
+
+
+<!-- Solution Modal Structure -->
+<div id="solutionModal" class="modal yellow lighten-4">
+  <div class="modal-content solution-details-container">
+    <h5>Solution details:</h5>
+    <p id="solution-details"></p>
+  </div>
+  <div class="modal-footer yellow lighten-5">
+    <a href="#!" class="modal-action modal-close waves-effect waves-yellow btn-flat">Got it!</a>
+  </div>
+</div>
+
 {{ end }}

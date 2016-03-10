@@ -14,7 +14,9 @@ function exportToJson(){
     variableMap:Globals.variableMap,
     totalFrames:Globals.totalFrames,
     maxFrames:Globals.maxFrames,
-    timelineReady:Globals.timelineReady
+    timelineReady:Globals.timelineReady,
+    origin:Globals.origin,
+    coordinateSystem: Globals.coordinateSystem
   }
   
   return JSON.stringify(json);
@@ -57,10 +59,11 @@ function updatePVAChart() {
 
   for (var index = 0, len = arr.length; index < len; index++) {
 
-    var name = Globals.bodyConstants[index].nickname;
+    var bodyIndex = arr[index];
+    var name = Globals.bodyConstants[bodyIndex].nickname;
 
     if(!name) {
-      name = index;
+      name = bodyIndex;
     }
 
     if(!Globals.timelineReady) {
@@ -68,9 +71,9 @@ function updatePVAChart() {
       dp2 = [];
       dp3 = [];
     } else {
-      dp1 = Globals.positionStates[index].slice(min, max);
-      dp2 = Globals.accelStates[index].slice(min, max);
-      dp3 = Globals.velocityStates[index].slice(min, max);
+      dp1 = Globals.positionStates[bodyIndex].slice(min, max);
+      dp2 = Globals.accelStates[bodyIndex].slice(min, max);
+      dp3 = Globals.velocityStates[bodyIndex].slice(min, max);
     }
 
     positionChart.options.data.push({
@@ -102,56 +105,122 @@ function updatePVAChart() {
 // Entry point for this application. Registers events. The module is initialized in the HTML file for now.
 $(document).ready(function(){
   //Events for canvas
-  //$('#viewport').on("click")
-  $( '#viewport' ).on("contextmenu", function(event){ contextMenuListener(event); } );
-  $( '#viewport' ).on("click", function(event){ clickListener(event); } );
-  //for tabs
+  $( '#viewport' ).on("contextmenu", function(event){
+    contextMenuListener(event);
+  });
+  $( '#viewport' ).on("click", function(event){
+    clickListener(event);
+  });
+  
+  // Events for overview tab
   $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
 
   // Events for properties window
-  $('#general-properties-position-x').on("change", function(){ updatePropertyRedraw('posx', $('#general-properties-position-x').val()); });
-  $('#general-properties-position-y').on("change", function(){ updatePropertyRedraw('posy', $('#general-properties-position-y').val()); });
-  $('#general-properties-nickname').on("change", function(){ updatePropertyRedraw('nickname', $('#general-properties-nickname').val()); });
+  $('#general-properties-position-x').on("change", function(){ 
+    updatePropertyRedraw(Globals.selectedBody, 'posx', $('#general-properties-position-x').val());
+  });
+  $('#general-properties-position-y').on("change", function(){ 
+    updatePropertyRedraw(Globals.selectedBody, 'posy', $('#general-properties-position-y').val());
+  });
+  $('#general-properties-nickname').on("change", function(){ 
+    updatePropertyRedraw(Globals.selectedBody, 'nickname', $('#general-properties-nickname').val()); 
+  });
+  
+  // Point mass specific events
+  $('#pointmass-properties-velocity-x').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'velx', $('#pointmass-properties-velocity-x').val());
+  });
+  $('#pointmass-properties-velocity-y').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'vely', -1 * parseFloat($('#pointmass-properties-velocity-y').val()));
+  });
+  $('#pointmass-properties-acceleration-x').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'accx', $('#pointmass-properties-acceleration-x').val());
+  });
+  $('#pointmass-properties-acceleration-y').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'accy', -1 * parseFloat($('#pointmass-properties-acceleration-y').val()));
+  });
+  $('#pointmass-properties-size').on("change", function(){
+    updateSize(Globals.selectedBody, $('#pointmass-properties-size').val());
+  });
+  $('#pointmass-properties-mass').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'mass', $('#pointmass-properties-mass').val());
+  });
+  $('#pointmass-properties-img').on("change", function(){
+    updateImage(Globals.selectedBody, $('#pointmass-properties-img option:selected')[0].value);
+  });
 
-  $('#pointmass-properties-velocity-x').on("change", function(){ updatePropertyRedraw('velx', $('#pointmass-properties-velocity-x').val()); });
-  $('#pointmass-properties-velocity-y').on("change", function(){ updatePropertyRedraw('vely', -1 * $('#pointmass-properties-velocity-y').val()); });
-  $('#pointmass-properties-acceleration-x').on("change", function(){ updatePropertyRedraw('accx', $('#pointmass-properties-acceleration-x').val()); });
-  $('#pointmass-properties-acceleration-y').on("change", function(){ updatePropertyRedraw('accy', -1 * $('#pointmass-properties-acceleration-y').val()); });
-  $('#pointmass-properties-size').on("change", function(){ updatePropertyRedraw('size', $('#pointmass-properties-size').val()); });
-  $('#pointmass-properties-mass').on("change", function(){ updatePropertyRedraw('mass', $('#pointmass-properties-mass').val()); });
-  $('#pointmass-properties-img').on("change", function(){ updatePropertyRedraw('image', $('#pointmass-properties-img option:selected')[0].value); });
-  $('#pointmass-properties-vector').on("change", function(){ updatePropertyRedraw('vectors', ($('#pointmass-properties-vector')[0].checked ? 1 : 0) ); });
-  $('#pointmass-properties-pvagraph').on("change", function(){ updatePropertyRedraw('pvagraph', ($('#pointmass-properties-pvagraph')[0].checked ? 1 : 0) ); });
 
-  $('#ramp-properties-width').on("change", function(){ updatePropertyRedraw('width', $('#ramp-properties-width').val()); });
-  $('#ramp-properties-height').on("change", function(){ updatePropertyRedraw('height', $('#ramp-properties-height').val()); });
-  $('#ramp-properties-angle').on("change", function(){ updatePropertyRedraw('angle', $('#ramp-properties-angle').val()); });
+  $("#pointmass-properties-vector-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors', $('#pointmass-properties-vector-cmenu')[0].checked);
+  });
+  $("#pointmass-properties-vector-ttt-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', $('#pointmass-properties-vector-ttt-cmenu')[0].checked);
+  });
+  $("#pointmass-properties-pvagraph-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph-cmenu')[0].checked);
+  });
+  $("#pointmass-properties-vector").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors', $('#pointmass-properties-vector')[0].checked);
+  });
+  $("#pointmass-properties-vector-ttt").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', $('#pointmass-properties-vector-ttt')[0].checked);
+  });
+  $("#pointmass-properties-pvagraph").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph')[0].checked);
+  });
+
+
+  // Ramp specific events
+  $('#ramp-properties-width').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'width', $('#ramp-properties-width').val()); 
+  });
+  $('#ramp-properties-height').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'height', $('#ramp-properties-height').val());
+  });
+  $('#ramp-properties-angle').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'angle', $('#ramp-properties-angle').val());
+  });
+  $('#ramp-properties-flip-horz').on("click", function(){
+    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).width, true);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
+  });
+  $('#ramp-properties-flip-vert').on("click", function(){
+    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).height, true);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
+  });
+
+  // enable modals
+  $('.modal-trigger').leanModal();
   
   // Event for clicking solve button
-  $('#playpause').on('click', function() {
-    if (Globals.keyframeStates.length > 1 && !Globals.timelineReady) {
+  $('#playpause').on('click', function(){
+    if (!Globals.timelineReady) {
       attemptSimulation();
+      // Show the solution details button
+      $('#solution-detail-button').show();
     }
+
     toggleSimulator();
-    
-    // Update format of solution details
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
   });
   
   // Events for selecting mini-canvases representing keyframes
   // MUST name keyframe divs using this format (splits on -)
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
+
+  $(document).on('keyup', function(event) {keyUp(event)});
+  $(document).on('keydown', function(event) {keyDown(event)});
   
   // Events for handling global acceleration (gravity)
-  $('#glob-xaccel').val(Globals.gravity[0]);
-  $('#glob-yaccel').val(Globals.gravity[1]);  
-  $('#glob-xaccel').on("change", function(){ updatePropertyRedraw('gravityx', $('#glob-xaccel').val()); }); 
-  $('#glob-yaccel').on("change", function(){ updatePropertyRedraw('gravityy', $('#glob-yaccel').val()); });
+  $('#glob-xaccel').val(Globals.gravity[0]); $('#glob-yaccel').val(Globals.gravity[1]);  
+  $('#glob-xaccel').on("change", function(){ updateGravity('x', $('#glob-xaccel').val()); }); 
+  $('#glob-yaccel').on("change", function(){ updateGravity('y', -1 * parseFloat($('#glob-yaccel').val())); });
   
-  // Events for handling updating the origin (w.r.t. the default coordinate space, i.e. 0,0 always means top-left)
-  $('#glob-xorigin').on("change", function(){ updateOrigin("x", $('#glob-xorigin').val()); });
-  $('#glob-yorigin').on("change", function(){ updateOrigin("y", $('#glob-yorigin').val()); });
+  // Events for handling updating the origin w.r.t. 0,0 being the bottom left
+  $('#glob-xorigin').on("change", function(){ moveOriginScalar("x", $('#glob-xorigin').val()); });
+  $('#glob-yorigin').on("change", function(){ moveOriginScalar("y", $('#glob-yorigin').val()); });
   
   $('#coord-sys').on("change", function(){ updateCoords( $('#coord-sys').val()); }); 
   
@@ -161,6 +230,13 @@ $(document).ready(function(){
 
   $('#help-tooltips').on("click", function() { displayTooltips(); });
   
+  $("#elementprops-tab").on("click", function() { 
+    if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
+  });
+  
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();
+  
+  // Configure MathJax
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 });
