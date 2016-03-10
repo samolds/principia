@@ -105,8 +105,12 @@ function updatePVAChart() {
 // Entry point for this application. Registers events. The module is initialized in the HTML file for now.
 $(document).ready(function(){
   //Events for canvas
-  $( '#viewport' ).on("contextmenu", function(event){ contextMenuListener(event); } );
-  $( '#viewport' ).on("click", function(event){ clickListener(event); } );
+  $( '#viewport' ).on("contextmenu", function(event){
+    contextMenuListener(event);
+  });
+  $( '#viewport' ).on("click", function(event){
+    clickListener(event);
+  });
   
   // Events for overview tab
   $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
@@ -144,21 +148,27 @@ $(document).ready(function(){
   $('#pointmass-properties-img').on("change", function(){
     updateImage(Globals.selectedBody, $('#pointmass-properties-img option:selected')[0].value);
   });
-  $('.vector-toggle').on("change", function(){
-    var isChecked = ($(this)[0].checked);
-    updateBooleanProperty(Globals.selectedBody, 'vectors',  isChecked);
-    $('.vector-toggle').prop("checked", isChecked);
+
+
+  $("#pointmass-properties-vector-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors', $('#pointmass-properties-vector-cmenu')[0].checked);
   });
-  $('.ttt-toggle').on("change", function(){
-    var isChecked = ($(this)[0].checked);
-    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', isChecked);
-    $('.ttt-toggle').prop("checked", isChecked);
+  $("#pointmass-properties-vector-ttt-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', $('#pointmass-properties-vector-ttt-cmenu')[0].checked);
   });
-  $('.pvagraph-toggle').on("change", function(){
-    var isChecked = ($(this)[0].checked);
-    updateBooleanProperty(Globals.selectedBody, 'showGraph', isChecked );
-    $('.pvagraph-toggle').prop("checked", isChecked);
+  $("#pointmass-properties-pvagraph-cmenu").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph-cmenu')[0].checked);
   });
+  $("#pointmass-properties-vector").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors', $('#pointmass-properties-vector')[0].checked);
+  });
+  $("#pointmass-properties-vector-ttt").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'vectors_ttt', $('#pointmass-properties-vector-ttt')[0].checked);
+  });
+  $("#pointmass-properties-pvagraph").on("change", function() {
+    updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph')[0].checked);
+  });
+
 
   // Ramp specific events
   $('#ramp-properties-width').on("change", function(){

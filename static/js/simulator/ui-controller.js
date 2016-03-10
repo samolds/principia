@@ -122,10 +122,15 @@ function toggleSimulator(){
 // Sets a boolean property to the specified value
 function updateBooleanProperty(body, property, value){
   Globals.bodyConstants[bIndex(body)][property] = value;
-  
-  // Convert truthy/falsy into strictly true/false
-  value = value? true: false;
-  
+
+  if (property === "vectors") {
+    $(".vector-toggle").prop("checked", value)
+  } else if (property === "vectors_ttt") {
+    $(".ttt-toggle").prop("checked", value)
+  } else if (property === "showGraph") {
+    $(".pvagraph-toggle").prop("checked", value)
+  }
+
   // Special case: Handle showing/hiding the graph div
   if(property === "showGraph"){
     var allHidden = (graphBodyIndices().length === 0);
@@ -479,59 +484,55 @@ function toggleMenuOff() {
 }
 
 function contextMenuListener(event) {
-  if(Globals.selectedBody)
-  {
-   
-      var canvas = document.getElementById("viewport");
-      var body = Globals.selectedBody;  
-      var pos = getMousePos(canvas, event);
-      var posx = pos.x;
-      var posy = pos.y;
-      //override normal context menu
-      event.preventDefault();
-
-     if( bodyType(Globals.selectedBody) == "kinematics1D-mass")
-    {
-      var img = body.view;
-      var halfw = img["width"] / 2;
-      var halfh = img["height"] / 2;
-
-      //get click x and y
-      //get body x and y
-      //create square,  see if contextMenuclick is in square
-      //
-      var loc = body.state.pos;
-      var rectRight= loc.x + halfw;
-      var rectBottom= loc.y + halfh;
-      var rectx = loc.x - halfw;
-      var recty = loc.y - halfh; 
-
-      // check each rect for hits
-      // if this rect is hit, display an alert
-      if(posx>=rectx && posx<=rectRight && posy>=recty && posy<=rectBottom  )
-        {//there is an object selected show context menu:
-          toggleMenuOn();  
-          positionMenu(event);
-        }
-      else
-      {
-          toggleMenuOff();
-      }
-    }
+  if (Globals.selectedBody === false) {
+    toggleMenuOff();
+    return
   }
-  else
-  {
+
+  // override normal context menu
+  event.preventDefault();
+
+  var canvas = document.getElementById("viewport");
+  var body = Globals.selectedBody;
+  var pos = getMousePos(canvas, event);
+  var posx = pos.x;
+  var posy = pos.y;
+
+  if (bodyType(Globals.selectedBody) == "kinematics1D-mass") {
+    $("#pointmass-properties-vector-cmenu").prop("checked", $("#pointmass-properties-vector")[0].checked);
+    $("#pointmass-properties-vector-ttt-cmenu").prop("checked", $("#pointmass-properties-vector-ttt")[0].checked);
+    $("#pointmass-properties-pvagraph-cmenu").prop("checked", $("#pointmass-properties-pvagraph")[0].checked);
+
+    var img = body.view;
+    var halfw = img["width"] / 2;
+    var halfh = img["height"] / 2;
+
+    // get click x and y
+    // get body x and y
+    // create square,  see if contextMenuclick is in square
+    var loc = body.state.pos;
+    var rectRight= loc.x + halfw;
+    var rectBottom= loc.y + halfh;
+    var rectx = loc.x - halfw;
+    var recty = loc.y - halfh;
+
+    // check each rect for hits
+    // if this rect is hit, display an alert
+    if (posx >= rectx && posx <= rectRight && posy >= recty && posy <= rectBottom) {
+      // there is an object selected, show context menu:
+      toggleMenuOn();
+      positionMenu(event);
+    } else {
       toggleMenuOff();
+    }
   }
 }
 
-function clickListener(e) 
-{
-    var button = e.which || e.button;
-    if ( button === 1 ) 
-    {
-      toggleMenuOff();
-    }
+function clickListener(e) {
+  var button = e.which || e.button;
+  if ( button === 1 ) {
+  toggleMenuOff();
+  }
 }
 
 function getPosition(e) {
