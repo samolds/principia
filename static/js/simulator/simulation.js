@@ -673,8 +673,8 @@ Physics.integrator('principia-integrator', function( parent ){
       
       else {
         // Recall that this equation assumes constant acceleration! Not the case for springs!
-        state.pos.x += state.old.vel.x * dt + state.acc.x * 0.5 * dt*dt;
-        state.pos.y += state.old.vel.y * dt + state.acc.y * 0.5 * dt*dt;  
+        state.pos.x += state.old.vel.x * dt + (state.acc.x + Globals.gravity[0]) * 0.5 * dt*dt;
+        state.pos.y += state.old.vel.y * dt + (state.acc.y + Globals.gravity[1]) * 0.5 * dt*dt;  
       }
       
       // Attached element must tag along
