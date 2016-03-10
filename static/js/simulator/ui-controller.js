@@ -647,6 +647,10 @@ function populateOverview(e) {
 }
 
 function deleteBody(bodyIndex){
+
+  //remove context menu
+  toggleMenuOff();
+  
   // If called without a parameter, get the index of the currently selected body
   if (bodyIndex === undefined) {
     bodyIndex = bIndex(Globals.selectedBody);

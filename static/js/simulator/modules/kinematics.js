@@ -97,13 +97,16 @@ function Kinematics1DModule() {
       }, true);
    
       // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
-      world.on('interact:grab', function( data ){        
+      world.on('interact:grab', function( data ){ 
+        //hide context menu
+        toggleMenuOff();
+         
         if(data.body){          
           selectBody(bIndex(data.body), bIndex(data.body) === 0); // Only switch tabs if not the origin!
         }
       });
   
-      world.on('interact:move', function( data ){    
+      world.on('interact:move', function( data ){
         if(Globals.vChanging){      
           updateVector(data);
         }
