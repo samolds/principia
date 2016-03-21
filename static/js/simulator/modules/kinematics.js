@@ -297,6 +297,7 @@ function Kinematics1DModule() {
     Globals.loading = true;
     
     var restore = $.parseJSON(json);
+    debugger;
     for(var key in restore)
     {
       if(key == "keyframeStates") continue;
@@ -311,7 +312,7 @@ function Kinematics1DModule() {
     var tempKF = restore.keyframeStates;
     var tempBC = restore.bodyConstants;
     
-    for(var i=0; i<tempKF.length-1; i++)   
+    for(var i=0; i<tempKF.length-1; i++)
       addKeyframe();
     
     
@@ -353,6 +354,8 @@ function Kinematics1DModule() {
       }
       
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
+    
+    Globals.variableMap = restore.variableMap;
     
     
     for(var i=tempKF.length-1; i>=0; i--){

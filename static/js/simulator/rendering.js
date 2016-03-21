@@ -124,7 +124,8 @@ function displayElementValues(bod){
     $('#pointmass-properties-acceleration-y').val((mod * convertUnit(acceleration[1], "accy", false)).toFixed(precision));
     $('#pointmass-properties-mass').val(constants.mass);
     $('#pointmass-properties-size').val(constants.size);
-
+    $('#pointmass-properties-img').val(constants.img);
+    
     $('#pointmass-properties-vector')[0].checked = constants.vectors;
     $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
     $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;

@@ -184,6 +184,12 @@ function assignAlpha(){
   }
 }
 
+function updateNickname(body, name){
+  body2Constant(body).nickname = name;
+  dirty();
+  drawMaster();
+}
+
 // Wrapper for updating properties followed by immediate resimulate and redraw
 function updatePropertyRedraw(body, property, value){
 
@@ -351,6 +357,9 @@ function addKeyframe(){
   if (Globals.numKeyframes == Globals.maxNumKeyframes)
     return;
   
+  if(Globals.running)
+    toggleSimulator();
+  
   $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
@@ -368,8 +377,9 @@ function addKeyframe(){
 
   $('#keyframe-' + (Globals.numKeyframes)).on("click", function(event) { selectKeyframe(event); } );
   $('#remove-keyframe-' + (Globals.numKeyframes)).on("click", function(event) { removeKeyframe(event); } );
+    
+  pushDuplicates();
   
-  pushDuplicates();   
   Globals.numKeyframes++;
   
   if(Globals.numKeyframes == 2)
@@ -381,7 +391,7 @@ function addKeyframe(){
       $($(li).children()[0]).addClass("input-field-variable");
       $(li).append(
       "<div class=\"input-field-unknown-container\" title=\"Mark this value as unknown.\">" +
-        "<a class=\"input-field-unknown btn green accent-1\"><img src=\"/static/img/toolbox/shrug.svg\" height=\"42\" width=\"30\"/></a>" +
+        "<a class=\"input-field-unknown btn green accent-1\"><img src=\"/static/img/toolbox/shrug.png\" height=\"42\" width=\"30\"/></a>" +
       "</div>");
       
     }

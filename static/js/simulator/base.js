@@ -123,7 +123,7 @@ $(document).ready(function(){
     updatePropertyRedraw(Globals.selectedBody, 'posy', $('#general-properties-position-y').val());
   });
   $('#general-properties-nickname').on("change", function(){ 
-    updatePropertyRedraw(Globals.selectedBody, 'nickname', $('#general-properties-nickname').val()); 
+    updateNickname(Globals.selectedBody, $('#general-properties-nickname').val()); 
   });
   
   // Point mass specific events
