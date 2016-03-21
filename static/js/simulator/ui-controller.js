@@ -790,6 +790,10 @@ function keyUp(e)
   
   if (e.keyCode == 86) Globals.vDown = false;
   if (e.keyCode == 65) Globals.aDown = false;
+  if (e.keyCode == 70) {
+    Globals.fbdDown = false; 
+    drawFBD();
+  }
   
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;
@@ -802,6 +806,10 @@ function keyDown(e)
 {
   if (e.keyCode == 86) Globals.vDown = true;
   if (e.keyCode == 65) Globals.aDown = true;
+  if (e.keyCode == 70) {
+    Globals.fbdDown = true; 
+    drawFBD();
+  }
  
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;

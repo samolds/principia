@@ -98,6 +98,11 @@ var Globals = {
   aDown: false,
   vChanging: false,
 
+  // Free Body Diagram Globals
+  // Tells us if the simulator was running when the fbd was displayed
+  fbdDown: false,
+  fbdWasRunning: false,
+
   // Flag for loading in progress
   loading: false,
   
