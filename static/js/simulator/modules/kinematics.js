@@ -297,7 +297,7 @@ function Kinematics1DModule() {
     Globals.loading = true;
     
     var restore = $.parseJSON(json);
-    debugger;
+    
     for(var key in restore)
     {
       if(key == "keyframeStates") continue;
