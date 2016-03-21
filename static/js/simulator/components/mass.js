@@ -29,16 +29,18 @@ function addMass(data){
           });
           
   // Upon being added, a map of variables associated with this mass is added to the globals
-  addToVariableMap(
-    {
-      posx: data.x, 
-      posy: swapYpos(data.y, false),
-      velx: 0,
-      vely: 0,
-      accx: 0,
-      accy: 0
-    }
-  );
+  if(!Globals.loading){
+    addToVariableMap(
+      {
+        posx: data.x, 
+        posy: swapYpos(data.y, false),
+        velx: 0,
+        vely: 0,
+        accx: 0,
+        accy: 0
+      }
+    );
+  }
 
   // Add the component to the world and update all keyframes
   world.add(component);

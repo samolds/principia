@@ -31,21 +31,25 @@ function addSpring(data)
                 fillStyle: '#000000',
               }
             });
-            
-  // Variables associated with spring
-  addToVariableMap(
-    {
-      k: 0.01
-    }
-  );
-  
-  // Variables associated with stretched point
-  addToVariableMap(
-    {
-      posx: data.x, 
-      posy: data.y
-    }
-  );
+       
+  if(!Globals.loading){       
+    // Variables associated with spring
+    addToVariableMap(
+      {
+        posx: data.x,
+        posy: swapYpos(data.y, false),
+        k: 0.01
+      }
+    );
+    
+    // Variables associated with stretched point
+    addToVariableMap(
+      {
+        posx: data.x+120, 
+        posy: swapYpos(data.y, false)
+      }
+    );
+  }
   
   world.add(component);
   world.add(componentChild);
@@ -57,8 +61,8 @@ function addSpring(data)
   bodyConstants[bodyConstants.length-1].vectors = false;
   bodyConstants[bodyConstants.length-2].k = 0.01;
   bodyConstants[bodyConstants.length-2].vectors = false;
-  bodyConstants[bodyConstants.length-1].nickname = "spring " + (getLabel(component));
-  bodyConstants[bodyConstants.length-2].nickname = "spring " + (getLabel(component)) + " end";
+  bodyConstants[bodyConstants.length-2].nickname = "spring " + (getLabel(component));
+  bodyConstants[bodyConstants.length-1].nickname = "spring " + (getLabel(component)) + " end";
   
   return [component, componentChild];
 }

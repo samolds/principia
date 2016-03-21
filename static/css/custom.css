@@ -195,7 +195,10 @@ body {
     padding: 0;
     height: 42px;
   }
-  
+
+  .input-field-unknown img {
+    padding-top: 5px;
+  }
 /* end custom form */
 
 

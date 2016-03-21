@@ -135,7 +135,7 @@ var Globals = {
               "/static/img/toolbox/mascot.png",
               "/static/img/toolbox/tranquilizer.png",
               "/static/img/toolbox/jogger.png",
-              "/static/img/toolbox/rocket.svg",
+              "/static/img/toolbox/rocket.png",
               "/static/img/team/dalton.png",
               "/static/img/team/danny.png",
               "/static/img/team/matthew.png",

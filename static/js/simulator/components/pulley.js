@@ -34,13 +34,15 @@ function addPulley(data){
             });
 
   // Variables associated with pulley
-  addToVariableMap(
-    {
-      r: dRadius,
-      posx: data.x, 
-      posy: data.y
-    }
-  );
+  if(!Globals.loading){
+    addToVariableMap(
+      {
+        r: dRadius,
+        posx: data.x, 
+        posy: swapYpos(data.y, false)
+      }
+    );
+  }
   
   
   
