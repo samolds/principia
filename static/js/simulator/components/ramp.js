@@ -26,14 +26,16 @@ function addRamp(data){
           });
           
   // Upon being added, a map of variables associated with this ramp is added to the globals
-  addToVariableMap({
-      posx: data.x, 
-      posy: data.y,
-      width: 100.0,
-      height: -60.0,
-      angle: -30.964,
-    }
-  );
+  if(!Globals.loading){
+    addToVariableMap({
+        posx: data.x, 
+        posy: swapYpos(data.y, false),
+        width: 100.0,
+        height: -60.0,
+        angle: -30.964,
+      }
+    );
+  }
 
   // Add the component to the world and update all keyframes
   world.add(component);

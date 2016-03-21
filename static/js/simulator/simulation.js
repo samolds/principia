@@ -90,53 +90,62 @@ function attemptSimulation(){
           for(var j=0; j<removals.length; j++){
             delete variables[removals[j]];
           }
-        
-          // Run solver if previous step resulted in any removals (relate equations to origin here?)      
-          var results = solver.solve(variables);
                     
-          // Missing results on final pass
-          if(!results[0] && pass == nKF-2){
-            $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.\n";
-            Globals.timelineReady = false;
-            return;
-          }        
-            
           
-          if(!Globals.keyframeTimes[keyframe2]){            
-            Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
-          
-            // Consistency check: time should always progress forward
-            if(results[1]["t"] <= 0 || Globals.keyframeTimes[keyframe2] <= Globals.keyframeTimes[keyframe1]){
-              $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!\n";
-              Globals.keyframeTimes[keyframe2] = false;
+          if(removals.length != 0){            
+              
+            // Run solver if previous step resulted in any removals (relate equations to origin here?)      
+            var results = solver.solve(variables);
+                      
+            // Missing results on final pass
+            if(!results[0] && pass == nKF-2){
+              $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.\n";
               Globals.timelineReady = false;
               return;
-            }
+            }        
+              
             
-            $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
-            if(keyframe2 == nKF-1)
-              Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
-          }
-                 
-          keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
-          keyframeStates[keyframe1][body]["pos"]["y"] = swapYpos(results[1]["y0"], false);
-          keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
-          keyframeStates[keyframe1][body]["vel"]["y"] = -results[1]["vy0"];
+            if(!Globals.keyframeTimes[keyframe2]){            
+              Globals.keyframeTimes[keyframe2] = results[1]["t"] + Globals.keyframeTimes[keyframe1];
+            
+              // Consistency check: time should always progress forward
+              if(results[1]["t"] <= 0 || Globals.keyframeTimes[keyframe2] <= Globals.keyframeTimes[keyframe1]){
+                $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!\n";
+                Globals.keyframeTimes[keyframe2] = false;
+                Globals.timelineReady = false;
+                return;
+              }
+              
+              $('#keyframe-' + keyframe2 +'-dt').val(Globals.keyframeTimes[keyframe2].toFixed(pre));          
+              if(keyframe2 == nKF-1)
+                Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
+            }
+                   
+            keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
+            keyframeStates[keyframe1][body]["pos"]["y"] = swapYpos(results[1]["y0"], false);
+            keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
+            keyframeStates[keyframe1][body]["vel"]["y"] = -results[1]["vy0"];
 
-          kf1_variables[body].posx = results[1]["x0"];
-          kf1_variables[body].posy = results[1]["y0"];
-          kf1_variables[body].velx = results[1]["vx0"];
-          kf1_variables[body].vely = results[1]["vy0"];
+            kf1_variables[body].posx = results[1]["x0"];
+            kf1_variables[body].posy = results[1]["y0"];
+            kf1_variables[body].velx = results[1]["vx0"];
+            kf1_variables[body].vely = results[1]["vy0"];
+            
+            keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
+            keyframeStates[keyframe2][body]["pos"]["y"] = swapYpos(results[1]["yf"], false);
+            keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
+            keyframeStates[keyframe2][body]["vel"]["y"] = -results[1]["vyf"];
+            
+            kf2_variables[body].posx = results[1]["xf"];
+            kf2_variables[body].posy = results[1]["yf"];
+            kf2_variables[body].velx = results[1]["vxf"];
+            kf2_variables[body].vely = results[1]["vyf"];
+          }  
           
-          keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
-          keyframeStates[keyframe2][body]["pos"]["y"] = swapYpos(results[1]["yf"], false);
-          keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
-          keyframeStates[keyframe2][body]["vel"]["y"] = -results[1]["vyf"];
-          
-          kf2_variables[body].posx = results[1]["xf"];
-          kf2_variables[body].posy = results[1]["yf"];
-          kf2_variables[body].velx = results[1]["vxf"];
-          kf2_variables[body].vely = results[1]["vyf"];
+          else
+          {            
+            $("#solution-details")[0].textContent += "No values are unknown.\n";
+          }
           
           if(bc.alpha)
             delete bc.alpha;
@@ -150,7 +159,8 @@ function attemptSimulation(){
     
     // Associate keyframes with a real frame
     for(var i=1; i < nKF; i++)
-      Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
+      if(Globals.keyframes[i] === false)
+        Globals.keyframes[i] = Math.floor(Globals.keyframeTimes[i]/Globals.keyframeTimes[nKF-1] * Globals.totalFrames);
     
     // Draw keyframes in reverse order to update all the mini-canvases and so that we end up at t=0
     Globals.frame = false;
@@ -300,11 +310,16 @@ function addToVariableMap(variable){
 // adding a new keyframe so that it ends up with the same bodies.
 function pushDuplicates(){
   // Previous keyframe, with one variable map per body
-  var lastMap = Globals.variableMap[Globals.numKeyframes-1];
-  var cloneMap = [];
-  for(var i=0; i<lastMap.length; i++)
-    cloneMap.push(cloneVariable(lastMap[i]));
-  Globals.variableMap.push(cloneMap);
+  
+  // The variable map is already built if simulation is being loaded
+  if(!Globals.loading){
+    // If this is an active simulation, the variables must be copied to the new keyframe
+    var lastMap = Globals.variableMap[Globals.numKeyframes-1];
+    var cloneMap = [];
+    for(var i=0; i<lastMap.length; i++)
+      cloneMap.push(cloneVariable(lastMap[i]));
+    Globals.variableMap.push(cloneMap);
+  }
   
   var lastKeyframeState = Globals.keyframeStates[Globals.numKeyframes-1];
   var KF = [];

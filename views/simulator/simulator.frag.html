@@ -378,15 +378,24 @@
           </div>
         </div>
         <div class="row">
-          <div class="col s4 toolbox-item-container valign-wrapper">
-            <img class="toolbox-item ui-draggable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
+          <div class="col s5">
+            <div class="toolbox-item-container card" title="Origin">
+              <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+              <div class="valign-wrapper">
+                <img class="toolbox-item ui-draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
+              </div>
+              <div class="card-reveal">
+                <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+                <p>Change the origin of the simulation!</p>
+              </div>
+            </div>
           </div>
 
-          <div class="input-field col s4">
+          <div class="input-field col s3">
             <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-xorigin" class="active">Origin X</label>
           </div>
-          <div class="input-field col s4">
+          <div class="input-field col s3">
             <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-yorigin" class="active">Origin Y</label>
           </div>
