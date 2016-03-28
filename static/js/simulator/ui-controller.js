@@ -540,8 +540,22 @@ function contextMenuListener(event) {
 function clickListener(e) {
   var button = e.which || e.button;
   if ( button === 1 ) {
-  toggleMenuOff();
+    toggleMenuOff();
   }
+}
+
+function panZoomListener(e) {
+  var mouseX = e.clientX;
+  var mouseY = e.clientY
+  var dx = mouseX - Globals.lastPos.x;
+  var dy = mouseY - Globals.lastPos.y;
+  var can = Globals.world.renderer();
+
+  can.ctx.translate(dx, dy);
+
+  Globals.lastPos.x = mouseX;
+  Globals.lastPos.y = mouseY;
+  drawMaster();
 }
 
 function getPosition(e) {

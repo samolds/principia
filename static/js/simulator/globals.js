@@ -141,7 +141,10 @@ var Globals = {
 // Number of frames to attempt to simulate before declaring simulation failure
   maxFrames: 4000,
   
-  maxNumKeyframes: 5
+  maxNumKeyframes: 5,
+
+  // Panning around the canvas
+  lastPos: {x: 0, y: 0},
 };
 
 

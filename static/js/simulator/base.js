@@ -112,6 +112,18 @@ $(document).ready(function(){
     clickListener(event);
   });
   
+  $( '#viewport' ).on("mousedown", function(event){
+    Globals.lastPos.x = event.clientX;
+    Globals.lastPos.y = event.clientY;
+    $('body').css({cursor: "move"});
+    $( '#viewport' ).on("mousemove", panZoomListener);
+  });
+
+  $( '#viewport' ).on("mouseup", function(event){
+    $( '#viewport' ).off("mousemove", panZoomListener);
+    $('body').css({cursor: "pointer"});
+  });
+
   // Events for overview tab
   $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
 
