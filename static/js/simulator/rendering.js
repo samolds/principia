@@ -343,14 +343,15 @@ function drawFBD(){
     Globals.fbdWasRunning = true;
     toggleSimulator();
   }
-    
+
   if(!Globals.fbdDown || !selectedBody) {
     if(Globals.fbdWasRunning){
       toggleSimulator();
       Globals.fbdWasRunning = false;
-    } else {
-      drawMaster();
-    }     
+    }
+
+    $("#help-tooltip-fbd").hide();
+    drawMaster();
     return;
   }
 
@@ -361,36 +362,45 @@ function drawFBD(){
 
   var xForce = (selectedBody.state.acc.x + Globals.gravity[0]) * mass;
   var yForce = (selectedBody.state.acc.y + Globals.gravity[1]) * mass;
-  
+
   var ax_amt = xForce * 20.0;
   var ay_amt = yForce * 20.0;
 
   var canvas = Globals.world.renderer();
   var context = canvas.ctx;
+  var bodySize = body2Constant(selectedBody).size;
+  var fbdHelp = $("#help-tooltip-fbd");
+
   context.font = 'bold 10pt Calibri';
   context.fillStyle = 'grey';
 
-  drawTipToTail(ax_amt, 0, 'black', 'black', 'black', false, selectedBody);
-
-  // X Right
-  context.fillText('xForce: ' + xForce, selectedBody.state.pos.x + body2Constant(selectedBody).size + 10, selectedBody.state.pos.y - body2Constant(selectedBody).size + 15);
-
-  // X Right
-  context.fillText('xForce: ' + xForce, selectedBody.state.pos.x - body2Constant(selectedBody).size - 65, selectedBody.state.pos.y - body2Constant(selectedBody).size + 15);
-
-  drawTipToTail(0, ay_amt, 'black', 'black', 'black', false, selectedBody);
-
-  // Y Downward
-  context.fillText('yForce: ' + yForce, selectedBody.state.pos.x + 5, selectedBody.state.pos.y + body2Constant(selectedBody).size + 15);
-
-  // Y Updawrd
-  context.fillText('yForce: ' + yForce, selectedBody.state.pos.x + 5, selectedBody.state.pos.y - body2Constant(selectedBody).size - 10);
-  
-  
-  
+  // TODO
   // Normal Force
   // Spring Force
   // Force Of Friction
+
+  // X Forces
+  drawTipToTail(ax_amt, 0, 'grey', 'grey', 'grey', false, selectedBody);
+
+  // Y Forces
+  drawTipToTail(0, ay_amt, 'grey', 'grey', 'grey', false, selectedBody);
+
+  // Draw the FBD popup window
+  fbdHelp.html('<p>xForce: ' + xForce + '</p><p>yForce: ' + (-yForce) + '</p>');
+
+  var topPos = selectedBody.state.pos.y + bodySize;
+  var leftPos = selectedBody.state.pos.x + bodySize;
+
+  // Body is too far right
+  if(selectedBody.state.pos.x + 80 > canvas.width) {
+    leftPos -= (bodySize*2 + 50);
+  }
+  if(selectedBody.state.pos.y + 80 > canvas.height) { // Body is off the bottom
+    topPos -= (bodySize*2 + 50);
+  }
+
+  fbdHelp.css({top: topPos, left: leftPos});
+  fbdHelp.show();
 }
 
 // Draw a vector for the specified body, scaled using the provided arguments
@@ -530,8 +540,9 @@ function postRender(isKeyframe){
   drawLines();
 
   // Only draw vectors if we aren't currently looking at a FBD
-  if(!Globals.fbdDown)
+  if(!Globals.fbdDown || !selectedBody) {
     drawVectors();
+  }
 
   if (selectedBody) {    
     var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
