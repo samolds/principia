@@ -145,6 +145,8 @@ var Globals = {
 
   // Panning around the canvas
   lastPos: {x: 0, y: 0},
+  
+  translation: {x: 0, y: 0}, 
 };
 
 

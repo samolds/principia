@@ -549,13 +549,16 @@ function panZoomListener(e) {
   var mouseY = e.clientY
   var dx = mouseX - Globals.lastPos.x;
   var dy = mouseY - Globals.lastPos.y;
+  
   var can = Globals.world.renderer();
 
-  can.ctx.translate(dx, dy);
-
+  can.ctx.translate(dx, dy);  
   Globals.lastPos.x = mouseX;
   Globals.lastPos.y = mouseY;
-  drawMaster();
+  var trans = Globals.translation;
+  trans.x += dx; trans.y += dy;
+  can.ctx.clearRect(-trans.x, -trans.y, can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
+  drawMaster();  
 }
 
 function getPosition(e) {
