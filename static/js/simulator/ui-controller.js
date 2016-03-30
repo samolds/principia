@@ -544,9 +544,9 @@ function clickListener(e) {
   }
 }
 
-function panZoomListener(e) {
-  var mouseX = e.clientX;
-  var mouseY = e.clientY
+function panZoomUpdate(data) {
+  var mouseX = data.x;
+  var mouseY = data.y;
   var dx = mouseX - Globals.lastPos.x;
   var dy = mouseY - Globals.lastPos.y;
   
@@ -558,6 +558,7 @@ function panZoomListener(e) {
   var trans = Globals.translation;
   trans.x += dx; trans.y += dy;
   can.ctx.clearRect(-trans.x, -trans.y, can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
+
   drawMaster();  
 }
 

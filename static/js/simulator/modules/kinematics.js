@@ -107,6 +107,9 @@ function Kinematics1DModule() {
       });
   
       world.on('interact:move', function( data ){
+        if (Globals.isPanning)
+          panZoomUpdate(data);
+
         if(Globals.vChanging){      
           updateVector(data);
         }
@@ -130,6 +133,9 @@ function Kinematics1DModule() {
       });
   
       world.on('interact:release', function( data ){    
+        $('body').css({cursor: "auto"});
+        Globals.isPanning = false;
+
         // Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
         if(data.body && Globals.didMove && !Globals.vChanging){
             var index = bIndex(data.body);
@@ -159,8 +165,13 @@ function Kinematics1DModule() {
             drawMaster();
         }    
       });
-  
-      world.on('interact:poke', function( data ){    
+
+      world.on('interact:poke', function(data){    
+        Globals.lastPos.x = data.x;
+        Globals.lastPos.y = data.y;
+        $('body').css({cursor: "move"});
+        Globals.isPanning = true;
+
         Globals.selectedBody = false;
         document.getElementById("toolbox-tab").click();  
         drawMaster();
