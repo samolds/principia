@@ -8442,7 +8442,7 @@ Physics.behavior('interactive', function( parent ){
                     for ( touchIndex = 0, l = e.changedTouches.length; touchIndex < l; touchIndex++) {
                         touch = e.changedTouches[touchIndex];
                         touchId = touch.identifier || touch.pointerId || "mouse";
-                        pos = { idx: touchId, x: touch.pageX - offset.left - Globals.translation.x, y: touch.pageY - offset.top - Globals.translation.y };
+                        pos = { idx: touchId, x: touch.pageX - offset.left, y: touch.pageY - offset.top };
                         
                         // Modified by MADADASA: Body must be visible to grab
                         body = self._world.findOne({ $at: new Physics.vector( pos ), $in: self.getTargets(), hidden:false });
@@ -8513,9 +8513,8 @@ Physics.behavior('interactive', function( parent ){
 
                     for ( touchIndex = 0, l = e.changedTouches.length; touchIndex < l; touchIndex++) {
                         touch = e.changedTouches[touchIndex];
-                        touchId = touch.identifier || touch.pointerId || "mouse";
-                        // Globals.translation added by MADADASA for canvas translation
-                        pos = { idx: touchId, x: touch.pageX - offset.left - Globals.translation.x, y: touch.pageY - offset.top - Globals.translation.y};
+                        touchId = touch.identifier || touch.pointerId || "mouse";                        
+                        pos = { idx: touchId, x: touch.pageX - offset.left, y: touch.pageY - offset.top };
                         data = self.bodyData[touchId];
 
                         if ( data ){

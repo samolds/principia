@@ -607,11 +607,13 @@ function onPropertyChanged(i, property, value){
   // Otherwise update the keyframe state or body constants with known value:
   switch(property){
     // Position updates
-    case 'posx':        
+    case 'posx':
+        value -= Globals.translation.x;
         body.state.pos.x = value;
         kState[i].pos.x = value;        
         break;
-    case 'posy':        
+    case 'posy':
+        value += Globals.translation.y;
         value = swapYpos(value, false);
         body.state.pos.y = value;
         kState[i].pos.y = value;        

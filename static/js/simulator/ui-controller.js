@@ -111,11 +111,7 @@ function toggleSimulator(){
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }
-    //from old version: assumes keyframe-1 is the last keyframe
-    // TODO delete this when fully updated
-    //if(Globals.frame == Globals.totalFrames){
-      //$("#keyframe-1").attr("style","border:4px solid #0000cc");
-    //}
+
   }
 }
 
@@ -545,6 +541,7 @@ function clickListener(e) {
 }
 
 function panZoomUpdate(data) {
+  var bodies = Globals.world.getBodies();
   var mouseX = data.x;
   var mouseY = data.y;
   var dx = mouseX - Globals.lastPos.x;
@@ -552,14 +549,17 @@ function panZoomUpdate(data) {
   
   var can = Globals.world.renderer();
 
-  can.ctx.translate(dx, dy);  
+  //can.ctx.translate(dx, dy);  
   Globals.lastPos.x = mouseX;
   Globals.lastPos.y = mouseY;
   var trans = Globals.translation;
   trans.x += dx; trans.y += dy;
-  can.ctx.clearRect(-trans.x, -trans.y, can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
-
-  drawMaster();  
+  //can.ctx.clearRect(-trans.x, -trans.y, can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
+  for(var i=0; i < bodies.length; i++){
+    bodies[i].offset = Physics.vector(trans.x, trans.y);
+  }
+  
+  drawMaster();
 }
 
 function getPosition(e) {

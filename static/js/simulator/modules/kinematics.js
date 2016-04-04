@@ -128,6 +128,9 @@ function Kinematics1DModule() {
           if(index === 0)
             $("#globalprops-tab").click();          
             
+          var trans = Globals.translation;
+          var can = Globals.world.renderer();
+          can.ctx.clearRect(-trans.x, -trans.y, 9999999, 9999999);//can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
           drawMaster();
         }
       });
@@ -143,8 +146,8 @@ function Kinematics1DModule() {
             Globals.didMove = false;
             setNoSelect(false);
             
-            data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
-            data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
+            //data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
+            //data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
             
             onPropertyChanged(index, "posx", data.x);
             onPropertyChanged(index, "posy", swapYpos(data.y, false));
@@ -406,8 +409,8 @@ function Kinematics1DModule() {
       
         var index = bIndex(body);
         
-        var dx = (-body.state.pos.x + data.x) / 8;
-        var dy = (-body.state.pos.y + data.y) / 8;
+        var dx = (-body.state.pos.x - Globals.translation.x + data.x) / 8;
+        var dy = (-body.state.pos.y - Globals.translation.y + data.y) / 8;
         
         // Rounds number to nearest increment of 0.25
         var snapTo = function(n) { return (Math.round(n*4)/4).toFixed(2); };

@@ -355,13 +355,16 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   if(!tipToTail)
   {
   
+  var x = body.state.pos.x + body.offset.x;
+  var y = body.state.pos.y + body.offset.y;
+  
   if(vx_amt != 0)
   {
     ctx.strokeStyle = (Math.sign(vx_amt) == 1)? '#00ff00': '#ff0000';    
     ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
+    ctx.moveTo(x,y);
+    ctx.lineTo(x + vx_amt, y);
+    ctx.lineTo(x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), y - 5);
     ctx.stroke();
   }
 
@@ -369,12 +372,12 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   {
     ctx.strokeStyle = (Math.sign(ax_amt) == 1)? '#009900': '#990000';
     ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8 + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
+    ctx.moveTo(x,y);
+    ctx.lineTo(x + ax_amt * 0.8, y);
+    ctx.lineTo(x + ax_amt * 0.8 + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), y - 7);  
+    ctx.lineTo(x + ax_amt * 0.8, y);
+    ctx.lineTo(x + ax_amt, y);
+    ctx.lineTo(x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), y - 7);  
     ctx.stroke();
   }
   
@@ -382,9 +385,9 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   {
     ctx.strokeStyle = (Math.sign(vy_amt) == 1)? '#ff0000': '#00ff00';
     ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + vy_amt + -Math.sign(vy_amt)*0.1*Math.abs(vy_amt));
+    ctx.moveTo(x,y);
+    ctx.lineTo(x,y + vy_amt);
+    ctx.lineTo(x - 5, y + vy_amt + -Math.sign(vy_amt)*0.1*Math.abs(vy_amt));
     ctx.stroke();
   }
   
@@ -392,12 +395,12 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   {
     ctx.strokeStyle = (Math.sign(ay_amt) == 1)? '#990000': '#009900';
     ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + 0.8*ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
-    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
-    ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+    ctx.moveTo(x,y);
+    ctx.lineTo(x,     y + 0.8*ay_amt);    
+    ctx.lineTo(x - 5, y + 0.8*ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+    ctx.lineTo(x,     y + 0.8*ay_amt);    
+    ctx.lineTo(x, y + ay_amt);
+    ctx.lineTo(x - 5, y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
     ctx.stroke();
   }
   
@@ -431,18 +434,21 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
       if(quadrant == 3) { dx *= -1; dy *= -1; }
       if(quadrant == 4) { dx *= -1; } 
 
+      var xOffset = body.state.pos.x + Globals.translation.x;
+      var yOffset = body.state.pos.y + Globals.translation.y;      
+      
       ctx.strokeStyle = color;
       ctx.beginPath();
-      ctx.moveTo(body.state.pos.x,body.state.pos.y);
-      ctx.lineTo(body.state.pos.x + x, body.state.pos.y + y);
-      ctx.lineTo(body.state.pos.x + x + dx, body.state.pos.y + y - dy);
+      ctx.moveTo(xOffset,yOffset);
+      ctx.lineTo(xOffset + x, yOffset + y);
+      ctx.lineTo(xOffset + x + dx, yOffset + y - dy);
       ctx.stroke();
       
       // Draw second tip to indicate acceleration
       if(acc){
         ctx.beginPath();
-        ctx.moveTo(body.state.pos.x + x*0.9, body.state.pos.y + y*0.9);
-        ctx.lineTo(body.state.pos.x + x*0.9 + dx, body.state.pos.y + y*0.9 - dy);
+        ctx.moveTo(xOffset + x*0.9, yOffset + y*0.9);
+        ctx.lineTo(xOffset + x*0.9 + dx, yOffset + y*0.9 - dy);
         ctx.stroke();
       }
       

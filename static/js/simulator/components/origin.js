@@ -7,6 +7,9 @@
 // These coordinates are relative to bottom-left as 0,0
 function moveOrigin(data){
   
+  data.x -= Globals.translation.x;
+  data.y += Globals.translation.y;
+  
   var world = Globals.world;
   var bodies = world.getBodies();
   var delta = Globals.delta;
@@ -36,7 +39,7 @@ function moveOrigin(data){
   }
   
   Globals.origin[0] = data.x;
-  Globals.origin[1] = data.y
+  Globals.origin[1] = data.y;
   
   for(var i=0; i < Globals.keyframeStates.length; i++){
     Globals.keyframeStates[i][0].pos.x = Globals.origin[0];
@@ -57,9 +60,9 @@ function moveOriginScalar(coordinate, value){
   if(isNaN(value)) return;
   
   if(coordinate == "x")
-    Globals.origin[0] = value;
+    Globals.origin[0] = value - Globals.translation.x;
   else 
-    Globals.origin[1] = value;
+    Globals.origin[1] = value - Globals.translation.y;
   
   moveOrigin({"x":Globals.origin[0],"y":Globals.origin[1]});
 }

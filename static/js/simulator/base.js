@@ -112,20 +112,12 @@ $(document).ready(function(){
     clickListener(event);
   });
   
-  //$( '#viewport' ).on("mousedown", function(event){
-  //  Globals.lastPos.x = event.clientX;
-  //  Globals.lastPos.y = event.clientY;
-  //  $('body').css({cursor: "move"});
-  //  $( '#viewport' ).on("mousemove", panZoomListener);
-  //  event.preventDefault();
-  //});
 
-  //$('#viewport').on("mouseup", function(event){
-  //  $( '#viewport' ).off("mousemove", panZoomListener);
-  //  $('body').css({cursor: "auto"});
-  //});
-
-  $('#viewport').on("mouseleave", function(event){
+  $('#viewport').on("mousedown", function(event){
+    event.preventDefault();
+  });
+  
+  $('#viewport').on("mouseleave", function(event){    
     Globals.world.emit("interact:release", {});
   });
 
