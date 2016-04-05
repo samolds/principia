@@ -125,7 +125,7 @@ var Globals = {
   delta: 50,
   
   // Minimum and maximum scale factor
-  minScale: -3,  
+  minScale: -2,  
   maxScale: 3,
   
   // Paths to images used for drawing point mass

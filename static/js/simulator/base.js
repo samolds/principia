@@ -250,28 +250,30 @@ $(document).ready(function(){
     if(Date.now() - Globals.scrollTime < 500) return;
     Globals.scrollTime  = Date.now();
     
+    
     // Adjust scale 'ticks'
+    var scaled = false;
     var ds = e.originalEvent.wheelDelta;        
     if(ds > 0 && Globals.scale < Globals.maxScale)
-      Globals.scale += 1;
+    { Globals.scale += 1; scaled = true; }
     else if(ds < 0 && Globals.scale > Globals.minScale)
-      Globals.scale -= 1;
+    { Globals.scale -= 1; scaled = true; }
+    
+    if(!scaled) return; 
     
     // Rescale and bias images
     var bodies = Globals.world.getBodies();
     for(var i=0; i < bodies.length; i++){
       var body = bodies[i];
       var factor = (ds < 0)? 0.5: 2.0;
-      
+            
       // Scale body images by factor
       // TODO: How to bias them?
-      
-      /*
       body.view.setAttribute("width", body.view.width * factor)
       body.view.setAttribute("height", body.view.height * factor);
       body.radius = body.raidus * factor;
       body.geometry.radius = body.geometry.radius * factor;
-      */      
+      
     }
     
     drawMaster();
