@@ -421,9 +421,13 @@ function simulate(){
 }
 
 // Updates a variable in the specified body to have the specified value
-function updateVariable(body, variable, value){
+function updateVariable(body, variable, value, doTranslate){
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
   
+  if(bIndex(body) !== 0 && doTranslate){
+    if(variable == "posx") value -= Globals.translation.x;
+    if(variable == "posy") value += Globals.translation.y;
+  }
   
   if(isNaN(value))
     Globals.variableMap[keyframe][bIndex(body)][variable] = "?";
@@ -569,7 +573,7 @@ function updateImage(body, value){
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-function onPropertyChanged(i, property, value){
+function onPropertyChanged(i, property, value, doTranslate){
   
   var body = Globals.world.getBodies()[i];
   if(!body) return;
@@ -597,7 +601,7 @@ function onPropertyChanged(i, property, value){
   dirty();
   
   // Attempt to update the corresponding variable
-  if(bIndex(body) !== 0) updateVariable(body, property, value);
+  if(bIndex(body) !== 0) updateVariable(body, property, value, doTranslate);
   
   assignAlpha();
  
@@ -608,12 +612,12 @@ function onPropertyChanged(i, property, value){
   switch(property){
     // Position updates
     case 'posx':
-        value -= Globals.translation.x;
+        if(doTranslate) value -= Globals.translation.x;
         body.state.pos.x = value;
         kState[i].pos.x = value;        
         break;
     case 'posy':
-        value += Globals.translation.y;
+        if(doTranslate) value += Globals.translation.y;
         value = swapYpos(value, false);
         body.state.pos.y = value;
         kState[i].pos.y = value;        

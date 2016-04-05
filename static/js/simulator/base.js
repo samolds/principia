@@ -243,6 +243,40 @@ $(document).ready(function(){
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
   });
   
+  $('#viewport').bind('mousewheel', function(e) {
+    e.preventDefault();
+    
+    // Throttle scroll event: return unless 500 ms from last scroll
+    if(Date.now() - Globals.scrollTime < 500) return;
+    Globals.scrollTime  = Date.now();
+    
+    // Adjust scale 'ticks'
+    var ds = e.originalEvent.wheelDelta;        
+    if(ds > 0 && Globals.scale < Globals.maxScale)
+      Globals.scale += 1;
+    else if(ds < 0 && Globals.scale > Globals.minScale)
+      Globals.scale -= 1;
+    
+    // Rescale and bias images
+    var bodies = Globals.world.getBodies();
+    for(var i=0; i < bodies.length; i++){
+      var body = bodies[i];
+      var factor = (ds < 0)? 0.5: 2.0;
+      
+      // Scale body images by factor
+      // TODO: How to bias them?
+      
+      /*
+      body.view.setAttribute("width", body.view.width * factor)
+      body.view.setAttribute("height", body.view.height * factor);
+      body.radius = body.raidus * factor;
+      body.geometry.radius = body.geometry.radius * factor;
+      */      
+    }
+    
+    drawMaster();
+});
+  
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();
   

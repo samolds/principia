@@ -56,7 +56,10 @@ function Kinematics1DModule() {
       Globals.keyframeStates[0].push(cloneState(origin.state));
       
       world.on('addComponent', function(data) {
-               
+        
+        data.x -= Globals.translation.x;
+        data.y -= Globals.translation.y;
+        
         bodyConstants.push({ctype:data.type});
         
         switch(data.type){
@@ -77,22 +80,28 @@ function Kinematics1DModule() {
             moveOrigin(data);
             break;
         }
+        
+        var bodies = Globals.world.getBodies();
+        var trans = Globals.translation;                
+        for(var i=0; i < bodies.length; i++){
+          bodies[i].offset = Physics.vector(trans.x, trans.y);
+        }
     
         drawMaster();
       });
   
       // constrain objects to these bounds
-      edgeBounce = Physics.behavior('edge-collision-detection', {
+      /*edgeBounce = Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds,
         restitution: 0.8,
         cof: 0.8
-      });
+      });*/
 
       // resize events
       window.addEventListener('resize', function () {
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
         viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);        
-        edgeBounce.setAABB(viewportBounds); // update the boundaries
+        //edgeBounce.setAABB(viewportBounds); // update the boundaries
         drawMaster();
       }, true);
    
@@ -119,8 +128,8 @@ function Kinematics1DModule() {
           Globals.didMove = true;
           setNoSelect(true);
           
-          onPropertyChanged(index, "posx", data.x);
-          onPropertyChanged(index, "posy", swapYpos(data.y, false));
+          onPropertyChanged(index, "posx", data.x, true);
+          onPropertyChanged(index, "posy", swapYpos(data.y, false), true);
           
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":data.x, "y":swapYpos(data.y, false)});
@@ -130,12 +139,12 @@ function Kinematics1DModule() {
             
           var trans = Globals.translation;
           var can = Globals.world.renderer();
-          can.ctx.clearRect(-trans.x, -trans.y, 9999999, 9999999);//can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
+          can.ctx.clearRect(0, 0, can.width, can.height);
           drawMaster();
         }
       });
   
-      world.on('interact:release', function( data ){    
+      world.on('interact:release', function( data ){         
         $('body').css({cursor: "auto"});
         Globals.isPanning = false;
 
@@ -149,8 +158,8 @@ function Kinematics1DModule() {
             //data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
             //data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
             
-            onPropertyChanged(index, "posx", data.x);
-            onPropertyChanged(index, "posy", swapYpos(data.y, false));
+            onPropertyChanged(index, "posx", data.x, true);
+            onPropertyChanged(index, "posy", swapYpos(data.y, false), true);
             
             if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
             {
@@ -421,15 +430,15 @@ function Kinematics1DModule() {
         if(Globals.vDown){
           body.state.vel.x = dx;
           body.state.vel.y = dy;
-          onPropertyChanged(index, "velx", dx);
-          onPropertyChanged(index, "vely", dy);
+          onPropertyChanged(index, "velx", dx, false);
+          onPropertyChanged(index, "vely", dy, false);
         }
         
         if(Globals.aDown){
           body.state.acc.x = dx;
           body.state.acc.y = dy;
-          onPropertyChanged(index, "accx", dx);
-          onPropertyChanged(index, "accy", dy);
+          onPropertyChanged(index, "accx", dx, false);
+          onPropertyChanged(index, "accy", dy, false);
         }
 
         drawMaster();

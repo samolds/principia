@@ -232,7 +232,7 @@ function updatePropertyRedraw(body, property, value){
         
     
     // Update properties within simulator, draw, and return
-    onPropertyChanged(index, property.substring(0,3) + "x", point[0]);
+    onPropertyChanged(index, property.substring(0,3) + "x", point[0], false);
     
     if(point[1] === -0){
       point[1] = "?";
@@ -242,7 +242,7 @@ function updatePropertyRedraw(body, property, value){
       toggleUnknown(body, property.substring(0,3) + "y");
     }
     else {
-      onPropertyChanged(index, property.substring(0,3) + "y", point[1]);
+      onPropertyChanged(index, property.substring(0,3) + "y", point[1], false);
     }
     
     if(Globals.numKeyframes == 1) attemptSimulation();
@@ -254,7 +254,7 @@ function updatePropertyRedraw(body, property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(bIndex(body), property, value);
+  onPropertyChanged(bIndex(body), property, value, false);
   
   if(Globals.numKeyframes == 1) attemptSimulation();  
   drawMaster();
@@ -312,10 +312,10 @@ function toggleUnknown(body, property){
   }
   var index = bIndex(body);
   if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
-    onPropertyChanged(index, property, 0);
+    onPropertyChanged(index, property, 0, false);
   }
   else{
-    onPropertyChanged(index, property, Number.NaN);
+    onPropertyChanged(index, property, Number.NaN, false);
   }
   
   selectPropertyInputType(body, property)
@@ -549,12 +549,11 @@ function panZoomUpdate(data) {
   
   var can = Globals.world.renderer();
 
-  //can.ctx.translate(dx, dy);  
   Globals.lastPos.x = mouseX;
   Globals.lastPos.y = mouseY;
   var trans = Globals.translation;
   trans.x += dx; trans.y += dy;
-  //can.ctx.clearRect(-trans.x, -trans.y, can.width+Math.abs(trans.x), can.height+Math.abs(trans.y));
+  
   for(var i=0; i < bodies.length; i++){
     bodies[i].offset = Physics.vector(trans.x, trans.y);
   }
@@ -627,6 +626,24 @@ function positionMenu(e) {
   }
 }
 
+// Selects and centers the camera on the body with the specified index
+function centerBody(i){  
+  selectBody(i);
+  var bodies = Globals.world.getBodies();
+  
+  var x = -Globals.selectedBody.state.pos.x + Globals.world.renderer().width/2;
+  var y = swapYpos(Globals.selectedBody.state.pos.y, false) - Globals.world.renderer().height/2;
+  
+  Globals.translation.x = x;
+  Globals.translation.y = y;
+  
+  for(var i=0; i<bodies.length; i++){
+    bodies[i].offset = Physics.vector(Globals.translation.x, Globals.translation.y);
+  }
+  
+  drawMaster();
+}
+
 function populateOverview(e) {
 
   var bodies = Globals.world.getBodies();
@@ -658,10 +675,10 @@ function populateOverview(e) {
      $list.append(
     "<li >" +
       "<div class ='row clickable'>"+
-       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'>"+
+       "<div class = ' col s4' onclick = 'centerBody(" + i + ")'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
-       "<div class = 'col s4' onclick = 'selectBody(" + i + ")'>"+
+       "<div class = 'col s4' onclick = 'centerBody(" + i + ");'>"+
         consts[i].nickname +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+

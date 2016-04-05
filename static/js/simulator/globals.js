@@ -101,6 +101,10 @@ var Globals = {
   // Flag for loading in progress
   loading: false,
   
+  // Scale factor in clicks (display only, the canvas should be zoomed in by 2^scale)
+  scale: 0,
+  scrollTime: Date.now(),
+  
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  
@@ -119,6 +123,10 @@ var Globals = {
   
   // Number of pixels within range for attaching objects (for springs or moving origin)
   delta: 50,
+  
+  // Minimum and maximum scale factor
+  minScale: -3,  
+  maxScale: 3,
   
   // Paths to images used for drawing point mass
   massImages: [

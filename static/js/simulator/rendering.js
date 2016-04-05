@@ -180,8 +180,8 @@ function drawRopeLine(b1, b2){
   ctx.lineWidth = 4;
   
   // Get the coordinates of each body
-  var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
-  var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
+  var x1 = b1.state.pos.x + Globals.translation.x; var y1 = b1.state.pos.y + Globals.translation.y;
+  var x2 = b2.state.pos.x + Globals.translation.x; var y2 = b2.state.pos.y + Globals.translation.y;
   
   // Get modifier based on pulley radius and which side of the pulley it is on
   var radius = Globals.bodyConstants[bIndex(b1)].radius;
@@ -213,8 +213,8 @@ function drawSpringLine(b1, b2){
   ctx.lineWidth = 3;
   
   // Get the coordinates of each body
-  var x1 = b1.state.pos.x; var y1 = b1.state.pos.y;
-  var x2 = b2.state.pos.x; var y2 = b2.state.pos.y;
+  var x1 = b1.state.pos.x + Globals.translation.x; var y1 = b1.state.pos.y + Globals.translation.y;
+  var x2 = b2.state.pos.x + Globals.translation.x; var y2 = b2.state.pos.y + Globals.translation.y;
   var d = distance(x1,y1,x2,y2);
   var angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
   // -0.001 to -179.9999 is upper
