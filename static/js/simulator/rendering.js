@@ -355,38 +355,59 @@ function drawFBD(){
     return;
   }
 
+  if(bodyType(selectedBody) !== "kinematics1D-mass") {
+    return;
+  }
+
   // Called to remove vectors from the selected body while displaying force vectors
   drawMaster();
-
-  var mass = body2Constant(selectedBody).mass;
-
-  var xForce = (selectedBody.state.acc.x + Globals.gravity[0]) * mass;
-  var yForce = (selectedBody.state.acc.y + Globals.gravity[1]) * mass;
-
-  var ax_amt = xForce * 20.0;
-  var ay_amt = yForce * 20.0;
 
   var canvas = Globals.world.renderer();
   var context = canvas.ctx;
   var bodySize = body2Constant(selectedBody).size;
   var fbdHelp = $("#help-tooltip-fbd");
 
+  // TODO: Make force arrows the same color as the label in help box
   context.font = 'bold 10pt Calibri';
-  context.fillStyle = 'grey';
 
-  // TODO
-  // Normal Force
+  var mass = body2Constant(selectedBody).mass;
+
+  var xInternalForce = selectedBody.state.acc.x * mass * 10;
+  var yInternalForce = selectedBody.state.acc.y * mass * 10;
+
+  var xGlobalForce = Globals.gravity[0] * mass * 10;
+  var yGlobalForce = Globals.gravity[1] * mass * 10;
+
+  // TODO: Limit length of vectors?
+
+  // Internal Force
+  drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
+
+  // Global Force
+  drawTipToTail(xGlobalForce, yGlobalForce, 'blue', 'blue', 'blue', false, selectedBody);
+
+  // TODO:
   // Spring Force
+  // Tension Force
   // Force Of Friction
+  // Normal Force
+  // Normal force on ramp/surface is function of acceleration and the angle of surface
+  // Make selected body fire an event upon collision?
+  // How to tell which body has been collided with...
 
-  // X Forces
-  drawTipToTail(ax_amt, 0, 'grey', 'grey', 'grey', false, selectedBody);
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
 
-  // Y Forces
-  drawTipToTail(0, ay_amt, 'grey', 'grey', 'grey', false, selectedBody);
+  totalInternalForce = totalInternalForce.toFixed(2);
+  totalGlobalForce = totalGlobalForce.toFixed(2);
 
-  // Draw the FBD popup window
-  fbdHelp.html('<p>xForce: ' + xForce + '</p><p>yForce: ' + (-yForce) + '</p>');
+  // Position the FBD popup window
+  fbdHelp.html("<p style='color:grey'>" +
+                  "Internal Force: " + totalInternalForce +
+               "</p>" +
+               "<p style='color:blue'>" +
+                  "Global Force: " + totalGlobalForce +
+              "</p>");
 
   var topPos = selectedBody.state.pos.y + bodySize;
   var leftPos = selectedBody.state.pos.x + bodySize;
