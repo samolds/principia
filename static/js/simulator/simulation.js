@@ -144,7 +144,7 @@ function attemptSimulation(){
           
           else
           {            
-            $("#solution-details")[0].textContent += "No values are unknown.\n";
+            //$("#solution-details")[0].textContent += "No values are unknown.\n";
           }
           
           if(bc.alpha)
