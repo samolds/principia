@@ -81,6 +81,7 @@ function applySpringForces(body) {
       var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
       var spring = Globals.world.getBodies()[spring_idx]; // The parent element represents the equilibrium point
       var properties = body2Constant(spring);
+      if(body2Constant(body).mass == 0) return a;
       
       // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m
       var origin = [spring.state.pos.x, spring.state.pos.y];     

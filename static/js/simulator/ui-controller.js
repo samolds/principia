@@ -40,7 +40,7 @@ function handleUIDragStop(event, ui){
 
   var data = { 'x': cx-vleft, 'y': swapYpos(cy-vtop, false)};
 
-  moveOrigin(data);  
+  moveOrigin(data, true);  
   drawMaster();
 }
 

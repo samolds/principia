@@ -5,10 +5,12 @@
 
 // Moves component to current world using the specified coordinates
 // These coordinates are relative to bottom-left as 0,0
-function moveOrigin(data){
+function moveOrigin(data, doTranslate){
   
-  data.x -= Globals.translation.x;
-  data.y += Globals.translation.y;
+  if(doTranslate){
+    data.x -= Globals.translation.x;
+    data.y += Globals.translation.y;
+  }
   
   var world = Globals.world;
   var bodies = world.getBodies();
@@ -60,9 +62,9 @@ function moveOriginScalar(coordinate, value){
   if(isNaN(value)) return;
   
   if(coordinate == "x")
-    Globals.origin[0] = value - Globals.translation.x;
+    Globals.origin[0] = value; //- Globals.translation.x;
   else 
-    Globals.origin[1] = value - Globals.translation.y;
+    Globals.origin[1] = value; //- Globals.translation.y;
   
-  moveOrigin({"x":Globals.origin[0],"y":Globals.origin[1]});
+  moveOrigin({"x":Globals.origin[0],"y":Globals.origin[1]}, false);
 }

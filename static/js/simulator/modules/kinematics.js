@@ -77,7 +77,7 @@ function Kinematics1DModule() {
             addPulley(data);
             break;
           case "kinematics1D-origin":
-            moveOrigin(data);
+            moveOrigin(data, true);
             break;
         }
         
@@ -132,7 +132,7 @@ function Kinematics1DModule() {
           onPropertyChanged(index, "posy", swapYpos(data.y, false), true);
           
           if(index === 0 || index === Globals.originObject)
-            moveOrigin({"x":data.x, "y":swapYpos(data.y, false)});
+            moveOrigin({"x":data.x, "y":swapYpos(data.y, false)}, true);
           
           if(index === 0)
             $("#globalprops-tab").click();          
@@ -169,7 +169,7 @@ function Kinematics1DModule() {
             }
             
             if(index === 0 || index === Globals.originObject)
-              moveOrigin({"x":data.x, "y":swapYpos(data.y, false)});
+              moveOrigin({"x":data.x, "y":swapYpos(data.y, false)}, true);
           
             // Resimulate if there is only one keyframe
             if(Globals.numKeyframes == 1) attemptSimulation();
