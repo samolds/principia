@@ -59,7 +59,7 @@ var Globals = {
 
   // If a move event is fired after a grab event, raise flag to inform release event
   didMove: false,
-
+    
   // Currently selected body, false if none
   selectedBody: false,
 

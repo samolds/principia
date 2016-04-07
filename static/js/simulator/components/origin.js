@@ -44,8 +44,8 @@ function moveOrigin(data, doTranslate){
   Globals.origin[1] = data.y;
   
   for(var i=0; i < Globals.keyframeStates.length; i++){
-    Globals.keyframeStates[i][0].pos.x = Globals.origin[0];
-    Globals.keyframeStates[i][0].pos.y = swapYpos(Globals.origin[1], false);
+    Globals.keyframeStates[i][0].pos.x = pixelTransform(Globals.origin[0], "x");
+    Globals.keyframeStates[i][0].pos.y = pixelTransform(Globals.origin[1], "y");
   }
     
   $("#glob-xorigin").val(Globals.origin[0]);

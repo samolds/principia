@@ -88,7 +88,8 @@ function displayElementValues(bod){
     var precision = Globals.dPrecision;
     
     // Convert to user coordinate system before displaying position
-    var position = physics2Origin([st.pos.x, st.pos.y]);
+    var scaleFactor = getScaleFactor();
+    var position = physics2Origin([st.pos.x*scaleFactor, swapYpos(st.pos.y, false)*scaleFactor]);
     var velocity = [st.vel.x, st.vel.y];
     var acceleration = [st.acc.x, st.acc.y];
     
@@ -111,7 +112,7 @@ function displayElementValues(bod){
     $('#general-properties-nickname').val(constants.nickname);
     $('#general-properties-position-x').val(position[0].toFixed(precision));
     
-    if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);
+    //if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);
     
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
@@ -215,7 +216,7 @@ function drawSpringLine(b1, b2){
   // Get the coordinates of each body
   var x1 = b1.state.pos.x + Globals.translation.x; var y1 = b1.state.pos.y + Globals.translation.y;
   var x2 = b2.state.pos.x + Globals.translation.x; var y2 = b2.state.pos.y + Globals.translation.y;
-  var d = distance(x1,y1,x2,y2);
+  var d = distance(x1,y1,x2,y2) * getScaleFactor();
   var angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
   // -0.001 to -179.9999 is upper
   // 180 to 0 is lower
@@ -234,7 +235,10 @@ function drawSpringLine(b1, b2){
   else if(d > 150) { wavelength = 0.5; amplitude = 16; }
   else if(d > 100) { wavelength = 0.5; amplitude = 18; }
   else             { wavelength = 0.5; amplitude = 20; }
-      
+  
+  amplitude *= 1/getScaleFactor();
+  wavelength *= getScaleFactor();
+  
   var incr;         // Amount to increment before drawing next point
   var delta   = 10; // If within delta from x or xmax, modify increment
   
@@ -286,9 +290,12 @@ function highlightSelection(body, color, modifier){
   // Special case: don't highlight origin
   if(bIndex(body) === 0) return;
   
-  var bodyDim = body.aabb();
-  var width = bodyDim.hw * 2;
-  var height = bodyDim.hh * 2;
+  //var bodyDim = body.aabb();
+  //var width = bodyDim.hw * 2;
+  //var height = bodyDim.hh * 2;
+  var view = body.view;
+  var width = view.width;
+  var height = view.height;
   var canvas = Globals.world.renderer();
 
   if (modifier) {
@@ -308,8 +315,8 @@ function highlightSelection(body, color, modifier){
   
   canvas.ctx.lineWidth = 2;
 
-  var centerX = bodyDim.x - (width / 2);
-  var centerY = bodyDim.y - (height / 2);
+  var centerX = body.state.pos.x + Globals.translation.x - (width / 2);//bodyDim.x - (width / 2);
+  var centerY = body.state.pos.y + Globals.translation.y - (height / 2);//bodyDim.y - (height / 2);
 
   canvas.ctx.strokeRect(centerX, centerY, width, height);
 }
@@ -355,8 +362,8 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   if(!tipToTail)
   {
   
-  var x = body.state.pos.x + body.offset.x;
-  var y = body.state.pos.y + body.offset.y;
+  var x = body.state.pos.x + Globals.translation.x;
+  var y = body.state.pos.y + Globals.translation.y;
   
   if(vx_amt != 0)
   {

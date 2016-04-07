@@ -61,11 +61,11 @@ function handleDragStop(event, ui){
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
   
-  var data = { 'type': type, 'x': cx-vleft, 'y': cy-vtop};
+  var data = { 'type': type, 'x': Math.round(cx-vleft), 'y': Math.round(cy-vtop)};
 
   Globals.world.emit('addComponent', data);
 
-  resetSaveButton();
+  dirty();
 }
 
 // Scrubs to selected frame
@@ -516,10 +516,10 @@ function contextMenuListener(event) {
     // get body x and y
     // create square,  see if contextMenuclick is in square
     var loc = body.state.pos;
-    var rectRight= loc.x + halfw;
-    var rectBottom= loc.y + halfh;
-    var rectx = loc.x - halfw;
-    var recty = loc.y - halfh;
+    var rectRight= loc.x + Globals.translation.x + halfw;
+    var rectBottom= loc.y + Globals.translation.y + halfh;
+    var rectx = loc.x + Globals.translation.x - halfw;
+    var recty = loc.y + Globals.translation.y - halfh;
 
     // check each rect for hits
     // if this rect is hit, display an alert
@@ -552,11 +552,9 @@ function panZoomUpdate(data) {
   Globals.lastPos.x = mouseX;
   Globals.lastPos.y = mouseY;
   var trans = Globals.translation;
-  trans.x += dx; trans.y += dy;
   
-  for(var i=0; i < bodies.length; i++){
-    bodies[i].offset = Physics.vector(trans.x, trans.y);
-  }
+  trans.x += dx; 
+  trans.y += dy;
   
   drawMaster();
 }
@@ -636,11 +634,7 @@ function centerBody(i){
   
   Globals.translation.x = x;
   Globals.translation.y = y;
-  
-  for(var i=0; i<bodies.length; i++){
-    bodies[i].offset = Physics.vector(Globals.translation.x, Globals.translation.y);
-  }
-  
+
   drawMaster();
 }
 
@@ -834,6 +828,18 @@ function keyUp(e)
   
   if (e.keyCode == 86) Globals.vDown = false;
   if (e.keyCode == 65) Globals.aDown = false;
+  
+  if (e.keyCode == 66) 
+  {
+    var data = { 'type': "kinematics1D-mass", 'x': 335/2, 'y': 250, 'blockSimulation':true};
+    Globals.world.emit('addComponent', data);
+  }
+  if(e.keyCode == 67)
+  {
+    //debugger;
+    updatePropertyRedraw(Globals.world.getBodies()[1], "posy", 0);
+  }
+  
   
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;

@@ -22,8 +22,8 @@ function Kinematics1DModule() {
       world.timestep(0.5); // TODO: should base timestep on dt option
             
       // create a renderer
-      renderer = Physics.renderer('canvas', {el: canvasId});
-
+      renderer = Physics.renderer('canvas', {el: canvasId});      
+      
       // add the renderer
       world.add(renderer);
     
@@ -57,8 +57,10 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
-        data.x -= Globals.translation.x;
-        data.y -= Globals.translation.y;
+        
+        var canon = canonicalTransform(data);
+        data.x = canon.x;
+        data.y = canon.y;
         
         bodyConstants.push({ctype:data.type});
         
@@ -80,22 +82,9 @@ function Kinematics1DModule() {
             moveOrigin(data, true);
             break;
         }
-        
-        var bodies = Globals.world.getBodies();
-        var trans = Globals.translation;                
-        for(var i=0; i < bodies.length; i++){
-          bodies[i].offset = Physics.vector(trans.x, trans.y);
-        }
-    
+
         drawMaster();
       });
-  
-      // constrain objects to these bounds
-      /*edgeBounce = Physics.behavior('edge-collision-detection', {
-        aabb: viewportBounds,
-        restitution: 0.8,
-        cof: 0.8
-      });*/
 
       // resize events
       window.addEventListener('resize', function () {
@@ -115,31 +104,33 @@ function Kinematics1DModule() {
         }
       });
   
-      world.on('interact:move', function( data ){
+      world.on('interact:move', function( data ){        
+            
         if (Globals.isPanning)
           panZoomUpdate(data);
-
         if(Globals.vChanging){      
           updateVector(data);
         }
         else if(data.body && !Globals.vChanging) {      
-          var index = bIndex(data.body);
-          
+
           Globals.didMove = true;
           setNoSelect(true);
+          var index = bIndex(data.body);          
+          var canon = canonicalTransform(data);
           
-          onPropertyChanged(index, "posx", data.x, true);
-          onPropertyChanged(index, "posy", swapYpos(data.y, false), true);
+          console.log(data.x + "," + data.y);
+          console.log(canon);
+          console.log(pixelTransform(canon.x, "x") + "," + pixelTransform(canon.y, "y"));
+          
+          onPropertyChanged(index, "posx", canon.x, false);
+          onPropertyChanged(index, "posy", canon.y, false);
           
           if(index === 0 || index === Globals.originObject)
-            moveOrigin({"x":data.x, "y":swapYpos(data.y, false)}, true);
+            moveOrigin({"x":canon.x, "y":canon.y}, true);
           
           if(index === 0)
             $("#globalprops-tab").click();          
-            
-          var trans = Globals.translation;
-          var can = Globals.world.renderer();
-          can.ctx.clearRect(0, 0, can.width, can.height);
+          
           drawMaster();
         }
       });
@@ -150,16 +141,15 @@ function Kinematics1DModule() {
 
         // Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
         if(data.body && Globals.didMove && !Globals.vChanging){
-            var index = bIndex(data.body);
+            
             // Make move as complete
             Globals.didMove = false;
             setNoSelect(false);
             
-            //data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
-            //data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
-            
-            onPropertyChanged(index, "posx", data.x, true);
-            onPropertyChanged(index, "posy", swapYpos(data.y, false), true);
+            var index = bIndex(data.body);
+            var canon = canonicalTransform(data);
+            onPropertyChanged(index, "posx", canon.x, false);
+            onPropertyChanged(index, "posy", canon.y, false);
             
             if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
             {
@@ -169,7 +159,7 @@ function Kinematics1DModule() {
             }
             
             if(index === 0 || index === Globals.originObject)
-              moveOrigin({"x":data.x, "y":swapYpos(data.y, false)}, true);
+              moveOrigin({"x":canon.x, "y":canon.y}, true);
           
             // Resimulate if there is only one keyframe
             if(Globals.numKeyframes == 1) attemptSimulation();
@@ -179,6 +169,7 @@ function Kinematics1DModule() {
       });
 
       world.on('interact:poke', function(data){    
+        console.log(data);
         Globals.lastPos.x = data.x;
         Globals.lastPos.y = data.y;
         $('body').css({cursor: "move"});

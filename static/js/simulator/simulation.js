@@ -421,13 +421,8 @@ function simulate(){
 }
 
 // Updates a variable in the specified body to have the specified value
-function updateVariable(body, variable, value, doTranslate){
+function updateVariable(body, variable, value){
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
-  
-  if(bIndex(body) !== 0 && doTranslate){
-    if(variable == "posx") value -= Globals.translation.x;
-    if(variable == "posy") value += Globals.translation.y;
-  }
   
   if(isNaN(value))
     Globals.variableMap[keyframe][bIndex(body)][variable] = "?";
@@ -573,7 +568,8 @@ function updateImage(body, value){
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-function onPropertyChanged(i, property, value, doTranslate){
+// This function should be passed canonical coordinates
+function onPropertyChanged(i, property, value, doTranslation){
   
   var body = Globals.world.getBodies()[i];
   if(!body) return;
@@ -581,7 +577,7 @@ function onPropertyChanged(i, property, value, doTranslate){
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
   var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
-  
+
   // Reparse the value, assigning NaN if the parse fails
   value = parseFloat(value);
   
@@ -601,7 +597,7 @@ function onPropertyChanged(i, property, value, doTranslate){
   dirty();
   
   // Attempt to update the corresponding variable
-  if(bIndex(body) !== 0) updateVariable(body, property, value, doTranslate);
+  if(bIndex(body) !== 0) updateVariable(body, property, value);
   
   assignAlpha();
  
@@ -611,16 +607,15 @@ function onPropertyChanged(i, property, value, doTranslate){
   // Otherwise update the keyframe state or body constants with known value:
   switch(property){
     // Position updates
-    case 'posx':
-        if(doTranslate) value -= Globals.translation.x;
+    case 'posx':        
+        value = pixelTransform(value, "x", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.x = value;
-        kState[i].pos.x = value;        
+        kState[i].pos.x = value;
         break;
-    case 'posy':
-        if(doTranslate) value += Globals.translation.y;
-        value = swapYpos(value, false);
+    case 'posy':        
+        value = pixelTransform(value, "y", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.y = value;
-        kState[i].pos.y = value;        
+        kState[i].pos.y = value;
         break;
       
     // Velocity and acceleration updates:
