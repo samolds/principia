@@ -149,7 +149,7 @@ body {
 }
 
 .home-background {
-  top: -30px;
+  margin-top: -30px;
   height: 100%;
   padding-bottom: 50px;
   background-color: #0066cc; /* fallback for old browsers */
@@ -168,6 +168,20 @@ body {
 
 .home-hero-space {
   height: 400px;
+}
+
+.feedback-background {
+  margin-top: -30px;
+  height: 100%;
+  padding-bottom: 50px;
+  background-color: #0066cc; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #353f4a, #0066cc); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(221, 221, 221, 1)), url('/static/img/team/team.png') no-repeat;
+  background-size: cover;
+}
+
+.feedback-hero-space {
+  height: 350px;
 }
 
 /* custom form color */
