@@ -1,0 +1,91 @@
+{{ define "title" }} - Simulator{{ end }}
+
+{{ define "scripts" }}
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
+<script src="/static/js/lib/canvasjs.min.js"></script>
+<script src="/static/js/lib/eq-solver.js"></script>
+<script src="/static/js/simulator/globals.js"></script>
+<script src="/static/js/simulator/simulation.js"></script>
+<script src="/static/js/simulator/ui-controller.js"></script>
+<script src="/static/js/simulator/rendering.js"></script>
+<script src="/static/js/simulator/utility.js"></script>
+<script src="/static/js/simulator/components/origin.js"></script>
+<script src="/static/js/simulator/components/mass.js"></script>
+<script src="/static/js/simulator/components/ramp.js"></script>
+<script src="/static/js/simulator/components/spring.js"></script>
+<script src="/static/js/simulator/components/pulley.js"></script>
+<script src="/static/js/simulator/modules/kinematics.js"></script>
+<script src="/static/js/lib/canvasjs.min.js"></script>
+
+<script>
+  Kinematics1D.initModule({{ .Data.simulation.Simulator }});
+  var GlobalKeyNames = {
+    User: {{ .User.KeyName }},
+    Simulation: {{ .Data.simulation.KeyName }},
+  }
+</script>
+
+<script src="/static/js/simulator/base.js"></script>
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/view.js"></script>
+{{ end }}
+
+
+
+{{ define "content" }}
+<div id="main-content-container">
+  <div id="sim-nav" >
+    <nav class="sim-sub-nav">
+      <div class="nav-wrapper ">
+        <ul id="sim-sub-nav-list">
+          <li class="sim-sub-nav" ><a href="sass.html"><i class="fa fa-file fa-size-small"></i></a></li>
+          <li class="sim-sub-nav"><a href="badges.html"><i class="fa fa-save fa-size-small"></i></a></li>
+          <li></li>
+          <li></li>
+          <li class="sim-sub-nav center" style="padding-left: 25vh;"><a href="collapsible.html">Title</a></li>
+          <li class="sim-sub-nav right"><a href="mobile.html"><i class="fa fa-question fa-size-small"></i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+<div class="row">
+  <div id="left-menu">
+    <div id="left-menu-button">
+      <i  class="fa fa-chevron-right fa-size-medium blue-text"></i>
+    </div>
+    <ul id="left-keyframe-list">
+
+    </ul>
+
+  </div>
+
+   <div id="right-menu">
+    <!-- Tabs -->
+    <ul id="" class="">
+      <li class="right-menu-item"><a class="property-tab blue-text valign active" href="#toolbox" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i></a></li>
+      <li class="right-menu-item"><a class="property-tab blue-text valign" href="#elementprops" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></a></li>
+      <li class="right-menu-item"><a class="property-tab blue-text valign" href="#globalprops" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></a></li>
+      <li class="right-menu-item"><a class="property-tab blue-text valign" href="#overview" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></a></li>
+
+      <div class="indicator blue" style="z-index: 1;"></div>
+    </ul>
+  </div>
+
+  <div id="simulator-window">
+    <div  id="viewport"  ></div>
+  </div>
+<div>
+
+
+ 
+
+
+
+
+
+</div>
+{{ end }}

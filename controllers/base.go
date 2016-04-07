@@ -39,6 +39,8 @@ var (
 		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 
+		"simulator/layout": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"layout.html")),
+
 		"user/simulations": template.Must(template.ParseFiles(base, userDir+"simulations.html")),
 		"user/profile":     template.Must(template.ParseFiles(base, userDir+"profile.html")),
 

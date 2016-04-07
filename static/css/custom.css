@@ -10,11 +10,11 @@
 
 .main-container {
   margin: auto;
-  width: 90%;
+  width: 99%;
 }
 
 .simulator-container {
-  width: 1100px;
+  width: 99%;
 }
 
 .clear {
@@ -204,7 +204,7 @@ body {
 
 /* simulator canvas */
   .simulator {
-    height: 500px;
+    height: 900px;
     border: 2px solid #888;
     background-color: #e3f2fd;
   }
@@ -633,3 +633,116 @@ a#help-tooltips:hover {
   user-select: none;           /* non-prefixed version, currently
                                   not supported by any browser */
 }
+
+/* 
+-------Adding for new layout
+*/
+#main-simulator
+{
+  background-color: blue;
+  margin: 5px;
+  margin-right: 5px;
+  width: 99%;
+  height: 100%;
+}
+
+#sim
+{
+
+
+}
+
+/*----------------
+adding for new layout.html
+*/
+#main-content-container{
+  margin-top: 0;
+  margin: auto;
+  width:100%;
+  height:90vh;
+  background-color: #003366;
+}
+
+#sim-nav{
+
+}
+
+.sim-sub-nav {
+  background-color: #eaeaea !important; /* because of materialize stupidness */
+  height: 40px;
+}
+
+.sim-sub-nav ul li {
+ 
+}
+
+.sim-sub-nav ul li a{
+  height: 40px;
+  
+  font-size: 1em;
+  
+}
+.sim-sub-nav ul li a i{
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sim-sub-nav ul li:hover,
+.sim-sub-nav ul li.active {
+  background-color: #003366;
+}
+
+#left-menu{
+  width: 80px;
+  height: 80vh;
+  background-color: white;
+  float: left;
+  margin: 0px;
+  padding: 0px;
+
+  text-align: center;
+}
+
+#right-menu{
+  width: 80px;
+  height: 80vh;
+  background-color: white;
+  float: right;
+
+}
+
+#simulator-window{
+  width: 85%;
+  height: 78vh;
+  background-color: clear;
+  padding-top: 8px;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+#viewport{
+  background-color: grey;
+  width :100%;
+  height: 78vh;
+}
+
+.right-menu-item{
+  text-align: center;
+  margin-top: 30px;
+}
+
+#left-menu-button{
+  text-align: center;
+  background-color: grey;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+}
+
+#sim-sub-nav-list{
+ padding-left: 170px;
+}
+
+
