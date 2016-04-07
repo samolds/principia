@@ -89,6 +89,8 @@ var Globals = {
 
   pulleyBodyCounter: 0,
 
+  surfaceBodyCounter: 0,
+
   rampBodyCounter: 0,
 
   springBodyCounter: 0,
@@ -122,7 +124,8 @@ var Globals = {
   
   // Paths to images used for drawing point mass
   massImages: [
-              "/static/img/toolbox/mass.png",
+              "/static/img/toolbox/roundmass.png",
+              "/static/img/toolbox/squaremass.png",
               "/static/img/toolbox/weight.png",
               "/static/img/toolbox/car.png",
               "/static/img/toolbox/sailboat.png",

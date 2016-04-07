@@ -97,14 +97,34 @@
       <div class="center-align">
         <h5 class="pad-sides">Toolbox</h5>
         <ul class="property-window-list">
-          <li class="toolbox-item-container card" title="Point Mass">
+          <li class="toolbox-item-container card" title="Square Point Mass">
             <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
             <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/squaremass.png" component="kinematics1D-squaremass"/>
             </div>
             <div class="card-reveal">
               <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
               <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+            </div>
+          </li>
+          <li class="toolbox-item-container card" title="Round Point Mass">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/roundmass.png" component="kinematics1D-roundmass"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+            </div>
+          </li>
+          <li class="toolbox-item-container card" title="Surface">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/surface.png" component="kinematics1D-surface"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Surfaces are static and affect the movement of point mass objects.</p>
             </div>
           </li>
           <li class="toolbox-item-container card" title="Ramp">
@@ -229,20 +249,20 @@
             <div class="input-field">
               <select id="pointmass-properties-img" class="browser-default">
                 <option disabled>Display As:</option>
-                <option value="0" selected="selected">Mass</option>
-                <option value="1">Weight</option>
-                <option value="2">Car</option>
-                <option value="3">Sail Boat</option>
-                <option value="4">Speed Boat</option>
-                <option value="5">Mascot</option>
-                <option value="6">Dart</option>
-                <option value="7">Jogger</option>
-                <option value="8">Rocket</option>
-                <option value="9">Dalton</option>
-                <option value="10">Danny</option>
-                <option value="11">Matthew</option>
-                <option value="12">Sam</option>
-                <option value="13">Logo</option>
+                <option selected="selected">Mass</option>
+                <option value="2">Weight</option>
+                <option value="3">Car</option>
+                <option value="4">Sail Boat</option>
+                <option value="5">Speed Boat</option>
+                <option value="6">Mascot</option>
+                <option value="7">Dart</option>
+                <option value="8">Jogger</option>
+                <option value="9">Rocket</option>
+                <option value="10">Dalton</option>
+                <option value="11">Danny</option>
+                <option value="12">Matthew</option>
+                <option value="13">Sam</option>
+                <option value="14">Logo</option>
               </select>
               <label for="pointmass-properties-img" class="active">Display As</label>
             </div>
@@ -284,6 +304,33 @@
                   On
                 </label>
               </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Surface properties! -->
+        <ul class="property-window-list hide" id="surface-properties">
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="surface-properties-width" placeholder="" title="Enter a number"></input>
+              <label for="surface-properties-width" class="active">Width</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="surface-properties-height" placeholder="" title="Enter a number"></input>
+              <label for="surface-properties-height" class="active">Height</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <input type="number" id="surface-properties-friction" placeholder="" title="Enter a number"></input>
+              <label for="surface-properties-friction" class="active">Friction</label>
+            </div>
+          </li>
+          <li class="property-item">
+            <div class="input-field">
+              <a class="waves-effect waves-light btn" id="surface-properties-rotate">Rotate</a>
             </div>
           </li>
         </ul>

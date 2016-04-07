@@ -629,6 +629,9 @@ function populateOverview(e) {
       case "kinematics1D-pulley":
         img = "/static/img/toolbox/pulley.png";
         break;
+      case "kinematics1D-surface":
+        img = "/static/img/toolbox/surface.png";
+        break;
       case "kinematics1D-ramp":
         img = "/static/img/toolbox/ramp.png";
         break;

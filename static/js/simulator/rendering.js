@@ -83,6 +83,14 @@ function displayElementValues(bod){
     var constants = Globals.bodyConstants[Globals.world.getBodies().indexOf(bod)];
     var selected = constants.img;
     if (constants.ctype === "kinematics1D-mass") {
+      if (constants.massType === "square") {
+        $('#pointmass-properties-img option')[1].setAttribute("value", 1);
+        if (selected === 0)
+          selected = 1;
+      } else {
+        $('#pointmass-properties-img option')[1].setAttribute("value", 0);
+      }
+
       $('#pointmass-properties-img option[value=' + selected +']').attr('selected', 'selected');
     }
     var precision = Globals.dPrecision;
@@ -118,21 +126,28 @@ function displayElementValues(bod){
     // Invert coordinate system if using cartesian coordinates for y value
     var mod = (Globals.coordinateSystem == "cartesian")? -1: 1;
     
-    $('#pointmass-properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
-    $('#pointmass-properties-velocity-y').val((mod * convertUnit(velocity[1], "vely", false)).toFixed(precision));
-    $('#pointmass-properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
-    $('#pointmass-properties-acceleration-y').val((mod * convertUnit(acceleration[1], "accy", false)).toFixed(precision));
-    $('#pointmass-properties-mass').val(constants.mass);
-    $('#pointmass-properties-size').val(constants.size);
-    $('#pointmass-properties-img').val(constants.img);
-    
-    $('#pointmass-properties-vector')[0].checked = constants.vectors;
-    $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
-    $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;
+    if (constants.ctype === "kinematics1D-mass") {
+      $('#pointmass-properties-velocity-x').val(convertUnit(velocity[0], "velx", false).toFixed(precision));
+      $('#pointmass-properties-velocity-y').val((mod * convertUnit(velocity[1], "vely", false)).toFixed(precision));
+      $('#pointmass-properties-acceleration-x').val(convertUnit(acceleration[0], "accx", false).toFixed(precision));
+      $('#pointmass-properties-acceleration-y').val((mod * convertUnit(acceleration[1], "accy", false)).toFixed(precision));
+      $('#pointmass-properties-mass').val(constants.mass);
+      $('#pointmass-properties-size').val(constants.size);
+      $('#pointmass-properties-img').val(constants.img);
 
-    $('#ramp-properties-width').val(Math.abs(constants.width));
-    $('#ramp-properties-height').val(Math.abs(constants.height));
-    $('#ramp-properties-angle').val(Math.abs(constants.angle));
+      $('#pointmass-properties-vector')[0].checked = constants.vectors;
+      $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
+      $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;
+    } else if (constants.ctype === "kinematics1D-surface") {
+      $('#surface-properties-width').val(Math.abs(constants.surfaceWidth));
+      $('#surface-properties-height').val(Math.abs(constants.surfaceHeight));
+      $('#surface-properties-friction').val(Math.abs(constants.surfaceFriction));
+    } else if (constants.ctype === "kinematics1D-ramp") {
+      $('#ramp-properties-width').val(Math.abs(constants.rampWidth));
+      $('#ramp-properties-height').val(Math.abs(constants.rampHeight));
+      $('#ramp-properties-angle').val(Math.abs(constants.rampAngle));
+      $('#ramp-properties-friction').val(Math.abs(constants.rampFriction));
+    }
     
   } else {
     $('#general-properties-nickname').val("");
@@ -147,9 +162,14 @@ function displayElementValues(bod){
     $('#pointmass-properties-mass').val("");
     $('#pointmass-properties-size').val("");
 
+    $('#surface-properties-width').val("");
+    $('#surface-properties-height').val("");
+    $('#surface-properties-friction').val("");
+
     $('#ramp-properties-width').val("");
     $('#ramp-properties-height').val("");
     $('#ramp-properties-angle').val("");
+    $('#ramp-properties-friction').val("");
   }
 }
 
@@ -478,12 +498,16 @@ function postRender(isKeyframe){
     var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
     $('#general-properties').addClass('hide');
     $('#pointmass-properties').addClass('hide');
+    $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
     $('#general-properties').removeClass('hide');
 
     switch (bodConstants.ctype) {
       case 'kinematics1D-mass':
         $('#pointmass-properties').removeClass('hide');
+        break;
+      case 'kinematics1D-surface':
+        $('#surface-properties').removeClass('hide');
         break;
       case 'kinematics1D-ramp':
         $('#ramp-properties').removeClass('hide');
@@ -494,6 +518,7 @@ function postRender(isKeyframe){
   } else {
     $('#general-properties').addClass('hide');
     $('#pointmass-properties').addClass('hide');
+    $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
   }
 
