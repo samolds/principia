@@ -33,6 +33,7 @@ var (
 		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
 		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
 		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
+		"dormant/help":        template.Must(template.ParseFiles(base, dormDir+"help.html")),
 		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
 		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
 

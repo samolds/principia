@@ -57,15 +57,6 @@
   background-color: #0066cc;
 }
 
-.principia-blue-navbar {
-  background-color: #000033 !important; /* because of materialize stupidness */
-}
-
-.principia-blue-navbar ul li:hover,
-.principia-blue-navbar ul li.active {
-  background-color: #003366;
-}
-
 .page-header {
   word-break: break-word;
 }
@@ -81,6 +72,10 @@
     color: #29b6f6;
   }
 /* end blue links */
+
+.principia-card-dark-color {
+  background-color: #353f4a !important; /* because of materialize stupidness */
+}
 
 /* for smaller text on about cards */
   .card .card-content .card-title,
@@ -106,14 +101,6 @@
   }
 /* end sticky footer */
 
-/* for footer hover over text change */
-  .page-footer a.white-text:hover,
-  .page-footer a.white-text:active {
-    color: #000033 !important; /* because of materialize stupidness */
-  }
-/* end footer text color change */
-
-
 /*for Simulation name input*/
 #simulation-name {
   border-bottom: 0px solid #29b6f6;
@@ -137,15 +124,50 @@
   overflow-x: scroll;
 }
 
+.principia-navbar-color {
+  /* background-color: #353f4a; */
+  background-color: #222222;
+}
+
+.principia-navbar-color ul li:hover,
+.principia-navbar-color ul li.active {
+  /* background-color: #5d656e; */
+  background-color: #444444;
+}
+
+.principia-footer-color a, .principia-footer-color span {
+  color: #000000;
+}
+
+.principia-footer-color a:hover,
+.principia-footer-color a:active {
+  color: #0066cc !important; /* because of materialize stupidness */
+}
+
 body {
-  background-color: #bbb;
-  background-image: url("/static/img/background.png");
-  background: -webkit-linear-gradient(rgba(245,245,245,0), rgba(245,245,245,1)); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(white, #f5f5f5); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(white, #f5f5f5); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, rgba(0, 0, 0, 0.65) 100%), url('/static/img/background.png') no-repeat;
+  background-color: #dddddd;
+}
+
+.home-background {
+  top: -30px;
+  height: 100%;
+  padding-bottom: 50px;
+  background-color: #0066cc; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #353f4a, #0066cc); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, rgba(53, 63, 74, 0.5), rgba(0, 102, 204, 0.5), rgba(221, 221, 221, 1)), url('/static/img/accent.png') no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+}
+
+.home-background .valign-wrapper {
+  height: 100%;
+}
+
+.home-background .valign {
+  width: 100%;
+}
+
+.home-hero-space {
+  height: 400px;
 }
 
 /* custom form color */
@@ -403,12 +425,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     margin: 2px;
   }
 
-  .property-item-long {
-    height: 70px;
-    width: 90%;
-    padding: 0px 5px;
-  }
-
   .property-item {
     height: 70px;
     width: 45%;
@@ -424,6 +440,10 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     margin: 0;
   }
 
+  .toolbox-item-container .valign-wrapper {
+    height: inherit;
+  }
+
   .toolbox-item-container .card-reveal {
     background-color: #a5d6a7;
     white-space: normal;
@@ -436,10 +456,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     padding: 0px;
     margin: 0px;
     font-size: 0.9em;
-  }
-
-  .toolbox-item-container .valign-wrapper {
-    height: inherit;
   }
 
   .toolbox-item-container:hover {
@@ -512,22 +528,6 @@ i.fa.fa-size-large {
 .private-checkbox {
   margin-top: 26px;
 }
-
-/* home page card title */
-.home-card-title {
-  position: absolute;
-  left: 0;
-  bottom: 10px;
-  padding: 20px;
-}
-
-.home-card-subtitle {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 20px;
-}
-/* end home page card title */
 
 /* simulator window context menu */
 .context-menu {
@@ -633,3 +633,29 @@ a#help-tooltips:hover {
   user-select: none;           /* non-prefixed version, currently
                                   not supported by any browser */
 }
+
+/* half width card list */
+  .card-list {
+    list-style-type: none;
+    list-style-image: none;
+    width: 100%;
+  }
+
+  .card-list li {
+    float: left;
+    margin: 20px 1%;
+  }
+
+  .card-list li .activator {
+    position: absolute;
+    right: 15px;
+    z-index: 1;
+  }
+
+  .card-list-half-width {
+    width: 48%;
+  }
+
+  .card-list-quarter-width {
+    width: 23%;
+  }

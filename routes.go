@@ -22,6 +22,7 @@ func init() {
 	router.HandleFunc("/about", controllers.AboutHandler)
 	router.HandleFunc("/faqs", controllers.FaqsHandler)
 	router.HandleFunc("/feedback", controllers.FeedbackHandler)
+	router.HandleFunc("/help", controllers.HelpHandler)
 
 	// Simulators
 	router.HandleFunc("/simulator", simulator.BrowseHandler)

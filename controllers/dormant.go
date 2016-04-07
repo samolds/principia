@@ -20,6 +20,10 @@ func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
 	BaseHandler(w, r, "dormant/feedback", nil)
 }
 
+func HelpHandler(w http.ResponseWriter, r *http.Request) {
+	BaseHandler(w, r, "dormant/help", nil)
+}
+
 func TestHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	page := vars["testPage"]

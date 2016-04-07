@@ -1,48 +1,57 @@
 {{ define "title" }}{{ end }}
 
 {{ define "content" }}
-<div class="container">
-  <div class="card">
-    {{ $numSimulations := len .Data.simulations }}
-    <div class="card-image waves-effect waves-block waves-light">
-      <img class="activator" src="/static/img/homebanner.png">
-      <h2 class="home-card-title white-text hide-on-small-only">Welcome!</h2>
-      <h4 class="home-card-title white-text hide-on-med-and-up flow">Welcome!</h4>
-      <span class="home-card-subtitle white-text">
-        {{ if gt $numSimulations 1 }}
-          This Week's Top {{ $numSimulations }} Simulations
-        {{ else if eq $numSimulations 1 }}
-          This Week's Top Simulation
-        {{ else }}
-          No New Simulations This Week
-        {{ end }}
-      </span>
+<div class="home-background waves-effect waves-block waves-light">
+  <div class="home-hero-space">
+    <div class="container valign-wrapper">
+      <div class="valign">
+        <div class="white-text hide-on-small-only">
+          <h1 class="center-align">Welcome!</h1>
+        </div>
+        <div class="white-text hide-on-med-and-up">
+          <h3 class="center-align">Welcome!</h3>
+        </div>
+        <div class="white-text center-align">
+          {{ $numSimulations := len .Data.simulations }}
+          {{ if gt $numSimulations 1 }}
+            This Week's Top {{ $numSimulations }} Simulations
+          {{ else if eq $numSimulations 1 }}
+            This Week's Top Simulation
+          {{ else }}
+            No New Simulations This Week
+          {{ end }}
+        </div>
+      </div>
     </div>
-    <div class="card-content">
-      <div class="row">
-        <div class="valign-wrapper">
-          <div class="col s6">
-            {{ if .Data.simulations }}
-              <ol class="valign">
-                {{ range $simulation := .Data.simulations }}
-                  <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
-                {{ end }}
-              </ol>
-            {{ else }}
-              <p>No new simulations this week!</p>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="valign-wrapper">
+            <div class="col s6">
+              {{ if .Data.simulations }}
+                <ol class="valign">
+                  {{ range $simulation := .Data.simulations }}
+                    <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
+                  {{ end }}
+                </ol>
+              {{ else }}
+                <p>No new simulations this week!</p>
+              {{ end }}
+            </div>
+            {{ if eq "Sign In" .Data.loginMessage }}
+              <div class="col s5">
+                <div class="valign center-align">
+                  <p class="flow-text">
+                    Already have a Google Account?
+                  </p>
+                  <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
+                  <p class="pad-top">Or go <a href="{{ .Data.loginUrl }}">Sign Up</a>!</p>
+                </div>
+              </div>
             {{ end }}
           </div>
-          {{ if eq "Sign In" .Data.loginMessage }}
-            <div class="col s5">
-              <div class="valign center-align">
-                <p class="flow-text">
-                  Already have a Google Account?
-                </p>
-                <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
-                <p class="pad-top">Or go <a href="{{ .Data.loginUrl }}">Sign Up</a>!</p>
-              </div>
-            </div>
-          {{ end }}
         </div>
       </div>
     </div>
