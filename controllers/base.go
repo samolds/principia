@@ -11,7 +11,6 @@ import (
 	"lib/gomobiledetect"
 	"models"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -38,6 +37,7 @@ var (
 		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
 
 		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
+		"simulator/mobile":     template.Must(template.ParseFiles(base, comFrag, simDir+"mobile.html")),
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 
 		"user/simulations": template.Must(template.ParseFiles(base, userDir+"simulations.html")),
@@ -153,14 +153,23 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 		Data:       data,
 	}
 
-	// Render template with all page data including user information, or error
-	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
-
 	// Catch mobile users and render mobile friendly template
 	detect := mobiledetect.NewMobileDetect(r, nil)
-	if detect.IsMobile() && strings.HasPrefix(templ, "simulator/") {
-		buffer.Reset()
-		err = templates["dormant/unsupported"].ExecuteTemplate(&buffer, baseName, pageData)
+	var err error
+
+	if detect.IsMobile() && templ == "simulator/kinematics" {
+		// Render mobile specific template
+		if data["new"] == true { // Have to specifically check because data["new"] type is interface, not bool
+			// The user cannot create new simulations on mobile
+			err = templates["dormant/unsupported"].ExecuteTemplate(&buffer, baseName, pageData)
+		} else {
+			// The user can watch existing simulations on mobile
+			err = templates["simulator/mobile"].ExecuteTemplate(&buffer, baseName, pageData)
+		}
+	} else {
+		// Render normal browser version
+		// Render template with all page data including user information, or error
+		err = templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
 	}
 
 	if err != nil {

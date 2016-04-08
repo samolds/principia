@@ -76,6 +76,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 	// If it's a new simulation, you're the owner
 	data := map[string]interface{}{
 		"simulation": simulation,
+		"new":        true,
 		"isOwner":    true,
 	}
 
@@ -140,6 +141,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 
 	data := map[string]interface{}{
 		"simulation": simulationData,
+		"new":        false,
 		"isOwner":    isOwner,
 	}
 
