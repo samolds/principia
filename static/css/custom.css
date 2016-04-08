@@ -74,7 +74,7 @@
 /* end blue links */
 
 .principia-card-dark-color {
-  background-color: #353f4a !important; /* because of materialize stupidness */
+  background-color: #222222 !important; /* because of materialize stupidness */
 }
 
 /* for smaller text on about cards */
@@ -170,18 +170,11 @@ body {
   height: 400px;
 }
 
-.feedback-background {
+.feedback-hero {
+  height: 300px;
   margin-top: -30px;
-  height: 100%;
-  padding-bottom: 50px;
-  background-color: #0066cc; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #353f4a, #0066cc); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(221, 221, 221, 1)), url('/static/img/team/team.png') no-repeat;
+  background-image: url('/static/img/team/team.png');
   background-size: cover;
-}
-
-.feedback-hero-space {
-  height: 350px;
 }
 
 /* custom form color */
@@ -648,6 +641,11 @@ a#help-tooltips:hover {
                                   not supported by any browser */
 }
 
+.inherit-size {
+  width: 100%;
+  height: 100%;
+}
+
 /* half width card list */
   .card-list {
     list-style-type: none;
@@ -655,21 +653,97 @@ a#help-tooltips:hover {
     width: 100%;
   }
 
-  .card-list li {
+  .card-list .card,
+  .card-list .card-panel {
     float: left;
     margin: 20px 1%;
   }
 
-  .card-list li .activator {
+  .card-list .card .activator,
+  .card-list .card-panel .activator {
     position: absolute;
     right: 15px;
     z-index: 1;
   }
 
-  .card-list-half-width {
+  .card-list .card-quarter-width .card-content,
+  .card-list .card-quarter-width .card-content {
+    font-size: 0.8em;
+    min-height: 100px;
+  }
+
+  .card-list .card-half-width .card-content,
+  .card-list .card-half-width .card-content {
+    font-size: 1em;
+    min-height: 100px;
+  }
+
+  .card-half-width {
     width: 48%;
   }
 
-  .card-list-quarter-width {
+  .card-quarter-width {
     width: 23%;
+  }
+
+/* color gradients used as accents */
+  /* all generated from http://uigradients.com */
+  .light-accent-gradient-1 { /* Back To Earth */
+    background: #00c9ff; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #00c9ff , #92fe9d); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #00c9ff , #92fe9d); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-2 { /* Jonquil */
+    background: #ffeeee; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ffeeee , #ddefbb); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #ffeeee , #ddefbb); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-3 { /* Frozen */
+    background: #403b4a; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #403b4a , #e7e9bb); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #403b4a , #e7e9bb); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-4 { /* Rose Water */
+    background: #e55d87; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #e55d87 , #5fc3e4); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #e55d87 , #5fc3e4); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-5 { /* Sunny Days */
+    background: #ede574; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ede574 , #e1f5c4); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #ede574 , #e1f5c4); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-6 { /* Timber */
+    background: #fc00ff; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #fc00ff , #00dbde); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #fc00ff , #00dbde); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-7 { /* Tranquil */
+    background: #eecda3; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #eecda3 , #ef629f); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #eecda3 , #ef629f); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .light-accent-gradient-8 { /* Endless River */
+    background: #43cea2; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #43cea2 , #185a9d); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #43cea2 , #185a9d); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .dark-accent-gradient-1 { /* Bloody Mary */
+    background: #ff512f; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ff512f , #dd2476); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #ff512f , #dd2476); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+  }
+
+  .dark-accent-gradient-2 { /* Predawn */
+    background: #ffa17f; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ffa17f , #00223e); /* chrome 10-25, safari 5.1-6 */
+    background: linear-gradient(to left, #ffa17f , #00223e); /* w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
   }

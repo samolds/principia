@@ -31,9 +31,8 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	simulationKey := datastore.NewKey(ctx, "Simulation", simKeyName, 0, nil)
 
 	if r.Method == "GET" {
-		var comments []models.Comment
 		q := datastore.NewQuery("Comment").Ancestor(simulationKey).Order("-CreationDate")
-		_, err := q.GetAll(ctx, &comments)
+		comments, err := utils.BuildCommentDataSlice(r, q)
 
 		if err != nil {
 			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
@@ -45,6 +44,12 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
+		formMessage := r.FormValue("Contents")
+		if len(formMessage) < 1 {
+			ApiErrorResponse(w, "Cannot create empty comments", http.StatusBadRequest)
+			return
+		}
+
 		user, err := utils.GetCurrentUser(ctx)
 		if err != nil {
 			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)
@@ -58,7 +63,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		comment := models.Comment{
 			KeyName:       keyName,
 			AuthorKeyName: user.KeyName,
-			Contents:      r.FormValue("Contents"),
+			Contents:      formMessage,
 			CreationDate:  time.Now(),
 		}
 
@@ -96,7 +101,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 			totalScore += int(ratings[i].Score)
 		}
 
-		// Return comments as json
+		// Return rating as json
 		json.NewEncoder(w).Encode(struct {
 			Ratings    []models.Rating
 			TotalScore int
@@ -136,7 +141,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Build the comment object
+		// Build the rating object
 		rating := models.Rating{
 			KeyName:       keyName,
 			AuthorKeyName: user.KeyName,
@@ -144,7 +149,7 @@ func RatingHandler(w http.ResponseWriter, r *http.Request) {
 			CreationDate:  time.Now(),
 		}
 
-		// Put the comment in the datastore
+		// Put the rating in the datastore
 		_, err = datastore.Put(ctx, key, &rating)
 
 		if err != nil {

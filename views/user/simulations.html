@@ -5,27 +5,76 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="container narrow">
-  <div class="card-panel">
+<div class="container pad-top pad-bottom">
+  <div class="center-align">
     <h3 class="page-header">My Simulations</h3>
-    {{ if .Data.simulations }}
-      <ul>
-        {{ range $simulation := .Data.simulations }}
-          <li>
-            <div class='row'>
-              <div class='col s4'>
-                <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a>
-              </div>
-              <div class='col s1'>
-                <a class="clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)"><i class="fa fa-trash-o fa-lg-custom"></i></a>
-              </div>
-            </div>
-          </li>
-        {{ end }}
-      </ul>
-    {{ else }}
-      <p>Nothing?!</p>
-    {{ end }}
+  </div>
+  <div class="center-align">
+    By Creation Data
   </div>
 </div>
+
+{{ if .Data.simulations }}
+<div class="container">
+  <ul class="card-list">
+    {{ range $simulation := .Data.simulations }}
+      <li>
+        <div class="hide-on-small-only card-quarter-width card">
+          <div class="card-image waves-effect waves-block waves-light">
+            <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
+          </div>
+          <div class="card-content">
+            <span class="card-title">
+              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
+            </span>
+            <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+            <span class="activator clickable"><i class="fa fa-wrench"></i></span>
+          </div>
+          <div class="card-reveal">
+            <span class="card-title">Details<i class="fa fa-times right"></i></span>
+            <p>
+              Check out this neat simulation!
+            </p>
+            <div class="card-action">
+              <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)">Delete! <i class="fa fa-trash-o fa-lg-custom"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hide-on-med-and-up card-half-width card">
+          <div class="card-image waves-effect waves-block waves-light">
+            <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
+          </div>
+          <div class="card-content">
+            <span class="card-title">
+              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
+            </span>
+            <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+            <span class="activator clickable"><i class="fa fa-wrench"></i></span>
+          </div>
+          <div class="card-reveal">
+            <span class="card-title">Details<i class="fa fa-times right"></i></span>
+            <p>
+              Check out this neat simulation!
+            </p>
+            <div class="card-action">
+              <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)">Delete! <i class="fa fa-trash-o fa-lg-custom"></i></a>
+            </div>
+          </div>
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+</div>
+
+<div class="clear"></div>
+{{ else }}
+<div class="container narrow center-align">
+  <div class="light-accent-gradient-1 pad-top pad-bottom">
+    <p>No Simulations to show</p>
+  </div>
+</div>
+{{ end }}
+
+<div class="pad-bottom"></div>
 {{ end }}

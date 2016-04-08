@@ -1,7 +1,7 @@
 {{ define "title" }}{{ end }}
 
 {{ define "content" }}
-<div class="home-background waves-effect waves-block waves-light">
+<div class="home-background">
   <div class="home-hero-space">
     <div class="container valign-wrapper">
       <div class="valign">
@@ -14,48 +14,66 @@
         <div class="white-text center-align">
           {{ $numSimulations := len .Data.simulations }}
           {{ if gt $numSimulations 1 }}
-            This Week's Top {{ $numSimulations }} Simulations
+            This Week's {{ $numSimulations }} Most Recent Simulations
           {{ else if eq $numSimulations 1 }}
-            This Week's Top Simulation
-          {{ else }}
-            No New Simulations This Week
+            This Week's Most Recent Simulation
           {{ end }}
         </div>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="card">
-      <div class="card-content">
-        <div class="row">
-          <div class="valign-wrapper">
-            <div class="col s6">
-              {{ if .Data.simulations }}
-                <ol class="valign">
-                  {{ range $simulation := .Data.simulations }}
-                    <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} <small>({{ $simulation.Type }})</small></a></li>
-                  {{ end }}
-                </ol>
-              {{ else }}
-                <p>No new simulations this week!</p>
-              {{ end }}
-            </div>
-            {{ if eq "Sign In" .Data.loginMessage }}
-              <div class="col s5">
-                <div class="valign center-align">
-                  <p class="flow-text">
-                    Already have a Google Account?
-                  </p>
-                  <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
-                  <p class="pad-top">Or go <a href="{{ .Data.loginUrl }}">Sign Up</a>!</p>
-                </div>
+
+  {{ if .Data.simulations }}
+    <div class="container pad-bottom">
+      <ul class="card-list">
+        {{ range $simulation := .Data.simulations }}
+          <li>
+            <div class="hide-on-small-only card-quarter-width card">
+              <div class="card-image waves-effect waves-block waves-light">
+                <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
               </div>
-            {{ end }}
+              <div class="card-content">
+                <span class="card-title">
+                  <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
+                </span>
+                <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+              </div>
+            </div>
+
+            <div class="hide-on-med-and-up card-half-width card">
+              <div class="card-image waves-effect waves-block waves-light">
+                <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
+              </div>
+              <div class="card-content">
+                <span class="card-title">
+                  <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
+                </span>
+                <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+              </div>
+            </div>
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+
+    <div class="clear pad-bottom"></div>
+  {{ end }}
+
+  {{ if eq "Sign In" .Data.loginMessage }}
+    <div class="container narrow pad-top pad-bottom">
+      <div class="card-panel">
+        <div class="valign-wrapper">
+          <div class="valign center-align">
+            <p class="flow-text">
+              Have a Google Account?
+            </p>
+            <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
+            <p>Or go <a href="{{ .Data.loginUrl }}">sign up</a>!</p>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  {{ end }}
 </div>
 {{ end }}
 

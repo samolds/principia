@@ -1,10 +1,9 @@
 package controllers
 
 import (
-	"appengine"
 	"appengine/datastore"
+	"controllers/utils"
 	"lib/gorilla/mux"
-	"models"
 	"net/http"
 )
 
@@ -32,14 +31,17 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(10) // TODO: filter out when CreationDate is older than 7 days and Order by rating
+	// TODO: filter out when CreationDate is older than 7 days (when we have lots of users)
+	// TODO: Order by the number of ratings objects each simulation has... In order to do this,
+	//       we're going to have to keep a running total of a simulations score everytime a
+	//       rating is given (Rating object is created or deleted). So whenever a rating object
+	//       is created or deleted, the simulation object will have to be modified...
+	//       I don't think we can filter Simulations by the number of children entities it has :(
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
 
-	var simulations []models.Simulation
-	_, err := q.GetAll(ctx, &simulations)
-
+	simulations, err := utils.BuildSimulationDataSlice(r, q)
 	if err != nil {
-		ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, "Error getting top simulations: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

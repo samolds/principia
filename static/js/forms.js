@@ -155,6 +155,7 @@ function refreshCommentsList() {
         result +=  "<div class='row'>";
         result +=   "<div class='col s2'>";
         result +=    "<i class='medium fa fa-user'></i>";
+        result +=    "<small>" + comment.AuthorName + "</small>";
         result +=  "</div>";
         result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
         result +=    "<div class='row'>";

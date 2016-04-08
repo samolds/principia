@@ -14,13 +14,11 @@ import (
 func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userKeyName := vars["userID"]
-	ctx := appengine.NewContext(r)
 
 	// TODO: Only show public simulations if NOT THE OWNER is trying to view
 	q := datastore.NewQuery("Simulation").Filter("AuthorKeyName =", userKeyName)
-	var simulations []models.Simulation
-	_, err := q.GetAll(ctx, &simulations)
 
+	simulations, err := utils.BuildSimulationDataSlice(r, q)
 	if err != nil {
 		controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 		return

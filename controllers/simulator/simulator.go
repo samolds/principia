@@ -14,12 +14,8 @@ import (
 
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(20)
-
-	var simulations []models.Simulation
-	_, err := q.GetAll(ctx, &simulations)
-
+	simulations, err := utils.BuildSimulationDataSlice(r, q)
 	if err != nil {
 		controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,7 +28,7 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	controllers.BaseHandler(w, r, "simulator/browse", data)
 }
 
-// GET returns a new simulation which the current user is made owner of (if logged in)
+// GET returns an empty simulation object
 // POST saves the simulation and redirects to simulator/{simulationID}
 func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, template string) {
 	ctx := appengine.NewContext(r)
@@ -97,23 +93,18 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 
 	var simulation models.Simulation
 	err := datastore.Get(ctx, simulationKey, &simulation)
+	if err != nil {
+		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		return
+	}
 
+	simulationData, err := utils.BuildSimulationData(ctx, simulation)
 	if err != nil {
 		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
 	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
-	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
-
-	var author models.User
-	err = datastore.Get(ctx, authorKey, &author)
-
-	authorDisplay := author.Email
-	if author.DisplayName != "" {
-		authorDisplay = author.DisplayName
-	}
-
 	if r.Method == "POST" && isOwner {
 		simulation.Name = r.FormValue("Name")
 		simulation.Simulator = r.FormValue("Contents")
@@ -148,10 +139,8 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	}
 
 	data := map[string]interface{}{
-		"simulation":              simulation,
-		"simulationAuthor":        author,
-		"simulationAuthorDisplay": authorDisplay,
-		"isOwner":                 isOwner,
+		"simulation": simulationData,
+		"isOwner":    isOwner,
 	}
 
 	controllers.BaseHandler(w, r, template, data)
