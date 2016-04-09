@@ -10,67 +10,7 @@
   </div>
 </div>
 
-{{ if .Data.simulations }}
-<div class="container">
-  <ul class="card-list">
-    {{ range $simulation := .Data.simulations }}
-      <li>
-        <div class="hide-on-small-only card-quarter-width card">
-          <div class="card-image waves-effect waves-block waves-light">
-            <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
-          </div>
-          <div class="card-content">
-            <span class="card-title">
-              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
-            </span>
-            <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
-            <span class="activator clickable"><i class="fa fa-wrench"></i></span>
-          </div>
-          <div class="card-reveal">
-            <span class="card-title">Details<i class="fa fa-times right"></i></span>
-            <p>
-              Check out this neat simulation!
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="hide-on-med-and-up card-half-width card">
-          <div class="card-image waves-effect waves-block waves-light">
-            <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
-          </div>
-          <div class="card-content">
-            <span class="card-title">
-              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
-            </span>
-            <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
-            <span class="activator clickable"><i class="fa fa-wrench"></i></span>
-          </div>
-          <div class="card-reveal">
-            <span class="card-title">Details<i class="fa fa-times right"></i></span>
-            <p>
-              Check out this neat simulation!
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
-            </div>
-          </div>
-        </div>
-      </li>
-    {{ end }}
-  </ul>
-</div>
-
-<div class="clear"></div>
-{{ else }}
-<div class="container narrow center-align">
-  <div class="light-accent-gradient-2 pad-top pad-bottom">
-    <p>No Simulations to show</p>
-  </div>
-</div>
-{{ end }}
+{{ template "simulationsListFrag" . }}
 
 <div class="pad-bottom"></div>
 {{ end }}

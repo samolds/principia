@@ -15,7 +15,7 @@ import (
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(20)
-	simulations, err := utils.BuildSimulationDataSlice(r, q)
+	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
 		controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -153,10 +153,10 @@ function refreshCommentsList() {
       for (var i = 0; i < json.length; i++) {
         var comment = json[i];
         result +=  "<div class='row'>";
-        result +=   "<div class='col s2'>";
+        result +=   "<div class='col s2'><a href='/user/" + comment.AuthorID + "'>";
         result +=    "<i class='medium fa fa-user'></i>";
         result +=    "<small>" + comment.AuthorName + "</small>";
-        result +=  "</div>";
+        result +=  "</a></div>";
         result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
         result +=    "<div class='row'>";
         result +=      "<div class='all-point'></div>";

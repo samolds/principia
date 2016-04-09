@@ -36,7 +36,7 @@
                 <span class="card-title">
                   <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
                 </span>
-                <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+                <p><small>A {{ $simulation.Type }} simulation by <a href="/user/{{ $simulation.AuthorID }}">{{ $simulation.AuthorName }}</a></small></p>
               </div>
             </div>
 
@@ -48,7 +48,7 @@
                 <span class="card-title">
                   <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
                 </span>
-                <p><small>A {{ $simulation.Type }} simulation by {{ $simulation.AuthorName }}</small></p>
+                <p><small>A {{ $simulation.Type }} simulation by <a href="/user/{{ $simulation.AuthorID }}">{{ $simulation.AuthorName }}</a></small></p>
               </div>
             </div>
           </li>

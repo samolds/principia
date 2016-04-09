@@ -32,7 +32,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		q := datastore.NewQuery("Comment").Ancestor(simulationKey).Order("-CreationDate")
-		comments, err := utils.BuildCommentDataSlice(r, q)
+		comments, err := utils.GetCommentDataSlice(r, q)
 
 		if err != nil {
 			ApiErrorResponse(w, err.Error(), http.StatusInternalServerError)

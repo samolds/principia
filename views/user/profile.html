@@ -6,21 +6,38 @@
 
 {{ define "content" }}
 <div class="container pad-top pad-bottom">
-  <h3 class="page-header center-align">My Profile</h3>
+  {{ if .Data.userIsOwner }}
+    <h3 class="page-header center-align">My Profile</h3>
+  {{ else if .Data.user.DisplayName }}
+    <h3 class="page-header center-align">{{ .Data.user.DisplayName }}'s Profile</h3>
+  {{ else }}
+    <h3 class="page-header center-align">Anonymous' Profile</h3>
+  {{ end }}
 </div>
 
 <div class="container">
   <div class="row">
     <div class="col s6">
       <div class="card-panel">
+        {{ if .Data.userIsOwner }}
         <div class="input-field">
-          <label for="user-email" id="user-email-label">User Email</label>
-          <input disabled value="{{ .User.Email }}" id="user-email" type="text" class="validate">
+          <label for="user-email" id="user-email-label">Email</label>
+          <input disabled value="{{ .Data.user.Email }}" id="user-email" type="text" class="validate">
         </div>
         <div class="input-field">
-          <label for="user-display-name" id="user-email-label">Display name</label>
-          <input id="user-display-name" value="{{ .User.DisplayName }}" type="text" class="validate">
+          <label for="user-display-name" id="user-display-label">Display Name</label>
+          <input id="user-display-name" value="{{ .Data.user.DisplayName }}" type="text" class="validate">
         </div>
+        {{ else }}
+        <div>
+          <label for="user-email-name">Email</label>
+          <p id="user-email-name" class="pad-sides">...</p>
+        </div>
+        <div class="pad-top">
+          <label for="user-display-name">Display Name</label>
+          <p id="user-display-name" class="pad-sides">{{ .Data.user.DisplayName }}</p>
+        </div>
+        {{ end }}
       </div>
     </div>
 
@@ -32,12 +49,12 @@
               <i class="white-text fa fa-user large"></i>
             </div>
           </div>
-          <!--
-            <input type='file' onchange="readURL(this);" />
-            <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="Upload An Image">
-            </div>
-          -->
+          {{ if .Data.userIsOwner }}
+          <input type='file' onchange="readURL(this);" />
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="Upload An Image">
+          </div>
+          {{ end }}
         </div>
       </div>
     </div>
@@ -46,20 +63,43 @@
   <div class="row">
     <div class="col s12">
       <div class="card-panel">
+        {{ if .Data.userIsOwner }}
         <div class="input-field">
-          <textarea id="user-interests" class="materialize-textarea" length="120">{{ .User.Interests }}</textarea>
           <label for="user-interests">Areas Of Interest:</label>
+          <textarea id="user-interests" class="materialize-textarea" length="120">{{ .Data.user.Interests }}</textarea>
         </div>
+        {{ else }}
+        <div>
+          <label for="user-interests">Areas Of Interest:</label>
+          <p id="user-interests" class="pad-sides">{{ .Data.user.Interests }}</p>
+        </div>
+        {{ end }}
       </div>
     </div>
   </div>
 
+  {{ if .Data.userIsOwner }}
   <div class="row">
     <div class="center-align">
       <a class="waves-effect waves-light btn-large blue darken-1" id="profile-save-button" onclick="saveUser()"><i class="fa fa-floppy-o"></i> Update!</a>
     </div>
   </div>
+  {{ end }}
 </div>
+
+{{ if not .Data.userIsOwner }}
+  <div class="container pad-top pad-bottom">
+    {{ if .Data.user.DisplayName }}
+      <h4 class="page-header center-align">Simulations Created by {{ .Data.user.DisplayName }}</h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of {{ .Data.user.DisplayName }}'s Simulations</a></h6>
+    {{ else }}
+      <h4 class="page-header center-align">Simulations Created by Anonymous</h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of Anonymous' Simulations</a></h6>
+    {{ end }}
+  </div>
+
+  {{ template "simulationsListFrag" . }}
+{{ end }}
 
 <div class="pad-bottom"></div>
 {{ end }}

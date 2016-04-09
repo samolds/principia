@@ -21,14 +21,15 @@ var (
 	userDir = tmplDir + "user/"
 	testDir = tmplDir + "test/"
 
-	simFrag = simDir + "simulator.frag.html"
-	comFrag = simDir + "comments.frag.html"
+	simFrag     = simDir + "simulator.frag.html"
+	simListFrag = simDir + "simList.frag.html"
+	comFrag     = simDir + "comments.frag.html"
 
 	baseName = "base"
 	base     = tmplDir + baseName + ".html"
 
 	templates = map[string]*template.Template{
-		"dormant/home":        template.Must(template.ParseFiles(base, dormDir+"home.html")),
+		"dormant/home":        template.Must(template.ParseFiles(base, simListFrag, dormDir+"home.html")),
 		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
 		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
 		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
@@ -36,12 +37,13 @@ var (
 		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
 		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
 
-		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
+		"simulator/browse":     template.Must(template.ParseFiles(base, simListFrag, simDir+"browse.html")),
 		"simulator/mobile":     template.Must(template.ParseFiles(base, comFrag, simDir+"mobile.html")),
 		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 
-		"user/simulations": template.Must(template.ParseFiles(base, userDir+"simulations.html")),
-		"user/profile":     template.Must(template.ParseFiles(base, userDir+"profile.html")),
+		"user/simulations":  template.Must(template.ParseFiles(base, simListFrag, userDir+"simulations.html")),
+		"user/interactions": template.Must(template.ParseFiles(base, simListFrag, userDir+"interactions.html")),
+		"user/profile":      template.Must(template.ParseFiles(base, simListFrag, userDir+"profile.html")),
 
 		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
 	}

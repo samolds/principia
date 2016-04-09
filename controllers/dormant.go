@@ -39,7 +39,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	//       I don't think we can filter Simulations by the number of children entities it has :(
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
 
-	simulations, err := utils.BuildSimulationDataSlice(r, q)
+	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
 		ErrorHandler(w, "Error getting top simulations: "+err.Error(), http.StatusInternalServerError)
 		return
