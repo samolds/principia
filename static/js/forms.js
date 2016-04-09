@@ -3,6 +3,11 @@ function successToast(msg) {
   Materialize.toast($toastContent, 2000);
 }
 
+function notificationToast(header, msg) {
+  var $toastContent = $('<span class="amber lighten-5 black-text pad"><h5><i class="fa fa-bullhorn"></i> ' + header + '</h5><p>' + msg + '</p></span>');
+  Materialize.toast($toastContent, 8000);
+}
+
 function failToast(msg) {
   var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><p>' + msg + '</p></span>');
   Materialize.toast($toastContent, 8000);
