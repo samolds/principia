@@ -725,6 +725,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #00c9ff , #92fe9d); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #00c9ff , #92fe9d);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(0, 201, 255, 0.5), rgba(146, 254, 157, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -733,6 +734,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #ffeeee , #ddefbb); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #ffeeee , #ddefbb);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(255, 238, 238, 0.5), rgba(221, 239, 187, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -741,6 +743,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #403b4a , #e7e9bb); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #403b4a , #e7e9bb);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(64, 59, 74, 0.5), rgba(231, 233, 187, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -749,6 +752,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #e55d87 , #5fc3e4); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #e55d87 , #5fc3e4);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(229, 93, 135, 0.5), rgba(95, 195, 228, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -757,6 +761,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #ede574 , #e1f5c4); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #ede574 , #e1f5c4);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(237, 229, 116, 0.5), rgba(225, 245, 196, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -765,6 +770,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #fc00ff , #00dbde); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #fc00ff , #00dbde);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(252, 0, 255, 0.5), rgba(0, 219, 222, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -773,6 +779,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #eecda3 , #ef629f); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #eecda3 , #ef629f);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(238, 205, 163, 0.5), rgba(239, 98, 159, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -781,6 +788,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #43cea2 , #185a9d); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #43cea2 , #185a9d);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(67, 206, 162, 0.5), rgba(24, 90, 157, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -789,6 +797,7 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #ff512f , #dd2476); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #ff512f , #dd2476);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(255, 81, 47, 0.5), rgba(221, 36, 118, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
 
@@ -797,5 +806,6 @@ a#help-tooltips:hover {
     background: -webkit-linear-gradient(to left, #ffa17f , #00223e); /* chrome 10-25, safari 5.1-6 */
     /* background: linear-gradient(to left, #ffa17f , #00223e); w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
     background: linear-gradient(to left, rgba(255, 161, 127, 0.5), rgba(0, 34, 62, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
     color: #ffffff;
   }
