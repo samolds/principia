@@ -55,7 +55,7 @@
           <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}/interactions">My Interactions</a></li>
           <li class="principia-navbar-color divider white-text"></li>
         {{ end }}
-        <li class="principia-navbar-color"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="{{ .LoginUrl }}">{{ .LoginMessage }}</a></li>
       </ul>
 
       <ul id="simulatorDropdown" class="dropdown-content" role="navigation">
@@ -74,7 +74,7 @@
         <li class="principia-navbar-color"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
         <li class="principia-navbar-color"><a class="white-text" href="/simulator/browse">Browse Simulations</a></li>
         <li class="principia-navbar-color"><a class="white-text" href="/help">Help!</a></li>
-        <li class="principia-navbar-color"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="{{ .LoginUrl }}">{{ .LoginMessage }}</a></li>
       </ul>
     </header>
 

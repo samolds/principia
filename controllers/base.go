@@ -50,31 +50,58 @@ var (
 )
 
 type PageData struct {
-	IsLoggedIn bool
-	User       models.User
-	Data       map[string]interface{}
+	IsLoggedIn   bool
+	LoginUrl     string
+	LoginMessage string
+	User         models.User
+	Data         map[string]interface{}
 }
 
 // The 404 page handler. Just a wrapper on the ErrorHandler but has
 // the same function signature necessary for routes
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	ErrorHandler(w, "Not Found!", http.StatusNotFound)
+	ErrorHandler(w, r, "Not Found!", http.StatusNotFound)
 }
 
 // Renders a nice looking error page. Call this function whenever you want
 // to return and error template from any other function!
-func ErrorHandler(w http.ResponseWriter, errMsg string, status int) {
+func ErrorHandler(w http.ResponseWriter, r *http.Request, errMsg string, status int) {
 	var buffer bytes.Buffer
 
-	// TODO: Add user information stuff. Sign in links aren't rendered on error pages
+	// Get current user information for signin links
+	ctx := appengine.NewContext(r)
+	googleUser := appengineUser.Current(ctx)
+	var loginUrl string
+	var loginMessage string
+	var err error
+
+	// Build correct login/logout links for Google but don't worry about
+	// showing full user information, so don't get user object
+	if googleUser == nil {
+		loginUrl, err = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		loginMessage = "Sign In"
+	} else {
+		loginUrl, err = appengineUser.LogoutURL(ctx, "/")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		loginMessage = "Sign Out"
+	}
 
 	data := map[string]interface{}{
-		"title":  status,
-		"errMsg": errMsg,
+		"title":        status,
+		"errMsg":       errMsg,
+		"LoginUrl":     loginUrl,
+		"LoginMessage": loginMessage,
 	}
 
 	w.WriteHeader(status)
-	err := templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
+	err = templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -98,16 +125,19 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	ctx := appengine.NewContext(r)
 	googleUser := appengineUser.Current(ctx)
 	var user models.User
-	isLoggedIn := false
+	var isLoggedIn bool
+	var loginUrl string
+	var loginMessage string
 
 	// Build correct login/logout links for Google
 	if googleUser == nil {
-		data["loginUrl"], _ = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
-		data["loginMessage"] = "Sign In"
+		isLoggedIn = false
+		loginUrl, _ = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
+		loginMessage = "Sign In"
 	} else {
-		data["loginUrl"], _ = appengineUser.LogoutURL(ctx, "/")
-		data["loginMessage"] = "Sign Out"
 		isLoggedIn = true
+		loginUrl, _ = appengineUser.LogoutURL(ctx, "/")
+		loginMessage = "Sign Out"
 
 		// TODO-OO: Better way to do this? -> Do this in the profile handler and redirect?
 
@@ -133,7 +163,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 				if err != nil {
 					// Could not place the user in the datastore
-					ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
+					ErrorHandler(w, r, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
 					return
 				}
 
@@ -142,7 +172,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 					return
 				}
 			} else {
-				ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
+				ErrorHandler(w, r, "User was not found: "+err.Error(), http.StatusNotFound)
 				return
 			}
 		}
@@ -150,9 +180,11 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	// END TODO-OO
 
 	pageData := &PageData{
-		IsLoggedIn: isLoggedIn,
-		User:       user,
-		Data:       data,
+		IsLoggedIn:   isLoggedIn,
+		LoginUrl:     loginUrl,
+		LoginMessage: loginMessage,
+		User:         user,
+		Data:         data,
 	}
 
 	// Catch mobile users and render mobile friendly template
@@ -175,7 +207,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	}
 
 	if err != nil {
-		ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 	} else {
 		io.Copy(w, &buffer)
 	}

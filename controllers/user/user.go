@@ -21,7 +21,7 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	pageUserKey := datastore.NewKey(ctx, "User", pageUserKeyName, 0, nil)
 	err := datastore.Get(ctx, pageUserKey, &pageUser)
 	if err != nil {
-		controllers.ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
+		controllers.ErrorHandler(w, r, "User was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -39,7 +39,7 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	var simulations []models.SimulationData
 	simulations, err = utils.GetSimulationDataSlice(r, q)
 	if err != nil {
-		controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
+		controllers.ErrorHandler(w, r, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -82,14 +82,14 @@ func InteractionsHandler(w http.ResponseWriter, r *http.Request) {
 		simulationRateObjs := make([]models.Simulation, len(simulationRateKeys))
 		err = datastore.GetMulti(ctx, simulationRateKeys, simulationRateObjs)
 		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// Build the proper simulation data objects from the simulation models
 		simulations, err = utils.BuildSimulationDataSlice(ctx, simulationRateObjs, simulationRateKeys)
 		if err != nil {
-			controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -97,7 +97,7 @@ func InteractionsHandler(w http.ResponseWriter, r *http.Request) {
 		q = datastore.NewQuery("Comment").Filter("AuthorKeyName =", userKeyName).Order("-CreationDate").Limit(50)
 		comments, err = utils.GetCommentDataSlice(r, q)
 		if err != nil {
-			controllers.ErrorHandler(w, "Error fetching comments: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Error fetching comments: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -122,7 +122,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	pageUserKey := datastore.NewKey(ctx, "User", userKeyName, 0, nil)
 	err := datastore.Get(ctx, pageUserKey, &pageUser)
 	if err != nil {
-		controllers.ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
+		controllers.ErrorHandler(w, r, "User was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -139,7 +139,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			q := datastore.NewQuery("Simulation").Filter("AuthorKeyName =", userKeyName).Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
 			simulations, err = utils.GetSimulationDataSlice(r, q)
 			if err != nil {
-				controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+				controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		}
@@ -153,7 +153,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		q := datastore.NewQuery("Simulation").KeysOnly().Filter("AuthorKeyName =", userKeyName)
 		simKeys, err := q.GetAll(ctx, &empty) // Get all simulation keys made by this user
 		if err != nil {
-			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -162,7 +162,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			q := datastore.NewQuery("Rating").Ancestor(key)
 			simFaves, err := q.Count(ctx)
 			if err != nil {
-				controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+				controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -185,7 +185,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		// Make sure only the owner is trying to update the information
 		if !userIsOwner {
-			controllers.ErrorHandler(w, "Unauthorized update attempt: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Unauthorized update attempt: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -196,7 +196,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = datastore.Put(ctx, pageUserKey, &pageUser)
 		if err != nil {
 			// Could not place the user in the datastore
-			controllers.ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}

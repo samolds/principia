@@ -17,7 +17,6 @@ type Comment struct {
 	// Using AncecstorKey for strong consistency
 }
 
-
 // Not a database object -> Information put in this format to pass to a view
 // All data necessary for nicely displaying a comment in a view
 type CommentData struct {

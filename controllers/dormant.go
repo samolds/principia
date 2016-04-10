@@ -3,8 +3,8 @@ package controllers
 import (
 	"appengine/datastore"
 	"controllers/utils"
-	"models"
 	"lib/gorilla/mux"
+	"models"
 	"net/http"
 	"sort"
 	"time"
@@ -43,7 +43,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Filter("CreationDate >", oneMonthAgo)
 	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
-		ErrorHandler(w, "Error getting top simulations: "+err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, r, "Error getting top simulations: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -61,7 +61,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		q = datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
 		simulations, err = utils.GetSimulationDataSlice(r, q)
 		if err != nil {
-			ErrorHandler(w, "Error getting recent simulations: "+err.Error(), http.StatusInternalServerError)
+			ErrorHandler(w, r, "Error getting recent simulations: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}

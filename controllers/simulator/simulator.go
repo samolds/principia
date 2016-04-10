@@ -17,7 +17,7 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(20)
 	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
-		controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -39,7 +39,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		user, err := utils.GetCurrentUser(ctx)
 
 		if err != nil {
-			controllers.ErrorHandler(w, "Couldn't get current user: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Couldn't get current user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -63,7 +63,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		key, err = datastore.Put(ctx, key, &simulation)
 
 		if err != nil {
-			controllers.ErrorHandler(w, "Could not save new simulation: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Could not save new simulation: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -96,13 +96,13 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	var simulation models.Simulation
 	err := datastore.Get(ctx, simulationKey, &simulation)
 	if err != nil {
-		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		controllers.ErrorHandler(w, r, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
 	simulationData, err := utils.BuildSimulationData(ctx, simulation, simulationKey)
 	if err != nil {
-		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		controllers.ErrorHandler(w, r, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 

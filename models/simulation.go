@@ -11,7 +11,7 @@ type Simulation struct {
 	Name          string
 	Simulator     string `datastore:",noindex"` // Don't index this field => max size = 1MB
 	Type          string
-  Description   string `datastore:",noindex"` // Don't index this field => max size = 1MB
+	Description   string `datastore:",noindex"` // Don't index this field => max size = 1MB
 	CreationDate  time.Time
 	UpdatedDate   time.Time
 	IsPrivate     bool
@@ -19,8 +19,6 @@ type Simulation struct {
 	// Ratings by descendant
 	// Comments by descendant
 }
-
-
 
 // Not a database object -> Information put in this format to pass to a view
 // All data necessary for nicely displaying a simulation in a view

@@ -63,7 +63,7 @@
     <div class="clear pad-bottom"></div>
   {{ end }}
 
-  {{ if eq "Sign In" .Data.loginMessage }}
+  {{ if not .IsLoggedIn }}
     <div class="container narrow pad-top pad-bottom">
       <div class="card-panel">
         <div class="valign-wrapper">
@@ -71,8 +71,8 @@
             <p class="flow-text">
               Have a Google Account?
             </p>
-            <a href="{{ .Data.loginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
-            <p>Or go <a href="{{ .Data.loginUrl }}">sign up</a>!</p>
+            <a href="{{ .LoginUrl }}"><img src="/static/img/googlesignin.svg" class="responsive-img"></a>
+            <p>Or go <a href="{{ .LoginUrl }}">sign up</a>!</p>
           </div>
         </div>
       </div>
