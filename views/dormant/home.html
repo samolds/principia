@@ -13,10 +13,14 @@
         </div>
         <div class="white-text center-align">
           {{ $numSimulations := len .Data.simulations }}
-          {{ if gt $numSimulations 1 }}
-            This Week's {{ $numSimulations }} Most Recent Simulations
-          {{ else if eq $numSimulations 1 }}
-            This Week's Most Recent Simulation
+          {{ if and (gt $numSimulations 1) (.Data.topThisMonth) }}
+            This Month's {{ $numSimulations }} Most Popular Simulations
+          {{ else if and (eq $numSimulations 1) (.Data.topThisMonth) }}
+            This Month's Most Popular Simulation
+          {{ else if and (gt $numSimulations 1) (not .Data.topThisMonth) }}
+            The {{ $numSimulations }} Most Recent Simulations
+          {{ else if and (eq $numSimulations 1) (not .Data.topThisMonth) }}
+            The Most Recent Simulation
           {{ end }}
         </div>
       </div>

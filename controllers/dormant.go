@@ -5,6 +5,8 @@ import (
 	"controllers/utils"
 	"lib/gorilla/mux"
 	"net/http"
+	"sort"
+	"time"
 )
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,22 +33,41 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: filter out when CreationDate is older than 7 days (when we have lots of users)
-	// TODO: Order by the number of ratings objects each simulation has... In order to do this,
-	//       we're going to have to keep a running total of a simulations score everytime a
-	//       rating is given (Rating object is created or deleted). So whenever a rating object
-	//       is created or deleted, the simulation object will have to be modified...
-	//       I don't think we can filter Simulations by the number of children entities it has :(
-	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
+	topThisMonth := true
 
+	// Get a time value for one month ago
+	oneMonthAgo := time.Now().AddDate(0, -1, 0)
+
+	// Get all of the public simulations from the last month // TODO: Too expensive of a call?
+	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Filter("CreationDate >", oneMonthAgo)
 	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
 		ErrorHandler(w, "Error getting top simulations: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Sort the simulations by the the ones with the most favorites
+	sort.Sort(utils.ByRating(simulations))
+
+	// Only keep the first 8
+	if len(simulations) > 8 {
+		simulations = simulations[0:8]
+	}
+
+	// If there were none created this month, just get the 8 most recent simulations
+	if len(simulations) == 0 {
+		topThisMonth = false
+		q = datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(8)
+		simulations, err = utils.GetSimulationDataSlice(r, q)
+		if err != nil {
+			ErrorHandler(w, "Error getting recent simulations: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	data := map[string]interface{}{
-		"simulations": simulations,
+		"simulations":  simulations,
+		"topThisMonth": topThisMonth,
 	}
 
 	BaseHandler(w, r, "dormant/home", data)

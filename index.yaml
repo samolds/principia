@@ -65,6 +65,11 @@ indexes:
   properties:
   - name: IsPrivate
   - name: CreationDate
+
+- kind: Simulation
+  properties:
+  - name: IsPrivate
+  - name: CreationDate
     direction: desc
 
 - kind: Simulation

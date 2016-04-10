@@ -809,3 +809,8 @@ a#help-tooltips:hover {
     background-size: cover;
     color: #ffffff;
   }
+
+/* user display name identifier */
+  span.user-display-name {
+    font-style: normal;
+  }

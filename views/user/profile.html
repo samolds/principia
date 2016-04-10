@@ -9,9 +9,9 @@
   {{ if .Data.userIsOwner }}
     <h3 class="page-header center-align">My Profile</h3>
   {{ else if .Data.user.DisplayName }}
-    <h3 class="page-header center-align">{{ .Data.user.DisplayName }}'s Profile</h3>
+    <h3 class="page-header center-align"><span class="user-display-name">{{ .Data.user.DisplayName }}</span>'s Profile</h3>
   {{ else }}
-    <h3 class="page-header center-align">Anonymous' Profile</h3>
+    <h3 class="page-header center-align"><span class="user-display-name">Anonymous</span>' Profile</h3>
   {{ end }}
 </div>
 
@@ -21,23 +21,27 @@
       <div class="card-panel">
         {{ if .Data.userIsOwner }}
         <div class="input-field">
-          <label for="user-email" id="user-email-label">Email</label>
-          <input disabled value="{{ .Data.user.Email }}" id="user-email" type="text" class="validate">
-        </div>
-        <div class="input-field">
           <label for="user-display-name" id="user-display-label">Display Name</label>
           <input id="user-display-name" value="{{ .Data.user.DisplayName }}" type="text" class="validate">
         </div>
+        <div>
+          <label>Email</label>
+          <p class="pad-sides">{{ .Data.user.Email }}</p>
+        </div>
         {{ else }}
         <div>
-          <label for="user-email-name">Email</label>
-          <p id="user-email-name" class="pad-sides">...</p>
-        </div>
-        <div class="pad-top">
-          <label for="user-display-name">Display Name</label>
-          <p id="user-display-name" class="pad-sides">{{ .Data.user.DisplayName }}</p>
+          <label>Display Name</label>
+          <p class="pad-sides">{{ .Data.user.DisplayName }}</p>
         </div>
         {{ end }}
+        <div>
+          <label>Joined</label>
+          <p class="pad-sides">{{ .Data.userJoinDate }}</p>
+        </div>
+        <div>
+          <label>Total Favorites Received</label>
+          <p class="pad-sides">{{ .Data.totalFavoritesReceived }}</p>
+        </div>
       </div>
     </div>
 
@@ -70,8 +74,8 @@
         </div>
         {{ else }}
         <div>
-          <label for="user-interests">Areas Of Interest:</label>
-          <p id="user-interests" class="pad-sides">{{ .Data.user.Interests }}</p>
+          <label>Areas Of Interest:</label>
+          <p class="pad-sides">{{ .Data.user.Interests }}</p>
         </div>
         {{ end }}
       </div>
@@ -90,11 +94,11 @@
 {{ if not .Data.userIsOwner }}
   <div class="container pad-top pad-bottom">
     {{ if .Data.user.DisplayName }}
-      <h4 class="page-header center-align">Simulations Created by {{ .Data.user.DisplayName }}</h4>
-      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of {{ .Data.user.DisplayName }}'s Simulations</a></h6>
+      <h4 class="page-header center-align">Simulations Created by <span class="user-display-name">{{ .Data.user.DisplayName }}</span></h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of <span class="user-display-name">{{ .Data.user.DisplayName }}</span>'s Simulations</a></h6>
     {{ else }}
-      <h4 class="page-header center-align">Simulations Created by Anonymous</h4>
-      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of Anonymous' Simulations</a></h6>
+      <h4 class="page-header center-align">Simulations Created by <span class="user-display-name">Anonymous</span></h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of <span class="user-display-name">Anonymous</span>' Simulations</a></h6>
     {{ end }}
   </div>
 

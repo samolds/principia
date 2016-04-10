@@ -29,7 +29,7 @@ var (
 	base     = tmplDir + baseName + ".html"
 
 	templates = map[string]*template.Template{
-		"dormant/home":        template.Must(template.ParseFiles(base, simListFrag, dormDir+"home.html")),
+		"dormant/home":        template.Must(template.ParseFiles(base, dormDir+"home.html")),
 		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
 		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
 		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),

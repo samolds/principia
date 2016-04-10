@@ -6,9 +6,9 @@
     {{ if .Data.userIsOwner }}
       <h3 class="page-header">My Simulations</h3>
     {{ else if .Data.user.DisplayName }}
-      <h3 class="page-header">{{ .Data.user.DisplayName }}'s Simulations</h3>
+      <h3 class="page-header"><span class="user-display-name">{{ .Data.user.DisplayName }}</span>'s Simulations</h3>
     {{ else }}
-      <h3 class="page-header">Anonymous' Simulations</h3>
+      <h3 class="page-header"><span class="user-display-name">Anonymous</span>' Simulations</h3>
     {{ end }}
   </div>
   <div class="center-align">
@@ -18,5 +18,9 @@
 
 {{ template "simulationsListFrag" . }}
 
+
 <div class="pad-bottom"></div>
+<div class="container pad-top pad-bottom center-align">
+  <p>Back to <a href="/user/{{ .Data.user.KeyName }}">{{ .Data.user.DisplayName }}</a>'s profile</p>
+</div>
 {{ end }}

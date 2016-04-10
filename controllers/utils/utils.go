@@ -15,9 +15,18 @@ import (
 // All data necessary for nicely displaying a simulation in a view
 type SimulationData struct {
 	models.Simulation
-	AuthorName string
-	AuthorID   string
+	AuthorName  string
+	AuthorID    string
+	RatingTotal int
 }
+
+// ByRating implements sort.Interface for []SimulationData based on
+// the RatingTotal field.
+type ByRating []SimulationData
+
+func (sim ByRating) Len() int           { return len(sim) }
+func (sim ByRating) Swap(i, j int)      { sim[i], sim[j] = sim[j], sim[i] }
+func (sim ByRating) Less(i, j int) bool { return sim[i].RatingTotal > sim[j].RatingTotal }
 
 // All data necessary for nicely displaying a comment in a view
 type CommentData struct {
@@ -78,12 +87,18 @@ func GenerateUniqueKey(ctx appengine.Context, kind string, user models.User, anc
 }
 
 // Builds a SimulationData object from a models.Simulation object with the proper fields
-func BuildSimulationData(ctx appengine.Context, simObj models.Simulation) (SimulationData, error) {
+func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey *datastore.Key) (SimulationData, error) {
 	var author models.User
 	var sim SimulationData
 
 	authorKey := datastore.NewKey(ctx, "User", simObj.AuthorKeyName, 0, nil)
 	err := datastore.Get(ctx, authorKey, &author)
+	if err != nil {
+		return sim, err
+	}
+
+	q := datastore.NewQuery("Rating").Ancestor(simKey)
+	simFaves, err := q.Count(ctx)
 	if err != nil {
 		return sim, err
 	}
@@ -102,16 +117,17 @@ func BuildSimulationData(ctx appengine.Context, simObj models.Simulation) (Simul
 	sim.IsPrivate = simObj.IsPrivate
 	sim.AuthorName = author.DisplayName
 	sim.AuthorID = author.KeyName
+	sim.RatingTotal = simFaves
 
 	return sim, nil
 }
 
 // Builds a list of all of the simulations that match a query as SimulationData types
-func BuildSimulationDataSlice(ctx appengine.Context, simulationObjs []models.Simulation) ([]SimulationData, error) {
+func BuildSimulationDataSlice(ctx appengine.Context, simulationObjs []models.Simulation, simulationKeys []*datastore.Key) ([]SimulationData, error) {
 	var simulations []SimulationData
 
-	for _, simObj := range simulationObjs {
-		sim, err := BuildSimulationData(ctx, simObj)
+	for i, _ := range simulationObjs {
+		sim, err := BuildSimulationData(ctx, simulationObjs[i], simulationKeys[i])
 		if err != nil {
 			return simulations, err
 		}
@@ -127,13 +143,13 @@ func GetSimulationDataSlice(r *http.Request, q *datastore.Query) ([]SimulationDa
 	var simulationObjs []models.Simulation
 
 	ctx := appengine.NewContext(r)
-	_, err := q.GetAll(ctx, &simulationObjs)
+	simulationKeys, err := q.GetAll(ctx, &simulationObjs)
 
 	if err != nil {
 		return simulations, err
 	}
 
-	return BuildSimulationDataSlice(ctx, simulationObjs)
+	return BuildSimulationDataSlice(ctx, simulationObjs, simulationKeys)
 }
 
 // Builds a CommentData object from a models.Comment object with the proper fields
@@ -172,7 +188,7 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 
 // Builds a list of all of the comments that match a query as CommentData types
 func GetCommentDataSlice(r *http.Request, q *datastore.Query) ([]CommentData, error) {
-  var commentKeys []*datastore.Key
+	var commentKeys []*datastore.Key
 	var commentObjs []models.Comment
 	var comments []CommentData
 

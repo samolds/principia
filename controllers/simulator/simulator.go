@@ -99,7 +99,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
-	simulationData, err := utils.BuildSimulationData(ctx, simulation)
+	simulationData, err := utils.BuildSimulationData(ctx, simulation, simulationKey)
 	if err != nil {
 		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return

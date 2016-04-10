@@ -73,21 +73,21 @@ func InteractionsHandler(w http.ResponseWriter, r *http.Request) {
 		ratingKeys, err := q.GetAll(ctx, ratingObjs)
 
 		// Get the parent keys of the ratings made (these are the keys of the simulations the ratings were for)
-		var simRateKeys []*datastore.Key
+		var simulationRateKeys []*datastore.Key
 		for _, key := range ratingKeys {
-			simRateKeys = append(simRateKeys, key.Parent())
+			simulationRateKeys = append(simulationRateKeys, key.Parent())
 		}
 
 		// Get all of the simulation objects from the simulation keys
-		simulationRateObjs := make([]models.Simulation, len(simRateKeys))
-		err = datastore.GetMulti(ctx, simRateKeys, simulationRateObjs)
+		simulationRateObjs := make([]models.Simulation, len(simulationRateKeys))
+		err = datastore.GetMulti(ctx, simulationRateKeys, simulationRateObjs)
 		if err != nil {
 			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// Build the proper simulation data objects from the simulation models
-		simulations, err = utils.BuildSimulationDataSlice(ctx, simulationRateObjs)
+		simulations, err = utils.BuildSimulationDataSlice(ctx, simulationRateObjs, simulationRateKeys)
 		if err != nil {
 			controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -144,10 +144,37 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		// Nicely format the join date
+		prettyJoinDate := pageUser.JoinDate.Format("January _2, 2006")
+		var empty []models.Simulation
+		totalFavoritesReceived := 0
+
+		// Get a count of all favorites received on all simulations created by this user
+		q := datastore.NewQuery("Simulation").KeysOnly().Filter("AuthorKeyName =", userKeyName)
+		simKeys, err := q.GetAll(ctx, &empty) // Get all simulation keys made by this user
+		if err != nil {
+			controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Get a count of all of the favorites received for each simulation and add to total
+		for _, key := range simKeys {
+			q := datastore.NewQuery("Rating").Ancestor(key)
+			simFaves, err := q.Count(ctx)
+			if err != nil {
+				controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			totalFavoritesReceived += simFaves
+		}
+
 		data := map[string]interface{}{
-			"user":        pageUser,
-			"userIsOwner": userIsOwner,
-			"simulations": simulations,
+			"user":                   pageUser,
+			"userJoinDate":           prettyJoinDate,
+			"userIsOwner":            userIsOwner,
+			"simulations":            simulations,
+			"totalFavoritesReceived": totalFavoritesReceived,
 		}
 
 		controllers.BaseHandler(w, r, "user/profile", data)
