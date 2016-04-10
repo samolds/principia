@@ -79,7 +79,7 @@
 /* end blue links */
 
 .principia-card-dark-color {
-  background-color: #222222 !important; /* because of materialize stupidness */
+  background-color: #222222;
 }
 
 /* for smaller text on about cards */
@@ -91,6 +91,26 @@
 
   .card-reveal {
     font-size: 0.9em;
+  }
+
+  .principia-about-card-sam .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/sam.png') no-repeat;
+    background-size: contain;
+  }
+
+  .principia-about-card-danny .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/danny.png') no-repeat;
+    background-size: contain;
+  }
+
+  .principia-about-card-matthew .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/matthew.png') no-repeat;
+    background-size: contain;
+  }
+
+  .principia-about-card-dalton .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/dalton.png') no-repeat;
+    background-size: contain;
   }
 /* end blue links */
 
@@ -176,10 +196,10 @@ body {
 }
 
 .feedback-hero {
-  height: 300px;
-  margin-top: -30px;
-  background-image: url('/static/img/team/team.png');
-  background-size: cover;
+  padding: 180px;
+  background-image: url('/static/img/team/turtle/team.png');
+  background-position-x: center;
+  background-repeat: no-repeat;
 }
 
 /* custom form color */
@@ -681,13 +701,13 @@ a#help-tooltips:hover {
   .card-list .card-quarter-width .card-content,
   .card-list .card-quarter-width .card-content {
     font-size: 0.8em;
-    min-height: 100px;
+    padding: 20px;
   }
 
   .card-list .card-half-width .card-content,
   .card-list .card-half-width .card-content {
     font-size: 1em;
-    min-height: 100px;
+    padding: 20px;
   }
 
   .card-half-width {
