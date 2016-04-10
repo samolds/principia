@@ -36,7 +36,7 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	q = q.Order("-CreationDate").Limit(50)
 
 	// Get the simulations for the page user from the query
-	var simulations []utils.SimulationData
+	var simulations []models.SimulationData
 	simulations, err = utils.GetSimulationDataSlice(r, q)
 	if err != nil {
 		controllers.ErrorHandler(w, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
@@ -57,8 +57,8 @@ func InteractionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userKeyName := vars["userID"]
 	ctx := appengine.NewContext(r)
-	var simulations []utils.SimulationData
-	var comments []utils.CommentData
+	var simulations []models.SimulationData
+	var comments []models.CommentData
 
 	// Check to see if the page user is the same as the logged in user
 	userIsOwner := utils.IsOwner(userKeyName, ctx)
@@ -131,7 +131,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// If a user is just viewing the page
 	if r.Method == "GET" {
-		var simulations []utils.SimulationData
+		var simulations []models.SimulationData
 
 		// If viewing someone else's profile page, get their 8 most recent public simultions to display
 		if !userIsOwner {

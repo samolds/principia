@@ -456,6 +456,21 @@
   </div>
 </div>
 
+<!-- The simulation description -->
+<div class="row">
+  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+  <div class="input-field col s8">
+    <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}" onkeypress="resetSaveButton()"></input>
+    <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
+  </div>
+  {{ else if .Data.simulation.Description }}
+  <div class="col s8">
+    <label>Simulation Description</label>
+    <p>{{ .Data.simulation.Description }}</p>
+  </div>
+  {{ end }}
+</div>
+
 <!-- This is the context menu -->
 <div class="context-menu">
   <span>Object Properties</span>

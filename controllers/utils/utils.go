@@ -12,32 +12,6 @@ import (
 	"time"
 )
 
-// All data necessary for nicely displaying a simulation in a view
-type SimulationData struct {
-	models.Simulation
-	AuthorName  string
-	AuthorID    string
-	RatingTotal int
-}
-
-// ByRating implements sort.Interface for []SimulationData based on
-// the RatingTotal field.
-type ByRating []SimulationData
-
-func (sim ByRating) Len() int           { return len(sim) }
-func (sim ByRating) Swap(i, j int)      { sim[i], sim[j] = sim[j], sim[i] }
-func (sim ByRating) Less(i, j int) bool { return sim[i].RatingTotal > sim[j].RatingTotal }
-
-// All data necessary for nicely displaying a comment in a view
-type CommentData struct {
-	models.Comment
-	AuthorName     string
-	AuthorID       string
-	SimulationName string
-	SimulationID   string
-	SimulationType string
-}
-
 // Returns true if the user.ID and simUserId are equivalent
 func IsOwner(simUserKey string, ctx appengine.Context) bool {
 	currentUser, err := GetCurrentUser(ctx)
@@ -87,9 +61,9 @@ func GenerateUniqueKey(ctx appengine.Context, kind string, user models.User, anc
 }
 
 // Builds a SimulationData object from a models.Simulation object with the proper fields
-func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey *datastore.Key) (SimulationData, error) {
+func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey *datastore.Key) (models.SimulationData, error) {
 	var author models.User
-	var sim SimulationData
+	var sim models.SimulationData
 
 	authorKey := datastore.NewKey(ctx, "User", simObj.AuthorKeyName, 0, nil)
 	err := datastore.Get(ctx, authorKey, &author)
@@ -112,6 +86,7 @@ func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey
 	sim.Name = simObj.Name
 	sim.Simulator = simObj.Simulator
 	sim.Type = simObj.Type
+	sim.Description = simObj.Description
 	sim.CreationDate = simObj.CreationDate
 	sim.UpdatedDate = simObj.UpdatedDate
 	sim.IsPrivate = simObj.IsPrivate
@@ -123,8 +98,8 @@ func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey
 }
 
 // Builds a list of all of the simulations that match a query as SimulationData types
-func BuildSimulationDataSlice(ctx appengine.Context, simulationObjs []models.Simulation, simulationKeys []*datastore.Key) ([]SimulationData, error) {
-	var simulations []SimulationData
+func BuildSimulationDataSlice(ctx appengine.Context, simulationObjs []models.Simulation, simulationKeys []*datastore.Key) ([]models.SimulationData, error) {
+	var simulations []models.SimulationData
 
 	for i, _ := range simulationObjs {
 		sim, err := BuildSimulationData(ctx, simulationObjs[i], simulationKeys[i])
@@ -138,8 +113,8 @@ func BuildSimulationDataSlice(ctx appengine.Context, simulationObjs []models.Sim
 }
 
 // Builds a list of all of the simulations that match a query as SimulationData types
-func GetSimulationDataSlice(r *http.Request, q *datastore.Query) ([]SimulationData, error) {
-	var simulations []SimulationData
+func GetSimulationDataSlice(r *http.Request, q *datastore.Query) ([]models.SimulationData, error) {
+	var simulations []models.SimulationData
 	var simulationObjs []models.Simulation
 
 	ctx := appengine.NewContext(r)
@@ -153,10 +128,10 @@ func GetSimulationDataSlice(r *http.Request, q *datastore.Query) ([]SimulationDa
 }
 
 // Builds a CommentData object from a models.Comment object with the proper fields
-func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *datastore.Key) (CommentData, error) {
+func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *datastore.Key) (models.CommentData, error) {
 	var author models.User
 	var sim models.Simulation
-	var com CommentData
+	var com models.CommentData
 
 	authorKey := datastore.NewKey(ctx, "User", comObj.AuthorKeyName, 0, nil)
 	err := datastore.Get(ctx, authorKey, &author)
@@ -187,10 +162,10 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 }
 
 // Builds a list of all of the comments that match a query as CommentData types
-func GetCommentDataSlice(r *http.Request, q *datastore.Query) ([]CommentData, error) {
+func GetCommentDataSlice(r *http.Request, q *datastore.Query) ([]models.CommentData, error) {
 	var commentKeys []*datastore.Key
 	var commentObjs []models.Comment
-	var comments []CommentData
+	var comments []models.CommentData
 
 	ctx := appengine.NewContext(r)
 	commentKeys, err := q.GetAll(ctx, &commentObjs)

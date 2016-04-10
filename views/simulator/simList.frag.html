@@ -19,10 +19,10 @@
             <div class="card-reveal">
               <span class="card-title">Details<i class="fa fa-times right"></i></span>
               <p>
-                Simulation Description.
+                Favorited {{ $simulation.RatingTotal }} times
               </p>
               <p>
-                Favorited {{ $simulation.RatingTotal }} times
+                {{ $simulation.Description }}
               </p>
               {{ if $.Data.userIsOwner }}
               <div class="card-action">
@@ -48,10 +48,10 @@
             <div class="card-reveal">
               <span class="card-title">Details<i class="fa fa-times right"></i></span>
               <p>
-                Simulation Description.
+                Favorited {{ $simulation.RatingTotal }} times
               </p>
               <p>
-                Favorited {{ $simulation.RatingTotal }} times
+                {{ $simulation.Description }}
               </p>
               {{ if $.Data.userIsOwner }}
               <div class="card-action">

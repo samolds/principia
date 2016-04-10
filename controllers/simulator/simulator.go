@@ -52,6 +52,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 			Name:          r.FormValue("Name"),
 			Simulator:     r.FormValue("Contents"),
 			Type:          simType,
+			Description:   r.FormValue("Description"),
 			CreationDate:  creationTime,
 			UpdatedDate:   creationTime,
 			IsPrivate:     utils.StringToBool(r.FormValue("IsPrivate")),
@@ -109,6 +110,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	if r.Method == "POST" && isOwner {
 		simulation.Name = r.FormValue("Name")
 		simulation.Simulator = r.FormValue("Contents")
+		simulation.Description = r.FormValue("Description")
 		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
 		simulation.UpdatedDate = time.Now()
 

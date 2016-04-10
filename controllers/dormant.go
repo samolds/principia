@@ -3,6 +3,7 @@ package controllers
 import (
 	"appengine/datastore"
 	"controllers/utils"
+	"models"
 	"lib/gorilla/mux"
 	"net/http"
 	"sort"
@@ -47,7 +48,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Sort the simulations by the the ones with the most favorites
-	sort.Sort(utils.ByRating(simulations))
+	sort.Sort(models.ByRating(simulations))
 
 	// Only keep the first 8
 	if len(simulations) > 8 {
