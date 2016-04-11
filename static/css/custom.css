@@ -623,6 +623,11 @@ a#help-tooltips:hover {
   width: 330px;
 }
 
+#help-tooltip-fbd {
+  color: blue;
+  background-color: #ffffff;
+}
+
 /** via http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting **/
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */

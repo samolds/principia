@@ -335,6 +335,98 @@ function drawVectors(){
   } 
 }
 
+function drawFBD(){
+
+  var selectedBody = Globals.selectedBody;
+
+  if(Globals.fbdDown && Globals.running) {
+    Globals.fbdWasRunning = true;
+    toggleSimulator();
+  }
+
+  if(!Globals.fbdDown || !selectedBody) {
+    if(Globals.fbdWasRunning){
+      toggleSimulator();
+      Globals.fbdWasRunning = false;
+    }
+
+    $("#help-tooltip-fbd").hide();
+    drawMaster();
+    return;
+  }
+
+  if(bodyType(selectedBody) !== "kinematics1D-mass") {
+    return;
+  }
+
+  // Called to remove vectors from the selected body while displaying force vectors
+  drawMaster();
+
+  var canvas = Globals.world.renderer();
+  var context = canvas.ctx;
+  var bodySize = body2Constant(selectedBody).size;
+  var fbdHelp = $("#help-tooltip-fbd");
+
+  // TODO: Make force arrows the same color as the label in help box
+  context.font = 'bold 10pt Calibri';
+
+  var mass = body2Constant(selectedBody).mass;
+
+  var xInternalForce = selectedBody.state.acc.x * mass;
+  var yInternalForce = selectedBody.state.acc.y * mass;
+
+  var xGlobalForce = Globals.gravity[0] * mass;
+  var yGlobalForce = Globals.gravity[1] * mass;
+
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
+  totalInternalForce = totalInternalForce.toFixed(2);
+  totalGlobalForce = totalGlobalForce.toFixed(2);
+
+  // Limit length of vectors?
+  xInternalForce = clamp(-200, xInternalForce * 10, 200);
+  yInternalForce = clamp(-200, yInternalForce * 10, 200);
+  xGlobalForce = clamp(-200, xGlobalForce * 10, 200);
+  yGlobalForce = clamp(-200, yGlobalForce * 10, 200);
+
+  // Internal Force
+  drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
+
+  // Global Force
+  drawTipToTail(xGlobalForce, yGlobalForce, 'blue', 'blue', 'blue', false, selectedBody);
+
+  // TODO:
+  // Spring Force
+  // Tension Force
+  // Force Of Friction
+  // Normal Force
+  // Normal force on ramp/surface is function of acceleration and the angle of surface
+  // Make selected body fire an event upon collision?
+  // How to tell which body has been collided with...
+  
+  // Position the FBD popup window
+  fbdHelp.html("<p style='color:grey'>" +
+                  "Internal Force: " + totalInternalForce +
+               "</p>" +
+               "<p style='color:blue'>" +
+                  "Global Force: " + totalGlobalForce +
+              "</p>");
+
+  var topPos = selectedBody.state.pos.y + bodySize;
+  var leftPos = selectedBody.state.pos.x + bodySize;
+
+  // Body is too far right
+  if(selectedBody.state.pos.x + 80 > canvas.width) {
+    leftPos -= (bodySize*2 + 50);
+  }
+  if(selectedBody.state.pos.y + 80 > canvas.height) { // Body is off the bottom
+    topPos -= (bodySize*2 + 50);
+  }
+
+  fbdHelp.css({top: topPos, left: leftPos});
+  fbdHelp.show();
+}
+
 // Draw a vector for the specified body, scaled using the provided arguments
 function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   var tipToTail = (body2Constant(body).vectors_ttt === true);
@@ -354,106 +446,104 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   
   if(!tipToTail)
   {
-  
-  if(vx_amt != 0)
-  {
-    ctx.strokeStyle = (Math.sign(vx_amt) == 1)? '#00ff00': '#ff0000';    
-    ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
-    ctx.stroke();
-  }
+    if(vx_amt != 0)
+    {
+      ctx.strokeStyle = (Math.sign(vx_amt) == 1)? '#00ff00': '#ff0000';    
+      ctx.beginPath();
+      ctx.moveTo(body.state.pos.x,body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + vx_amt, body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + vx_amt + -Math.sign(vx_amt)*0.1*Math.abs(vx_amt), body.state.pos.y - 5);
+      ctx.stroke();
+    }
 
-  if(ax_amt != 0)
-  {
-    ctx.strokeStyle = (Math.sign(ax_amt) == 1)? '#009900': '#990000';
-    ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8 + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
-    ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
-    ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
-    ctx.stroke();
-  }
-  
-  if(vy_amt != 0)
-  {
-    ctx.strokeStyle = (Math.sign(vy_amt) == 1)? '#ff0000': '#00ff00';
-    ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + vy_amt + -Math.sign(vy_amt)*0.1*Math.abs(vy_amt));
-    ctx.stroke();
-  }
-  
-  if(ay_amt != 0)
-  {
-    ctx.strokeStyle = (Math.sign(ay_amt) == 1)? '#990000': '#009900';
-    ctx.beginPath();
-    ctx.moveTo(body.state.pos.x,body.state.pos.y);
-    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + 0.8*ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
-    ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
-    ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
-    ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
-    ctx.stroke();
-  }
-  
+    if(ax_amt != 0)
+    {
+      ctx.strokeStyle = (Math.sign(ax_amt) == 1)? '#009900': '#990000';
+      ctx.beginPath();
+      ctx.moveTo(body.state.pos.x,body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + ax_amt * 0.8 + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
+      ctx.lineTo(body.state.pos.x + ax_amt * 0.8, body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + ax_amt, body.state.pos.y);
+      ctx.lineTo(body.state.pos.x + ax_amt + -Math.sign(ax_amt)*0.1*Math.abs(ax_amt), body.state.pos.y - 7);  
+      ctx.stroke();
+    }
+    
+    if(vy_amt != 0)
+    {
+      ctx.strokeStyle = (Math.sign(vy_amt) == 1)? '#ff0000': '#00ff00';
+      ctx.beginPath();
+      ctx.moveTo(body.state.pos.x,body.state.pos.y);
+      ctx.lineTo(body.state.pos.x, body.state.pos.y + vy_amt);
+      ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + vy_amt + -Math.sign(vy_amt)*0.1*Math.abs(vy_amt));
+      ctx.stroke();
+    }
+    
+    if(ay_amt != 0)
+    {
+      ctx.strokeStyle = (Math.sign(ay_amt) == 1)? '#990000': '#009900';
+      ctx.beginPath();
+      ctx.moveTo(body.state.pos.x,body.state.pos.y);
+      ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
+      ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + 0.8*ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+      ctx.lineTo(body.state.pos.x,     body.state.pos.y + 0.8*ay_amt);    
+      ctx.lineTo(body.state.pos.x, body.state.pos.y + ay_amt);
+      ctx.lineTo(body.state.pos.x - 5, body.state.pos.y + ay_amt + -Math.sign(ay_amt)*0.1*Math.abs(ay_amt));  
+      ctx.stroke();
+    }
   }
   
   if(tipToTail)
   {    
-    
-    function getAngle(x, y){ var result = -1 * rad2deg(Math.atan2(y, x)); return (result < 0)? result + 360: result;}
-    
-    function getQuadrant(angle) { return (angle   >= 0 && angle <  90)? 1:
-                                         (angle  >= 90 && angle < 180)? 2:
-                                         (angle >= 180 && angle < 270)? 3:
-                                                                        4;
-    }
-    
-    //clr3 is mixed
-    function drawTipToTail(x, y, clr1, clr2, clr3, acc){      
-      var angle = getAngle(x, y);      
-      var quadrant = getQuadrant(angle);
-      var color = (quadrant == 1)? clr1: (quadrant == 3)? clr2: clr3;
-      var N  = magnitude(x, y) <= 20? 5: 15;      
-      var THETA = (quadrant == 1 || quadrant == 4)?
-                                                  deg2rad(45) - deg2rad(angle):
-                                                  deg2rad(45) + deg2rad(angle);
-      var dx = N * Math.cos(THETA);
-      var dy = N * Math.sin(THETA);
-    
-      if(quadrant == 1) { dx *= -1; }
-      if(quadrant == 2) { dx *= -1; dy *= -1; }
-      if(quadrant == 3) { dx *= -1; dy *= -1; }
-      if(quadrant == 4) { dx *= -1; } 
-
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(body.state.pos.x,body.state.pos.y);
-      ctx.lineTo(body.state.pos.x + x, body.state.pos.y + y);
-      ctx.lineTo(body.state.pos.x + x + dx, body.state.pos.y + y - dy);
-      ctx.stroke();
-      
-      // Draw second tip to indicate acceleration
-      if(acc){
-        ctx.beginPath();
-        ctx.moveTo(body.state.pos.x + x*0.9, body.state.pos.y + y*0.9);
-        ctx.lineTo(body.state.pos.x + x*0.9 + dx, body.state.pos.y + y*0.9 - dy);
-        ctx.stroke();
-      }
-      
-      
-    }
-  
     if(vx_amt != 0 || vy_amt != 0)
-      drawTipToTail(vx_amt, vy_amt, '#00ff00', '#ff0000', 'yellow', false);
+      drawTipToTail(vx_amt, vy_amt, '#00ff00', '#ff0000', 'yellow', false, body);
     
     if(ax_amt != 0 || ay_amt != 0)
-      drawTipToTail(ax_amt, ay_amt, '#009900', '#990000', 'yellow', true);
+      drawTipToTail(ax_amt, ay_amt, '#009900', '#990000', 'yellow', true, body);
+  }
+}
+
+function getAngle(x, y){ var result = -1 * rad2deg(Math.atan2(y, x)); return (result < 0)? result + 360: result;}
+    
+function getQuadrant(angle) { 
+  return (angle   >= 0 && angle <  90)? 1:
+         (angle  >= 90 && angle < 180)? 2:
+         (angle >= 180 && angle < 270)? 3: 4;
+}
+
+function drawTipToTail(x, y, clr1, clr2, clr3, acc, body){
+  var canvas = Globals.world.renderer();
+  var ctx = canvas.ctx;
+  ctx.lineWidth = 3;
+
+  var angle = getAngle(x, y);      
+  var quadrant = getQuadrant(angle);
+  var color = (quadrant == 1)? clr1: (quadrant == 3)? clr2: clr3;
+  var N  = magnitude(x, y) <= 20? 5: 15;      
+  var THETA = (quadrant == 1 || quadrant == 4)?
+                                              deg2rad(45) - deg2rad(angle):
+                                              deg2rad(45) + deg2rad(angle);
+  var dx = N * Math.cos(THETA);
+  var dy = N * Math.sin(THETA);
+
+  if(quadrant == 1) { dx *= -1; }
+  if(quadrant == 2) { dx *= -1; dy *= -1; }
+  if(quadrant == 3) { dx *= -1; dy *= -1; }
+  if(quadrant == 4) { dx *= -1; } 
+
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(body.state.pos.x,body.state.pos.y);
+  ctx.lineTo(body.state.pos.x + x, body.state.pos.y + y);
+  ctx.lineTo(body.state.pos.x + x + dx, body.state.pos.y + y - dy);
+  ctx.stroke();
+  
+  // Draw second tip to indicate acceleration
+  if(acc){
+    ctx.beginPath();
+    ctx.moveTo(body.state.pos.x + x*0.9, body.state.pos.y + y*0.9);
+    ctx.lineTo(body.state.pos.x + x*0.9 + dx, body.state.pos.y + y*0.9 - dy);
+    ctx.stroke();
   }
 }
 
@@ -472,7 +562,11 @@ function postRender(isKeyframe){
   var originObject = Globals.originObject;
   
   drawLines();
-  drawVectors();
+
+  // Only draw vectors if we aren't currently looking at a FBD
+  if(!Globals.fbdDown || !selectedBody) {
+    drawVectors();
+  }
 
   if (selectedBody) {    
     var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
@@ -507,7 +601,7 @@ function postRender(isKeyframe){
   
   if(selectedBody)
     highlightSelection(selectedBody);
-  
+
   if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }
