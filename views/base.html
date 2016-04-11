@@ -16,9 +16,14 @@
 
   <body>
     <header>
-      <nav id="nav" class="principia-blue-navbar" role="navigation">
+      <nav id="nav" class="principia-navbar-color" role="navigation">
         <div class="nav-wrapper main-container">
-          <a id="logo-container" class="brand-logo left" href="/"><img id="nav-bar-principia-logo" src="/static/img/logo/principia-invert.png"></a>
+          <div class="hide-on-small-only">
+            <a class="brand-logo left" href="/"><img class="nav-bar-principia-logo" src="/static/img/logo/principia-invert.png"></a>
+          </div>
+          <div class="hide-on-med-and-up">
+            <a class="brand-logo left" href="/"><img class="nav-bar-principia-logo" src="/static/img/logo/principia-invert.png"></a>
+          </div>
           <ul class="right hide-on-small-only">
             <li>
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="simulatorDropdown">Simulator<i class="fa fa-caret-down right fa-size-small"></i></a>
@@ -36,7 +41,7 @@
               {{ if .IsLoggedIn }}
               <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="mobileDropdown">{{ .User.Email }}</a>
               {{ else }}
-              <a class="dropdown-button" href="#" data-beloworigin="true" data-activates="mobileDropdown">Menu</a>
+              <a class="dropdown-button pad-sides-big" href="#" data-beloworigin="true" data-activates="mobileDropdown">Navigation</a>
               {{ end }}
             </li>
           </ul>
@@ -45,27 +50,31 @@
 
       <ul id="myPrincipiaDropdown" class="dropdown-content" role="navigation">
         {{ if .IsLoggedIn }}
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyName }}">My Profile</a></li>
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyName }}/simulations">My Simulations</a></li>
-          <li class="principia-blue-navbar divider white-text"></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}">My Profile</a></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}/simulations">My Simulations</a></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}/interactions">My Interactions</a></li>
+          <li class="principia-navbar-color divider white-text"></li>
         {{ end }}
-        <li class="principia-blue-navbar"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="{{ .LoginUrl }}">{{ .LoginMessage }}</a></li>
       </ul>
 
       <ul id="simulatorDropdown" class="dropdown-content" role="navigation">
-        <li class="principia-blue-navbar"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
-        <li class="principia-blue-navbar"><a class="white-text" href="/simulator/browse">Browse Simulations</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/simulator/browse">Browse Simulations</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/help">Help!</a></li>
       </ul>
 
       <ul id="mobileDropdown" class="dropdown-content" role="navigation">
         {{ if .IsLoggedIn }}
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyName }}">My Profile</a></li>
-          <li class="principia-blue-navbar"><a class="white-text" href="/user/{{ .User.KeyName }}/simulations">My Simulations</a></li>
-          <li class="principia-blue-navbar divider white-text"></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}">My Profile</a></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}/simulations">My Simulations</a></li>
+          <li class="principia-navbar-color"><a class="white-text" href="/user/{{ .User.KeyName }}/interactions">My Interactions</a></li>
+          <li class="principia-navbar-color divider white-text"></li>
         {{ end }}
-        <li class="principia-blue-navbar"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
-        <li class="principia-blue-navbar"><a class="white-text" href="/simulator/browse">Browse Simulations</a></li>
-        <li class="principia-blue-navbar"><a class="white-text" href="{{ .Data.loginUrl }}">{{ .Data.loginMessage }}</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/simulator/kinematics">Kinematics</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/simulator/browse">Browse Simulations</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="/help">Help!</a></li>
+        <li class="principia-navbar-color"><a class="white-text" href="{{ .LoginUrl }}">{{ .LoginMessage }}</a></li>
       </ul>
     </header>
 
@@ -75,16 +84,16 @@
       {{ template "content" . }}
     </main>
 
-    <footer class="page-footer transparent">
+    <footer class="page-footer transparent principia-footer-color">
       <div class="container">
         <div class="row">
-          <span class="pad-sides"><a class="white-text" href="/about">About</a></span>
-          <span class="pad-sides"><a class="white-text" href="/faqs">FAQs</a></span>
-          <span class="pad-sides"><a class="white-text" href="/feedback">Feedback</a></span>
-          <span class="pad-sides"><a class="white-text" href="http://github.com/samolds/principia"><i class="fa fa-github-square"></i></a></span>
-          <span class="pad-sides"><a class="white-text" href="http://instagram.com/principiaxyz"><i class="fa fa-instagram"></i></a></span>
-          <span class="pad-sides"><a class="white-text" href="http://twitter.com/principiaxyz"><i class="fa fa-twitter-square"></i></a></span>
-          <span class="white-text right hide-on-small-only"><i class="fa fa-copyright"></i> 2015 - 2016 Principia</span>
+          <span class="pad-sides"><a href="/about">About</a></span>
+          <span class="pad-sides"><a href="/faqs">FAQs</a></span>
+          <span class="pad-sides"><a href="/feedback">Feedback</a></span>
+          <span class="pad-sides"><a href="http://github.com/samolds/principia"><i class="fa fa-github-square"></i></a></span>
+          <span class="pad-sides"><a href="http://instagram.com/principiaxyz"><i class="fa fa-instagram"></i></a></span>
+          <span class="pad-sides"><a href="http://twitter.com/principiaxyz"><i class="fa fa-twitter-square"></i></a></span>
+          <span class="right hide-on-small-only"><i class="fa fa-copyright"></i> 2015 - 2016 Principia</span>
         </div>
       </div>
     </footer>

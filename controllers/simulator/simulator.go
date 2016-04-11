@@ -14,14 +14,10 @@ import (
 
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-Name").Limit(20)
-
-	var simulations []models.Simulation
-	_, err := q.GetAll(ctx, &simulations)
-
+	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
-		controllers.ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		controllers.ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -32,7 +28,7 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	controllers.BaseHandler(w, r, "simulator/browse", data)
 }
 
-// GET returns a new simulation which the current user is made owner of (if logged in)
+// GET returns an empty simulation object
 // POST saves the simulation and redirects to simulator/{simulationID}
 func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, template string) {
 	ctx := appengine.NewContext(r)
@@ -43,7 +39,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		user, err := utils.GetCurrentUser(ctx)
 
 		if err != nil {
-			controllers.ErrorHandler(w, "Couldn't get current user: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Couldn't get current user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -56,6 +52,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 			Name:          r.FormValue("Name"),
 			Simulator:     r.FormValue("Contents"),
 			Type:          simType,
+			Description:   r.FormValue("Description"),
 			CreationDate:  creationTime,
 			UpdatedDate:   creationTime,
 			IsPrivate:     utils.StringToBool(r.FormValue("IsPrivate")),
@@ -66,7 +63,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		key, err = datastore.Put(ctx, key, &simulation)
 
 		if err != nil {
-			controllers.ErrorHandler(w, "Could not save new simulation: "+err.Error(), http.StatusInternalServerError)
+			controllers.ErrorHandler(w, r, "Could not save new simulation: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -80,6 +77,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 	// If it's a new simulation, you're the owner
 	data := map[string]interface{}{
 		"simulation": simulation,
+		"new":        true,
 		"isOwner":    true,
 	}
 
@@ -97,26 +95,22 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 
 	var simulation models.Simulation
 	err := datastore.Get(ctx, simulationKey, &simulation)
-
 	if err != nil {
-		controllers.ErrorHandler(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		controllers.ErrorHandler(w, r, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		return
+	}
+
+	simulationData, err := utils.BuildSimulationData(ctx, simulation, simulationKey)
+	if err != nil {
+		controllers.ErrorHandler(w, r, "Simulation was not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
 	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
-	authorKey := datastore.NewKey(ctx, "User", simulation.AuthorKeyName, 0, nil)
-
-	var author models.User
-	err = datastore.Get(ctx, authorKey, &author)
-
-	authorDisplay := author.Email
-	if author.DisplayName != "" {
-		authorDisplay = author.DisplayName
-	}
-
 	if r.Method == "POST" && isOwner {
 		simulation.Name = r.FormValue("Name")
 		simulation.Simulator = r.FormValue("Contents")
+		simulation.Description = r.FormValue("Description")
 		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
 		simulation.UpdatedDate = time.Now()
 
@@ -148,10 +142,9 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	}
 
 	data := map[string]interface{}{
-		"simulation":              simulation,
-		"simulationAuthor":        author,
-		"simulationAuthorDisplay": authorDisplay,
-		"isOwner":                 isOwner,
+		"simulation": simulationData,
+		"new":        false,
+		"isOwner":    isOwner,
 	}
 
 	controllers.BaseHandler(w, r, template, data)

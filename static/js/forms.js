@@ -3,6 +3,11 @@ function successToast(msg) {
   Materialize.toast($toastContent, 2000);
 }
 
+function notificationToast(header, msg) {
+  var $toastContent = $('<span class="amber lighten-5 black-text pad"><h5><i class="fa fa-bullhorn"></i> ' + header + '</h5><p>' + msg + '</p></span>');
+  Materialize.toast($toastContent, 8000);
+}
+
 function failToast(msg) {
   var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><p>' + msg + '</p></span>');
   Materialize.toast($toastContent, 8000);
@@ -49,7 +54,7 @@ function post(path, parameters) {
 // for a page redirect to simulator/{simulatorId}
 function saveSimulation(){
 
-    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson(), IsPrivate: $("#simulation-is-private").is(":checked") };
+    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson(), Description: $("#simulation-description").val(), IsPrivate: $("#simulation-is-private").is(":checked") };
 
     // Is this a new simulation that we're trying to save?
     if(isNewSim()){
@@ -153,9 +158,10 @@ function refreshCommentsList() {
       for (var i = 0; i < json.length; i++) {
         var comment = json[i];
         result +=  "<div class='row'>";
-        result +=   "<div class='col s2'>";
+        result +=   "<div class='col s2'><a href='/user/" + comment.AuthorID + "'>";
         result +=    "<i class='medium fa fa-user'></i>";
-        result +=  "</div>";
+        result +=    "<small>" + comment.AuthorName + "</small>";
+        result +=  "</a></div>";
         result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
         result +=    "<div class='row'>";
         result +=      "<div class='all-point'></div>";

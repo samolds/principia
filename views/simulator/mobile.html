@@ -1,0 +1,358 @@
+{{ define "title" }} - Simulator{{ end }}
+
+{{ define "scripts" }}
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
+<script src="/static/js/lib/eq-solver.js"></script>
+<script src="/static/js/simulator/globals.js"></script>
+<script src="/static/js/simulator/simulation.js"></script>
+<script src="/static/js/simulator/ui-controller.js"></script>
+<script src="/static/js/simulator/rendering.js"></script>
+<script src="/static/js/simulator/utility.js"></script>
+<script src="/static/js/simulator/components/origin.js"></script>
+<script src="/static/js/simulator/components/mass.js"></script>
+<script src="/static/js/simulator/components/ramp.js"></script>
+<script src="/static/js/simulator/components/spring.js"></script>
+<script src="/static/js/simulator/components/pulley.js"></script>
+<script src="/static/js/simulator/modules/kinematics.js"></script>
+<script src="/static/js/lib/canvasjs.min.js"></script>
+
+<script>
+  var GlobalKeyNames = {
+    User: {{ .User.KeyName }},
+    Simulation: {{ .Data.simulation.KeyName }},
+  }
+  Kinematics1D.initModule({{ .Data.simulation.Simulator }});
+</script>
+
+<script src="/static/js/simulator/base.js"></script>
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/view.js"></script>
+
+<script>notificationToast('Notice', 'Functionality is limited in mobile browsers. <i class="fa fa-frown-o"></i>');</script>
+{{ end }}
+
+{{ define "content" }}
+<!-- Simulator Name and Author -->
+<div class="container">
+  <div class="row">
+    <div class="col s6">
+      <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
+      <small>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></small>
+    </div>
+    <div class="col s1 right pad-sides">
+      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        {{ if .IsLoggedIn }}
+          <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+        {{ else }}
+          <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+        {{ end }}
+      </h4>
+    </div>
+  </div>
+</div>
+
+<!-- Simulator -->
+<div style="height: 500px;" id="viewport" class="white card"></div>
+
+<!-- Play button and slider -->
+<div class="container">
+  <div class="row">
+    <div class="col s1">
+      <div class="help-tooltip-container">
+        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+        </button>
+      </div>
+    </div>
+    <div class="col s11">
+      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+    </div>
+  </div>
+</div>
+
+<!-- Comments -->
+<div class="container" id="comments-frag">
+  {{ template "commentsFrag" . }}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Definitely bad to keep
+     This is all completely unnecessary for this page... EXCEPT that all of the simulation
+     code breaks without the expected structure of divs and ids found below :'(
+     So none of this is here to add functionality to the page...
+-->
+<!-- Simulator JS assumes these IDs exist --><div class="hide">
+<!-- Simulator JS assumes these IDs exist -->  <!---------- Simulator and property window  ---------->
+<!-- Simulator JS assumes these IDs exist -->  <div id="toolbox-tab"></div>
+<!-- Simulator JS assumes these IDs exist -->  <div id="elementprops-tab"></div>
+<!-- Simulator JS assumes these IDs exist -->  <div id="globalprops-tab"></div>
+<!-- Simulator JS assumes these IDs exist -->  <div id="overview-tab"></div>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->  <!-- Properties window for each element -->
+<!-- Simulator JS assumes these IDs exist -->  <div id="elementprops">
+<!-- Simulator JS assumes these IDs exist -->    <div class="center-align">
+<!-- Simulator JS assumes these IDs exist -->      <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->      <!-- Properties that apply to all components -->
+<!-- Simulator JS assumes these IDs exist -->      <ul class="property-window-list hide" id="general-properties">
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="text" id="general-properties-nickname" placeholder=""></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="general-properties-nickname" class="active">Nickname</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()">Remove <i class="fa fa-trash"></i></a>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="posx">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="general-properties-position-x" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="posy">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="general-properties-position-y" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->      </ul>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->      <!-- Properties that apply to point mass components -->
+<!-- Simulator JS assumes these IDs exist -->      <ul class="property-window-list hide" id="pointmass-properties">
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="velx">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="pointmass-properties-velocity-x" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="vely">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="pointmass-properties-velocity-y" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="accx">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="pointmass-properties-acceleration-x" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Acceleration</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item" principia-property="accy">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="pointmass-properties-acceleration-y" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Acceleration</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>            
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="pointmass-properties-mass" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-mass" class="active">Mass</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="text" id="pointmass-properties-size" placeholder=""></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-size" class="active">Size</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <select id="pointmass-properties-img" class="browser-default">
+<!-- Simulator JS assumes these IDs exist -->              <option disabled>Display As:</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="0" selected="selected">Mass</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="1">Weight</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="2">Car</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="3">Sail Boat</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="4">Speed Boat</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="5">Mascot</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="6">Dart</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="7">Jogger</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="8">Rocket</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="9">Dalton</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="10">Danny</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="11">Matthew</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="12">Sam</option>
+<!-- Simulator JS assumes these IDs exist -->              <option value="13">Logo</option>
+<!-- Simulator JS assumes these IDs exist -->            </select>
+<!-- Simulator JS assumes these IDs exist -->            <label for="pointmass-properties-img" class="active">Display As</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <span>Vectors</span>
+<!-- Simulator JS assumes these IDs exist -->            <div class="switch">
+<!-- Simulator JS assumes these IDs exist -->              <label>
+<!-- Simulator JS assumes these IDs exist -->                Off
+<!-- Simulator JS assumes these IDs exist -->                <input class="vector-toggle" id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
+<!-- Simulator JS assumes these IDs exist -->                <span class="lever"></span>
+<!-- Simulator JS assumes these IDs exist -->                On
+<!-- Simulator JS assumes these IDs exist -->              </label>
+<!-- Simulator JS assumes these IDs exist -->            </div>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <span>Tip-to-Tail Vectors</span>
+<!-- Simulator JS assumes these IDs exist -->            <div class="switch">
+<!-- Simulator JS assumes these IDs exist -->              <label>
+<!-- Simulator JS assumes these IDs exist -->                Off
+<!-- Simulator JS assumes these IDs exist -->                <input class="ttt-toggle" id="pointmass-properties-vector-ttt" type="checkbox"></input>
+<!-- Simulator JS assumes these IDs exist -->                <span class="lever"></span>
+<!-- Simulator JS assumes these IDs exist -->                On
+<!-- Simulator JS assumes these IDs exist -->              </label>
+<!-- Simulator JS assumes these IDs exist -->            </div>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <span>PVA Graph</span>
+<!-- Simulator JS assumes these IDs exist -->            <div class="switch">
+<!-- Simulator JS assumes these IDs exist -->              <label>
+<!-- Simulator JS assumes these IDs exist -->                Off
+<!-- Simulator JS assumes these IDs exist -->                <input class="pvagraph-toggle" id="pointmass-properties-pvagraph" type="checkbox"></input>
+<!-- Simulator JS assumes these IDs exist -->                <span class="lever"></span>
+<!-- Simulator JS assumes these IDs exist -->                On
+<!-- Simulator JS assumes these IDs exist -->              </label>
+<!-- Simulator JS assumes these IDs exist -->            </div>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->      </ul>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->      <!-- Ramp properties! -->
+<!-- Simulator JS assumes these IDs exist -->      <ul class="property-window-list hide" id="ramp-properties">
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="ramp-properties-width" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="ramp-properties-width" class="active">Width</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="ramp-properties-height" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="ramp-properties-height" class="active">Height</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="ramp-properties-angle" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <input type="number" id="ramp-properties-friction" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->            <label for="ramp-properties-friction" class="active">Friction</label>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <a class="waves-effect waves-light btn" id="ramp-properties-flip-horz">Flip Horz.</a>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>          
+<!-- Simulator JS assumes these IDs exist -->        <li class="property-item">
+<!-- Simulator JS assumes these IDs exist -->          <div class="input-field">
+<!-- Simulator JS assumes these IDs exist -->            <a class="waves-effect waves-light btn" id="ramp-properties-flip-vert">Flip Vert.</a>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </li>
+<!-- Simulator JS assumes these IDs exist -->      </ul>
+<!-- Simulator JS assumes these IDs exist -->    </div>
+<!-- Simulator JS assumes these IDs exist -->  </div>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->  <!-- Hideable global properties window for each element -->
+<!-- Simulator JS assumes these IDs exist -->  <div id="globalprops">
+<!-- Simulator JS assumes these IDs exist -->    <div class="center-align">
+<!-- Simulator JS assumes these IDs exist -->      <h5 class="pad-sides">Global Properties</h5>
+<!-- Simulator JS assumes these IDs exist -->      <div class="row">
+<!-- Simulator JS assumes these IDs exist -->        <div class="input-field col s6">
+<!-- Simulator JS assumes these IDs exist -->          <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->          <label for="glob-xaccel" class="active">Horizontal Acceleration</label>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->        <div class="input-field col s6">
+<!-- Simulator JS assumes these IDs exist -->          <input type="number" id="glob-yaccel" placeholder="" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->          <label for="glob-yaccel" class="active">Vertical Acceleration</label>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->      </div>
+<!-- Simulator JS assumes these IDs exist -->      <div class="row">
+<!-- Simulator JS assumes these IDs exist -->        <div class="input-field col s6">
+<!-- Simulator JS assumes these IDs exist -->          <select id="coord-sys" class="browser-default">
+<!-- Simulator JS assumes these IDs exist -->            <option disabled>Coordinate System:</option>
+<!-- Simulator JS assumes these IDs exist -->            <option value="cartesian" selected="selected">Cartesian</option>
+<!-- Simulator JS assumes these IDs exist -->            <option value="polar" >Polar</option>
+<!-- Simulator JS assumes these IDs exist -->          </select>
+<!-- Simulator JS assumes these IDs exist -->          <label for="coord-sys" class="active">Coordinate System</label>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->      </div>
+<!-- Simulator JS assumes these IDs exist -->      <div class="row">
+<!-- Simulator JS assumes these IDs exist -->        <div class="col s5">
+<!-- Simulator JS assumes these IDs exist -->          <div class="toolbox-item-container card" title="Origin">
+<!-- Simulator JS assumes these IDs exist -->            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+<!-- Simulator JS assumes these IDs exist -->            <div class="valign-wrapper">
+<!-- Simulator JS assumes these IDs exist -->              <img class="toolbox-item ui-draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
+<!-- Simulator JS assumes these IDs exist -->            </div>
+<!-- Simulator JS assumes these IDs exist -->            <div class="card-reveal">
+<!-- Simulator JS assumes these IDs exist -->              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+<!-- Simulator JS assumes these IDs exist -->              <p>Change the origin of the simulation!</p>
+<!-- Simulator JS assumes these IDs exist -->            </div>
+<!-- Simulator JS assumes these IDs exist -->          </div>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->        <div class="input-field col s3">
+<!-- Simulator JS assumes these IDs exist -->          <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->          <label for="glob-xorigin" class="active">Origin X</label>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->        <div class="input-field col s3">
+<!-- Simulator JS assumes these IDs exist -->          <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
+<!-- Simulator JS assumes these IDs exist -->          <label for="glob-yorigin" class="active">Origin Y</label>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->      </div>
+<!-- Simulator JS assumes these IDs exist -->    </div>
+<!-- Simulator JS assumes these IDs exist -->  </div>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->  <!-- Overview with a dynamically populated list of all active elements -->
+<!-- Simulator JS assumes these IDs exist -->  <div id="overview">
+<!-- Simulator JS assumes these IDs exist -->    <div class="center-align">
+<!-- Simulator JS assumes these IDs exist -->      <h5 class="pad-sides">Scene Overview</h5>
+<!-- Simulator JS assumes these IDs exist -->      <div class="row" >
+<!-- Simulator JS assumes these IDs exist -->        <ul id="overview-list"></ul>
+<!-- Simulator JS assumes these IDs exist -->      </div>
+<!-- Simulator JS assumes these IDs exist -->    </div>
+<!-- Simulator JS assumes these IDs exist -->  </div>
+<!-- Simulator JS assumes these IDs exist -->  <!---------- End Simulator and property window  ---------->
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->  <div id="keyframelist">
+<!-- Simulator JS assumes these IDs exist -->    <ul id="keyframe-list">
+<!-- Simulator JS assumes these IDs exist -->      <li>
+<!-- Simulator JS assumes these IDs exist -->        <div class="keyframe-tile">
+<!-- Simulator JS assumes these IDs exist -->          <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
+<!-- Simulator JS assumes these IDs exist -->        </div>
+<!-- Simulator JS assumes these IDs exist -->      </li>
+<!-- Simulator JS assumes these IDs exist -->    </ul>
+<!-- Simulator JS assumes these IDs exist -->  </div>
+<!-- Simulator JS assumes these IDs exist -->
+<!-- Simulator JS assumes these IDs exist -->  <!-- Graphing acceleration velocity and position -->
+<!-- Simulator JS assumes these IDs exist -->  <div id="pvaGraphContainer" class="col s12">
+<!-- Simulator JS assumes these IDs exist -->    <div id="positionGraph"></div>
+<!-- Simulator JS assumes these IDs exist -->    <div id="vaGraph"></div>
+<!-- Simulator JS assumes these IDs exist -->  </div>
+<!-- Simulator JS assumes these IDs exist --></div>
+{{ end }}

@@ -2,71 +2,108 @@
 
 {{ define "scripts" }}
 <script src="/static/js/forms.js"></script>
-<script type="text/javascript">
-  // $( document ).ready(function() {
-  //     $('#profile-welcome-modal').openModal();
-  // });
-</script>
 {{ end }}
 
 {{ define "content" }}
-<div class="container narrow">
-  <div class="card-panel">
-
-    <div class="row">
-      <div class="col s10">
-        <h3 class="page-header">My Profile</h3>
-      </div>
-      <div class="col s2 right pad-sides" style="margin: 1.46rem 0 1.168rem 0">
-        <a class="waves-effect waves-light btn-floating blue darken-1 page-header" id="profile-save-button" onclick="saveUser()"><i class="fa fa-floppy-o"></i></a>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col s6">
-        <div class="input-field col s12">
-          <label for="user-email" id="user-email-label">User Email</label>
-          <input disabled value="{{ .User.Email }}" id="user-email" type="text" class="validate">
-        </div>
-        <div class="input-field col s12">
-          <label for="user-display-name" id="user-email-label">Display name</label>
-          <input id="user-display-name" value="{{ .User.DisplayName }}" type="text" class="validate">
-        </div>
-      </div>
-      <div class="input-field col s6">
-        <div class="file-field">
-          <div id="profile-pic-container" class="valign-wrapper">
-            <div class="valign center-align" style="width: 100%;">
-              <i class="fa fa-user large"></i>
-            </div>
-          </div>
-          <!--
-            <input type='file' onchange="readURL(this);" />
-            <div class="file-path-wrapper">
-              <input class="file-path validate" type="text" placeholder="Upload An Image">
-            </div>
-          -->
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <textarea id="user-interests" class="materialize-textarea" length="120">{{ .User.Interests }}</textarea>
-        <label for="user-interests">Areas Of Interest:</label>
-      </div>
-    </div>
-  </div>
+<div class="container pad-top pad-bottom">
+  {{ if .Data.userIsOwner }}
+    <h3 class="page-header center-align">My Profile</h3>
+  {{ else if .Data.user.DisplayName }}
+    <h3 class="page-header center-align"><span class="user-display-name">{{ .Data.user.DisplayName }}</span>'s Profile</h3>
+  {{ else }}
+    <h3 class="page-header center-align"><span class="user-display-name">Anonymous</span>' Profile</h3>
+  {{ end }}
 </div>
 
-<!-- Modal Structure -->
-<!-- <div id="profile-welcome-modal" class="modal modal-fixed-footer">
-  <div class="modal-content">
-    <h4>Hello There</h4>
-    <p>Seeing as how this is your first time logging in, why don't you take a second and tell us a little bit more about yourself.</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Sounds Good!</a>
-  </div>
-</div> -->
+<div class="container">
+  <div class="row">
+    <div class="col s6">
+      <div class="card-panel">
+        {{ if .Data.userIsOwner }}
+        <div class="input-field">
+          <label for="user-display-name" id="user-display-label">Display Name</label>
+          <input id="user-display-name" value="{{ .Data.user.DisplayName }}" type="text" class="validate">
+        </div>
+        <div>
+          <label>Email</label>
+          <p class="pad-sides">{{ .Data.user.Email }}</p>
+        </div>
+        {{ else }}
+        <div>
+          <label>Display Name</label>
+          <p class="pad-sides">{{ .Data.user.DisplayName }}</p>
+        </div>
+        {{ end }}
+        <div>
+          <label>Joined</label>
+          <p class="pad-sides">{{ .Data.userJoinDate }}</p>
+        </div>
+        <div>
+          <label>Total Favorites Received</label>
+          <p class="pad-sides">{{ .Data.totalFavoritesReceived }}</p>
+        </div>
+      </div>
+    </div>
 
+    <div class="col s6">
+      <div class="card-panel">
+        <div class="file-field">
+          <div id="profile-pic-container" class="valign-wrapper dark-accent-gradient-1">
+            <div class="valign center-align" style="width: 100%;">
+              <i class="white-text fa fa-user large"></i>
+            </div>
+          </div>
+          {{ if .Data.userIsOwner }}
+          <input type='file' onchange="readURL(this);" />
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="Upload An Image">
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel">
+        {{ if .Data.userIsOwner }}
+        <div class="input-field">
+          <label for="user-interests">Areas Of Interest:</label>
+          <textarea id="user-interests" class="materialize-textarea" length="120">{{ .Data.user.Interests }}</textarea>
+        </div>
+        {{ else }}
+        <div>
+          <label>Areas Of Interest:</label>
+          <p class="pad-sides">{{ .Data.user.Interests }}</p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  {{ if .Data.userIsOwner }}
+  <div class="row">
+    <div class="center-align">
+      <a class="waves-effect waves-light btn-large blue darken-1" id="profile-save-button" onclick="saveUser()"><i class="fa fa-floppy-o"></i> Update!</a>
+    </div>
+  </div>
+  {{ end }}
+</div>
+
+{{ if not .Data.userIsOwner }}
+  <div class="container pad-top pad-bottom">
+    {{ if .Data.user.DisplayName }}
+      <h4 class="page-header center-align">Simulations Created by <span class="user-display-name">{{ .Data.user.DisplayName }}</span></h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of <span class="user-display-name">{{ .Data.user.DisplayName }}</span>'s Simulations</a></h6>
+    {{ else }}
+      <h4 class="page-header center-align">Simulations Created by <span class="user-display-name">Anonymous</span></h4>
+      <h6 class="center-align"><a href="/user/{{ .Data.user.KeyName }}/simulations">More of <span class="user-display-name">Anonymous</span>' Simulations</a></h6>
+    {{ end }}
+  </div>
+
+  {{ template "simulationsListFrag" . }}
+{{ end }}
+
+<div class="pad-bottom"></div>
 {{ end }}

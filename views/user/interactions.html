@@ -1,0 +1,56 @@
+{{ define "title" }} - User Interactions{{ end }}
+
+{{ define "content" }}
+  {{ if .Data.userIsOwner }}
+    <div class="container pad-top pad-bottom">
+      <div class="center-align">
+        <h3 class="page-header">My Favorited Simulations</h3>
+      </div>
+      <div class="center-align">
+        By Creation Data
+      </div>
+    </div>
+    {{ template "simulationsListFrag" . }}
+    <div class="pad-bottom"></div>
+
+    <div class="container pad-top pad-bottom">
+      <div class="center-align">
+        <h3 class="page-header">My Comments</h3>
+      </div>
+      <div class="center-align">
+        By Creation Data
+      </div>
+    </div>
+
+    {{ if .Data.comments }}
+    <div class="container narrow">
+      <div class="center-align">
+        <ul>
+        {{ range $comment := .Data.comments }}
+          <li class="card-panel left-align">
+            <div class="row">
+              <div class="col s9">
+                <p>{{ $comment.Contents }}</p>
+              </div>
+              <div class="col s3">
+                <p>
+                  <a href="/simulator/{{ $comment.SimulationType }}/{{ $comment.SimulationID }}">{{ $comment.SimulationName }}</a>
+                </p>
+              </div>
+            </div>
+          </li>
+        {{ end }}
+        </ul>
+      </div>
+    </div>
+    {{ end }}
+
+    <div class="pad-bottom"></div>
+  {{ else }}
+    <div class="container pad-top pad-bottom">
+      <div class="center-align">
+        <h3 class="page-header">Unauthorized Access</h3>
+      </div>
+    </div>
+  {{ end }}
+{{ end }}
