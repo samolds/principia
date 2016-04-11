@@ -117,11 +117,7 @@ function Kinematics1DModule() {
           setNoSelect(true);
           var index = bIndex(data.body);          
           var canon = canonicalTransform(data);
-          
-          console.log(data.x + "," + data.y);
-          console.log(canon);
-          console.log(pixelTransform(canon.x, "x") + "," + pixelTransform(canon.y, "y"));
-          
+
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
           
@@ -169,7 +165,7 @@ function Kinematics1DModule() {
       });
 
       world.on('interact:poke', function(data){    
-        console.log(data);
+        toggleMenuOff();
         Globals.lastPos.x = data.x;
         Globals.lastPos.y = data.y;
         $('body').css({cursor: "move"});

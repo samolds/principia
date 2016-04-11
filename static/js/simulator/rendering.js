@@ -342,6 +342,98 @@ function drawVectors(){
   } 
 }
 
+function drawFBD(){
+
+  var selectedBody = Globals.selectedBody;
+
+  if(Globals.fbdDown && Globals.running) {
+    Globals.fbdWasRunning = true;
+    toggleSimulator();
+  }
+
+  if(!Globals.fbdDown || !selectedBody) {
+    if(Globals.fbdWasRunning){
+      toggleSimulator();
+      Globals.fbdWasRunning = false;
+    }
+
+    $("#help-tooltip-fbd").hide();
+    drawMaster();
+    return;
+  }
+
+  if(bodyType(selectedBody) !== "kinematics1D-mass") {
+    return;
+  }
+
+  // Called to remove vectors from the selected body while displaying force vectors
+  drawMaster();
+
+  var canvas = Globals.world.renderer();
+  var context = canvas.ctx;
+  var bodySize = body2Constant(selectedBody).size;
+  var fbdHelp = $("#help-tooltip-fbd");
+
+  // TODO: Make force arrows the same color as the label in help box
+  context.font = 'bold 10pt Calibri';
+
+  var mass = body2Constant(selectedBody).mass;
+
+  var xInternalForce = selectedBody.state.acc.x * mass;
+  var yInternalForce = selectedBody.state.acc.y * mass;
+
+  var xGlobalForce = Globals.gravity[0] * mass;
+  var yGlobalForce = Globals.gravity[1] * mass;
+
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
+  totalInternalForce = totalInternalForce.toFixed(2);
+  totalGlobalForce = totalGlobalForce.toFixed(2);
+
+  // Limit length of vectors?
+  xInternalForce = clamp(-200, xInternalForce * 10, 200);
+  yInternalForce = clamp(-200, yInternalForce * 10, 200);
+  xGlobalForce = clamp(-200, xGlobalForce * 10, 200);
+  yGlobalForce = clamp(-200, yGlobalForce * 10, 200);
+
+  // Internal Force
+  drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
+
+  // Global Force
+  drawTipToTail(xGlobalForce, yGlobalForce, 'blue', 'blue', 'blue', false, selectedBody);
+
+  // TODO:
+  // Spring Force
+  // Tension Force
+  // Force Of Friction
+  // Normal Force
+  // Normal force on ramp/surface is function of acceleration and the angle of surface
+  // Make selected body fire an event upon collision?
+  // How to tell which body has been collided with...
+  
+  // Position the FBD popup window
+  fbdHelp.html("<p style='color:grey'>" +
+                  "Internal Force: " + totalInternalForce +
+               "</p>" +
+               "<p style='color:blue'>" +
+                  "Global Force: " + totalGlobalForce +
+              "</p>");
+
+  var topPos = selectedBody.state.pos.y + bodySize;
+  var leftPos = selectedBody.state.pos.x + bodySize;
+
+  // Body is too far right
+  if(selectedBody.state.pos.x + 80 > canvas.width) {
+    leftPos -= (bodySize*2 + 50);
+  }
+  if(selectedBody.state.pos.y + 80 > canvas.height) { // Body is off the bottom
+    topPos -= (bodySize*2 + 50);
+  }
+
+  fbdHelp.css({top: topPos, left: leftPos});
+  fbdHelp.show();
+}
+
 // Draw a vector for the specified body, scaled using the provided arguments
 function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   var tipToTail = (body2Constant(body).vectors_ttt === true);
@@ -360,8 +452,7 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   ctx.lineWidth = 3;
   
   if(!tipToTail)
-  {
-  
+  {  
   var x = body.state.pos.x + Globals.translation.x;
   var y = body.state.pos.y + Globals.translation.y;
   
@@ -414,59 +505,68 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   }
   
   if(tipToTail)
-  {    
-    
-    function getAngle(x, y){ var result = -1 * rad2deg(Math.atan2(y, x)); return (result < 0)? result + 360: result;}
-    
-    function getQuadrant(angle) { return (angle   >= 0 && angle <  90)? 1:
-                                         (angle  >= 90 && angle < 180)? 2:
-                                         (angle >= 180 && angle < 270)? 3:
-                                                                        4;
-    }
-    
-    //clr3 is mixed
-    function drawTipToTail(x, y, clr1, clr2, clr3, acc){      
-      var angle = getAngle(x, y);      
-      var quadrant = getQuadrant(angle);
-      var color = (quadrant == 1)? clr1: (quadrant == 3)? clr2: clr3;
-      var N  = magnitude(x, y) <= 20? 5: 15;      
-      var THETA = (quadrant == 1 || quadrant == 4)?
-                                                  deg2rad(45) - deg2rad(angle):
-                                                  deg2rad(45) + deg2rad(angle);
-      var dx = N * Math.cos(THETA);
-      var dy = N * Math.sin(THETA);
-    
-      if(quadrant == 1) { dx *= -1; }
-      if(quadrant == 2) { dx *= -1; dy *= -1; }
-      if(quadrant == 3) { dx *= -1; dy *= -1; }
-      if(quadrant == 4) { dx *= -1; } 
+  { 
 
-      var xOffset = body.state.pos.x + Globals.translation.x;
-      var yOffset = body.state.pos.y + Globals.translation.y;      
-      
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(xOffset,yOffset);
-      ctx.lineTo(xOffset + x, yOffset + y);
-      ctx.lineTo(xOffset + x + dx, yOffset + y - dy);
-      ctx.stroke();
-      
-      // Draw second tip to indicate acceleration
-      if(acc){
-        ctx.beginPath();
-        ctx.moveTo(xOffset + x*0.9, yOffset + y*0.9);
-        ctx.lineTo(xOffset + x*0.9 + dx, yOffset + y*0.9 - dy);
-        ctx.stroke();
-      }
-      
-      
-    }
-  
+    var xOffset = body.state.pos.x + Globals.translation.x;
+    var yOffset = body.state.pos.y + Globals.translation.y;   
+           
     if(vx_amt != 0 || vy_amt != 0)
-      drawTipToTail(vx_amt, vy_amt, '#00ff00', '#ff0000', 'yellow', false);
+      drawTipToTail(vx_amt, vy_amt, '#00ff00', '#ff0000', 'yellow', false, body);
     
     if(ax_amt != 0 || ay_amt != 0)
-      drawTipToTail(ax_amt, ay_amt, '#009900', '#990000', 'yellow', true);
+      drawTipToTail(ax_amt, ay_amt, '#009900', '#990000', 'yellow', true, body);    
+    
+      
+      
+    }
+
+}
+
+function getAngle(x, y){ var result = -1 * rad2deg(Math.atan2(y, x)); return (result < 0)? result + 360: result;}
+    
+function getQuadrant(angle) { 
+  return (angle   >= 0 && angle <  90)? 1:
+         (angle  >= 90 && angle < 180)? 2:
+         (angle >= 180 && angle < 270)? 3: 4;
+}
+
+
+function drawTipToTail(x, y, clr1, clr2, clr3, acc, body){
+  var canvas = Globals.world.renderer();
+  var ctx = canvas.ctx;
+  ctx.lineWidth = 3;
+
+  var angle = getAngle(x, y);      
+  var quadrant = getQuadrant(angle);
+  var color = (quadrant == 1)? clr1: (quadrant == 3)? clr2: clr3;
+  var N  = magnitude(x, y) <= 20? 5: 15;      
+  var THETA = (quadrant == 1 || quadrant == 4)?
+                                              deg2rad(45) - deg2rad(angle):
+                                              deg2rad(45) + deg2rad(angle);
+  var dx = N * Math.cos(THETA);
+  var dy = N * Math.sin(THETA);
+
+  if(quadrant == 1) { dx *= -1; }
+  if(quadrant == 2) { dx *= -1; dy *= -1; }
+  if(quadrant == 3) { dx *= -1; dy *= -1; }
+  if(quadrant == 4) { dx *= -1; } 
+
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  var bx = body.state.pos.x + Globals.translation.x;
+  var by = body.state.pos.y + Globals.translation.y;
+  
+  ctx.moveTo(bx , by);
+  ctx.lineTo(bx + x, by + y);
+  ctx.lineTo(bx + x + dx, by + y - dy);
+  ctx.stroke();
+  
+  // Draw second tip to indicate acceleration
+  if(acc){
+    ctx.beginPath();
+    ctx.moveTo(bx + x*0.9, by + y*0.9);
+    ctx.lineTo(bx + x*0.9 + dx, by + y*0.9 - dy);
+    ctx.stroke();
   }
 }
 
@@ -485,7 +585,11 @@ function postRender(isKeyframe){
   var originObject = Globals.originObject;
   
   drawLines();
-  drawVectors();
+
+  // Only draw vectors if we aren't currently looking at a FBD
+  if(!Globals.fbdDown || !selectedBody) {
+    drawVectors();
+  }
 
   if (selectedBody) {    
     var bodConstants = Globals.bodyConstants[bIndex(selectedBody)];
@@ -520,7 +624,7 @@ function postRender(isKeyframe){
   
   if(selectedBody)
     highlightSelection(selectedBody);
-  
+
   if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }
