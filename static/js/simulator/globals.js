@@ -59,7 +59,7 @@ var Globals = {
 
   // If a move event is fired after a grab event, raise flag to inform release event
   didMove: false,
-
+    
   // Currently selected body, false if none
   selectedBody: false,
 
@@ -106,6 +106,10 @@ var Globals = {
   // Flag for loading in progress
   loading: false,
   
+  // Scale factor in clicks (display only, the canvas should be zoomed in by 2^scale)
+  scale: 0,
+  scrollTime: Date.now(),
+  
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  
@@ -124,6 +128,10 @@ var Globals = {
   
   // Number of pixels within range for attaching objects (for springs or moving origin)
   delta: 50,
+  
+  // Minimum and maximum scale factor
+  minScale: -2,  
+  maxScale: 3,
   
   // Paths to images used for drawing point mass
   massImages: [
@@ -146,7 +154,13 @@ var Globals = {
 // Number of frames to attempt to simulate before declaring simulation failure
   maxFrames: 4000,
   
-  maxNumKeyframes: 5
+  maxNumKeyframes: 5,
+
+  // Panning around the canvas
+  lastPos: {x: 0, y: 0},
+  isPanning: false,
+  
+  translation: {x: 0, y: 0}, 
 };
 
 

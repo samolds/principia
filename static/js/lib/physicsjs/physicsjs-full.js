@@ -8442,7 +8442,7 @@ Physics.behavior('interactive', function( parent ){
                     for ( touchIndex = 0, l = e.changedTouches.length; touchIndex < l; touchIndex++) {
                         touch = e.changedTouches[touchIndex];
                         touchId = touch.identifier || touch.pointerId || "mouse";
-                        pos = { idx: touchId, x: touch.pageX - offset.left, y: touch.pageY - offset.top };
+                        pos = { idx: touchId, x: touch.pageX - offset.left - Globals.translation.x, y: touch.pageY - offset.top - Globals.translation.y };
                         
                         // Modified by MADADASA: Body must be visible to grab
                         body = self._world.findOne({ $at: new Physics.vector( pos ), $in: self.getTargets(), hidden:false });
@@ -8481,7 +8481,8 @@ Physics.behavior('interactive', function( parent ){
                             self._world.emit('interact:grab', pos);
 
                         } else {
-
+                            // MADADASA
+                            pos.x += Globals.translation.x; pos.y += Globals.translation.y;
                             self._world.emit('interact:poke', pos);
                         }
                     }
@@ -8513,7 +8514,7 @@ Physics.behavior('interactive', function( parent ){
 
                     for ( touchIndex = 0, l = e.changedTouches.length; touchIndex < l; touchIndex++) {
                         touch = e.changedTouches[touchIndex];
-                        touchId = touch.identifier || touch.pointerId || "mouse";
+                        touchId = touch.identifier || touch.pointerId || "mouse";                        
                         pos = { idx: touchId, x: touch.pageX - offset.left, y: touch.pageY - offset.top };
                         data = self.bodyData[touchId];
 
@@ -11001,8 +11002,9 @@ Physics.renderer('canvas', function( proto ){
                 ,ang
                 ,aabb
                 ;
-
-            offset = offset || this.options.offset;
+            // Modified by MADADASA
+            //offset = offset || this.options.offset;
+            offset = {x: Globals.translation.x, y: Globals.translation.y};
             ctx = ctx || this.ctx;
 
             // interpolate positions
