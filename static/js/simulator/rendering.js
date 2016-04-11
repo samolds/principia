@@ -372,13 +372,22 @@ function drawFBD(){
 
   var mass = body2Constant(selectedBody).mass;
 
-  var xInternalForce = selectedBody.state.acc.x * mass * 10;
-  var yInternalForce = selectedBody.state.acc.y * mass * 10;
+  var xInternalForce = selectedBody.state.acc.x * mass;
+  var yInternalForce = selectedBody.state.acc.y * mass;
 
-  var xGlobalForce = Globals.gravity[0] * mass * 10;
-  var yGlobalForce = Globals.gravity[1] * mass * 10;
+  var xGlobalForce = Globals.gravity[0] * mass;
+  var yGlobalForce = Globals.gravity[1] * mass;
 
-  // TODO: Limit length of vectors?
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
+  totalInternalForce = totalInternalForce.toFixed(2);
+  totalGlobalForce = totalGlobalForce.toFixed(2);
+
+  // Limit length of vectors?
+  xInternalForce = clamp(-200, xInternalForce * 10, 200);
+  yInternalForce = clamp(-200, yInternalForce * 10, 200);
+  xGlobalForce = clamp(-200, xGlobalForce * 10, 200);
+  yGlobalForce = clamp(-200, yGlobalForce * 10, 200);
 
   // Internal Force
   drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
@@ -394,13 +403,7 @@ function drawFBD(){
   // Normal force on ramp/surface is function of acceleration and the angle of surface
   // Make selected body fire an event upon collision?
   // How to tell which body has been collided with...
-
-  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
-  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
-
-  totalInternalForce = totalInternalForce.toFixed(2);
-  totalGlobalForce = totalGlobalForce.toFixed(2);
-
+  
   // Position the FBD popup window
   fbdHelp.html("<p style='color:grey'>" +
                   "Internal Force: " + totalInternalForce +
