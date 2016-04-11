@@ -61,8 +61,6 @@ function Kinematics1DModule() {
         data.x = canon.x;
         data.y = canon.y;
         
-        bodyConstants.push({ctype:data.type});
-        
         switch(data.type){
           case "kinematics1D-spring":         
             bodyConstants.push({ctype:data.type});

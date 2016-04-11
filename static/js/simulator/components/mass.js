@@ -26,8 +26,8 @@ function addMass(data, massType){
           x: pixelTransform(data.x, "x"),
           y: pixelTransform(data.y, "y"),
           restitution: 0.5,
-          width: size/2,
-          height: size/2,
+          width: size,
+          height: size,
           view: img,
           cof: 1.0,
           styles: {
