@@ -520,8 +520,16 @@ function updateSize(body, value){
 
   body.view.setAttribute("width", value * 2)
   body.view.setAttribute("height", value * 2);
-  body.radius = value;
-  body.geometry.radius = value;
+
+  if (body2Constant(body).massType === "square") {
+    body.width = value * 2;
+    body.height = value * 2;
+    body.geometry.width = value * 2;
+    body.geometry.height = value * 2;
+  } else { // if (body.massType === "round") {
+    body.radius = value;
+    body.geometry.radius = value;
+  }
 
   // Resimulate if there is only one keyframe
   if(Globals.numKeyframes == 1) attemptSimulation();
@@ -624,11 +632,19 @@ function onPropertyChanged(i, property, value, doTranslation){
     case 'accx': kState[i].acc.x = value; break;
     case 'accy': kState[i].acc.y = value; break;
     
+    // Surface-specific updates:
+    case 'surfaceWidth':
+    case 'surfaceHeight':
+    case 'surfaceFriction':
+      updateSurface(body, property, value);
+      break;
+
     // Ramp-specific updates:
-    case 'width':        
-    case 'height':        
-    case 'angle':    
-      updateRamp(body, property, value);        
+    case 'rampWidth':
+    case 'rampHeight':
+    case 'rampAngle':
+    case 'rampFriction':
+      updateRamp(body, property, value);
       break;
 
     // Default case:

@@ -57,7 +57,6 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
-        
         var canon = canonicalTransform(data);
         data.x = canon.x;
         data.y = canon.y;
@@ -66,16 +65,29 @@ function Kinematics1DModule() {
         
         switch(data.type){
           case "kinematics1D-spring":         
+            bodyConstants.push({ctype:data.type});
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
+          case "kinematics1D-squaremass":
+            data.massType = "square";
+          case "kinematics1D-roundmass":
+            if (data.massType === undefined)
+              data.massType = "round";
           case "kinematics1D-mass":
-            addMass(data);
+            bodyConstants.push({ctype:"kinematics1D-mass"});
+            addMass(data, data.massType);
             break;
+          case "kinematics1D-surface":
+            bodyConstants.push({ctype:data.type});
+            addSurface(data);
+            break
           case "kinematics1D-ramp":
+            bodyConstants.push({ctype:data.type});
             addRamp(data);
             break
           case "kinematics1D-pulley":
+            bodyConstants.push({ctype:data.type});
             addPulley(data);
             break;
           case "kinematics1D-origin":
@@ -332,6 +344,10 @@ function Kinematics1DModule() {
       var x = tempKF[0][i].pos._[0];
       var y = tempKF[0][i].pos._[1];
       var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
+
+      if (tempBC[i].massType !== undefined)
+        data.massType = tempBC[i].massType;
+
       if(type != "kinematics1D-spring-child")
         Globals.world.emit('addComponent', data);
       Globals.bodyConstants[i] = tempBC[i];
@@ -341,10 +357,15 @@ function Kinematics1DModule() {
       if (type == "kinematics1D-mass" || type == "kinematics1D-pulley") {
         updateImage(Globals.selectedBody, tempBC[i].img);
         updateSize(Globals.selectedBody, tempBC[i].size);
+      } else if (type == "kinematics1D-surface") {
+        setSurfaceWidth(Globals.selectedBody, tempBC[i].surfaceWidth);
+        setSurfaceHeight(Globals.selectedBody, tempBC[i].surfaceHeight);
+        setSurfaceFriction(Globals.selectedBody, tempBC[i].surfaceFriction);
       } else if (type == "kinematics1D-ramp") {
-        setRampWidth(Globals.selectedBody, tempBC[i].width, true);
-        setRampHeight(Globals.selectedBody, tempBC[i].height, true);
-        setRampAngle(Globals.selectedBody, tempBC[i].angle, true);
+        setRampWidth(Globals.selectedBody, tempBC[i].rampWidth, true);
+        setRampHeight(Globals.selectedBody, tempBC[i].rampHeight, true);
+        setRampAngle(Globals.selectedBody, tempBC[i].rampAngle);
+        setRampFriction(Globals.selectedBody, tempBC[i].rampFriction);
       }
       Globals.selectedBody = false;
     }

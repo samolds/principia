@@ -179,26 +179,50 @@ $(document).ready(function(){
   });
 
 
+  // Surface specific events
+  $('#surface-properties-width').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceWidth', $('#surface-properties-width').val());
+  });
+  $('#surface-properties-height').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceHeight', $('#surface-properties-height').val());
+  });
+  $('#surface-properties-friction').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceFriction', $('#surface-properties-friction').val());
+  });
+  $('#surface-properties-rotate').on("click", function(){
+    var w = body2Constant(Globals.selectedBody).surfaceWidth;
+    var h = body2Constant(Globals.selectedBody).surfaceHeight;
+    setSurfaceWidth(Globals.selectedBody, h);
+    setSurfaceHeight(Globals.selectedBody, w);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
+  });
+
+
   // Ramp specific events
   $('#ramp-properties-width').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'width', $('#ramp-properties-width').val()); 
+    updatePropertyRedraw(Globals.selectedBody, 'rampWidth', $('#ramp-properties-width').val());
   });
   $('#ramp-properties-height').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'height', $('#ramp-properties-height').val());
+    updatePropertyRedraw(Globals.selectedBody, 'rampHeight', $('#ramp-properties-height').val());
   });
   $('#ramp-properties-angle').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'angle', $('#ramp-properties-angle').val());
+    updatePropertyRedraw(Globals.selectedBody, 'rampAngle', $('#ramp-properties-angle').val());
+  });
+  $('#ramp-properties-friction').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'rampFriction', $('#ramp-properties-friction').val());
   });
   $('#ramp-properties-flip-horz').on("click", function(){
-    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).width, true);
+    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).rampWidth, true);
     if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
   });
   $('#ramp-properties-flip-vert').on("click", function(){
-    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).height, true);
+    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).rampHeight, true);
     if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
   });
+
 
   // enable modals
   $('.modal-trigger').leanModal();
