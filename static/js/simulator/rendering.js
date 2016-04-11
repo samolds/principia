@@ -419,9 +419,10 @@ function drawFBD(){
                   "Global Force: " + totalGlobalForce +
               "</p>");
 
-  var topPos = selectedBody.state.pos.y + bodySize;
-  var leftPos = selectedBody.state.pos.x + bodySize;
+  var topPos = selectedBody.state.pos.y + Globals.translation.y + bodySize;
+  var leftPos = selectedBody.state.pos.x + Globals.translation.x + bodySize;
 
+  /*
   // Body is too far right
   if(selectedBody.state.pos.x + 80 > canvas.width) {
     leftPos -= (bodySize*2 + 50);
@@ -429,6 +430,7 @@ function drawFBD(){
   if(selectedBody.state.pos.y + 80 > canvas.height) { // Body is off the bottom
     topPos -= (bodySize*2 + 50);
   }
+  */
 
   fbdHelp.css({top: topPos, left: leftPos});
   fbdHelp.show();
