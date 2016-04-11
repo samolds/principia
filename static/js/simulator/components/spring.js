@@ -10,13 +10,15 @@ function addSpring(data)
   var variableMap = Globals.variableMap;
   var bodyConstants = Globals.bodyConstants;
   
+  var radius = 6/getScaleFactor();
+  
   // Generate the primary component (equilibrium point) and its child (point stretched to)
   // Note that 'ghost' is a new treatment that ignores collisions
   var component = Physics.body('circle', {
               treatment:"ghost",
-              x: data.x,
-              y: data.y,           
-              radius: 6,
+              x: pixelTransform(data.x, "x"),
+              y: pixelTransform(data.y, "y"),
+              radius: radius,
               styles: {
                 fillStyle: '#000000',
               }
@@ -24,9 +26,9 @@ function addSpring(data)
             
   var componentChild = Physics.body('circle', {
               treatment:"ghost",
-              x: data.x+120,
-              y: data.y,             
-              radius: 6,                    
+              x: pixelTransform(data.x, "x")+120/getScaleFactor(),
+              y: pixelTransform(data.y, "y"),
+              radius: radius,
               styles: {
                 fillStyle: '#000000',
               }
@@ -37,7 +39,7 @@ function addSpring(data)
     addToVariableMap(
       {
         posx: data.x,
-        posy: swapYpos(data.y, false),
+        posy: data.y,
         k: 0.01
       }
     );
@@ -46,7 +48,7 @@ function addSpring(data)
     addToVariableMap(
       {
         posx: data.x+120, 
-        posy: swapYpos(data.y, false)
+        posy: data.y
       }
     );
   }
@@ -81,6 +83,7 @@ function applySpringForces(body) {
       var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
       var spring = Globals.world.getBodies()[spring_idx]; // The parent element represents the equilibrium point
       var properties = body2Constant(spring);
+      if(body2Constant(body).mass == 0) return a;
       
       // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m
       var origin = [spring.state.pos.x, spring.state.pos.y];     
