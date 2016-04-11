@@ -141,7 +141,7 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 
 	err = datastore.Get(ctx, commentKey.Parent(), &sim)
 	if err != nil {
-		return com, errors.New("uausdfhasdfla " + err.Error())
+		return com, err
 	}
 
 	// Get all of the display names for each simulation author

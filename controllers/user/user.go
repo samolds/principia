@@ -36,8 +36,7 @@ func SimulationsHandler(w http.ResponseWriter, r *http.Request) {
 	q = q.Order("-CreationDate").Limit(50)
 
 	// Get the simulations for the page user from the query
-	var simulations []models.SimulationData
-	simulations, err = utils.GetSimulationDataSlice(r, q)
+	simulations, err := utils.GetSimulationDataSlice(r, q)
 	if err != nil {
 		controllers.ErrorHandler(w, r, "Could not load user simulations: "+err.Error(), http.StatusInternalServerError)
 		return
