@@ -30,7 +30,7 @@ function addRamp(data){
   if(!Globals.loading){
     addToVariableMap({
         posx: data.x, 
-        posy: swapYpos(data.y, false),
+        posy: data.y,
         rampWidth: 100.0,
         rampHeight: -60.0,
         rampAngle: -30.964,

@@ -12,6 +12,6 @@ type Rating struct {
 	CreationDate  time.Time
 	AuthorKeyName string // Used to get Author Key
 
-	// AncestorKey = Thing that was rated
+	// AncestorKey (key.Parent()) = Thing that was rated
 	// Using AncecstorKey for strong consistency
 }

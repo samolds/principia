@@ -171,3 +171,29 @@ function swapYpos(value, invert){
 
 // Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
 function getKF() { return (Globals.keyframe !== false)? Globals.keyframe: lastKF(); }
+
+function getScaleFactor() { return Math.pow(2, Globals.scale * -1); }
+
+/*  Uses given data (assumed pixel coordinates) to return result contain PhysicsJS canonical coordinates */
+function canonicalTransform(data) { 
+  var result = {};
+  result.x = data.x * getScaleFactor() - Globals.translation.x * getScaleFactor();
+  result.y = swapYpos(data.y, false) * getScaleFactor() + Globals.translation.y * getScaleFactor();
+  return result;
+}
+
+/* Returns a value obtained by transforming PhysicsJS canonical coordinate to pixel coordinate (target) */
+function pixelTransform(canon, coordinate, doTranslation){
+  
+  var scale = getScaleFactor();
+  var translate = doTranslation? {x:Globals.translation.x, y:Globals.translation.y}: {x:0, y:0};
+  return (coordinate == "x")? canon/scale - translate.x: swapYpos(canon/scale, false) - translate.y;
+}
+
+/* Returns the pixel coordinate of the specified body (current position) */
+function pixelCoordinate(body){
+  var result = {};
+  result.x = body.state.pos.x + Globals.translation.x;
+  result.y = body.state.pos.y - Globals.translation.y;
+  return result;
+}

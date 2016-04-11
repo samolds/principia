@@ -14,19 +14,20 @@ function addMass(data, massType){
   
   // Default image: use pointmass image. Can be changed from select element.
   var img = document.createElement("img");
-  img.setAttribute("width", "50");
-  img.setAttribute("height", "50");
+  var size = 50/getScaleFactor();
+  img.setAttribute("width", "" + size);
+  img.setAttribute("height", "" + size);
   
   // Add the PhysicsJS body
   if (massType === "square") {
     img.setAttribute("src", "/static/img/toolbox/squaremass.png");
     imgIdx = 1;
     component = Physics.body('rectangle', {
-          x: data.x,
-          y: data.y,
+          x: pixelTransform(data.x, "x"),
+          y: pixelTransform(data.y, "y"),
           restitution: 0.5,
-          width: 50.0,
-          height: 50.0,
+          width: size/2,
+          height: size/2,
           view: img,
           cof: 1.0,
           styles: {
@@ -38,10 +39,10 @@ function addMass(data, massType){
     img.setAttribute("src", "/static/img/toolbox/roundmass.png");
     imgIdx = 0;
     component = Physics.body('circle', {
-          x: data.x,
-          y: data.y,
+          x: pixelTransform(data.x, "x"),
+          y: pixelTransform(data.y, "y"),
           restitution: 0.5,
-          radius: 25,
+          radius: size/2,
           view: img,
           cof: 1.0,
           styles: {
@@ -56,7 +57,7 @@ function addMass(data, massType){
     addToVariableMap(
       {
         posx: data.x, 
-        posy: swapYpos(data.y, false),
+        posy: data.y,
         velx: 0.0,
         vely: 0.0,
         accx: 0.0,
@@ -73,7 +74,7 @@ function addMass(data, massType){
   // Assign constants
   bodyConstants[bodyConstants.length-1].massType = massType;
   bodyConstants[bodyConstants.length-1].mass = 1.0;
-  bodyConstants[bodyConstants.length-1].size = 25;
+  bodyConstants[bodyConstants.length-1].size = size/2;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;

@@ -30,6 +30,11 @@
   padding-right: 10px;
 }
 
+.pad-sides-big {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
 .pad-top {
   padding-top: 30px;
 }
@@ -57,15 +62,6 @@
   background-color: #0066cc;
 }
 
-.principia-blue-navbar {
-  background-color: #000033 !important; /* because of materialize stupidness */
-}
-
-.principia-blue-navbar ul li:hover,
-.principia-blue-navbar ul li.active {
-  background-color: #003366;
-}
-
 .page-header {
   word-break: break-word;
 }
@@ -82,6 +78,10 @@
   }
 /* end blue links */
 
+.principia-card-dark-color {
+  background-color: #222222;
+}
+
 /* for smaller text on about cards */
   .card .card-content .card-title,
   .card .card-reveal .card-title {
@@ -91,6 +91,26 @@
 
   .card-reveal {
     font-size: 0.9em;
+  }
+
+  .principia-about-card-sam .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/sam.png') no-repeat;
+    background-size: cover;
+  }
+
+  .principia-about-card-danny .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/danny.png') no-repeat;
+    background-size: cover;
+  }
+
+  .principia-about-card-matthew .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/matthew.png') no-repeat;
+    background-size: cover;
+  }
+
+  .principia-about-card-dalton .card-reveal {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/dalton.png') no-repeat;
+    background-size: cover;
   }
 /* end blue links */
 
@@ -105,14 +125,6 @@
     flex: 1 0 auto;
   }
 /* end sticky footer */
-
-/* for footer hover over text change */
-  .page-footer a.white-text:hover,
-  .page-footer a.white-text:active {
-    color: #000033 !important; /* because of materialize stupidness */
-  }
-/* end footer text color change */
-
 
 /*for Simulation name input*/
 #simulation-name {
@@ -137,15 +149,54 @@
   overflow-x: scroll;
 }
 
+.principia-navbar-color {
+  /* background-color: #353f4a; */
+  background-color: #222222;
+}
+
+.principia-navbar-color ul li:hover,
+.principia-navbar-color ul li.active {
+  /* background-color: #5d656e; */
+  background-color: #444444;
+}
+
+.principia-footer-color a, .principia-footer-color span {
+  color: #000000;
+}
+
+.principia-footer-color a:hover,
+.principia-footer-color a:active {
+  color: #0066cc !important; /* because of materialize stupidness */
+}
+
 body {
-  background-color: #bbb;
-  background-image: url("/static/img/background.png");
-  background: -webkit-linear-gradient(rgba(245,245,245,0), rgba(245,245,245,1)); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(white, #f5f5f5); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(white, #f5f5f5); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 59%, rgba(0, 0, 0, 0.65) 100%), url('/static/img/background.png') no-repeat;
+  background-color: #dddddd;
+}
+
+.home-background {
+  margin-top: -30px;
+  height: 100%;
+  padding-bottom: 50px;
+  background-color: #0066cc; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #353f4a, #0066cc); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, rgba(53, 63, 74, 0.5), rgba(0, 102, 204, 0.5), rgba(221, 221, 221, 1)), url('/static/img/accent.png') no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+}
+
+.home-background .valign-wrapper {
+  height: 100%;
+}
+
+.home-background .valign {
+  width: 100%;
+}
+
+.home-hero-space {
+  height: 400px;
+}
+
+.feedback-hero {
+  height: 100px;
 }
 
 /* custom form color */
@@ -372,11 +423,18 @@ textarea.comment-text {
 
 
 /* logo stuff */
-  #nav-bar-principia-logo {
+  .nav-bar-principia-logo {
     padding: 10px;
     max-width: 100%;
     max-height: 100%;
+  }
+
+  .hide-on-small-only .nav-bar-principia-logo {
     height: 64px;
+  }
+
+  .hide-on-med-and-up .nav-bar-principia-logo {
+    height: 58px;
   }
 /* end logo stuff */
 
@@ -403,12 +461,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     margin: 2px;
   }
 
-  .property-item-long {
-    height: 70px;
-    width: 90%;
-    padding: 0px 5px;
-  }
-
   .property-item {
     height: 70px;
     width: 45%;
@@ -424,6 +476,10 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     margin: 0;
   }
 
+  .toolbox-item-container .valign-wrapper {
+    height: inherit;
+  }
+
   .toolbox-item-container .card-reveal {
     background-color: #a5d6a7;
     white-space: normal;
@@ -436,10 +492,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     padding: 0px;
     margin: 0px;
     font-size: 0.9em;
-  }
-
-  .toolbox-item-container .valign-wrapper {
-    height: inherit;
   }
 
   .toolbox-item-container:hover {
@@ -512,22 +564,6 @@ i.fa.fa-size-large {
 .private-checkbox {
   margin-top: 26px;
 }
-
-/* home page card title */
-.home-card-title {
-  position: absolute;
-  left: 0;
-  bottom: 10px;
-  padding: 20px;
-}
-
-.home-card-subtitle {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 20px;
-}
-/* end home page card title */
 
 /* simulator window context menu */
 .context-menu {
@@ -623,6 +659,11 @@ a#help-tooltips:hover {
   width: 330px;
 }
 
+#help-tooltip-fbd {
+  color: blue;
+  background-color: #ffffff;
+}
+
 /** via http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting **/
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -633,3 +674,145 @@ a#help-tooltips:hover {
   user-select: none;           /* non-prefixed version, currently
                                   not supported by any browser */
 }
+
+.inherit-size {
+  width: 100%;
+  height: 100%;
+}
+
+/* half width card list */
+  .card-list {
+    list-style-type: none;
+    list-style-image: none;
+    width: 100%;
+  }
+
+  .card-list .card,
+  .card-list .card-panel {
+    float: left;
+    margin: 20px 1%;
+  }
+
+  .card-list .card .activator,
+  .card-list .card-panel .activator {
+    position: absolute;
+    right: 15px;
+    z-index: 1;
+  }
+
+  .card-list .card-quarter-width .card-content,
+  .card-list .card-quarter-width .card-content {
+    font-size: 0.8em;
+    padding: 20px;
+  }
+
+  .card-list .card-half-width .card-content,
+  .card-list .card-half-width .card-content {
+    font-size: 1em;
+    padding: 20px;
+  }
+
+  .card-half-width {
+    width: 48%;
+  }
+
+  .card-quarter-width {
+    width: 23%;
+  }
+
+/* color gradients used as accents */
+  /* all generated from http://uigradients.com */
+  .light-accent-gradient-1 { /* Back To Earth */
+    background: #00c9ff; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #00c9ff , #92fe9d); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #00c9ff , #92fe9d);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(0, 201, 255, 0.5), rgba(146, 254, 157, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-2 { /* Jonquil */
+    background: #ffeeee; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ffeeee , #ddefbb); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #ffeeee , #ddefbb);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(255, 238, 238, 0.5), rgba(221, 239, 187, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-3 { /* Frozen */
+    background: #403b4a; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #403b4a , #e7e9bb); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #403b4a , #e7e9bb);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(64, 59, 74, 0.5), rgba(231, 233, 187, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-4 { /* Rose Water */
+    background: #e55d87; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #e55d87 , #5fc3e4); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #e55d87 , #5fc3e4);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(229, 93, 135, 0.5), rgba(95, 195, 228, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-5 { /* Sunny Days */
+    background: #ede574; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ede574 , #e1f5c4); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #ede574 , #e1f5c4);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(237, 229, 116, 0.5), rgba(225, 245, 196, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-6 { /* Timber */
+    background: #fc00ff; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #fc00ff , #00dbde); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #fc00ff , #00dbde);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(252, 0, 255, 0.5), rgba(0, 219, 222, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-7 { /* Tranquil */
+    background: #eecda3; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #eecda3 , #ef629f); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #eecda3 , #ef629f);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(238, 205, 163, 0.5), rgba(239, 98, 159, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .light-accent-gradient-8 { /* Endless River */
+    background: #43cea2; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #43cea2 , #185a9d); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #43cea2 , #185a9d);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(67, 206, 162, 0.5), rgba(24, 90, 157, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .dark-accent-gradient-1 { /* Bloody Mary */
+    background: #ff512f; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ff512f , #dd2476); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #ff512f , #dd2476);  w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(255, 81, 47, 0.5), rgba(221, 36, 118, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .dark-accent-gradient-2 { /* Predawn */
+    background: #ffa17f; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #ffa17f , #00223e); /* chrome 10-25, safari 5.1-6 */
+    /* background: linear-gradient(to left, #ffa17f , #00223e); w3c, ie 10+/ edge, firefox 16+, chrome 26+, opera 12+, safari 7+ */
+    background: linear-gradient(to left, rgba(255, 161, 127, 0.5), rgba(0, 34, 62, 0.5)), url('/static/img/accent.png') no-repeat;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+/* user display name identifier */
+  span.user-display-name {
+    font-style: normal;
+  }

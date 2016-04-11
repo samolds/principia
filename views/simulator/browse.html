@@ -1,18 +1,16 @@
 {{ define "title" }} - Simulations{{ end }}
 
 {{ define "content" }}
-<div class="container narrow">
-  <div class="card-panel">
+<div class="container pad-top pad-bottom">
+  <div class="center-align">
     <h3 class="page-header">Browse Simulations</h3>
-    {{ if .Data.simulations }}
-      <ul>
-        {{ range $simulation := .Data.simulations }}
-          <li><a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }} - {{ $simulation.Type }}</a></li>
-        {{ end }}
-      </ul>
-    {{ else }}
-      <p>Nothing?!</p>
-    {{ end }}
+  </div>
+  <div class="center-align">
+    By Creation Data
   </div>
 </div>
+
+{{ template "simulationsListFrag" . }}
+
+<div class="pad-bottom"></div>
 {{ end }}

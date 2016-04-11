@@ -50,7 +50,7 @@
     <div class="col s4">
       {{ if .Data.simulation.Name }}
         <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
-        <small>By: {{ .Data.simulationAuthorDisplay }}</small>
+        <small>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></small>
       {{ else }}
         <h4 class="page-header">Simulation</h4>
       {{ end }}
@@ -473,10 +473,11 @@
     <div id="help-tooltip-toolbox" class="help-tooltip card">
       <p>Drag any of the desired components above into the simulator!</p>
     </div>
+    <div id="help-tooltip-fbd" class="help-tooltip card">
+    </div>
   </div>
 </div>
 <!---------- End Simulator and property window  ---------->
-
 
 <!-- Play button and slider -->
 <div class="row">
@@ -501,6 +502,21 @@
     <div id="positionGraph"></div>
     <div id="vaGraph"></div>
   </div>
+</div>
+
+<!-- The simulation description -->
+<div class="row">
+  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+  <div class="input-field col s8">
+    <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}" onkeypress="resetSaveButton()"></input>
+    <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
+  </div>
+  {{ else if .Data.simulation.Description }}
+  <div class="col s8">
+    <label>Simulation Description</label>
+    <p>{{ .Data.simulation.Description }}</p>
+  </div>
+  {{ end }}
 </div>
 
 <!-- This is the context menu -->

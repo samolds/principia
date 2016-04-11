@@ -424,7 +424,6 @@ function simulate(){
 function updateVariable(body, variable, value){
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
   
-  
   if(isNaN(value))
     Globals.variableMap[keyframe][bIndex(body)][variable] = "?";
   else {
@@ -577,7 +576,8 @@ function updateImage(body, value){
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-function onPropertyChanged(i, property, value){
+// This function should be passed canonical coordinates
+function onPropertyChanged(i, property, value, doTranslation){
   
   var body = Globals.world.getBodies()[i];
   if(!body) return;
@@ -585,7 +585,7 @@ function onPropertyChanged(i, property, value){
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
   var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
-  
+
   // Reparse the value, assigning NaN if the parse fails
   value = parseFloat(value);
   
@@ -616,13 +616,14 @@ function onPropertyChanged(i, property, value){
   switch(property){
     // Position updates
     case 'posx':        
+        value = pixelTransform(value, "x", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.x = value;
-        kState[i].pos.x = value;        
+        kState[i].pos.x = value;
         break;
     case 'posy':        
-        value = swapYpos(value, false);
+        value = pixelTransform(value, "y", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.y = value;
-        kState[i].pos.y = value;        
+        kState[i].pos.y = value;
         break;
       
     // Velocity and acceleration updates:
