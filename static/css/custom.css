@@ -95,22 +95,22 @@
 
   .principia-about-card-sam .card-reveal {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/sam.png') no-repeat;
-    background-size: contain;
+    background-size: cover;
   }
 
   .principia-about-card-danny .card-reveal {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/danny.png') no-repeat;
-    background-size: contain;
+    background-size: cover;
   }
 
   .principia-about-card-matthew .card-reveal {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/matthew.png') no-repeat;
-    background-size: contain;
+    background-size: cover;
   }
 
   .principia-about-card-dalton .card-reveal {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/static/img/team/turtle/dalton.png') no-repeat;
-    background-size: contain;
+    background-size: cover;
   }
 /* end blue links */
 
@@ -196,10 +196,7 @@ body {
 }
 
 .feedback-hero {
-  padding: 180px;
-  background-image: url('/static/img/team/turtle/team.png');
-  background-position-x: center;
-  background-repeat: no-repeat;
+  height: 100px;
 }
 
 /* custom form color */
