@@ -674,18 +674,16 @@ function preRender()
 {
   var can = Globals.world.renderer();
   
-  for(var i=0; i <= can.width; i+= 20/getScaleFactor())
-    can.drawLine({'x':(i + Globals.translation.x), 'y':0},
-                 {'x':(i + Globals.translation.x), 'y':can.height},
+  var incr = 20/getScaleFactor();
+  for(var i=-100; i <= can.width + 100; i+= incr)
+    can.drawLine({'x':(i + Globals.translation.x % incr), 'y':0},
+                 {'x':(i + Globals.translation.x % incr), 'y':can.height},
                  { strokeStyle: '#ff00ff ',lineWidth: 1});
-                 
-  for(var i=0; i <= can.height; i+= 20/getScaleFactor())
-    can.drawLine({'x':0,         'y':(i + Globals.translation.y)},
-                 {'x':can.width, 'y':(i + Globals.translation.y)},
+
+  for(var i=-100; i <= can.height+100; i+= incr)
+    can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
+                 {'x':can.width, 'y':(i + Globals.translation.y % incr)},
                  { strokeStyle: '#ff00ff ',lineWidth: 1});
-  
-  //for(var i=0; i <= can.height; i+= 20/getScaleFactor())
-    //can.drawLine({'x':0, 'y':i + Globals.translation.y}, {'x':can.width,'y':i + Globals.translation.y}, { strokeStyle: '#ff00ff ',lineWidth: 1});
 }
 
 // Sets the world state to the currently selected frame and renders it.
@@ -706,9 +704,7 @@ function drawMaster(){
     setState(frame);
     world.render(false);
     postRender(false);
-  }
-  
-  
+  } 
 }
 
 // zoom == +1 -> Zoom in
