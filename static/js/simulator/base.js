@@ -6,6 +6,10 @@
 // Converts the current simulation into a JSON string to be persisted in the data store
 function exportToJson(){
   // NOTE LIMIT OF 1500 chars - updated with flag to store 1 MB, but consider splitting these up further
+  
+  //var scaled_keyframes = clone(Globals.keyframeStates);
+  // If scale !== 0, return keyframes to original size before storing
+  
   var json = 
   {
     keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe

@@ -670,22 +670,45 @@ function highlightKeycanvas(n, color){
     $("#" + "keyframe-" + lastKF()).attr("style","border:4px solid " + color);  
 }
 
+function preRender()
+{
+  var can = Globals.world.renderer();
+  
+  for(var i=0; i <= can.width; i+= 20/getScaleFactor())
+    can.drawLine({'x':(i + Globals.translation.x), 'y':0},
+                 {'x':(i + Globals.translation.x), 'y':can.height},
+                 { strokeStyle: '#ff00ff ',lineWidth: 1});
+                 
+  for(var i=0; i <= can.height; i+= 20/getScaleFactor())
+    can.drawLine({'x':0,         'y':(i + Globals.translation.y)},
+                 {'x':can.width, 'y':(i + Globals.translation.y)},
+                 { strokeStyle: '#ff00ff ',lineWidth: 1});
+  
+  //for(var i=0; i <= can.height; i+= 20/getScaleFactor())
+    //can.drawLine({'x':0, 'y':i + Globals.translation.y}, {'x':can.width,'y':i + Globals.translation.y}, { strokeStyle: '#ff00ff ',lineWidth: 1});
+}
+
 // Sets the world state to the currently selected frame and renders it.
 function drawMaster(){
   var world = Globals.world;
   var frame = Globals.frame;
   var keyframe = Globals.keyframe;
   
+  Globals.world.renderer().ctx.clearRect(0, 0, Globals.world.renderer().width, Globals.world.renderer().height);
+  preRender();
+  
   if(keyframe !== false){
     setStateKF(keyframe);
-    world.render();
+    world.render(false);
     postRender(true);
   }
   else if(frame !== false) {
     setState(frame);
-    world.render();
+    world.render(false);
     postRender(false);
   }
+  
+  
 }
 
 // zoom == +1 -> Zoom in

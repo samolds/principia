@@ -22,7 +22,9 @@ function Kinematics1DModule() {
       world.timestep(0.5); // TODO: should base timestep on dt option
             
       // create a renderer
-      renderer = Physics.renderer('canvas', {el: canvasId});      
+      renderer = Physics.renderer('canvas', {el: canvasId, manual: true});
+      renderer.addLayer("grid");
+      
       
       // add the renderer
       world.add(renderer);

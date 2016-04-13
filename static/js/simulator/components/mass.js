@@ -74,7 +74,7 @@ function addMass(data, massType){
   // Assign constants
   bodyConstants[bodyConstants.length-1].massType = massType;
   bodyConstants[bodyConstants.length-1].mass = 1.0;
-  bodyConstants[bodyConstants.length-1].size = size * getScaleFactor() / 2;
+  bodyConstants[bodyConstants.length-1].size = size * getScaleFactor(); /// 2;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;

@@ -10651,7 +10651,7 @@ Physics.renderer('canvas', function( proto ){
                     offset.sub( layer.options.follow.state.vel.get(0)*t, layer.options.follow.state.vel.get(1)*t );
                 }
 
-                if ( clear !== false ){
+                if ( clear !== false && false){ // Added by MADADASA: Require manual canvas clear before prerender
                     layer.ctx.clearRect(0, 0, layer.el.width, layer.el.height);
                 }
 
