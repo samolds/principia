@@ -816,3 +816,22 @@ a#help-tooltips:hover {
   span.user-display-name {
     font-style: normal;
   }
+
+a.start-simulating-action {
+  border: 1px solid #ffffff;
+}
+
+.zoom-controls-container {
+  position: relative;
+}
+
+.zoom-controls {
+  position: absolute;
+  width: 30px;
+  right: 5px;
+  top: -93px;
+}
+
+.zoom-controls .btn {
+  padding: 0 0.5em;
+}

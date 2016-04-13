@@ -306,16 +306,12 @@ function drawSpringLine(b1, b2){
 
 // Draws highlight box around selected element
 function highlightSelection(body, color, modifier){
-  
   // Special case: don't highlight origin
   if(bIndex(body) === 0) return;
   
-  //var bodyDim = body.aabb();
-  //var width = bodyDim.hw * 2;
-  //var height = bodyDim.hh * 2;
-  var view = body.view;
-  var width = view.width;
-  var height = view.height;
+  var bodyDim = body.aabb();
+  var width = bodyDim.hw * 2;
+  var height = bodyDim.hh * 2;
   var canvas = Globals.world.renderer();
 
   if (modifier) {
@@ -690,4 +686,62 @@ function drawMaster(){
     world.render();
     postRender(false);
   }
+}
+
+// zoom == +1 -> Zoom in
+// zoom == -1 -> Zoom out
+// otherwise  -> ??
+function simulationZoom(zoom) {
+  if (zoom > 0 && Globals.scale < Globals.maxScale) {
+    Globals.scale += 1;
+  } else if (zoom < 0 && Globals.scale > Globals.minScale) {
+    Globals.scale -= 1;
+  } else {
+    return;
+  }
+  
+  //var coords = getPosition(e);    
+  //var offset = $("#" + Globals.canvasId).position();
+  
+  // TODO: Adjust translation according to cursor position while zooming
+  Globals.translation.x = 0;
+  Globals.translation.y = 0;
+
+  // Rescale and bias images
+  var factor = (zoom < 0)? 0.5: 2.0;
+  var numBodies = Globals.world.getBodies().length;
+  for(var i=1; i < numBodies; i++){
+    
+    var body = Globals.world.getBodies()[i];
+    var bodyConst = body2Constant(body);
+    if (bodyConst.ctype == "kinematics1D-mass" || bodyConst.ctype == "kinematics1D-pulley") {
+      updateImage(body, bodyConst.img);
+      updateSize(body, bodyConst.size);
+    } else if (bodyConst.ctype == "kinematics1D-surface") {
+      setSurfaceWidth(body, bodyConst.surfaceWidth);
+      setSurfaceHeight(body, bodyConst.surfaceHeight);
+      setSurfaceFriction(body, bodyConst.surfaceFriction);
+    } else if (bodyConst.ctype == "kinematics1D-ramp") {
+      setRampWidth(body, bodyConst.rampWidth, true);
+      setRampHeight(body, bodyConst.rampHeight, true);
+      setRampAngle(body, bodyConst.rampAngle);
+      setRampFriction(body, bodyConst.rampFriction);
+    }
+    
+    // Scale within existing keyframe states
+    for(var j=0; j < Globals.keyframeStates.length; j++){
+      var state = Globals.keyframeStates[j][bIndex(body)];
+      state.pos.x *= factor;
+      state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
+    }
+    
+    // Scale within existing simulation states
+    for(var j=0; j < Globals.states[i].length; j++){
+      var state = Globals.states[i][j];
+      state.pos.x *= factor;
+      state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
+    }
+  }
+  
+  drawMaster();
 }

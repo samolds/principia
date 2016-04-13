@@ -11,28 +11,28 @@ function addRamp(data){
   
   // Add the PhysicsJS body
   var component = Physics.body('convex-polygon', {
-            restitution: 0.0,
-            treatment: 'static',
-            x: data.x,
-            y: data.y,
-            cof: 0.0,
-            styles: {
-              fillStyle: '#4d4d4d',
-            },
-            vertices: [
-              { x: 0, y: 0 },
-              { x: 100.0, y: 0 },
-              { x: 0, y: -60.0 }
-            ]
-          });
+    restitution: 0.0,
+    treatment: 'static',
+    x: pixelTransform(data.x, "x"),
+    y: pixelTransform(data.y, "y"),
+    cof: 0.0,
+    styles: {
+      fillStyle: '#4d4d4d',
+    },
+    vertices: [
+      { x: 0, y: 0 },
+      { x: 100.0/getScaleFactor(), y: 0 },
+      { x: 0, y: -60.0/getScaleFactor() }
+    ]
+  });
           
   // Upon being added, a map of variables associated with this ramp is added to the globals
   if(!Globals.loading){
     addToVariableMap({
         posx: data.x, 
         posy: data.y,
-        rampWidth: 100.0,
-        rampHeight: -60.0,
+        rampWidth: 100.0/getScaleFactor(),
+        rampHeight: -60.0/getScaleFactor(),
         rampAngle: -30.964,
         rampFriction: 0.0,
       }
@@ -67,33 +67,36 @@ function updateRamp(body, property, value)
 }
 
 function setRampWidth(body, value, allow_negatives){
-    value = parseFloat(value);
-    if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
-      return;
-    
-    if(!allow_negatives)
-    {
-      if(value < 0) return;
-      value = value * Math.sign(body2Constant(body).rampWidth);
-    }
+  value = parseFloat(value);
+  if (value == 0.0 || isNaN(value))
+    return;
+  
+  if(!allow_negatives)
+  {
+    if(value < 0) return;
+    value = value * Math.sign(body2Constant(body).rampWidth);
+  }
 
-    // Get all of the other vertices except for the "width" vertex    
-    var newVertices = body.vertices.filter(function(vert) { return vert.x === 0; });
-    var height = body.vertices.filter(function(vert) { return vert.y !== 0; })[0].y;
+  // Get the actual height
+  var height = Globals.bodyConstants[bIndex(body)]["rampHeight"];
 
-    newVertices.push({x: value, y: 0}); // Add the new vertex for the width
-    body.vertices = newVertices;
-    body.geometry.setVertices(newVertices);
-    body.view = null;
+  var newVertices = [
+            {x: 0, y: 0},
+            {x: value / getScaleFactor(), y: 0},
+            {x: 0, y: height / getScaleFactor()}];
 
-    var newAngle = Math.atan(height / value) * (180.0 / Math.PI);
-    Globals.bodyConstants[bIndex(body)]["rampWidth"] = value.toFixed(Globals.dPrecision);
-    Globals.bodyConstants[bIndex(body)]["rampAngle"] = newAngle.toFixed(Globals.dPrecision);
+  body.vertices = newVertices;
+  body.geometry.setVertices(newVertices);
+  body.view = null;
+
+  var newAngle = Math.atan(height / value) * (180.0 / Math.PI);
+  Globals.bodyConstants[bIndex(body)]["rampWidth"] = value.toFixed(Globals.dPrecision);
+  Globals.bodyConstants[bIndex(body)]["rampAngle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
 function setRampHeight(body, value, allow_negatives){
   value = parseFloat(value);
-  if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
+  if (value == 0.0 || isNaN(value))
     return;
   
   if(!allow_negatives)
@@ -102,11 +105,14 @@ function setRampHeight(body, value, allow_negatives){
     value = value * Math.sign(body2Constant(body).rampHeight);
   }
   
-  // Get all of the other vertices except for the "height" vertex
-  var newVertices = body.vertices.filter(function(vert) { return vert.y === 0; });
-  var width = body.vertices.filter(function(vert) { return vert.x !== 0; })[0].x;
+  // Get the actual width
+  var width = Globals.bodyConstants[bIndex(body)]["rampWidth"];
 
-  newVertices.push({x: 0, y: value}); // Add the new vertex for the height
+  var newVertices = [
+            {x: 0, y: 0},
+            {x: width / getScaleFactor(), y: 0},
+            {x: 0, y: value / getScaleFactor()}];
+
   body.vertices = newVertices;
   body.geometry.setVertices(newVertices);
   body.view = null;
@@ -118,7 +124,7 @@ function setRampHeight(body, value, allow_negatives){
 
 function setRampAngle(body, value) {
   value = parseFloat(value);
-  if (Math.abs(value) > 500.0 || value == 0.0 || isNaN(value))
+  if (Math.abs(value) > 360.0 || value == 0.0 || isNaN(value))
     return;
 
   if(value < 0) return;

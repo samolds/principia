@@ -110,7 +110,6 @@ var Globals = {
   
   // Scale factor in clicks (display only, the canvas should be zoomed in by 2^scale)
   scale: 0,
-  scrollTime: Date.now(),
   
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating

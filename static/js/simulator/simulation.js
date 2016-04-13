@@ -514,21 +514,22 @@ function updateGravity(coordinate, value){
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
-  value = isNaN(value) ? body2Constant(body).size : clamp(10, value, 100);
+  value = isNaN(value) ? body2Constant(body).size : clamp(1, value, 500);
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
 
-  body.view.setAttribute("width", value * 2)
-  body.view.setAttribute("height", value * 2);
+  var scaledSize = (value * 2) / getScaleFactor();
+  body.view.setAttribute("width", scaledSize);
+  body.view.setAttribute("height", scaledSize);
 
   if (body2Constant(body).massType === "square") {
-    body.width = value * 2;
-    body.height = value * 2;
-    body.geometry.width = value * 2;
-    body.geometry.height = value * 2;
+    body.width = scaledSize;
+    body.height = scaledSize;
+    body.geometry.width = scaledSize;
+    body.geometry.height = scaledSize;
   } else { // if (body.massType === "round") {
-    body.radius = value;
-    body.geometry.radius = value;
+    body.radius = scaledSize / 2;
+    body.geometry.radius = scaledSize / 2;
   }
 
   // Resimulate if there is only one keyframe
@@ -541,11 +542,12 @@ function updateImage(body, value){
   if(!body) return;
   
   var i = bIndex(body);
+  var scaledSize = (Globals.bodyConstants[i].size * 2) / getScaleFactor();
 
   // Create image element to be used
   var img = document.createElement("img");
-  img.setAttribute("width", Globals.bodyConstants[i].size * 2);
-  img.setAttribute("height", Globals.bodyConstants[i].size * 2);
+  img.setAttribute("width", scaledSize);
+  img.setAttribute("height", scaledSize);
   
   // Associate body with its image
   Globals.bodyConstants[i].img = isNaN(value)? value: parseInt(value);
