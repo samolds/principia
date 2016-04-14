@@ -47,8 +47,8 @@ function canvasToImage() {
   // draw background / rect on entire canvas
   context.fillRect(0, 0, w, h);
 
-  // get the image data from the canvas
-  var imageData = canvas.el.toDataURL("image/jpeg", 0.5);
+  // get the image data from the canvas and decrement image quality 70%
+  var imageData = canvas.el.toDataURL("image/jpeg", 0.3);
 
   // clear the canvas
   context.clearRect(0, 0, w, h);

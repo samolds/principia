@@ -521,12 +521,8 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
 }
 
 /* Profile Page */
-#profile-pic-container {
-  height: 250px; 
-  width: 70%; 
-  border: dashed 1px grey; 
-  margin:auto; 
-  border-radius: 5px
+.empty-profile-image-container {
+  padding: 57px 0;
 }
 
 #profile-welcome-modal {

@@ -146,6 +146,12 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 		return com, err
 	}
 
+	var profileImageSrc string
+	profileImage, err := appengineImage.ServingURL(ctx, author.ImageBlobKey, nil)
+	if err == nil {
+		profileImageSrc = profileImage.Path
+	}
+
 	err = datastore.Get(ctx, commentKey.Parent(), &sim)
 	if err != nil {
 		return com, err
@@ -161,6 +167,7 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 	com.CreationDate = comObj.CreationDate
 	com.AuthorName = author.DisplayName
 	com.AuthorID = author.KeyName
+	com.AuthorImageSrcUrl = profileImageSrc
 	com.SimulationName = sim.Name
 	com.SimulationID = sim.KeyName
 	com.SimulationType = sim.Type

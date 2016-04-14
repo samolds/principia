@@ -146,6 +146,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		// Delete the old thumbnail image in the blobstore
 		err = blobstore.Delete(ctx, simulation.ImageBlobKey)
 		if err != nil {
@@ -182,6 +183,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		// Delete the old thumbnail image in the blobstore
 		err = blobstore.Delete(ctx, simulation.ImageBlobKey)
 		if err != nil {
