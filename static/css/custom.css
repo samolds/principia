@@ -149,6 +149,10 @@
   overflow-x: scroll;
 }
 
+header {
+  z-index: 50;
+}
+
 .principia-navbar-color {
   /* background-color: #353f4a; */
   background-color: #222222;
@@ -174,12 +178,11 @@ body {
 }
 
 .home-background {
-  margin-top: -30px;
   height: 100%;
-  padding-bottom: 50px;
+  padding-bottom: 100px;
   background-color: #0066cc; /* fallback for old browsers */
   background: -webkit-linear-gradient(to bottom, #353f4a, #0066cc); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, rgba(53, 63, 74, 0.5), rgba(0, 102, 204, 0.5), rgba(221, 221, 221, 1)), url('/static/img/accent.png') no-repeat;
+  background: linear-gradient(to bottom, rgba(53, 63, 74, 0.5) 0%, rgba(0, 102, 204, 0.5) 60%, rgba(221, 221, 221, 1) 100%), url('/static/img/accent.png') no-repeat;
   background-size: cover;
 }
 
@@ -192,7 +195,8 @@ body {
 }
 
 .home-hero-space {
-  height: 400px;
+  padding-bottom: 50px;
+  height: 500px;
 }
 
 .feedback-hero {
