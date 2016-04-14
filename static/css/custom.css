@@ -693,12 +693,13 @@ a#help-tooltips:hover {
   .card-list .card-panel .activator {
     position: absolute;
     right: 15px;
+    bottom: 15px;
     z-index: 1;
   }
 
   .card-list .card-quarter-width .card-content,
   .card-list .card-quarter-width .card-content {
-    font-size: 0.8em;
+    font-size: 1em;
     padding: 20px;
   }
 
@@ -714,6 +715,16 @@ a#help-tooltips:hover {
 
   .card-quarter-width {
     width: 23%;
+  }
+
+  .simulation-thumb {
+    background: #222222;
+  }
+
+  .simulation-thumb-description {
+    color: #ffffff;
+    background: #222222;
+    word-wrap: break-word;
   }
 
 /* color gradients used as accents */
@@ -811,9 +822,4 @@ a#help-tooltips:hover {
 /* user display name identifier */
   span.user-display-name {
     font-style: normal;
-  }
-
-  .simulation-thumb-description {
-    border-top: 2px solid #000;
-    background: #eeeeee;
   }
