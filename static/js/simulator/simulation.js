@@ -518,7 +518,7 @@ function updateSize(body, value){
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
 
-  var scaledSize = (value * 2) / getScaleFactor();
+  var scaledSize = value / getScaleFactor();
   body.view.setAttribute("width", scaledSize);
   body.view.setAttribute("height", scaledSize);
 
@@ -542,7 +542,7 @@ function updateImage(body, value){
   if(!body) return;
   
   var i = bIndex(body);
-  var scaledSize = (Globals.bodyConstants[i].size * 2) / getScaleFactor();
+  var scaledSize = Globals.bodyConstants[i].size / getScaleFactor();
 
   // Create image element to be used
   var img = document.createElement("img");

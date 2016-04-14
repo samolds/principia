@@ -331,8 +331,8 @@ function highlightSelection(body, color, modifier){
   
   canvas.ctx.lineWidth = 2;
 
-  var centerX = body.state.pos.x + Globals.translation.x - (width / 2);//bodyDim.x - (width / 2);
-  var centerY = body.state.pos.y + Globals.translation.y - (height / 2);//bodyDim.y - (height / 2);
+  var centerX = bodyDim.x + Globals.translation.x - (width / 2);//bodyDim.x - (width / 2);
+  var centerY = bodyDim.y + Globals.translation.y - (height / 2);//bodyDim.y - (height / 2);
 
   canvas.ctx.strokeRect(centerX, centerY, width, height);
 }
@@ -678,12 +678,12 @@ function preRender()
   for(var i=-100; i <= can.width + 100; i+= incr)
     can.drawLine({'x':(i + Globals.translation.x % incr), 'y':0},
                  {'x':(i + Globals.translation.x % incr), 'y':can.height},
-                 { strokeStyle: '#ff00ff ',lineWidth: 1});
+                 { strokeStyle: '#eeeeee',lineWidth: 1});
 
   for(var i=-100; i <= can.height+100; i+= incr)
     can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
                  {'x':can.width, 'y':(i + Globals.translation.y % incr)},
-                 { strokeStyle: '#ff00ff ',lineWidth: 1});
+                 { strokeStyle: '#eeeeee',lineWidth: 1});
 }
 
 // Sets the world state to the currently selected frame and renders it.

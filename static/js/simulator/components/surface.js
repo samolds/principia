@@ -28,9 +28,6 @@ function addSurface(data){
     addToVariableMap({
         posx: data.x, 
         posy: data.y,
-        surfaceWidth: 100.0/getScaleFactor(),
-        surfaceHeight: 7.0/getScaleFactor(),
-        surfaceFriction: 0.0,
       }
     );
   }
@@ -67,7 +64,7 @@ function updateSurface(body, property, value) {
 
 function setSurfaceWidth(body, value) {
   value = parseFloat(value);
-  if (value == 0.0 || isNaN(value))
+  if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
     return;
   value = Math.abs(value);
   
@@ -80,7 +77,7 @@ function setSurfaceWidth(body, value) {
 
 function setSurfaceHeight(body, value) {
   value = parseFloat(value);
-  if (value == 0.0 || isNaN(value))
+  if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
     return;
   value = Math.abs(value);
   

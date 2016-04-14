@@ -8,6 +8,8 @@ function addRamp(data){
   var world = Globals.world;
   var bodyConstants = Globals.bodyConstants;
   var variableMap = Globals.variableMap;
+  var width = 100;
+  var height = -60;
   
   // Add the PhysicsJS body
   var component = Physics.body('convex-polygon', {
@@ -21,8 +23,8 @@ function addRamp(data){
     },
     vertices: [
       { x: 0, y: 0 },
-      { x: 100.0/getScaleFactor(), y: 0 },
-      { x: 0, y: -60.0/getScaleFactor() }
+      { x: width/getScaleFactor(), y: 0 },
+      { x: 0, y: height/getScaleFactor() }
     ]
   });
           
@@ -31,10 +33,6 @@ function addRamp(data){
     addToVariableMap({
         posx: data.x, 
         posy: data.y,
-        rampWidth: 100.0/getScaleFactor(),
-        rampHeight: -60.0/getScaleFactor(),
-        rampAngle: -30.964,
-        rampFriction: 0.0,
       }
     );
   }
@@ -45,8 +43,8 @@ function addRamp(data){
   Globals.rampBodyCounter++;
                   
   // Assign constants
-  bodyConstants[bodyConstants.length-1].rampWidth = 100.0;
-  bodyConstants[bodyConstants.length-1].rampHeight = -60.0;
+  bodyConstants[bodyConstants.length-1].rampWidth = width;
+  bodyConstants[bodyConstants.length-1].rampHeight = height;
   bodyConstants[bodyConstants.length-1].rampAngle = -30.964;
   bodyConstants[bodyConstants.length-1].rampFriction = 0.0;
   bodyConstants[bodyConstants.length-1].nickname = "ramp " + getLabel(component);
@@ -68,7 +66,7 @@ function updateRamp(body, property, value)
 
 function setRampWidth(body, value, allow_negatives){
   value = parseFloat(value);
-  if (value == 0.0 || isNaN(value))
+  if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
     return;
   
   if(!allow_negatives)
@@ -96,7 +94,7 @@ function setRampWidth(body, value, allow_negatives){
 
 function setRampHeight(body, value, allow_negatives){
   value = parseFloat(value);
-  if (value == 0.0 || isNaN(value))
+  if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
     return;
   
   if(!allow_negatives)

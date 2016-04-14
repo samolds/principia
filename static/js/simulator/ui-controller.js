@@ -10,7 +10,8 @@ $(".ui-draggable").draggable({
     scroll: false,
     stop: handleUIDragStop,
     helper: 'clone',
-    appendTo: 'body'
+    appendTo: 'body',
+    zIndex: 20,
 });
 
 // Defines drag event for draggable-classed components
@@ -20,7 +21,8 @@ $(".draggable").draggable({
 	  scroll: false,
 	  stop: handleDragStop,
 	  helper: 'clone',
-    appendTo: 'body'
+    appendTo: 'body',
+    zIndex: 20,
 });
 
 // Event fired when user is done dragging component that is not part of PhysicJS world (origin target)

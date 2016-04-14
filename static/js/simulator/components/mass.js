@@ -14,9 +14,10 @@ function addMass(data, massType){
   
   // Default image: use pointmass image. Can be changed from select element.
   var img = document.createElement("img");
-  var size = 50/getScaleFactor();
-  img.setAttribute("width", "" + size);
-  img.setAttribute("height", "" + size);
+  var size = 50;
+  var scaledSize = size / getScaleFactor();
+  img.setAttribute("width", "" + scaledSize);
+  img.setAttribute("height", "" + scaledSize);
   
   // Add the PhysicsJS body
   if (massType === "square") {
@@ -26,8 +27,8 @@ function addMass(data, massType){
           x: pixelTransform(data.x, "x"),
           y: pixelTransform(data.y, "y"),
           restitution: 0.5,
-          width: size,
-          height: size,
+          width: scaledSize,
+          height: scaledSize,
           view: img,
           cof: 1.0,
           styles: {
@@ -42,7 +43,7 @@ function addMass(data, massType){
           x: pixelTransform(data.x, "x"),
           y: pixelTransform(data.y, "y"),
           restitution: 0.5,
-          radius: size/2,
+          radius: scaledSize / 2,
           view: img,
           cof: 1.0,
           styles: {
@@ -74,7 +75,7 @@ function addMass(data, massType){
   // Assign constants
   bodyConstants[bodyConstants.length-1].massType = massType;
   bodyConstants[bodyConstants.length-1].mass = 1.0;
-  bodyConstants[bodyConstants.length-1].size = size * getScaleFactor(); /// 2;
+  bodyConstants[bodyConstants.length-1].size = size;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;

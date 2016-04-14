@@ -7,12 +7,32 @@
 function exportToJson(){
   // NOTE LIMIT OF 1500 chars - updated with flag to store 1 MB, but consider splitting these up further
   
-  //var scaled_keyframes = clone(Globals.keyframeStates);
-  // If scale !== 0, return keyframes to original size before storing
+  // Have to unscale the positions of all of the bodies in all keyframes before saving the data
+  var scaledKeyframes = Globals.keyframeStates;
+  var unscaledKeyframeStates = [];
+
+  // Only need to scale the positions if the simulator has been zoomed in or out
+  if (getScaleFactor() !== 1) {
+
+    // Need to update in all keyframes
+    for (var i = 0; i < scaledKeyframes.length; i++) {
+      var keyframe = scaledKeyframes[i];
+      var clonedState = [];
+      for (var j = 0; j < keyframe.length; j++) {
+        var objState = cloneState(keyframe[j]);
+        objState.pos.x = objState.pos.x * getScaleFactor();
+        objState.pos.y = swapYpos(swapYpos(objState.pos.y, false) * getScaleFactor(), false);
+        clonedState.push(objState);
+      }
+      unscaledKeyframeStates.push(clonedState);
+    }
+  } else {
+    unscaledKeyframeStates = scaledKeyframes;
+  }
   
   var json = 
   {
-    keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    keyframeStates:unscaledKeyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
     bodyConstants:Globals.bodyConstants,
     gravity:Globals.gravity,
     variableMap:Globals.variableMap,
