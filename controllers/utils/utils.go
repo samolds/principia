@@ -3,6 +3,7 @@ package utils
 import (
 	"appengine"
 	"appengine/datastore"
+	appengineImage "appengine/image"
 	appengineUser "appengine/user"
 	"errors"
 	"log"
@@ -65,8 +66,13 @@ func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey
 	var author models.User
 	var sim models.SimulationData
 
+	thumbnailImage, err := appengineImage.ServingURL(ctx, simObj.ImageBlobKey, nil)
+	if err != nil {
+		return sim, err
+	}
+
 	authorKey := datastore.NewKey(ctx, "User", simObj.AuthorKeyName, 0, nil)
-	err := datastore.Get(ctx, authorKey, &author)
+	err = datastore.Get(ctx, authorKey, &author)
 	if err != nil {
 		return sim, err
 	}
@@ -89,6 +95,7 @@ func BuildSimulationData(ctx appengine.Context, simObj models.Simulation, simKey
 	sim.Description = simObj.Description
 	sim.CreationDate = simObj.CreationDate
 	sim.UpdatedDate = simObj.UpdatedDate
+	sim.ImageSrcUrl = thumbnailImage.Path
 	sim.IsPrivate = simObj.IsPrivate
 	sim.AuthorName = author.DisplayName
 	sim.AuthorID = author.KeyName

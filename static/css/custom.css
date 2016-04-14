@@ -816,3 +816,8 @@ a#help-tooltips:hover {
   span.user-display-name {
     font-style: normal;
   }
+
+  .simulation-thumb-description {
+    border-top: 2px solid #000;
+    background: #eeeeee;
+  }

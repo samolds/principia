@@ -22,6 +22,75 @@ function exportToJson(){
   return JSON.stringify(json);
 }
 
+// Returns contents of a canvas as a jpeg based data url, with the specified
+// background color
+// http://www.mikechambers.com/blog/2011/01/31/setting-the-background-color-when-generating-images-from-canvas-todataurl
+function canvasToImage() {
+  // cache height and width
+  var canvas = Globals.world.renderer();
+  var context = canvas.ctx;
+  var w = canvas.width;
+  var h = canvas.height;
+
+  // get the current ImageData for the canvas.
+  var data = context.getImageData(0, 0, w, h);
+
+  // store the current globalCompositeOperation
+  var compositeOperation = context.globalCompositeOperation;
+
+  // set to draw behind current content
+  context.globalCompositeOperation = "destination-over";
+
+  // set background color
+  context.fillStyle = '#ffffff';
+
+  // draw background / rect on entire canvas
+  context.fillRect(0, 0, w, h);
+
+  // get the image data from the canvas
+  var imageData = canvas.el.toDataURL("image/jpeg", 0.5);
+
+  // clear the canvas
+  context.clearRect(0, 0, w, h);
+
+  // restore it with original / cached ImageData
+  context.putImageData(data, 0, 0);
+
+  // reset the globalCompositeOperation to what it was
+  context.globalCompositeOperation = compositeOperation;
+
+  // var head = 'data:image/jpeg;base64,';
+  // var imgFileSize = Math.round((imageData.length - head.length) * 3/4) ;
+  // console.log("generated image file size: " + imgFileSize);
+
+  // return the Base64 encoded data url string
+  return imageData;
+}
+
+// Turns the dataURI created by the canvas to an actual blob that is recognized
+// as a file to be uploaded in a form and saved to the blobstore
+// http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+function dataURItoBlob(dataURI) {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  var byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+  else
+    byteString = unescape(dataURI.split(',')[1]);
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  // write the bytes of the string to a typed array
+  var ia = new Uint8Array(byteString.length);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], {type:mimeString});
+}
+
+
 function registerPVAChartEvents() {
   positionChart = new CanvasJS.Chart("positionGraph",{
       // // axisX:{

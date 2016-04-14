@@ -6,10 +6,10 @@
       {{ range $simulation := .Data.simulations }}
         <li>
           <div class="hide-on-small-only card-quarter-width card">
-            <div class="card-image waves-effect waves-block waves-light">
-              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
+            <div class="card-image waves-effect waves-block waves-dark">
+              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img simulation-thumb" src="{{ $simulation.ImageSrcUrl }}" /></a>
             </div>
-            <div class="card-content">
+            <div class="card-content simulation-thumb-description">
               <span class="card-title">
                 <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
               </span>
@@ -35,10 +35,10 @@
           </div>
 
           <div class="hide-on-med-and-up card-half-width card">
-            <div class="card-image waves-effect waves-block waves-light">
-              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img" src="/static/img/accent.png" /></a>
+            <div class="card-image waves-effect waves-block waves-dark">
+              <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}"><img class="responsive-img simulation-thumb" src="{{ $simulation.ImageSrcUrl }}" /></a>
             </div>
-            <div class="card-content">
+            <div class="card-content simulation-thumb-description">
               <span class="card-title">
                 <a href="/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}">{{ $simulation.Name }}</a>
               </span>
