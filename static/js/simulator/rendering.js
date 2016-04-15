@@ -462,8 +462,11 @@ function viewportToKeyCanvas(n){
   if(n === false) n = lastKF();  
   var canvas = $('#' + Globals.canvasId)[0].children[0];  
   var keycanvas = $("#keyframe-" + n)[0];
-  keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
-  keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+  if(keycanvas != undefined)
+  {
+    keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
+    keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+  }
 }
 
 // Adds post world.render() effects including property windows, springs, vectors, and highlights.

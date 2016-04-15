@@ -141,7 +141,11 @@ var Globals = {
 // Number of frames to attempt to simulate before declaring simulation failure
   maxFrames: 4000,
   
-  maxNumKeyframes: 5
+  maxNumKeyframes: 5,
+
+  rightMenuActive: false,
+
+  activeRightTabName: ""
 };
 
 

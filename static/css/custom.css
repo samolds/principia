@@ -705,6 +705,8 @@ adding for new layout.html
 }
 
 #right-menu{
+  z-index: 3;
+  position: relative;
   width: 80px;
   height: 80vh;
   background-color: white;
@@ -725,10 +727,13 @@ adding for new layout.html
 #viewport{
   background-color: grey;
   width :100%;
-  height: 78vh;
+  height: 80vh;
+  margin: 0px;
+  padding: 0px;
 }
 
 .right-menu-item{
+  z-index:2;
   text-align: center;
   margin-top: 30px;
 }
@@ -745,4 +750,40 @@ adding for new layout.html
  padding-left: 170px;
 }
 
+/*----slide menus----*/
+.right-slide-menu {
+  z-index:1;
+  width: 240px;
+  height: 80vh;
+  position: absolute;
+  background-color: red;
+  right: -240px;
+  top:104px;
+  margin:0px;
 
+  transition: all .5s ;
+  -webkit-transition: all .5s ;
+  -moz-transition: all .5s ;
+  -ms-transition: all .5s;
+  
+}
+
+#overview,
+#globalprops,
+#elementprops,
+#toolbox {
+  z-index:1;
+  width: 240px;
+  height: 80vh;
+  position: absolute;
+  background-color: blue;
+  right: -240px;
+  top:104px;
+  margin:0px;
+
+  transition: all .5s ;
+  -webkit-transition: all .5s ;
+  -moz-transition: all .5s ;
+  -ms-transition: all .5s;
+  
+}

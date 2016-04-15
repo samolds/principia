@@ -210,6 +210,9 @@ $(document).ready(function(){
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
 
+  $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
+
+
   $(document).on('keyup', function(event) {keyUp(event)});
   $(document).on('keydown', function(event) {keyDown(event)});
   

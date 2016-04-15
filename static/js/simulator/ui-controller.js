@@ -815,3 +815,47 @@ function keyDown(e)
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;
 }
+
+function rightSlideMenuOpen(e)
+{
+  id = e.currentTarget.firstChild.id;
+  selector = "";
+  if(id == "toolbox-tab"){
+    console.log("toolbox");
+    selector = "toolbox";
+  }
+  else if(id == "elementprops-tab"){
+    console.log("element");
+    selector = "elementprops";
+  }
+  else if(id == "globalprops-tab"){
+    console.log("global");
+    selector = "globalprops";
+  }
+  else if(id == "overview-tab"){
+    console.log("overview");
+    selector = "overview";
+  }
+
+
+//if its open, close it, 
+  if(Globals.rightMenuActive){
+    console.log("open")
+
+    $("#" + selector).css("right", "-280px");
+    Globals.rightMenuActive = false;
+  }
+  else{
+  console.log("closed");
+  $("#" + selector).css("right", "80px");
+  Globals.rightMenuActive = true;
+  }
+}
+
+// $(function() {
+//   $('.right-menu-item').click(function() {
+//     console.log("sup fool?");
+//     $("#right-slide-menu").css("right", "80px");
+//   });
+// })
+
