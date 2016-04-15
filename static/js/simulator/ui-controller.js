@@ -701,6 +701,13 @@ function deleteBody(bodyIndex){
     var bodToDelete = Globals.bodyConstants[bodyIndex];
     Globals.bodyConstants.splice(bodyIndex, 1);
 
+    var deletedBodWasMass = bodToDelete.ctype.indexOf("mass") !== -1;
+    var deletedBodWasSpringChild = bodToDelete.ctype.indexOf("spring-child") !== -1;
+    var deletedBodWasSpring = bodToDelete.ctype.indexOf("spring") !== -1;
+    var deletedBodWasPulley = bodToDelete.ctype.indexOf("pulley") !== -1;
+    var deletedBodWasRamp = bodToDelete.ctype.indexOf("ramp") !== -1;
+    var deletedBodWasSurface = bodToDelete.ctype.indexOf("surface") !== -1;
+
     // Remove the body from all of the keyframes
     var len = Globals.keyframeStates.length;
     for (var i = 0; i < len; i++) {
@@ -716,7 +723,7 @@ function deleteBody(bodyIndex){
 
     // We already deleted one of the ends of the spring, but now we
     // have to delete the other end
-    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+    if (deletedBodWasSpringChild) {
       // Delete the parent of the child spring that was just deleted from
       // bodyConstants, the keyframes, and the physicsjs world
       Globals.bodyConstants.splice(bodToDelete.parent, 1);
@@ -724,7 +731,7 @@ function deleteBody(bodyIndex){
         Globals.keyframeStates[i].splice(bodToDelete.parent, 1);
       }
       Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.parent]);
-    } else if (bodToDelete.ctype.indexOf("spring") !== -1) {
+    } else if (deletedBodWasSpring) {
       // Delete the child of the parent spring that was just deleted from
       // bodyConstants, the keyframes, and the physicsjs world
       Globals.bodyConstants.splice(bodToDelete.child - 1, 1);
@@ -739,7 +746,7 @@ function deleteBody(bodyIndex){
     // to decrement the referenced index by 2, otherwise we just decrement it by 1
     len = Globals.bodyConstants.length;
     var decSize = 1;
-    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+    if (deletedBodWasSpring) {
       decSize = 2;
     }
 
@@ -747,25 +754,31 @@ function deleteBody(bodyIndex){
     // one that was deleted, unless it was a spring child, then we'll need to step
     // back a step since the child and previous parent will have been deleted
     var startIndex = bodyIndex;
-    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+    if (deletedBodWasSpringChild) {
       startIndex--;
     }
 
     // Loop through all bodies after the deleted body to update any indices that
     // reference changed index
-    for (i = startIndex; i < len; i++) {
+    for (i = 0; i < len; i++) {
       bod = Globals.bodyConstants[i];
       if (bod.ctype.indexOf("spring-child") !== -1) {
-        bod.parent -= decSize;
-      } else if (bod.ctype.indexOf("spring") !== -1) {
+        if (i >= startIndex)
+          bod.parent -= decSize;
+        if (bod.attachedBody !== null && bod.attachedBody >= startIndex)
+          bod.attachedBody -= decSize;
+      } else if (i >= startIndex && bod.ctype.indexOf("spring") !== -1) {
         bod.child -= decSize;
+      } else if (bod.ctype.indexOf("mass") !== -1) {
+        if (bod.attachedTo !== null && bod.attachedTo >= startIndex)
+          bod.attachedTo -= decSize;
       }
     }
 
     // If the component deleted was a spring or pulley, we need to loop through
     // any of the existing components to check if any of them were attached to
     // the spring or pulley. If they were we need to delete the reference
-    if (bodToDelete.ctype.indexOf("spring") !== -1 || bodToDelete.ctype.indexOf("pulley") !== -1) {
+    if (deletedBodWasSpring || deletedBodWasPulley) {
       // For Springs get the actual reference if it was
       // the parent or child spring node that was deleted
       var refToDelete = bodyIndex;
@@ -783,7 +796,7 @@ function deleteBody(bodyIndex){
     // If the component deleted was a pointmass, we need to loop through all of the
     // remaining components (specifically any springs) to check to see if any of the
     // springs were attached to this pointmass. If they were we delete the reference
-    if (bodToDelete.ctype.indexOf("mass") !== -1) {
+    if (deletedBodWasMass) {
       for (i = 0; i < len; i++) {
         bod = Globals.bodyConstants[i];
         if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
