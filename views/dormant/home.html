@@ -20,7 +20,7 @@
 
   {{ if .Data.simulations }}
     <div class="container pad-top">
-      <div class="white-text center-align">
+      <div class="white-text center-align pad-bottom">
         {{ $numSimulations := len .Data.simulations }}
         {{ if and (eq $numSimulations 1) (.Data.topThisMonth) }}
           <h5>This Month's Most Popular Simulation</h5>
@@ -37,6 +37,7 @@
   {{ end }}
 
   {{ if not .IsLoggedIn }}
+    <div class="pad-top pad-bottom"></div>
     <div class="container narrow pad-top pad-bottom">
       <div class="card-panel">
         <div class="valign-wrapper">
