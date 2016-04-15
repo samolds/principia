@@ -14,7 +14,7 @@ function Kinematics1DModule() {
       var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);// bounds of the window
       var edgeBounce;
       var renderer;
-      var integrator;    
+      var integrator;
       
       var variableMap = Globals.variableMap;
       var bodyConstants = Globals.bodyConstants;
@@ -132,7 +132,7 @@ function Kinematics1DModule() {
           onPropertyChanged(index, "posy", canon.y, false);
           
           if(index === 0 || index === Globals.originObject)
-            moveOrigin({"x":canon.x, "y":canon.y}, true);
+            moveOrigin({"x":canon.x, "y":canon.y}, false);
           
           if(index === 0)
             $("#globalprops-tab").click();          
@@ -165,7 +165,7 @@ function Kinematics1DModule() {
             }
             
             if(index === 0 || index === Globals.originObject)
-              moveOrigin({"x":canon.x, "y":canon.y}, true);
+              moveOrigin({"x":canon.x, "y":canon.y}, false);
           
             // Resimulate if there is only one keyframe
             if(Globals.numKeyframes == 1) attemptSimulation();
