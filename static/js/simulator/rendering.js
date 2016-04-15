@@ -674,7 +674,7 @@ function preRender()
 {
   var can = Globals.world.renderer();
   
-  var incr = 20/getScaleFactor();
+  var incr = 50/getScaleFactor();
   for(var i=-100; i <= can.width + 100; i+= incr)
     can.drawLine({'x':(i + Globals.translation.x % incr), 'y':0},
                  {'x':(i + Globals.translation.x % incr), 'y':can.height},
@@ -684,6 +684,18 @@ function preRender()
     can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
                  {'x':can.width, 'y':(i + Globals.translation.y % incr)},
                  { strokeStyle: '#eeeeee',lineWidth: 1});
+    
+  // Draw y grid labels
+  var ymod = Math.floor(Globals.translation.y/incr)*incr;
+  if(ymod < 0 && Globals.translation.y !== ymod) ymod += incr;  
+  for(var i=-100; i <= can.height+100; i+= incr)    
+    can.ctx.fillText("" + (swapYpos(i, false) + ymod), 0, (i + Globals.translation.y % incr));
+  
+  // Draw x grid labels
+  var xmod = Math.floor(Globals.translation.x/incr)*incr;
+  if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
+  for(var i=-100; i <= can.width+100; i+= incr)    
+    can.ctx.fillText("" + (i - xmod), (i + Globals.translation.x % incr), 490);
 }
 
 // Sets the world state to the currently selected frame and renders it.
