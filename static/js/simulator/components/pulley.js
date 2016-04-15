@@ -123,6 +123,8 @@ function attachPulley(body){
   } 
 }
 
+function applyPulleyForces(body, dt) { return [0,0]; }
+
 // Applies pulley physics to the specified state object using specified pulley.
 // Assumes that the caller has already identified 'state' as being attached to the pulley.
 function applyPulley(body, dt)
