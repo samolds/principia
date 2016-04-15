@@ -28,10 +28,15 @@
           <label>Email</label>
           <p class="pad-sides">{{ .Data.user.Email }}</p>
         </div>
-        {{ else }}
+        {{ else if .Data.user.DisplayName }}
         <div>
           <label>Display Name</label>
           <p class="pad-sides">{{ .Data.user.DisplayName }}</p>
+        </div>
+        {{ else }}
+        <div>
+          <label>Display Name</label>
+          <p class="pad-sides">Anonymous</p>
         </div>
         {{ end }}
         <div>
@@ -48,16 +53,24 @@
     <div class="col s6">
       <div class="card-panel">
         <div class="file-field">
-          <div id="profile-pic-container" class="valign-wrapper dark-accent-gradient-1">
-            <div class="valign center-align" style="width: 100%;">
-              <i class="white-text fa fa-user large"></i>
+          {{ if .Data.userProfileImageSrc }}
+            <div class="inherit-size">
+              <img class="responsive-img" src="{{ .Data.userProfileImageSrc }}">
             </div>
-          </div>
+          {{ else }}
+            <div class="inherit-size dark-accent-gradient-1 empty-profile-image-container">
+              <i class="inherit-size center-align white-text fa fa-user large"></i>
+            </div>
+          {{ end }}
           {{ if .Data.userIsOwner }}
-          <input type='file' onchange="readURL(this);" />
-          <div class="file-path-wrapper">
-            <input class="file-path validate" type="text" placeholder="Upload An Image">
-          </div>
+            <div class="file-path-wrapper">
+              <input id="user-profile-image" name="ProfileImage" type="file" onchange="validateUserImageSelection()">
+            </div>
+          {{ end }}
+          {{ if .Data.userIsOwner }}
+            <div class="center-align pad-top">
+              <a id="image-upload-message">Click to upload a new profile image!</a>
+            </div>
           {{ end }}
         </div>
       </div>
@@ -85,7 +98,7 @@
   {{ if .Data.userIsOwner }}
   <div class="row">
     <div class="center-align">
-      <a class="waves-effect waves-light btn-large blue darken-1" id="profile-save-button" onclick="saveUser()"><i class="fa fa-floppy-o"></i> Update!</a>
+      <a class="waves-effect waves-light btn-large blue darken-1" id="save-button" onclick="saveUser({{ .Data.imageUploadUrl }})"><i class="fa fa-floppy-o"></i> Update!</a>
     </div>
   </div>
   {{ end }}

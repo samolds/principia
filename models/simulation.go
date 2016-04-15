@@ -1,6 +1,7 @@
 package models
 
 import (
+	"appengine"
 	"time"
 )
 
@@ -16,6 +17,7 @@ type Simulation struct {
 	UpdatedDate   time.Time
 	IsPrivate     bool
 	AuthorKeyName string // Used to get Author Key
+	ImageBlobKey  appengine.BlobKey
 	// Ratings by descendant
 	// Comments by descendant
 }
@@ -27,6 +29,7 @@ type SimulationData struct {
 	AuthorName  string
 	AuthorID    string
 	RatingTotal int
+	ImageSrcUrl string
 }
 
 // ByRating implements sort.Interface for []SimulationData based on

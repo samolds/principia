@@ -28,22 +28,28 @@ var (
 	baseName = "base"
 	base     = tmplDir + baseName + ".html"
 
+	templateHelpers = template.FuncMap{
+		"evenlyDivisible": func(a, b int) bool {
+			return (a % b) == 0
+		},
+	}
+
 	templates = map[string]*template.Template{
-		"dormant/home":        template.Must(template.ParseFiles(base, dormDir+"home.html")),
-		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
-		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
-		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
-		"dormant/help":        template.Must(template.ParseFiles(base, dormDir+"help.html")),
-		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
-		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
+		"dormant/home":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, dormDir+"home.html")),
+		"dormant/about":       template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"about.html")),
+		"dormant/faqs":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"faqs.html")),
+		"dormant/feedback":    template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"feedback.html")),
+		"dormant/help":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"help.html")),
+		"dormant/unsupported": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"unsupported.html")),
+		"dormant/error":       template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"error.html")),
 
-		"simulator/browse":     template.Must(template.ParseFiles(base, simListFrag, simDir+"browse.html")),
-		"simulator/mobile":     template.Must(template.ParseFiles(base, comFrag, simDir+"mobile.html")),
-		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
+		"simulator/browse":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, simDir+"browse.html")),
+		"simulator/mobile":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"mobile.html")),
+		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 
-		"user/simulations":  template.Must(template.ParseFiles(base, simListFrag, userDir+"simulations.html")),
-		"user/interactions": template.Must(template.ParseFiles(base, simListFrag, userDir+"interactions.html")),
-		"user/profile":      template.Must(template.ParseFiles(base, simListFrag, userDir+"profile.html")),
+		"user/simulations":  template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"simulations.html")),
+		"user/interactions": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"interactions.html")),
+		"user/profile":      template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"profile.html")),
 
 		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
 	}

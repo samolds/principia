@@ -1,6 +1,7 @@
 package models
 
 import (
+	"appengine"
 	"time"
 )
 
@@ -9,9 +10,10 @@ type User struct {
 	KeyName  string // UniqueID used to get Key
 	GoogleID string
 
-	DisplayName string
-	Interests   string
-	Email       string
-	Admin       bool
-	JoinDate    time.Time
+	DisplayName  string
+	Interests    string
+	Email        string
+	Admin        bool
+	JoinDate     time.Time
+	ImageBlobKey appengine.BlobKey
 }
