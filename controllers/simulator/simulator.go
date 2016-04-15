@@ -2,10 +2,14 @@ package simulator
 
 import (
 	"appengine"
+	"appengine/blobstore"
 	"appengine/datastore"
+	appengineImage "appengine/image"
+	"bytes"
 	"controllers"
 	"controllers/api"
 	"controllers/utils"
+	"io"
 	"lib/gorilla/mux"
 	"models"
 	"net/http"
@@ -45,18 +49,26 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 
 		key, keyName := utils.GenerateUniqueKey(ctx, "Simulation", user, nil)
 
+		// Get all of the form values and blob image from the post
+		blobs, formValues, err := blobstore.ParseUpload(r)
+		if err != nil {
+			controllers.ErrorHandler(w, r, "Bad blobstore form parse: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// Create the simulation object
 		creationTime := time.Now()
 		simulation = models.Simulation{
 			KeyName:       keyName,
-			Name:          r.FormValue("Name"),
-			Simulator:     r.FormValue("Contents"),
+			Name:          formValues["Name"][0],
+			Simulator:     formValues["Contents"][0],
 			Type:          simType,
-			Description:   r.FormValue("Description"),
+			Description:   formValues["Description"][0],
 			CreationDate:  creationTime,
 			UpdatedDate:   creationTime,
-			IsPrivate:     utils.StringToBool(r.FormValue("IsPrivate")),
+			IsPrivate:     utils.StringToBool(formValues["IsPrivate"][0]),
 			AuthorKeyName: user.KeyName,
+			ImageBlobKey:  blobs["Thumbnail"][0].BlobKey,
 		}
 
 		// Put the simulation in the datastore
@@ -68,17 +80,30 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		}
 
 		pagePath := r.URL.Path + "/" + simulation.KeyName
+		// an AJAX Request would prevent a redirect.
+		// http.Redirect(w, r, pagePath, http.StatusFound)
 
-		// an AJAX Request would prevent a redirect..
-		http.Redirect(w, r, pagePath, http.StatusFound)
+		// The logic that allows posting an image generated from a canvas as FormData
+		// requires that the POST is asynchronous? So post back what the redirect should be
+		pagePathBuff := bytes.NewBufferString(pagePath)
+		io.Copy(w, pagePathBuff)
+		return
+	}
+
+	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
+	// Have to specify a path to return to after the post succeeds
+	imageUploadUrl, err := blobstore.UploadURL(ctx, r.URL.Path, nil)
+	if err != nil {
+		controllers.ErrorHandler(w, r, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// If it's a new simulation, you're the owner
 	data := map[string]interface{}{
-		"simulation": simulation,
-		"new":        true,
-		"isOwner":    true,
+		"simulation":     simulation,
+		"imageUploadUrl": imageUploadUrl.Path,
+		"new":            true,
+		"isOwner":        true,
 	}
 
 	controllers.BaseHandler(w, r, template, data)
@@ -108,10 +133,33 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 
 	isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
 	if r.Method == "POST" && isOwner {
-		simulation.Name = r.FormValue("Name")
-		simulation.Simulator = r.FormValue("Contents")
-		simulation.Description = r.FormValue("Description")
-		simulation.IsPrivate = utils.StringToBool(r.FormValue("IsPrivate"))
+		// Get all of the form values and blob image from the post
+		blobs, formValues, err := blobstore.ParseUpload(r)
+		if err != nil {
+			api.ApiErrorResponse(w, "Bad blobstore form parse: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the url displaying the old thumbnail image in the blobstore
+		err = appengineImage.DeleteServingURL(ctx, simulation.ImageBlobKey)
+		if err != nil {
+			api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the old thumbnail image in the blobstore
+		err = blobstore.Delete(ctx, simulation.ImageBlobKey)
+		if err != nil {
+			api.ApiErrorResponse(w, "Can't delete the blobstore image: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Update the simulation with new values, including the new thumbnail image key
+		simulation.Name = formValues["Name"][0]
+		simulation.Simulator = formValues["Contents"][0]
+		simulation.Description = formValues["Description"][0]
+		simulation.IsPrivate = utils.StringToBool(formValues["IsPrivate"][0])
+		simulation.ImageBlobKey = blobs["Thumbnail"][0].BlobKey
 		simulation.UpdatedDate = time.Now()
 
 		// Put the simulation in the datastore
@@ -129,6 +177,20 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 	}
 
 	if r.Method == "DELETE" && isOwner {
+		// Delete the url displaying the old thumbnail image in the blobstore
+		err = appengineImage.DeleteServingURL(ctx, simulation.ImageBlobKey)
+		if err != nil {
+			api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the old thumbnail image in the blobstore
+		err = blobstore.Delete(ctx, simulation.ImageBlobKey)
+		if err != nil {
+			api.ApiErrorResponse(w, "Can't delete the blobstore image: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// Delete the simulation in the datastore
 		err = datastore.Delete(ctx, simulationKey)
 
@@ -141,10 +203,19 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
+	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
+	// Have to specify a path to return to after the post succeeds
+	imageUploadUrl, err := blobstore.UploadURL(ctx, r.URL.Path, nil)
+	if err != nil {
+		controllers.ErrorHandler(w, r, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	data := map[string]interface{}{
-		"simulation": simulationData,
-		"new":        false,
-		"isOwner":    isOwner,
+		"simulation":     simulationData,
+		"imageUploadUrl": imageUploadUrl.Path,
+		"new":            false,
+		"isOwner":        isOwner,
 	}
 
 	controllers.BaseHandler(w, r, template, data)

@@ -2,8 +2,11 @@ package user
 
 import (
 	"appengine"
+	"appengine/blobstore"
 	"appengine/datastore"
+	appengineImage "appengine/image"
 	"controllers"
+	"controllers/api"
 	"controllers/utils"
 	"lib/gorilla/mux"
 	"models"
@@ -148,6 +151,26 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		var empty []models.Simulation
 		totalFavoritesReceived := 0
 
+		// Get the profile image they may or may not
+		var userProfileImageSrc string
+		userProfileImage, err := appengineImage.ServingURL(ctx, pageUser.ImageBlobKey, nil)
+		if err == nil {
+			userProfileImageSrc = userProfileImage.Path
+		}
+
+		// Only want to generate an image upload user if it is the user's profile page
+		var imageUploadUrl string
+		if userIsOwner {
+			// The user's profile images need to be POSTed to specific appengine blobstore "action" paths.
+			// Have to specify a path to return to after the post succeeds
+			imageUpload, err := blobstore.UploadURL(ctx, r.URL.Path, nil)
+			if err != nil {
+				api.ApiErrorResponse(w, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+			imageUploadUrl = imageUpload.Path
+		}
+
 		// Get a count of all favorites received on all simulations created by this user
 		q := datastore.NewQuery("Simulation").KeysOnly().Filter("AuthorKeyName =", userKeyName)
 		simKeys, err := q.GetAll(ctx, &empty) // Get all simulation keys made by this user
@@ -171,6 +194,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
 			"user":                   pageUser,
 			"userJoinDate":           prettyJoinDate,
+			"userProfileImageSrc":    userProfileImageSrc,
+			"imageUploadUrl":         imageUploadUrl,
 			"userIsOwner":            userIsOwner,
 			"simulations":            simulations,
 			"totalFavoritesReceived": totalFavoritesReceived,
@@ -188,9 +213,37 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Get all of the form values and blob image from the post
+		blobs, formValues, err := blobstore.ParseUpload(r)
+		if err != nil {
+			controllers.ErrorHandler(w, r, "Bad blobstore form parse: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Only update the profile image if they posted a new one
+		newImage := blobs["ProfileImage"]
+		if len(newImage) != 0 {
+			// Delete the old profile photo if they already had one
+			// Delete the url displaying the old thumbnail image in the blobstore
+			err = appengineImage.DeleteServingURL(ctx, pageUser.ImageBlobKey)
+			if err != nil {
+				api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			// Delete the old thumbnail image in the blobstore
+			err = blobstore.Delete(ctx, pageUser.ImageBlobKey)
+			if err != nil {
+				api.ApiErrorResponse(w, "Can't delete the blobstore image: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			pageUser.ImageBlobKey = newImage[0].BlobKey
+		}
+
 		// Update user information
-		pageUser.DisplayName = r.FormValue("DisplayName")
-		pageUser.Interests = r.FormValue("Interests")
+		pageUser.DisplayName = formValues["DisplayName"][0]
+		pageUser.Interests = formValues["Interests"][0]
 
 		_, err = datastore.Put(ctx, pageUserKey, &pageUser)
 		if err != nil {

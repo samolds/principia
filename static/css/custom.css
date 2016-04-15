@@ -521,12 +521,8 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
 }
 
 /* Profile Page */
-#profile-pic-container {
-  height: 250px; 
-  width: 70%; 
-  border: dashed 1px grey; 
-  margin:auto; 
-  border-radius: 5px
+.empty-profile-image-container {
+  padding: 57px 0;
 }
 
 #profile-welcome-modal {
@@ -697,12 +693,13 @@ a#help-tooltips:hover {
   .card-list .card-panel .activator {
     position: absolute;
     right: 15px;
+    bottom: 15px;
     z-index: 1;
   }
 
   .card-list .card-quarter-width .card-content,
   .card-list .card-quarter-width .card-content {
-    font-size: 0.8em;
+    font-size: 1em;
     padding: 20px;
   }
 
@@ -718,6 +715,16 @@ a#help-tooltips:hover {
 
   .card-quarter-width {
     width: 23%;
+  }
+
+  .simulation-thumb {
+    background: #222222;
+  }
+
+  .simulation-thumb-description {
+    color: #ffffff;
+    background: #222222;
+    word-wrap: break-word;
   }
 
 /* color gradients used as accents */
