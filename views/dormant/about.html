@@ -1,8 +1,10 @@
 {{ define "title" }} - About{{ end }}
 
 {{ define "content" }}
-<div class="container">
-  <div class="card-panel">
+<div class="pad-top pad-bottom"></div>
+
+<div class="white">
+  <div class="container pad-top pad-bottom">
     <h3><img src="/static/img/logo/principia.svg" class="principia-logo"/></h3>
     <p>
       Principia is an educational physics playground emphasizing visualizations and interactability.
@@ -12,8 +14,7 @@
       A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their
       browser. Then the simulation can be run to see the elements interact with each other over time, with the ability to
       pause the simulation at any point and query the state of an element. Users can save their simulations and share
-      them with others. Special privileges are available for instructor accounts to manage a classroom, including the
-      ability to incorporate quizzes or assignments into their physics system.
+      them with others.
     </p>
     <p>
       Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students
@@ -24,89 +25,93 @@
       <a href="http://github.com/samolds/principia">GitHub</a>, or follow along with our behind the scenes on
       <a href="http://instagram.com/principiaxyz">Instagram</a>!
     </p>
+  </div>
+</div>
 
-    <h3 class="pad-top">The Team</h3>
-    <div class="row">
-      <div class="col s12 m3">
-        <div class="card principia-blue-navbar white-text">
-          <div class="card-image waves-effect waves-block waves-light">
-            <img src="/static/img/team/sam.gif" />
-          </div>
-          <div class="card-content">
-            <span class="card-title activator">Sam Olds</span>
-          </div>
-          <div class="card-reveal principia-blue-navbar">
-            <span class="card-title">About<i class="fa fa-times right"></i></span>
-            <p>
-              Sam enjoys funky jazz and cheap wine.
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="http://github.com/samolds">GitHub</a>
-            </div>
+<div class="container">
+  <h3 class="pad-top">The Team</h3>
+  <div class="row">
+    <div class="col s6 m3">
+      <div class="card principia-card-dark-color white-text principia-about-card-sam">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img src="/static/img/team/sam.gif" />
+        </div>
+        <div class="card-content">
+          <span class="card-title activator">Sam Olds</span>
+        </div>
+        <div class="card-reveal principia-card-dark-color">
+          <span class="card-title">About<i class="fa fa-times right"></i></span>
+          <p class="pad-top">
+            Sam enjoys funky jazz and cheap wine.
+          </p>
+          <div class="card-action">
+            <a class="dark-link-blue" href="http://github.com/samolds">GitHub</a>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="col s12 m3">
-        <div class="card principia-blue-navbar white-text">
-          <div class="card-image waves-effect waves-block waves-light">
-            <img src="/static/img/team/danny.gif" />
-          </div>
-          <div class="card-content">
-            <span class="card-title activator">Danny Petersen</span>
-          </div>
-          <div class="card-reveal principia-blue-navbar">
-            <span class="card-title">About<i class="fa fa-times right"></i></span>
-            <p>
-              Danny enjoys upbeat movies and piña coladas.
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="http://github.com/dannylp">GitHub</a>
-            </div>
+    <div class="col s6 m3">
+      <div class="card principia-card-dark-color white-text principia-about-card-danny">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img src="/static/img/team/danny.gif" />
+        </div>
+        <div class="card-content">
+          <span class="card-title activator">Danny Petersen</span>
+        </div>
+        <div class="card-reveal principia-card-dark-color">
+          <span class="card-title">About<i class="fa fa-times right"></i></span>
+          <p class="pad-top">
+            Danny enjoys upbeat movies and piña coladas.
+          </p>
+          <div class="card-action">
+            <a class="dark-link-blue" href="http://github.com/dannylp">GitHub</a>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="col s12 m3">
-        <div class="card principia-blue-navbar white-text">
-          <div class="card-image waves-effect waves-block waves-light">
-            <img src="/static/img/team/matthew.gif" />
-          </div>
-          <div class="card-content">
-            <span class="card-title activator">Matthew Turner<span>
-          </div>
-          <div class="card-reveal principia-blue-navbar">
-            <span class="card-title">About<i class="fa fa-times right"></i></span>
-            <p>
-              Matthew enjoys instrumental hip hop and a good lager.
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="http://github.com/matthewturnercs">GitHub</a>
-            </div>
+    <div class="col s6 m3">
+      <div class="card principia-card-dark-color white-text principia-about-card-matthew">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img src="/static/img/team/matthew.gif" />
+        </div>
+        <div class="card-content">
+          <span class="card-title activator">Matthew Turner<span>
+        </div>
+        <div class="card-reveal principia-card-dark-color">
+          <span class="card-title">About<i class="fa fa-times right"></i></span>
+          <p class="pad-top">
+            Matthew enjoys instrumental hip hop and a good lager.
+          </p>
+          <div class="card-action">
+            <a class="dark-link-blue" href="http://github.com/matthewturnercs">GitHub</a>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="col s12 m3">
-        <div class="card principia-blue-navbar white-text">
-          <div class="card-image waves-effect waves-block waves-light">
-            <img src="/static/img/team/dalton.gif" />
-          </div>
-          <div class="card-content">
-            <span class="card-title activator">Dalton Wallace</span>
-          </div>
-          <div class="card-reveal principia-blue-navbar">
-            <span class="card-title">About<i class="fa fa-times right"></i></span>
-            <p>
-              Dalton enjoys a good 'ol come back story and poutine.
-            </p>
-            <div class="card-action">
-              <a class="dark-link-blue" href="http://github.com/daltonwallace">GitHub</a>
-            </div>
+    <div class="col s6 m3">
+      <div class="card principia-card-dark-color white-text principia-about-card-dalton">
+        <div class="card-image waves-effect waves-block waves-light">
+          <img src="/static/img/team/dalton.gif" />
+        </div>
+        <div class="card-content">
+          <span class="card-title activator">Dalton Wallace</span>
+        </div>
+        <div class="card-reveal principia-card-dark-color">
+          <span class="card-title">About<i class="fa fa-times right"></i></span>
+          <p class="pad-top">
+            Dalton enjoys a good 'ol come back story and poutine.
+          </p>
+          <div class="card-action">
+            <a class="dark-link-blue" href="http://github.com/daltonwallace">GitHub</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<div class="pad-bottom"></div>
 {{ end }}

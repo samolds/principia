@@ -11,8 +11,20 @@ indexes:
 # your application using appcfg.py.
 
 - kind: Comment
+  properties:
+  - name: AuthorKeyName
+  - name: CreationDate
+    direction: desc
+
+- kind: Comment
   ancestor: yes
   properties:
+  - name: CreationDate
+    direction: desc
+
+- kind: Rating
+  properties:
+  - name: AuthorKeyName
   - name: CreationDate
     direction: desc
 
@@ -21,6 +33,38 @@ indexes:
   properties:
   - name: CreationDate
     direction: desc
+
+- kind: Simulation
+  properties:
+  - name: AuthorKeyName
+  - name: CreationDate
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: AuthorKeyName
+  - name: IsPrivate
+  - name: CreationData
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: AuthorKeyName
+  - name: IsPrivate
+  - name: CreationDate
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: AuthorKeyName
+  - name: IsPrivate
+  - name: Name
+    direction: desc
+
+- kind: Simulation
+  properties:
+  - name: IsPrivate
+  - name: CreationDate
 
 - kind: Simulation
   properties:

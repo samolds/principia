@@ -118,10 +118,11 @@ function convertUnit(value, type, invert){
 function getLabel(body){
 
   switch(bodyType(body)){
-    case 'kinematics1D-mass':   return Globals.massBodyCounter;
-    case 'kinematics1D-pulley': return Globals.pulleyBodyCounter;
-    case 'kinematics1D-ramp':   return Globals.rampBodyCounter;
-    case 'kinematics1D-spring': return Globals.springBodyCounter;
+    case 'kinematics1D-mass':    return Globals.massBodyCounter;
+    case 'kinematics1D-pulley':  return Globals.pulleyBodyCounter;
+    case 'kinematics1D-surface': return Globals.surfaceBodyCounter;
+    case 'kinematics1D-ramp':    return Globals.rampBodyCounter;
+    case 'kinematics1D-spring':  return Globals.springBodyCounter;
   }
   return 0;
 }
@@ -170,3 +171,29 @@ function swapYpos(value, invert){
 
 // Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
 function getKF() { return (Globals.keyframe !== false)? Globals.keyframe: lastKF(); }
+
+function getScaleFactor() { return Math.pow(2, Globals.scale * -1); }
+
+/*  Uses given data (assumed pixel coordinates) to return result contain PhysicsJS canonical coordinates */
+function canonicalTransform(data) { 
+  var result = {};
+  result.x = data.x * getScaleFactor() - Globals.translation.x * getScaleFactor();
+  result.y = swapYpos(data.y, false) * getScaleFactor() + Globals.translation.y * getScaleFactor();
+  return result;
+}
+
+/* Returns a value obtained by transforming PhysicsJS canonical coordinate to pixel coordinate (target) */
+function pixelTransform(canon, coordinate, doTranslation){
+  
+  var scale = getScaleFactor();
+  var translate = doTranslation? {x:Globals.translation.x, y:Globals.translation.y}: {x:0, y:0};
+  return (coordinate == "x")? canon/scale - translate.x: swapYpos(canon/scale, false) - translate.y;
+}
+
+/* Returns the pixel coordinate of the specified body (current position) */
+function pixelCoordinate(body){
+  var result = {};
+  result.x = body.state.pos.x + Globals.translation.x;
+  result.y = body.state.pos.y - Globals.translation.y;
+  return result;
+}

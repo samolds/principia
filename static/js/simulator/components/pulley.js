@@ -11,20 +11,22 @@ function addPulley(data){
   var bodyConstants = Globals.bodyConstants;
 
   // Default radius
-  var dRadius = 50;  
-
+  
+  var displaySize = 100/getScaleFactor();
+  var dRadius = displaySize/2;
+  
   // Default image: use pointmass image. Can be changed from select element.
   var img = document.createElement("img");
   img.setAttribute("src", "/static/img/toolbox/pulley.png");
-  img.setAttribute("width", "100");
-  img.setAttribute("height", "100");
+  img.setAttribute("width", "" + displaySize);
+  img.setAttribute("height", "" + displaySize);
   
   // Generate the primary component (equilibrium point) and its child (point stretched to)
   // Note that 'ghost' is a new treatment that ignores collisions
   var component = Physics.body('circle', {
               treatment:"ghost",
-              x: data.x,
-              y: data.y,
+              x: pixelTransform(data.x, "x"),
+              y: pixelTransform(data.y, "y"),
               radius: dRadius,
               view: img,
               styles: {
@@ -39,7 +41,7 @@ function addPulley(data){
       {
         r: dRadius,
         posx: data.x, 
-        posy: swapYpos(data.y, false)
+        posy: data.y
       }
     );
   }

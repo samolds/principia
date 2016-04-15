@@ -13,6 +13,18 @@ type Comment struct {
 	AuthorKeyName string // Used to get Author Key
 	// Ratings by descendant
 
-	// AncestorKey = Simulation
+	// AncestorKey (key.Parent()) = Simulation
 	// Using AncecstorKey for strong consistency
+}
+
+// Not a database object -> Information put in this format to pass to a view
+// All data necessary for nicely displaying a comment in a view
+type CommentData struct {
+	Comment
+	AuthorName        string
+	AuthorID          string
+	AuthorImageSrcUrl string
+	SimulationName    string
+	SimulationID      string
+	SimulationType    string
 }

@@ -3,6 +3,11 @@ function successToast(msg) {
   Materialize.toast($toastContent, 2000);
 }
 
+function notificationToast(header, msg) {
+  var $toastContent = $('<span class="amber lighten-5 black-text pad"><h5><i class="fa fa-bullhorn"></i> ' + header + '</h5><p>' + msg + '</p></span>');
+  Materialize.toast($toastContent, 8000);
+}
+
 function failToast(msg) {
   var $toastContent = $('<span class="red lighten-5 black-text pad"><h5><i class="fa fa-exclamation-triangle"></i> Failure!</h5><p>' + msg + '</p></span>');
   Materialize.toast($toastContent, 8000);
@@ -19,59 +24,68 @@ $( document ).ready(function() {
     }
 });
 
-function post(path, parameters) {
-    var form = $('<form></form>');
 
-    form.attr("method", "post");
-    form.attr("action", path);
+function formPost(path, parameters, successMessage) {
+  var fd = new FormData(document.forms[0]);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', path);
 
-
-    for (var key in parameters) {
-      if (parameters.hasOwnProperty(key)) {
-        var field = $('<input></input>');
-
-        field.attr("type", "hidden");
-        field.attr("name", key);
-        field.attr("value", parameters[key]);
-
-        form.append(field);
+  if (isNewSim()) {
+    xhr.onload = function() { // After the post is done, redirect
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+          window.location = xhr.responseText; // Redirects to saved simulation link
+          successToast(successMessage);
+        } else {
+          failToast(xhr.responseText);
+        }
       }
-    }
+    };
+  } else {
+    xhr.onload = function() { // Show toasts
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+          if ($("#save-button").size() > 0) {
+            $("#save-button").removeClass( "blue" )
+            $("#save-button").addClass( "green" )
+          }
+          window.location.reload(); // Necessary to get new image save form "action" attribute
+          successToast(successMessage);
+        } else {
+          failToast(xhr.responseText);
+        }
+      }
+    };
+  }
 
-    // The form needs to be a part of the document in
-    // order for us to be able to submit it.
-    $(document.body).append(form);
-    form.submit();
+  for (var i = 0; i < parameters.length; i++) {
+    fd.append(parameters[i].name, parameters[i].value);
+  }
+
+  // Post data
+  xhr.send(fd);
 }
+
 
 // Saves the simulation, whether new or existing
 // if a new simulation it does NOT use ajax to allow
 // for a page redirect to simulator/{simulatorId}
-function saveSimulation(){
+function saveSimulation(postURL){
+  if (!postURL) {
+    postURL = window.location.href;
+  }
 
-    simObject = { Name: $("#simulation-name").val(), Contents: exportToJson(), IsPrivate: $("#simulation-is-private").is(":checked") };
+  simObject = [
+    {name: "Name",        value: $("#simulation-name").val(),                type: "text"},
+    {name: "Contents",    value: exportToJson(),                             type: "text"},
+    {name: "Description", value: $("#simulation-description").val(),         type: "text"},
+    {name: "IsPrivate",   value: $("#simulation-is-private").is(":checked"), type: "text"},
+    {name: "Thumbnail",   value: dataURItoBlob(canvasToImage()),             type: "file"},
+  ];
 
-    // Is this a new simulation that we're trying to save?
-    if(isNewSim()){
-        // Creating a new simulation
-        post(window.location.href, simObject);
-        successToast('Simulation saved successfully!');
-    } else {
-        // Updating an existing simulation
-        $.post(window.location.href, simObject)
-        .done(function() { 
-            // I believe 'done' is synonymous with 'success' here
-            $("#save-button").removeClass( "blue" )
-            $("#save-button").addClass( "green" )
-            successToast('Simulation saved successfully!');
-        })
-        .fail(function(xhr, textStatus, errorThrown) {
-          failToast(xhr.responseText);
-        });
-    } 
+  formPost(postURL, simObject, "Simulation saved successfully!");
 
-    losefocus();
-
+  losefocus();
 }
 
 function deleteSimulation(simUrl, redirectUrl, element) {
@@ -94,19 +108,43 @@ function deleteSimulation(simUrl, redirectUrl, element) {
   });
 }
 
-function saveUser() {
-    simObject = { DisplayName: $("#user-display-name").val(), Interests:  $("#user-interests").val()};
+function validateUserImageSelection() {
+  var uploadMessage = $('#image-upload-message')[0];
 
-    $.post(window.location.href, simObject)
-        .done(function() { 
-            // I believe 'done' is synonymous with 'success' here
-            $("#profile-save-button").removeClass( "blue" )
-            $("#profile-save-button").addClass( "green" )
-            successToast('User saved successfully!');
-        })
-        .fail(function(xhr, textStatus, errorThrown) {
-          failToast(xhr.responseText);
-        });
+  var imageFiles = document.getElementById("user-profile-image").files;
+  if (imageFiles && imageFiles[0].size < 500000) { // 500kB
+    uploadMessage.text = "Ready to save " + imageFiles[0].name + "!";
+  } else {
+    uploadMessage.text = "This image might be too large! The max file size is 500KB";
+  }
+}
+
+function saveUser(postURL) {
+  if (!postURL) {
+    postURL = window.location.href;
+  }
+
+  var imageFiles = document.getElementById("user-profile-image").files;
+  if (imageFiles && imageFiles[0]) {
+    if (imageFiles[0].size < 500000) { // 500KB
+      userObject = [
+        {name: "DisplayName",  value: $("#user-display-name").val(), type: "text"},
+        {name: "Interests",    value: $("#user-interests").val(),    type: "text"},
+        {name: "ProfileImage", value: imageFiles[0],                 type: "file"},
+      ];
+
+      formPost(postURL, userObject, "Information saved successfully!");
+    } else {
+      failToast("This image might be too large! The max file size is 500KB");
+    }
+  } else {
+    userObject = [
+      {name: "DisplayName",  value: $("#user-display-name").val(), type: "text"},
+      {name: "Interests",    value: $("#user-interests").val(),    type: "text"},
+    ];
+
+    formPost(postURL, userObject, "Information saved successfully!");
+  }
 }
 
 // Save new comment to the datastore
@@ -152,16 +190,35 @@ function refreshCommentsList() {
     if (json) {
       for (var i = 0; i < json.length; i++) {
         var comment = json[i];
-        result +=  "<div class='row'>";
-        result +=   "<div class='col s2'>";
-        result +=    "<i class='medium fa fa-user'></i>";
-        result +=  "</div>";
-        result +=  "<div class='col s10 all-bubble-content' id='new-comment'>";
-        result +=    "<div class='row'>";
-        result +=      "<div class='all-point'></div>";
-        result +=      "<div class='col  s12'>";
-        result +=         "<p class=''>" +comment.Contents+"</p> ";
-        result +=      "</div></div></div></div>";
+        var displayName = 'Anonymous';
+        if (comment.AuthorName) {
+          displayName = comment.AuthorName;
+        }
+
+        var imgDisplay = "<i class='medium black-text fa fa-user'></i>";
+        if (comment.AuthorImageSrcUrl) {
+          imgDisplay = "<img src='" + comment.AuthorImageSrcUrl + "' class='responsive-img'>"
+        }
+
+        result += "<div class='col s12'>";
+        result +=   "<div class='row'>";
+        result +=     "<div class='card-panel valign-wrapper'>";
+        result +=       "<div class='col s3'>";
+        result +=         "<div class='center-align'>";
+        result +=           "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
+        result +=         "</div>";
+        result +=         "<div class='center-align'>";
+        result +=           "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
+        result +=         "</div>";
+        result +=       "</div>";
+        result +=       "<div class='col s9'>";
+        result +=         "<span class='black-text'>";
+        result +=           comment.Contents
+        result +=         "</span>";
+        result +=       "</div>";
+        result +=     "</div>";
+        result +=   "</div>";
+        result += "</div>";
       }
     }
 
@@ -219,21 +276,6 @@ function isNewSim(){
   } else {
     return false;
   }
-}
-
-// Used when uploading a new profile picture on the profile page
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            $('#profile-pic')
-                .attr('src', e.target.result)
-        };
-
-        reader.readAsDataURL(input.files[0]);
-    }
-
 }
 
 function getfocus() {

@@ -6,9 +6,33 @@
 // Converts the current simulation into a JSON string to be persisted in the data store
 function exportToJson(){
   // NOTE LIMIT OF 1500 chars - updated with flag to store 1 MB, but consider splitting these up further
+  
+  // Have to unscale the positions of all of the bodies in all keyframes before saving the data
+  var scaledKeyframes = Globals.keyframeStates;
+  var unscaledKeyframeStates = [];
+
+  // Only need to scale the positions if the simulator has been zoomed in or out
+  if (getScaleFactor() !== 1) {
+
+    // Need to update in all keyframes
+    for (var i = 0; i < scaledKeyframes.length; i++) {
+      var keyframe = scaledKeyframes[i];
+      var clonedState = [];
+      for (var j = 0; j < keyframe.length; j++) {
+        var objState = cloneState(keyframe[j]);
+        objState.pos.x = objState.pos.x * getScaleFactor();
+        objState.pos.y = swapYpos(swapYpos(objState.pos.y, false) * getScaleFactor(), false);
+        clonedState.push(objState);
+      }
+      unscaledKeyframeStates.push(clonedState);
+    }
+  } else {
+    unscaledKeyframeStates = scaledKeyframes;
+  }
+  
   var json = 
   {
-    keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    keyframeStates:unscaledKeyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
     bodyConstants:Globals.bodyConstants,
     gravity:Globals.gravity,
     variableMap:Globals.variableMap,
@@ -21,6 +45,75 @@ function exportToJson(){
   
   return JSON.stringify(json);
 }
+
+// Returns contents of a canvas as a jpeg based data url, with the specified
+// background color
+// http://www.mikechambers.com/blog/2011/01/31/setting-the-background-color-when-generating-images-from-canvas-todataurl
+function canvasToImage() {
+  // cache height and width
+  var canvas = Globals.world.renderer();
+  var context = canvas.ctx;
+  var w = canvas.width;
+  var h = canvas.height;
+
+  // get the current ImageData for the canvas.
+  var data = context.getImageData(0, 0, w, h);
+
+  // store the current globalCompositeOperation
+  var compositeOperation = context.globalCompositeOperation;
+
+  // set to draw behind current content
+  context.globalCompositeOperation = "destination-over";
+
+  // set background color
+  context.fillStyle = '#ffffff';
+
+  // draw background / rect on entire canvas
+  context.fillRect(0, 0, w, h);
+
+  // get the image data from the canvas and decrement image quality 70%
+  var imageData = canvas.el.toDataURL("image/jpeg", 0.3);
+
+  // clear the canvas
+  context.clearRect(0, 0, w, h);
+
+  // restore it with original / cached ImageData
+  context.putImageData(data, 0, 0);
+
+  // reset the globalCompositeOperation to what it was
+  context.globalCompositeOperation = compositeOperation;
+
+  // var head = 'data:image/jpeg;base64,';
+  // var imgFileSize = Math.round((imageData.length - head.length) * 3/4) ;
+  // console.log("generated image file size: " + imgFileSize);
+
+  // return the Base64 encoded data url string
+  return imageData;
+}
+
+// Turns the dataURI created by the canvas to an actual blob that is recognized
+// as a file to be uploaded in a form and saved to the blobstore
+// http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+function dataURItoBlob(dataURI) {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  var byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+  else
+    byteString = unescape(dataURI.split(',')[1]);
+
+  // separate out the mime component
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  // write the bytes of the string to a typed array
+  var ia = new Uint8Array(byteString.length);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], {type:mimeString});
+}
+
 
 function registerPVAChartEvents() {
   positionChart = new CanvasJS.Chart("positionGraph",{
@@ -112,6 +205,15 @@ $(document).ready(function(){
     clickListener(event);
   });
   
+
+  $('#viewport').on("mousedown", function(event){
+    event.preventDefault();
+  });
+  
+  $('#viewport').on("mouseleave", function(event){    
+    Globals.world.emit("interact:release", {});
+  });
+
   // Events for overview tab
   $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
 
@@ -170,26 +272,50 @@ $(document).ready(function(){
   });
 
 
+  // Surface specific events
+  $('#surface-properties-width').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceWidth', $('#surface-properties-width').val());
+  });
+  $('#surface-properties-height').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceHeight', $('#surface-properties-height').val());
+  });
+  $('#surface-properties-friction').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'surfaceFriction', $('#surface-properties-friction').val());
+  });
+  $('#surface-properties-rotate').on("click", function(){
+    var w = body2Constant(Globals.selectedBody).surfaceWidth;
+    var h = body2Constant(Globals.selectedBody).surfaceHeight;
+    setSurfaceWidth(Globals.selectedBody, h);
+    setSurfaceHeight(Globals.selectedBody, w);
+    if(Globals.numKeyframes == 1) attemptSimulation();
+    drawMaster();
+  });
+
+
   // Ramp specific events
   $('#ramp-properties-width').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'width', $('#ramp-properties-width').val()); 
+    updatePropertyRedraw(Globals.selectedBody, 'rampWidth', $('#ramp-properties-width').val());
   });
   $('#ramp-properties-height').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'height', $('#ramp-properties-height').val());
+    updatePropertyRedraw(Globals.selectedBody, 'rampHeight', $('#ramp-properties-height').val());
   });
   $('#ramp-properties-angle').on("change", function(){
-    updatePropertyRedraw(Globals.selectedBody, 'angle', $('#ramp-properties-angle').val());
+    updatePropertyRedraw(Globals.selectedBody, 'rampAngle', $('#ramp-properties-angle').val());
+  });
+  $('#ramp-properties-friction').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'rampFriction', $('#ramp-properties-friction').val());
   });
   $('#ramp-properties-flip-horz').on("click", function(){
-    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).width, true);
+    setRampWidth(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).rampWidth, true);
     if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
   });
   $('#ramp-properties-flip-vert').on("click", function(){
-    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).height, true);
+    setRampHeight(Globals.selectedBody, -1 * body2Constant(Globals.selectedBody).rampHeight, true);
     if(Globals.numKeyframes == 1) attemptSimulation();
     drawMaster();
   });
+
 
   // enable modals
   $('.modal-trigger').leanModal();
@@ -235,6 +361,14 @@ $(document).ready(function(){
   
   $("#elementprops-tab").on("click", function() { 
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
+  });
+  
+  $('#zoom-control-in').on("click", function(e) {
+    simulationZoom(1);
+  });
+
+  $('#zoom-control-out').on("click", function(e) {
+    simulationZoom(-1);
   });
   
   // Position, Velocity, Acceleration Graph Set Up

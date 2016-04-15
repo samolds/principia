@@ -59,7 +59,7 @@ var Globals = {
 
   // If a move event is fired after a grab event, raise flag to inform release event
   didMove: false,
-
+    
   // Currently selected body, false if none
   selectedBody: false,
 
@@ -89,6 +89,8 @@ var Globals = {
 
   pulleyBodyCounter: 0,
 
+  surfaceBodyCounter: 0,
+
   rampBodyCounter: 0,
 
   springBodyCounter: 0,
@@ -98,8 +100,16 @@ var Globals = {
   aDown: false,
   vChanging: false,
 
+  // Free Body Diagram Globals
+  // Tells us if the simulator was running when the fbd was displayed
+  fbdDown: false,
+  fbdWasRunning: false,
+
   // Flag for loading in progress
   loading: false,
+  
+  // Scale factor in clicks (display only, the canvas should be zoomed in by 2^scale)
+  scale: 0,
   
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
@@ -120,9 +130,14 @@ var Globals = {
   // Number of pixels within range for attaching objects (for springs or moving origin)
   delta: 50,
   
+  // Minimum and maximum scale factor
+  minScale: -2,  
+  maxScale: 3,
+  
   // Paths to images used for drawing point mass
   massImages: [
-              "/static/img/toolbox/mass.png",
+              "/static/img/toolbox/roundmass.png",
+              "/static/img/toolbox/squaremass.png",
               "/static/img/toolbox/weight.png",
               "/static/img/toolbox/car.png",
               "/static/img/toolbox/sailboat.png",
@@ -143,9 +158,19 @@ var Globals = {
   
   maxNumKeyframes: 5,
 
+
+// Panning around the canvas
+  lastPos: {x: 0, y: 0},
+  isPanning: false,
+  
+  translation: {x: 0, y: 0}, 
+
+//right ui menu flags
+
   rightMenuActive: false,
 
   activeRightTabName: ""
+  
 };
 
 

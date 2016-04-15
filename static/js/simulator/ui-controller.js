@@ -10,7 +10,8 @@ $(".ui-draggable").draggable({
     scroll: false,
     stop: handleUIDragStop,
     helper: 'clone',
-    appendTo: 'body'
+    appendTo: 'body',
+    zIndex: 20,
 });
 
 // Defines drag event for draggable-classed components
@@ -20,7 +21,8 @@ $(".draggable").draggable({
 	  scroll: false,
 	  stop: handleDragStop,
 	  helper: 'clone',
-    appendTo: 'body'
+    appendTo: 'body',
+    zIndex: 20,
 });
 
 // Event fired when user is done dragging component that is not part of PhysicJS world (origin target)
@@ -40,7 +42,7 @@ function handleUIDragStop(event, ui){
 
   var data = { 'x': cx-vleft, 'y': swapYpos(cy-vtop, false)};
 
-  moveOrigin(data);  
+  moveOrigin(data, true);  
   drawMaster();
 }
 
@@ -61,11 +63,11 @@ function handleDragStop(event, ui){
   var vleft = $("#" + Globals.canvasId).position().left;
   var vtop = $("#" + Globals.canvasId).position().top;
   
-  var data = { 'type': type, 'x': cx-vleft, 'y': cy-vtop};
+  var data = { 'type': type, 'x': Math.round(cx-vleft), 'y': Math.round(cy-vtop)};
 
   Globals.world.emit('addComponent', data);
 
-  resetSaveButton();
+  dirty();
 }
 
 // Scrubs to selected frame
@@ -111,11 +113,7 @@ function toggleSimulator(){
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }
-    //from old version: assumes keyframe-1 is the last keyframe
-    // TODO delete this when fully updated
-    //if(Globals.frame == Globals.totalFrames){
-      //$("#keyframe-1").attr("style","border:4px solid #0000cc");
-    //}
+
   }
 }
 
@@ -236,7 +234,7 @@ function updatePropertyRedraw(body, property, value){
         
     
     // Update properties within simulator, draw, and return
-    onPropertyChanged(index, property.substring(0,3) + "x", point[0]);
+    onPropertyChanged(index, property.substring(0,3) + "x", point[0], false);
     
     if(point[1] === -0){
       point[1] = "?";
@@ -246,7 +244,7 @@ function updatePropertyRedraw(body, property, value){
       toggleUnknown(body, property.substring(0,3) + "y");
     }
     else {
-      onPropertyChanged(index, property.substring(0,3) + "y", point[1]);
+      onPropertyChanged(index, property.substring(0,3) + "y", point[1], false);
     }
     
     if(Globals.numKeyframes == 1) attemptSimulation();
@@ -258,7 +256,7 @@ function updatePropertyRedraw(body, property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(bIndex(body), property, value);
+  onPropertyChanged(bIndex(body), property, value, false);
   
   if(Globals.numKeyframes == 1) attemptSimulation();  
   drawMaster();
@@ -316,10 +314,10 @@ function toggleUnknown(body, property){
   }
   var index = bIndex(body);
   if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
-    onPropertyChanged(index, property, 0);
+    onPropertyChanged(index, property, 0, false);
   }
   else{
-    onPropertyChanged(index, property, Number.NaN);
+    onPropertyChanged(index, property, Number.NaN, false);
   }
   
   selectPropertyInputType(body, property)
@@ -495,7 +493,7 @@ function toggleMenuOff() {
 function contextMenuListener(event) {
   if (Globals.selectedBody === false) {
     toggleMenuOff();
-    return
+    return;
   }
 
   // override normal context menu
@@ -520,10 +518,10 @@ function contextMenuListener(event) {
     // get body x and y
     // create square,  see if contextMenuclick is in square
     var loc = body.state.pos;
-    var rectRight= loc.x + halfw;
-    var rectBottom= loc.y + halfh;
-    var rectx = loc.x - halfw;
-    var recty = loc.y - halfh;
+    var rectRight= loc.x + Globals.translation.x + halfw;
+    var rectBottom= loc.y + Globals.translation.y + halfh;
+    var rectx = loc.x + Globals.translation.x - halfw;
+    var recty = loc.y + Globals.translation.y - halfh;
 
     // check each rect for hits
     // if this rect is hit, display an alert
@@ -540,8 +538,27 @@ function contextMenuListener(event) {
 function clickListener(e) {
   var button = e.which || e.button;
   if ( button === 1 ) {
-  toggleMenuOff();
+    toggleMenuOff();
   }
+}
+
+function panZoomUpdate(data) {
+  var bodies = Globals.world.getBodies();
+  var mouseX = data.x;
+  var mouseY = data.y;
+  var dx = mouseX - Globals.lastPos.x;
+  var dy = mouseY - Globals.lastPos.y;
+  
+  var can = Globals.world.renderer();
+
+  Globals.lastPos.x = mouseX;
+  Globals.lastPos.y = mouseY;
+  var trans = Globals.translation;
+  
+  trans.x += dx; 
+  trans.y += dy;
+  
+  drawMaster();
 }
 
 function getPosition(e) {
@@ -609,6 +626,20 @@ function positionMenu(e) {
   }
 }
 
+// Selects and centers the camera on the body with the specified index
+function centerBody(i){  
+  selectBody(i);
+  var bodies = Globals.world.getBodies();
+  
+  var x = -Globals.selectedBody.state.pos.x + Globals.world.renderer().width/2;
+  var y = swapYpos(Globals.selectedBody.state.pos.y, false) - Globals.world.renderer().height/2;
+  
+  Globals.translation.x = x;
+  Globals.translation.y = y;
+
+  drawMaster();
+}
+
 function populateOverview(e) {
 
   var bodies = Globals.world.getBodies();
@@ -629,6 +660,9 @@ function populateOverview(e) {
       case "kinematics1D-pulley":
         img = "/static/img/toolbox/pulley.png";
         break;
+      case "kinematics1D-surface":
+        img = "/static/img/toolbox/surface.png";
+        break;
       case "kinematics1D-ramp":
         img = "/static/img/toolbox/ramp.png";
         break;
@@ -640,10 +674,10 @@ function populateOverview(e) {
      $list.append(
     "<li >" +
       "<div class ='row clickable'>"+
-       "<div class = ' col s4' onclick = 'selectBody(" + i + ")'>"+
+       "<div class = ' col s4' onclick = 'centerBody(" + i + ")'>"+
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
-       "<div class = 'col s4' onclick = 'selectBody(" + i + ")'>"+
+       "<div class = 'col s4' onclick = 'centerBody(" + i + ");'>"+
         consts[i].nickname +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
@@ -667,6 +701,13 @@ function deleteBody(bodyIndex){
     var bodToDelete = Globals.bodyConstants[bodyIndex];
     Globals.bodyConstants.splice(bodyIndex, 1);
 
+    var deletedBodWasMass = bodToDelete.ctype.indexOf("mass") !== -1;
+    var deletedBodWasSpringChild = bodToDelete.ctype.indexOf("spring-child") !== -1;
+    var deletedBodWasSpring = bodToDelete.ctype.indexOf("spring") !== -1;
+    var deletedBodWasPulley = bodToDelete.ctype.indexOf("pulley") !== -1;
+    var deletedBodWasRamp = bodToDelete.ctype.indexOf("ramp") !== -1;
+    var deletedBodWasSurface = bodToDelete.ctype.indexOf("surface") !== -1;
+
     // Remove the body from all of the keyframes
     var len = Globals.keyframeStates.length;
     for (var i = 0; i < len; i++) {
@@ -682,7 +723,7 @@ function deleteBody(bodyIndex){
 
     // We already deleted one of the ends of the spring, but now we
     // have to delete the other end
-    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+    if (deletedBodWasSpringChild) {
       // Delete the parent of the child spring that was just deleted from
       // bodyConstants, the keyframes, and the physicsjs world
       Globals.bodyConstants.splice(bodToDelete.parent, 1);
@@ -690,7 +731,7 @@ function deleteBody(bodyIndex){
         Globals.keyframeStates[i].splice(bodToDelete.parent, 1);
       }
       Globals.world.removeBody(Globals.world.getBodies()[bodToDelete.parent]);
-    } else if (bodToDelete.ctype.indexOf("spring") !== -1) {
+    } else if (deletedBodWasSpring) {
       // Delete the child of the parent spring that was just deleted from
       // bodyConstants, the keyframes, and the physicsjs world
       Globals.bodyConstants.splice(bodToDelete.child - 1, 1);
@@ -705,7 +746,7 @@ function deleteBody(bodyIndex){
     // to decrement the referenced index by 2, otherwise we just decrement it by 1
     len = Globals.bodyConstants.length;
     var decSize = 1;
-    if (bodToDelete.ctype.indexOf("spring") !== -1) {
+    if (deletedBodWasSpring) {
       decSize = 2;
     }
 
@@ -713,25 +754,31 @@ function deleteBody(bodyIndex){
     // one that was deleted, unless it was a spring child, then we'll need to step
     // back a step since the child and previous parent will have been deleted
     var startIndex = bodyIndex;
-    if (bodToDelete.ctype.indexOf("spring-child") !== -1) {
+    if (deletedBodWasSpringChild) {
       startIndex--;
     }
 
     // Loop through all bodies after the deleted body to update any indices that
     // reference changed index
-    for (i = startIndex; i < len; i++) {
+    for (i = 0; i < len; i++) {
       bod = Globals.bodyConstants[i];
       if (bod.ctype.indexOf("spring-child") !== -1) {
-        bod.parent -= decSize;
-      } else if (bod.ctype.indexOf("spring") !== -1) {
+        if (i >= startIndex)
+          bod.parent -= decSize;
+        if (bod.attachedBody !== null && bod.attachedBody >= startIndex)
+          bod.attachedBody -= decSize;
+      } else if (i >= startIndex && bod.ctype.indexOf("spring") !== -1) {
         bod.child -= decSize;
+      } else if (bod.ctype.indexOf("mass") !== -1) {
+        if (bod.attachedTo !== null && bod.attachedTo >= startIndex)
+          bod.attachedTo -= decSize;
       }
     }
 
     // If the component deleted was a spring or pulley, we need to loop through
     // any of the existing components to check if any of them were attached to
     // the spring or pulley. If they were we need to delete the reference
-    if (bodToDelete.ctype.indexOf("spring") !== -1 || bodToDelete.ctype.indexOf("pulley") !== -1) {
+    if (deletedBodWasSpring || deletedBodWasPulley) {
       // For Springs get the actual reference if it was
       // the parent or child spring node that was deleted
       var refToDelete = bodyIndex;
@@ -749,7 +796,7 @@ function deleteBody(bodyIndex){
     // If the component deleted was a pointmass, we need to loop through all of the
     // remaining components (specifically any springs) to check to see if any of the
     // springs were attached to this pointmass. If they were we delete the reference
-    if (bodToDelete.ctype.indexOf("mass") !== -1) {
+    if (deletedBodWasMass) {
       for (i = 0; i < len; i++) {
         bod = Globals.bodyConstants[i];
         if (bod.attachedBody !== undefined && bod.attachedBody === bodyIndex) {
@@ -799,6 +846,22 @@ function keyUp(e)
   
   if (e.keyCode == 86) Globals.vDown = false;
   if (e.keyCode == 65) Globals.aDown = false;
+  if (e.keyCode == 70) {
+    Globals.fbdDown = false; 
+    drawFBD();
+  }
+  
+  if (e.keyCode == 66) 
+  {
+    var data = { 'type': "kinematics1D-mass", 'x': 335/2, 'y': 250, 'blockSimulation':true};
+    Globals.world.emit('addComponent', data);
+  }
+  if(e.keyCode == 67)
+  {
+    //debugger;
+    updatePropertyRedraw(Globals.world.getBodies()[1], "posy", 0);
+  }
+  
   
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;
@@ -811,6 +874,10 @@ function keyDown(e)
 {
   if (e.keyCode == 86) Globals.vDown = true;
   if (e.keyCode == 65) Globals.aDown = true;
+  if (e.keyCode == 70) {
+    Globals.fbdDown = true; 
+    drawFBD();
+  }
  
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;

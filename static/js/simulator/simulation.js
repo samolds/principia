@@ -424,7 +424,6 @@ function simulate(){
 function updateVariable(body, variable, value){
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
   
-  
   if(isNaN(value))
     Globals.variableMap[keyframe][bIndex(body)][variable] = "?";
   else {
@@ -515,14 +514,23 @@ function updateGravity(coordinate, value){
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
-  value = isNaN(value) ? body2Constant(body).size : clamp(10, value, 100);
+  value = isNaN(value) ? body2Constant(body).size : clamp(1, value, 500);
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
 
-  body.view.setAttribute("width", value * 2)
-  body.view.setAttribute("height", value * 2);
-  body.radius = value;
-  body.geometry.radius = value;
+  var scaledSize = value / getScaleFactor();
+  body.view.setAttribute("width", scaledSize);
+  body.view.setAttribute("height", scaledSize);
+
+  if (body2Constant(body).massType === "square") {
+    body.width = scaledSize;
+    body.height = scaledSize;
+    body.geometry.width = scaledSize;
+    body.geometry.height = scaledSize;
+  } else { // if (body.massType === "round") {
+    body.radius = scaledSize / 2;
+    body.geometry.radius = scaledSize / 2;
+  }
 
   // Resimulate if there is only one keyframe
   if(Globals.numKeyframes == 1) attemptSimulation();
@@ -534,11 +542,12 @@ function updateImage(body, value){
   if(!body) return;
   
   var i = bIndex(body);
+  var scaledSize = Globals.bodyConstants[i].size / getScaleFactor();
 
   // Create image element to be used
   var img = document.createElement("img");
-  img.setAttribute("width", Globals.bodyConstants[i].size * 2);
-  img.setAttribute("height", Globals.bodyConstants[i].size * 2);
+  img.setAttribute("width", scaledSize);
+  img.setAttribute("height", scaledSize);
   
   // Associate body with its image
   Globals.bodyConstants[i].img = isNaN(value)? value: parseInt(value);
@@ -569,7 +578,8 @@ function updateImage(body, value){
 
 // Handler for updating a property to have a specific value
 // All updates to pos/vel/acc should be routed through here
-function onPropertyChanged(i, property, value){
+// This function should be passed canonical coordinates
+function onPropertyChanged(i, property, value, doTranslation){
   
   var body = Globals.world.getBodies()[i];
   if(!body) return;
@@ -577,7 +587,7 @@ function onPropertyChanged(i, property, value){
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
   var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
-  
+
   // Reparse the value, assigning NaN if the parse fails
   value = parseFloat(value);
   
@@ -608,13 +618,14 @@ function onPropertyChanged(i, property, value){
   switch(property){
     // Position updates
     case 'posx':        
+        value = pixelTransform(value, "x", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.x = value;
-        kState[i].pos.x = value;        
+        kState[i].pos.x = value;
         break;
     case 'posy':        
-        value = swapYpos(value, false);
+        value = pixelTransform(value, "y", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.y = value;
-        kState[i].pos.y = value;        
+        kState[i].pos.y = value;
         break;
       
     // Velocity and acceleration updates:
@@ -623,11 +634,19 @@ function onPropertyChanged(i, property, value){
     case 'accx': kState[i].acc.x = value; break;
     case 'accy': kState[i].acc.y = value; break;
     
+    // Surface-specific updates:
+    case 'surfaceWidth':
+    case 'surfaceHeight':
+    case 'surfaceFriction':
+      updateSurface(body, property, value);
+      break;
+
     // Ramp-specific updates:
-    case 'width':        
-    case 'height':        
-    case 'angle':    
-      updateRamp(body, property, value);        
+    case 'rampWidth':
+    case 'rampHeight':
+    case 'rampAngle':
+    case 'rampFriction':
+      updateRamp(body, property, value);
       break;
 
     // Default case:

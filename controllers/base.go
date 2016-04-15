@@ -11,7 +11,6 @@ import (
 	"lib/gomobiledetect"
 	"models"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -22,58 +21,95 @@ var (
 	userDir = tmplDir + "user/"
 	testDir = tmplDir + "test/"
 
-	simFrag = simDir + "simulator.frag.html"
-	comFrag = simDir + "comments.frag.html"
+	simFrag     = simDir + "simulator.frag.html"
+	simListFrag = simDir + "simList.frag.html"
+	comFrag     = simDir + "comments.frag.html"
 
 	baseName = "base"
 	base     = tmplDir + baseName + ".html"
 
+	templateHelpers = template.FuncMap{
+		"evenlyDivisible": func(a, b int) bool {
+			return (a % b) == 0
+		},
+	}
+
 	templates = map[string]*template.Template{
-		"dormant/home":        template.Must(template.ParseFiles(base, dormDir+"home.html")),
-		"dormant/about":       template.Must(template.ParseFiles(base, dormDir+"about.html")),
-		"dormant/faqs":        template.Must(template.ParseFiles(base, dormDir+"faqs.html")),
-		"dormant/feedback":    template.Must(template.ParseFiles(base, dormDir+"feedback.html")),
-		"dormant/unsupported": template.Must(template.ParseFiles(base, dormDir+"unsupported.html")),
-		"dormant/error":       template.Must(template.ParseFiles(base, dormDir+"error.html")),
+		"dormant/home":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, dormDir+"home.html")),
+		"dormant/about":       template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"about.html")),
+		"dormant/faqs":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"faqs.html")),
+		"dormant/feedback":    template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"feedback.html")),
+		"dormant/help":        template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"help.html")),
+		"dormant/unsupported": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"unsupported.html")),
+		"dormant/error":       template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, dormDir+"error.html")),
 
-		"simulator/browse":     template.Must(template.ParseFiles(base, simDir+"browse.html")),
-		"simulator/kinematics": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
+		"simulator/browse":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, simDir+"browse.html")),
+		"simulator/mobile":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"mobile.html")),
+		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
 
-		"simulator/layout": template.Must(template.ParseFiles(base, comFrag, simFrag, simDir+"layout.html")),
-
-		"user/simulations": template.Must(template.ParseFiles(base, userDir+"simulations.html")),
-		"user/profile":     template.Must(template.ParseFiles(base, userDir+"profile.html")),
-
+		"user/simulations":  template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"simulations.html")),
+		"user/interactions": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"interactions.html")),
+		"user/profile":      template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"profile.html")),
+		
 		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
+
+		"simulator/layout": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"layout.html"))
 	}
 )
 
 type PageData struct {
-	IsLoggedIn bool
-	User       models.User
-	Data       map[string]interface{}
+	IsLoggedIn   bool
+	LoginUrl     string
+	LoginMessage string
+	User         models.User
+	Data         map[string]interface{}
 }
 
 // The 404 page handler. Just a wrapper on the ErrorHandler but has
 // the same function signature necessary for routes
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	ErrorHandler(w, "Not Found!", http.StatusNotFound)
+	ErrorHandler(w, r, "Not Found!", http.StatusNotFound)
 }
 
 // Renders a nice looking error page. Call this function whenever you want
 // to return and error template from any other function!
-func ErrorHandler(w http.ResponseWriter, errMsg string, status int) {
+func ErrorHandler(w http.ResponseWriter, r *http.Request, errMsg string, status int) {
 	var buffer bytes.Buffer
 
-	// TODO: Add user information stuff. Sign in links aren't rendered on error pages
+	// Get current user information for signin links
+	ctx := appengine.NewContext(r)
+	googleUser := appengineUser.Current(ctx)
+	var loginUrl string
+	var loginMessage string
+	var err error
+
+	// Build correct login/logout links for Google but don't worry about
+	// showing full user information, so don't get user object
+	if googleUser == nil {
+		loginUrl, err = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		loginMessage = "Sign In"
+	} else {
+		loginUrl, err = appengineUser.LogoutURL(ctx, "/")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		loginMessage = "Sign Out"
+	}
 
 	data := map[string]interface{}{
-		"title":  status,
-		"errMsg": errMsg,
+		"title":        status,
+		"errMsg":       errMsg,
+		"LoginUrl":     loginUrl,
+		"LoginMessage": loginMessage,
 	}
 
 	w.WriteHeader(status)
-	err := templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
+	err = templates["dormant/error"].ExecuteTemplate(&buffer, baseName, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -97,16 +133,19 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	ctx := appengine.NewContext(r)
 	googleUser := appengineUser.Current(ctx)
 	var user models.User
-	isLoggedIn := false
+	var isLoggedIn bool
+	var loginUrl string
+	var loginMessage string
 
 	// Build correct login/logout links for Google
 	if googleUser == nil {
-		data["loginUrl"], _ = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
-		data["loginMessage"] = "Sign In"
+		isLoggedIn = false
+		loginUrl, _ = appengineUser.LoginURL(ctx, html.EscapeString(r.URL.Path))
+		loginMessage = "Sign In"
 	} else {
-		data["loginUrl"], _ = appengineUser.LogoutURL(ctx, "/")
-		data["loginMessage"] = "Sign Out"
 		isLoggedIn = true
+		loginUrl, _ = appengineUser.LogoutURL(ctx, "/")
+		loginMessage = "Sign Out"
 
 		// TODO-OO: Better way to do this? -> Do this in the profile handler and redirect?
 
@@ -132,7 +171,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 
 				if err != nil {
 					// Could not place the user in the datastore
-					ErrorHandler(w, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
+					ErrorHandler(w, r, "Could not save user data: "+err.Error(), http.StatusInternalServerError)
 					return
 				}
 
@@ -141,7 +180,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 					return
 				}
 			} else {
-				ErrorHandler(w, "User was not found: "+err.Error(), http.StatusNotFound)
+				ErrorHandler(w, r, "User was not found: "+err.Error(), http.StatusNotFound)
 				return
 			}
 		}
@@ -149,23 +188,34 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	// END TODO-OO
 
 	pageData := &PageData{
-		IsLoggedIn: isLoggedIn,
-		User:       user,
-		Data:       data,
+		IsLoggedIn:   isLoggedIn,
+		LoginUrl:     loginUrl,
+		LoginMessage: loginMessage,
+		User:         user,
+		Data:         data,
 	}
-
-	// Render template with all page data including user information, or error
-	err := templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
 
 	// Catch mobile users and render mobile friendly template
 	detect := mobiledetect.NewMobileDetect(r, nil)
-	if detect.IsMobile() && strings.HasPrefix(templ, "simulator/") {
-		buffer.Reset()
-		err = templates["dormant/unsupported"].ExecuteTemplate(&buffer, baseName, pageData)
+	var err error
+
+	if detect.IsMobile() && templ == "simulator/kinematics" {
+		// Render mobile specific template
+		if data["new"] == true { // Have to specifically check because data["new"] type is interface, not bool
+			// The user cannot create new simulations on mobile
+			err = templates["dormant/unsupported"].ExecuteTemplate(&buffer, baseName, pageData)
+		} else {
+			// The user can watch existing simulations on mobile
+			err = templates["simulator/mobile"].ExecuteTemplate(&buffer, baseName, pageData)
+		}
+	} else {
+		// Render normal browser version
+		// Render template with all page data including user information, or error
+		err = templates[templ].ExecuteTemplate(&buffer, baseName, pageData)
 	}
 
 	if err != nil {
-		ErrorHandler(w, err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, r, err.Error(), http.StatusInternalServerError)
 	} else {
 		io.Copy(w, &buffer)
 	}

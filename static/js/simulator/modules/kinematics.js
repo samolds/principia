@@ -14,7 +14,7 @@ function Kinematics1DModule() {
       var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);// bounds of the window
       var edgeBounce;
       var renderer;
-      var integrator;    
+      var integrator;
       
       var variableMap = Globals.variableMap;
       var bodyConstants = Globals.bodyConstants;
@@ -22,8 +22,8 @@ function Kinematics1DModule() {
       world.timestep(0.5); // TODO: should base timestep on dt option
             
       // create a renderer
-      renderer = Physics.renderer('canvas', {el: canvasId});
-
+      renderer = Physics.renderer('canvas', {el: canvasId, manual: true});      
+      
       // add the renderer
       world.add(renderer);
     
@@ -56,43 +56,51 @@ function Kinematics1DModule() {
       Globals.keyframeStates[0].push(cloneState(origin.state));
       
       world.on('addComponent', function(data) {
-               
-        bodyConstants.push({ctype:data.type});
+        
+        var canon = canonicalTransform(data);
+        data.x = canon.x;
+        data.y = canon.y;
         
         switch(data.type){
           case "kinematics1D-spring":         
+            bodyConstants.push({ctype:data.type});
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
+          case "kinematics1D-squaremass":
+            data.massType = "square";
+          case "kinematics1D-roundmass":
+            if (data.massType === undefined)
+              data.massType = "round";
           case "kinematics1D-mass":
-            addMass(data);
+            bodyConstants.push({ctype:"kinematics1D-mass"});
+            addMass(data, data.massType);
             break;
+          case "kinematics1D-surface":
+            bodyConstants.push({ctype:data.type});
+            addSurface(data);
+            break
           case "kinematics1D-ramp":
+            bodyConstants.push({ctype:data.type});
             addRamp(data);
             break
           case "kinematics1D-pulley":
+            bodyConstants.push({ctype:data.type});
             addPulley(data);
             break;
           case "kinematics1D-origin":
-            moveOrigin(data);
+            moveOrigin(data, true);
             break;
         }
-    
+
         drawMaster();
-      });
-  
-      // constrain objects to these bounds
-      edgeBounce = Physics.behavior('edge-collision-detection', {
-        aabb: viewportBounds,
-        restitution: 0.8,
-        cof: 0.8
       });
 
       // resize events
       window.addEventListener('resize', function () {
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
         viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);        
-        edgeBounce.setAABB(viewportBounds); // update the boundaries
+        //edgeBounce.setAABB(viewportBounds); // update the boundaries
         drawMaster();
       }, true);
    
@@ -106,42 +114,48 @@ function Kinematics1DModule() {
         }
       });
   
-      world.on('interact:move', function( data ){
+      world.on('interact:move', function( data ){        
+            
+        if (Globals.isPanning)
+          panZoomUpdate(data);
         if(Globals.vChanging){      
           updateVector(data);
         }
         else if(data.body && !Globals.vChanging) {      
-          var index = bIndex(data.body);
-          
+
           Globals.didMove = true;
           setNoSelect(true);
-          
-          onPropertyChanged(index, "posx", data.x);
-          onPropertyChanged(index, "posy", swapYpos(data.y, false));
+          var index = bIndex(data.body);          
+          var canon = canonicalTransform(data);
+
+          onPropertyChanged(index, "posx", canon.x, false);
+          onPropertyChanged(index, "posy", canon.y, false);
           
           if(index === 0 || index === Globals.originObject)
-            moveOrigin({"x":data.x, "y":swapYpos(data.y, false)});
+            moveOrigin({"x":canon.x, "y":canon.y}, false);
           
           if(index === 0)
             $("#globalprops-tab").click();          
-            
+          
           drawMaster();
         }
       });
   
-      world.on('interact:release', function( data ){    
+      world.on('interact:release', function( data ){         
+        $('body').css({cursor: "auto"});
+        Globals.isPanning = false;
+
         // Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
         if(data.body && Globals.didMove && !Globals.vChanging){
-            var index = bIndex(data.body);
+            
             // Make move as complete
             Globals.didMove = false;
             setNoSelect(false);
             
-            data.x = clamp(0, data.x, $('#' + Globals.canvasId).children()[0].width);
-            data.y = clamp(0, data.y, $('#' + Globals.canvasId).children()[0].height);
-            
-            onPropertyChanged(index, "posx", data.x);
-            onPropertyChanged(index, "posy", swapYpos(data.y, false));
+            var index = bIndex(data.body);
+            var canon = canonicalTransform(data);
+            onPropertyChanged(index, "posx", canon.x, false);
+            onPropertyChanged(index, "posy", canon.y, false);
             
             if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
             {
@@ -151,7 +165,7 @@ function Kinematics1DModule() {
             }
             
             if(index === 0 || index === Globals.originObject)
-              moveOrigin({"x":data.x, "y":swapYpos(data.y, false)});
+              moveOrigin({"x":canon.x, "y":canon.y}, false);
           
             // Resimulate if there is only one keyframe
             if(Globals.numKeyframes == 1) attemptSimulation();
@@ -159,8 +173,14 @@ function Kinematics1DModule() {
             drawMaster();
         }    
       });
-  
-      world.on('interact:poke', function( data ){    
+
+      world.on('interact:poke', function(data){    
+        toggleMenuOff();
+        Globals.lastPos.x = data.x;
+        Globals.lastPos.y = data.y;
+        $('body').css({cursor: "move"});
+        Globals.isPanning = true;
+
         Globals.selectedBody = false;
         document.getElementById("toolbox-tab").click();  
         drawMaster();
@@ -322,6 +342,10 @@ function Kinematics1DModule() {
       var x = tempKF[0][i].pos._[0];
       var y = tempKF[0][i].pos._[1];
       var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
+
+      if (tempBC[i].massType !== undefined)
+        data.massType = tempBC[i].massType;
+
       if(type != "kinematics1D-spring-child")
         Globals.world.emit('addComponent', data);
       Globals.bodyConstants[i] = tempBC[i];
@@ -331,10 +355,15 @@ function Kinematics1DModule() {
       if (type == "kinematics1D-mass" || type == "kinematics1D-pulley") {
         updateImage(Globals.selectedBody, tempBC[i].img);
         updateSize(Globals.selectedBody, tempBC[i].size);
+      } else if (type == "kinematics1D-surface") {
+        setSurfaceWidth(Globals.selectedBody, tempBC[i].surfaceWidth);
+        setSurfaceHeight(Globals.selectedBody, tempBC[i].surfaceHeight);
+        setSurfaceFriction(Globals.selectedBody, tempBC[i].surfaceFriction);
       } else if (type == "kinematics1D-ramp") {
-        setRampWidth(Globals.selectedBody, tempBC[i].width, true);
-        setRampHeight(Globals.selectedBody, tempBC[i].height, true);
-        setRampAngle(Globals.selectedBody, tempBC[i].angle, true);
+        setRampWidth(Globals.selectedBody, tempBC[i].rampWidth, true);
+        setRampHeight(Globals.selectedBody, tempBC[i].rampHeight, true);
+        setRampAngle(Globals.selectedBody, tempBC[i].rampAngle);
+        setRampFriction(Globals.selectedBody, tempBC[i].rampFriction);
       }
       Globals.selectedBody = false;
     }
@@ -395,8 +424,8 @@ function Kinematics1DModule() {
       
         var index = bIndex(body);
         
-        var dx = (-body.state.pos.x + data.x) / 8;
-        var dy = (-body.state.pos.y + data.y) / 8;
+        var dx = (-body.state.pos.x - Globals.translation.x + data.x) / 8;
+        var dy = (-body.state.pos.y - Globals.translation.y + data.y) / 8;
         
         // Rounds number to nearest increment of 0.25
         var snapTo = function(n) { return (Math.round(n*4)/4).toFixed(2); };
@@ -407,15 +436,15 @@ function Kinematics1DModule() {
         if(Globals.vDown){
           body.state.vel.x = dx;
           body.state.vel.y = dy;
-          onPropertyChanged(index, "velx", dx);
-          onPropertyChanged(index, "vely", dy);
+          onPropertyChanged(index, "velx", dx, false);
+          onPropertyChanged(index, "vely", dy, false);
         }
         
         if(Globals.aDown){
           body.state.acc.x = dx;
           body.state.acc.y = dy;
-          onPropertyChanged(index, "accx", dx);
-          onPropertyChanged(index, "accy", dy);
+          onPropertyChanged(index, "accx", dx, false);
+          onPropertyChanged(index, "accy", dy, false);
         }
 
         drawMaster();
