@@ -306,16 +306,12 @@ function drawSpringLine(b1, b2){
 
 // Draws highlight box around selected element
 function highlightSelection(body, color, modifier){
-  
   // Special case: don't highlight origin
   if(bIndex(body) === 0) return;
   
-  //var bodyDim = body.aabb();
-  //var width = bodyDim.hw * 2;
-  //var height = bodyDim.hh * 2;
-  var view = body.view;
-  var width = view.width;
-  var height = view.height;
+  var bodyDim = body.aabb();
+  var width = bodyDim.hw * 2;
+  var height = bodyDim.hh * 2;
   var canvas = Globals.world.renderer();
 
   if (modifier) {
@@ -335,8 +331,8 @@ function highlightSelection(body, color, modifier){
   
   canvas.ctx.lineWidth = 2;
 
-  var centerX = body.state.pos.x + Globals.translation.x - (width / 2);//bodyDim.x - (width / 2);
-  var centerY = body.state.pos.y + Globals.translation.y - (height / 2);//bodyDim.y - (height / 2);
+  var centerX = bodyDim.x + Globals.translation.x - (width / 2);//bodyDim.x - (width / 2);
+  var centerY = bodyDim.y + Globals.translation.y - (height / 2);//bodyDim.y - (height / 2);
 
   canvas.ctx.strokeRect(centerX, centerY, width, height);
 }
@@ -655,6 +651,20 @@ function postRender(isKeyframe){
   if (originObject !== false) {
     highlightSelection(Globals.world.getBodies()[originObject], '#00ff00', -10);
   }
+  
+  // Draw y grid labels
+  var can = Globals.world.renderer();
+  var incr = 50/getScaleFactor();
+  var ymod = Math.floor(Globals.translation.y/incr)*incr;
+  if(ymod < 0 && Globals.translation.y !== ymod) ymod += incr;  
+  for(var i=-100; i <= can.height+100; i+= incr)    
+    can.ctx.fillText("" + (swapYpos(i, false) + ymod)*getScaleFactor(), 0, (i + Globals.translation.y % incr));
+  
+  // Draw x grid labels
+  var xmod = Math.floor(Globals.translation.x/incr)*incr;
+  if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
+  for(var i=-100; i <= can.width+100; i+= incr)    
+    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), 490);
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas
@@ -674,20 +684,94 @@ function highlightKeycanvas(n, color){
     $("#" + "keyframe-" + lastKF()).attr("style","border:4px solid " + color);  
 }
 
+function preRender()
+{
+  var can = Globals.world.renderer();
+  
+  var incr = 50/getScaleFactor();
+  for(var i=-100; i <= can.width + 100; i+= incr)
+    can.drawLine({'x':(i + Globals.translation.x % incr), 'y':0},
+                 {'x':(i + Globals.translation.x % incr), 'y':can.height},
+                 { strokeStyle: '#eeeeee',lineWidth: 1});
+
+  for(var i=-100; i <= can.height+100; i+= incr)
+    can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
+                 {'x':can.width, 'y':(i + Globals.translation.y % incr)},
+                 { strokeStyle: '#eeeeee',lineWidth: 1});
+}
+
 // Sets the world state to the currently selected frame and renders it.
 function drawMaster(){
   var world = Globals.world;
   var frame = Globals.frame;
   var keyframe = Globals.keyframe;
   
+  Globals.world.renderer().ctx.clearRect(0, 0, Globals.world.renderer().width, Globals.world.renderer().height);
+  preRender();
+  
   if(keyframe !== false){
     setStateKF(keyframe);
-    world.render();
+    world.render(false);
     postRender(true);
   }
   else if(frame !== false) {
     setState(frame);
-    world.render();
+    world.render(false);
     postRender(false);
+  } 
+}
+
+// zoom == +1 -> Zoom in
+// zoom == -1 -> Zoom out
+// otherwise  -> ??
+function simulationZoom(zoom) {
+  if (zoom > 0 && Globals.scale < Globals.maxScale) {
+    Globals.scale += 1;
+  } else if (zoom < 0 && Globals.scale > Globals.minScale) {
+    Globals.scale -= 1;
+  } else {
+    return;
   }
+  
+  //var coords = getPosition(e);    
+  //var offset = $("#" + Globals.canvasId).position();
+  
+  // TODO: Adjust translation according to cursor position while zooming
+  Globals.translation.x = 0;
+  Globals.translation.y = 0;
+
+  // Rescale and bias images
+  var factor = (zoom < 0)? 0.5: 2.0;
+  var numBodies = Globals.world.getBodies().length;
+  for(var i=1; i < numBodies; i++){
+    
+    var body = Globals.world.getBodies()[i];
+    var bodyConst = body2Constant(body);
+    if (bodyConst.ctype == "kinematics1D-mass" || bodyConst.ctype == "kinematics1D-pulley") {
+      updateImage(body, bodyConst.img);
+      updateSize(body, bodyConst.size);
+    } else if (bodyConst.ctype == "kinematics1D-surface") {
+      setSurfaceWidth(body, bodyConst.surfaceWidth);
+      setSurfaceHeight(body, bodyConst.surfaceHeight);
+    } else if (bodyConst.ctype == "kinematics1D-ramp") {
+      setRampWidth(body, bodyConst.rampWidth, true);
+      setRampHeight(body, bodyConst.rampHeight, true);
+    }
+    
+    // Scale within existing keyframe states
+    for(var j=0; j < Globals.keyframeStates.length; j++){
+      var state = Globals.keyframeStates[j][bIndex(body)];
+      state.pos.x *= factor;
+      state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
+    }
+    
+    // Scale within existing simulation states
+    for(var j=0; j < Globals.states[i].length; j++){
+      var state = Globals.states[i][j];
+      state.pos.x *= factor;
+      state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
+    }
+  }
+  
+  drawMaster();
 }

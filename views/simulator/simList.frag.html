@@ -31,7 +31,7 @@
               </p>
               {{ if $.Data.userIsOwner }}
               <div class="card-action">
-                <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)">
+                <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement.parentElement.parentElement)">
                   Delete! <i class="fa fa-trash-o fa-lg-custom"></i>
                 </a>
               </div>
@@ -60,7 +60,7 @@
               </p>
               {{ if $.Data.userIsOwner }}
               <div class="card-action">
-                <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement)">
+                <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement.parentElement.parentElement)">
                   Delete! <i class="fa fa-trash-o fa-lg-custom"></i>
                 </a>
               </div>
@@ -74,9 +74,11 @@
 
   <div class="clear"></div>
 {{ else }}
-  <div class="container narrow center-align">
-    <div class="light-accent-gradient-7 pad-top pad-bottom">
-      <p>No Simulations to show</p>
+  <div class="container narrow center-align card-half-width">
+    <div class="light-accent-gradient-7 pad-top pad-bottom card-panel">
+      <p class="pad-top pad-bottom">No Simulations to show</p>
+      <a href="/simulator/kinematics" class="start-simulating-action waves-effect waves-light btn border transparent">Start Simulating!</a>
+      <div class="pad-top pad-bottom"></div>
     </div>
   </div>
 {{ end }}
