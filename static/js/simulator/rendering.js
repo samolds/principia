@@ -753,12 +753,9 @@ function simulationZoom(zoom) {
     } else if (bodyConst.ctype == "kinematics1D-surface") {
       setSurfaceWidth(body, bodyConst.surfaceWidth);
       setSurfaceHeight(body, bodyConst.surfaceHeight);
-      setSurfaceFriction(body, bodyConst.surfaceFriction);
     } else if (bodyConst.ctype == "kinematics1D-ramp") {
       setRampWidth(body, bodyConst.rampWidth, true);
       setRampHeight(body, bodyConst.rampHeight, true);
-      setRampAngle(body, bodyConst.rampAngle);
-      setRampFriction(body, bodyConst.rampFriction);
     }
     
     // Scale within existing keyframe states
