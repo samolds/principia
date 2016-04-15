@@ -1,5 +1,9 @@
 {{ define "title" }} - User Simulations{{ end }}
 
+{{ define "scripts" }}
+<script src="/static/js/forms.js"></script>
+{{ end }}
+
 {{ define "content" }}
 <div class="container pad-top pad-bottom">
   <div class="center-align">
@@ -17,7 +21,6 @@
 </div>
 
 {{ template "simulationsListFrag" . }}
-
 
 <div class="pad-bottom"></div>
 <div class="container pad-top pad-bottom center-align">

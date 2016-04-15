@@ -206,6 +206,8 @@ function refreshCommentsList() {
         result +=       "<div class='col s3'>";
         result +=         "<div class='center-align'>";
         result +=           "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
+        result +=         "</div>";
+        result +=         "<div class='center-align'>";
         result +=           "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
         result +=         "</div>";
         result +=       "</div>";

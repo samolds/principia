@@ -6,9 +6,33 @@
 // Converts the current simulation into a JSON string to be persisted in the data store
 function exportToJson(){
   // NOTE LIMIT OF 1500 chars - updated with flag to store 1 MB, but consider splitting these up further
+  
+  // Have to unscale the positions of all of the bodies in all keyframes before saving the data
+  var scaledKeyframes = Globals.keyframeStates;
+  var unscaledKeyframeStates = [];
+
+  // Only need to scale the positions if the simulator has been zoomed in or out
+  if (getScaleFactor() !== 1) {
+
+    // Need to update in all keyframes
+    for (var i = 0; i < scaledKeyframes.length; i++) {
+      var keyframe = scaledKeyframes[i];
+      var clonedState = [];
+      for (var j = 0; j < keyframe.length; j++) {
+        var objState = cloneState(keyframe[j]);
+        objState.pos.x = objState.pos.x * getScaleFactor();
+        objState.pos.y = swapYpos(swapYpos(objState.pos.y, false) * getScaleFactor(), false);
+        clonedState.push(objState);
+      }
+      unscaledKeyframeStates.push(clonedState);
+    }
+  } else {
+    unscaledKeyframeStates = scaledKeyframes;
+  }
+  
   var json = 
   {
-    keyframeStates:Globals.keyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    keyframeStates:unscaledKeyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
     bodyConstants:Globals.bodyConstants,
     gravity:Globals.gravity,
     variableMap:Globals.variableMap,
@@ -336,64 +360,13 @@ $(document).ready(function(){
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
   });
   
-  $('#viewport').bind('mousewheel', function(e) {
-    e.preventDefault();
-    
-    // Throttle scroll event: return unless 500 ms from last scroll
-    if(Date.now() - Globals.scrollTime < 500) return;
-    Globals.scrollTime  = Date.now();
-    
-    
-    // Adjust scale 'ticks'
-    var scaled = false;
-    
-    var ds = e.originalEvent.wheelDelta;        
-    var currentScale = getScaleFactor();
-    if(ds > 0 && Globals.scale < Globals.maxScale)
-    { Globals.scale += 1; scaled = true; }
-    else if(ds < 0 && Globals.scale > Globals.minScale)
-    { Globals.scale -= 1; scaled = true; }
-    
-    if(!scaled) return; 
-    
-    
-    
-    //var coords = getPosition(e);    
-    //var offset = $("#" + Globals.canvasId).position();
-    
-    // TODO: Adjust translation according to cursor position while zooming
-    Globals.translation.x = 0;
-    Globals.translation.y = 0;
+  $('#zoom-control-in').on("click", function(e) {
+    simulationZoom(1);
+  });
 
-    // Rescale and bias images
-    var factor = (ds < 0)? 0.5: 2.0;
-    for(var i=0; i < Globals.world.getBodies().length; i++){
-      
-      var body = Globals.world.getBodies()[i];
-      
-      // Scale body images by factor      
-      body.view.setAttribute("width", body.view.width * factor)
-      body.view.setAttribute("height", body.view.height * factor);
-      body.radius = body.raidus * factor;
-      body.geometry.radius = body.geometry.radius * factor;
-      
-      // Scale within existing keyframe states
-      for(var j=0; j < Globals.keyframeStates.length; j++){
-        var state = Globals.keyframeStates[j][bIndex(body)];
-        state.pos.x *= factor;
-        state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
-      }
-      
-      // Scale within existing simulation states
-      for(var j=0; j < Globals.states[i].length; j++){
-        var state = Globals.states[i][j];
-        state.pos.x *= factor;
-        state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
-      }
-    }
-    
-    drawMaster();
-});
+  $('#zoom-control-out').on("click", function(e) {
+    simulationZoom(-1);
+  });
   
   // Position, Velocity, Acceleration Graph Set Up
   registerPVAChartEvents();
