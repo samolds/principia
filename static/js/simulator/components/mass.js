@@ -72,14 +72,16 @@ function addMass(data, massType){
   Globals.massBodyCounter++;
                   
   // Assign constants
-  bodyConstants[bodyConstants.length-1].massType = massType;
-  bodyConstants[bodyConstants.length-1].mass = 1.0;
+  bodyConstants[bodyConstants.length-1].massType = massType;  
   bodyConstants[bodyConstants.length-1].size = size/2;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
+  bodyConstants[bodyConstants.length-1].mass = 1.0;
+  bodyConstants[bodyConstants.length-1].attachedTo = [];
+  attachSpring(component);
   
   return component;
 }

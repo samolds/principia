@@ -143,9 +143,7 @@ function magnitude(x, y){ return Math.sqrt(x*x + y*y); }
 function clamp(min, x, max) { return Math.min(Math.max(x, min), max); }
 
 function getOldValue(body, property){
-  var keyframe = Globals.keyframe;
-  if(keyframe === false) keyframe = lastKF();
-  
+  var keyframe = getKF();  
   var state = Globals.keyframeStates[keyframe][bIndex(body)];
   var constants = body2Constant(body);
   

@@ -186,9 +186,9 @@ function drawLines(){
       drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
     
     // If the current body is attached to something and that something is a pulley...    
-    if((bodyConst[i].attachedTo || bodyConst[i].attachedTo === 0) && bodyConst[bodyConst[i].attachedTo].ctype == "kinematics1D-pulley"){
-      drawRopeLine(bodies[bodyConst[i].attachedTo], bodies[i]);
-    }
+    //if((bodyConst[i].attachedTo && bodyConst[i].attachedTo.length > 0) && bodyConst[bodyConst[i].attachedTo].ctype == "kinematics1D-pulley"){
+      //drawRopeLine(bodies[bodyConst[i].attachedTo], bodies[i]);
+    //}
   }
 }
 
@@ -276,14 +276,14 @@ function drawSpringLine(b1, b2){
     for(; y<=ymax; y+=incr){
       incr = (Math.abs(y - ymin) < delta || Math.abs(y - ymax) < delta) ? 1: Math.PI/2;
       var xnew = x + Math.sin(y*wavelength)*amplitude;
-      var ynew = y;    
+      var ynew = y;
       ctx.lineTo(xnew,ynew);
       x += (m*incr);
     }
   }
   else
   {
-    var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;    
+    var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;
     var ys = (x1 == xmin)? y1:y2; var ye = (x1 == xmin)? y2:y1;      
     var dx = xmax-xmin; var dy = ye-ys; var m = dy/dx;
     
@@ -405,22 +405,30 @@ function drawFBD(){
   var xGlobalForce = Globals.gravity[0] * mass;
   var yGlobalForce = Globals.gravity[1] * mass;
 
-  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
-  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
-  totalInternalForce = totalInternalForce.toFixed(2);
-  totalGlobalForce = totalGlobalForce.toFixed(2);
+  var springForce = getSpringForce(selectedBody);
+  var xSpringForce = springForce[0];
+  var ySpringForce = springForce[1];
+  
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2)).toFixed(2);
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2)).toFixed(2);
+  var totalSpringForce = Math.sqrt(Math.pow(xSpringForce, 2) + Math.pow(ySpringForce, 2)).toFixed(2);
 
   // Limit length of vectors?
   xInternalForce = clamp(-200, xInternalForce * 10, 200);
   yInternalForce = clamp(-200, yInternalForce * 10, 200);
   xGlobalForce = clamp(-200, xGlobalForce * 10, 200);
   yGlobalForce = clamp(-200, yGlobalForce * 10, 200);
+  xSpringForce = clamp(-200, xSpringForce * 10, 200);
+  ySpringForce = clamp(-200, ySpringForce * 10, 200);
 
   // Internal Force
   drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
 
   // Global Force
   drawTipToTail(xGlobalForce, yGlobalForce, 'blue', 'blue', 'blue', false, selectedBody);
+  
+  // Spring Force
+  drawTipToTail(xSpringForce, ySpringForce, 'orange', 'orange', 'orange', false, selectedBody);
 
   // TODO:
   // Spring Force
@@ -437,7 +445,11 @@ function drawFBD(){
                "</p>" +
                "<p style='color:blue'>" +
                   "Global Force: " + totalGlobalForce +
-              "</p>");
+              "</p>" +
+               "<p style='color:orange'>" +
+                  "Spring Force: " + totalSpringForce +
+              "</p>"
+              );
 
   var topPos = selectedBody.state.pos.y + Globals.translation.y + bodySize;
   var leftPos = selectedBody.state.pos.x + Globals.translation.x + bodySize;

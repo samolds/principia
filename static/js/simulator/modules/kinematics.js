@@ -93,6 +93,7 @@ function Kinematics1DModule() {
             break;
         }
 
+        if(Globals.numKeyframes === 1) attemptSimulation();
         drawMaster();
       });
 
@@ -157,10 +158,10 @@ function Kinematics1DModule() {
             onPropertyChanged(index, "posx", canon.x, false);
             onPropertyChanged(index, "posy", canon.y, false);
             
-            if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
+            if(bodyType(data.body) == "kinematics1D-mass" || bodyType(data.body) == "kinematics1D-spring-child")
             {
-              attachSpring(data.body);
               detachSpring(data.body);
+              attachSpring(data.body);
               attachPulley(data.body);          
             }
             

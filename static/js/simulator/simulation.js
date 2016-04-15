@@ -484,13 +484,11 @@ function updateKeyframes(components){
     drawMaster();    
   }
 
-  // With one keyframe, immediately resimulate using new object
-  if(nKF == 1) attemptSimulation();
-  else {
+  if(nKF > 1){
     dirty();
     Globals.keyframe = getKF();
     highlightKeycanvas(Globals.keyframe);
-    drawMaster();    
+    drawMaster();
   }
 }
 
@@ -675,23 +673,16 @@ Physics.integrator('principia-integrator', function( parent ){
       var body = bodies[i];
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
+      var pulley_a = applyPulleyForces(body, dt);
       var state = body.state;        
       state.old = cloneState(body.state);
       
-      state.vel.x += state.acc.x * dt + spring_a[0];
-      state.vel.y += state.acc.y * dt + spring_a[1];
+      state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
+      state.vel.y += state.acc.y * dt + spring_a[1] + pulley_a[1];
       
       if(body.treatment == "dynamic"){
         state.vel.x += Globals.gravity[0] * dt;
         state.vel.y += Globals.gravity[1] * dt;
-      }
-      
-      // Deal with pulleys
-      if((typeof consts.attachedTo !== 'undefined') 
-        && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley")
-      {        
-        var pulley = bodies[consts.attachedTo];
-        applyPulley(pulley, state, consts, dt);
       }
       
       state.angular.vel += state.angular.acc;
@@ -705,7 +696,7 @@ Physics.integrator('principia-integrator', function( parent ){
       var state = body.state;
       var temp = cloneState(body.state);
       
-      if(Globals.bodyConstants[i].attachedTo) {        
+      if(Globals.bodyConstants[i].attachedTo && Globals.bodyConstants[i].attachedTo.length > 0) {
         state.pos.x += state.vel.x;// * dt; //+ state.acc.x * 0.5 * dt*dt;
         state.pos.y += state.vel.y;// * dt; //+ state.acc.y * 0.5 * dt*dt;
       }
@@ -718,10 +709,12 @@ Physics.integrator('principia-integrator', function( parent ){
       
       // Attached element must tag along
       if(body2Constant(body).attachedTo){
-        var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo];
-        if(body2Constant(attachedTo).ctype != "kinematics1D-pulley"){
-          attachedTo.state.pos.x = state.pos.x;
-          attachedTo.state.pos.y = state.pos.y;
+        for(var j=0; j < body2Constant(body).attachedTo.length; j++){
+          var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo[j]];
+          if(body2Constant(attachedTo).ctype != "kinematics1D-pulley"){
+            attachedTo.state.pos.x = state.pos.x;
+            attachedTo.state.pos.y = state.pos.y;
+          }
         }
       }
       
