@@ -755,7 +755,7 @@ function simulationZoom(zoom) {
   // Rescale and bias images
   var factor = (zoom < 0)? 0.5: 2.0;
   var numBodies = Globals.world.getBodies().length;
-  for(var i=1; i < numBodies; i++){
+  for(var i=0; i < numBodies; i++){
     
     var body = Globals.world.getBodies()[i];
     var bodyConst = body2Constant(body);
@@ -785,5 +785,6 @@ function simulationZoom(zoom) {
     }
   }
   
+  attemptSimulation();
   drawMaster();
 }

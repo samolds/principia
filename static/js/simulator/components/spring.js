@@ -98,9 +98,10 @@ function getSpringForce(body)
       var spring_idx = Globals.bodyConstants[constants.attachedTo[i]].parent;      
       var spring = Globals.world.getBodies()[spring_idx];
       
-      // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m
-      var origin = canonicalTransform({x:spring.state.pos.x,y:spring.state.pos.y});//[spring.state.pos.x, spring.state.pos.y];
-      var attached = canonicalTransform({x:attached.state.pos.x,y:attached.state.pos.y});//[attached.state.pos.x, attached.state.pos.y];
+      // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m      
+      var factor = getScaleFactor();
+      var origin = {x:Globals.variableMap[getKF()][spring_idx].posx ,y:Globals.variableMap[getKF()][spring_idx].posy};
+      var attached = {x:attached.state.pos.x*factor, y:swapYpos(attached.state.pos.y, false)*factor};
       var k = body2Constant(spring).k;
       
       springFx += (-k * (attached.x - origin.x));
@@ -184,8 +185,7 @@ function attachSpring(body){
     }    
     // If the original body is a spring-child, allow it to attach to any mass
     else if(!isMass && t_constants.ctype == "kinematics1D-mass")
-    {
-      console.log("relationship between " + i + " " + j);
+    {      
       body2Constant(body).attachedBody = bIndex(target);
       body2Constant(target).attachedTo.push(bIndex(body));
     }
@@ -201,8 +201,8 @@ function attachSpring(body){
     }
   }
   
-  // If the original body is
-  if(!isMass && constants.attachBody){
+  // If the original body is a spring, snap it to the mass is attached to
+  if(!isMass && constants.attachedBody){
     onPropertyChanged(i, "posx", Globals.variableMap[getKF()][constants.attachedBody]["posx"], false);
     onPropertyChanged(i, "posy", Globals.variableMap[getKF()][constants.attachedBody]["posy"], false);
   }

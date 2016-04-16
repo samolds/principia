@@ -165,6 +165,9 @@ function Kinematics1DModule() {
               attachPulley(data.body);          
             }
             
+            if(bodyType(data.body) == "kinematics1D-pulley")
+              movePulley(data);
+            
             if(index === 0 || index === Globals.originObject)
               moveOrigin({"x":canon.x, "y":canon.y}, false);
           

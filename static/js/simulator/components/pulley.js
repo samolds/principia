@@ -69,6 +69,14 @@ function addPulley(data){
   return [component];
 }
 
+function movePulley(data)
+{
+  var displaySize = 100/getScaleFactor();
+  var dRadius = displaySize/2;
+  Globals.bodyConstants[bIndex(data.body)].attach_left  = [data.x - dRadius, data.y];
+  Globals.bodyConstants[bIndex(data.body)].attach_right = [data.x + dRadius, data.y];
+}
+
 function attachPulley(body){
   var world = Globals.world;
   var bodies = world.getBodies();
