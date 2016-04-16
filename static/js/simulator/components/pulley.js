@@ -53,8 +53,8 @@ function addPulley(data){
   Globals.pulleyBodyCounter++;
   
   bodyConstants[bodyConstants.length-1].radius = dRadius;  
-  bodyConstants[bodyConstants.length-1].attach_left  = [data.x - dRadius, data.y];
-  bodyConstants[bodyConstants.length-1].attach_right = [data.x + dRadius, data.y];
+  bodyConstants[bodyConstants.length-1].attach_left  = canonicalTransform({x:data.x - dRadius, y:swapYpos(data.y, false)});
+  bodyConstants[bodyConstants.length-1].attach_right = canonicalTransform({x:data.x + dRadius, y:swapYpos(data.y, false)});
   
   bodyConstants[bodyConstants.length-1].left_open = true;
   bodyConstants[bodyConstants.length-1].right_open = true;
@@ -69,12 +69,17 @@ function addPulley(data){
   return [component];
 }
 
+function scalePulley(body, data)
+{
+  
+}
+
 function movePulley(data)
 {
   var displaySize = 100/getScaleFactor();
   var dRadius = displaySize/2;
-  Globals.bodyConstants[bIndex(data.body)].attach_left  = [data.x - dRadius, data.y];
-  Globals.bodyConstants[bIndex(data.body)].attach_right = [data.x + dRadius, data.y];
+  Globals.bodyConstants[bIndex(data.body)].attach_left  = canonicalTransform({x:data.x - dRadius, y:data.y});
+  Globals.bodyConstants[bIndex(data.body)].attach_right = canonicalTransform({x:data.x + dRadius, y:data.y});
 }
 
 function attachPulley(body){
@@ -83,48 +88,40 @@ function attachPulley(body){
   var kState = Globals.keyframeStates[Globals.keyframe];
   var i = bIndex(body);
   var delta = Globals.delta;
+
+  var constants = body2Constant(body);
   
   for(var j=1; j<bodies.length; j++){
     var pulley = bodies[j];
-    var changed = false;
+    var pulley_const = body2Constant(pulley);    
         
     if(distance(body.state.pos.x, body.state.pos.y, pulley.state.pos.x, pulley.state.pos.y) <= delta){
-      if(body2Constant(body).ctype == "kinematics1D-mass" && body2Constant(pulley).ctype == "kinematics1D-pulley"){
+      if(constants.ctype == "kinematics1D-mass" && pulley_const.ctype == "kinematics1D-pulley" && !constants.side){
         
+        var changed = false;
         if(body2Constant(pulley).left_open)
         {        
-          body2Constant(pulley).attachedBodyLeft = bIndex(body);
-          body2Constant(body).attachedTo = bIndex(pulley);
-          body2Constant(body).side = "left";
-          body2Constant(pulley).left_open = false;
-          
-          kState[i].pos.x = body2Constant(pulley).attach_left[0];
-          kState[i].pos.y = body2Constant(pulley).attach_left[1];
-          body.state.pos.x = body2Constant(pulley).attach_left[0];
-          body.state.pos.y = body2Constant(pulley).attach_left[1];          
-          
+          pulley_const.attachedBodyLeft = bIndex(body);
+          pulley_const.left_open = false;
+          constants.attachedTo.push(bIndex(pulley));
+          constants.side = "left";
           changed = true;
         }        
         else if(body2Constant(pulley).right_open)
         {        
-          body2Constant(pulley).attachedBodyRight = bIndex(body);
-          body2Constant(body).attachedTo = bIndex(pulley);
-          body2Constant(body).side = "right";
-          body2Constant(pulley).right_open = false;
-          
-          kState[i].pos.x = body2Constant(pulley).attach_right[0];
-          kState[i].pos.y = body2Constant(pulley).attach_right[1];
-          body.state.pos.x = body2Constant(pulley).attach_right[0];
-          body.state.pos.y = body2Constant(pulley).attach_right[1];          
-          
+          pulley_const.attachedBodyRight = bIndex(body);
+          pulley_const.right_open = false;
+          constants.attachedTo.push(bIndex(pulley));
+          constants.side = "right";
           changed = true;
         }
-        
-        
+
         if(changed){
           // Attempt to update the corresponding variable
-          updateVariable(body, "posx", body.state.pos.x);
-          updateVariable(body, "posy", body.state.pos.y);
+          var position = pulley_const.right_open? pulley_const.attach_left: pulley_const.attach_right;         
+          onPropertyChanged(i, "posx", position.x, false);
+          onPropertyChanged(i, "posy", position.y, false);
+          drawMaster();
         }
       }
     }

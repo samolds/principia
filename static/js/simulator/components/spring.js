@@ -122,7 +122,7 @@ function detachSpring(body){
   
   if(bodyType(body) == "kinematics1D-mass"){
     var targets = body2Constant(body).attachedTo;
-    for(var j=0; j < targets.length; j++){
+    for(var j=0; j < targets.length; j++){      
       var target = world.getBodies()[targets[j]];
       
       if(bodyType(target) == "kinematics1D-pulley") continue;
@@ -163,6 +163,7 @@ function attachSpring(body){
   var bodies = world.getBodies();  
   var i = world.getBodies().indexOf(body);
   var delta = Globals.delta;
+  var attached = false;
   
   for(var j=1; j<bodies.length; j++){
     
@@ -180,7 +181,8 @@ function attachSpring(body){
       if(!t_constants.attachedBody)
       {
         t_constants.attachedBody = i;
-        constants.attachedTo.push(j);        
+        constants.attachedTo.push(j);
+        attached = true;
       }
     }    
     // If the original body is a spring-child, allow it to attach to any mass
@@ -188,11 +190,12 @@ function attachSpring(body){
     {      
       body2Constant(body).attachedBody = bIndex(target);
       body2Constant(target).attachedTo.push(bIndex(body));
+      attached = true;
     }
   }
   
   // If the original body is a mass, snap to the first body it attached to and snap all others to the same spot
-  if(isMass && constants.attachedTo.length > 0){
+  if(isMass && constants.attachedTo.length > 0 && attached){
     onPropertyChanged(i, "posx", Globals.variableMap[getKF()][constants.attachedTo[0]]["posx"], false);
     onPropertyChanged(i, "posy", Globals.variableMap[getKF()][constants.attachedTo[0]]["posy"], false);
     for(var j=1; j < constants.attachedTo.length; j++){
@@ -202,7 +205,7 @@ function attachSpring(body){
   }
   
   // If the original body is a spring, snap it to the mass is attached to
-  if(!isMass && constants.attachedBody){
+  if(!isMass && constants.attachedBody && attached){
     onPropertyChanged(i, "posx", Globals.variableMap[getKF()][constants.attachedBody]["posx"], false);
     onPropertyChanged(i, "posy", Globals.variableMap[getKF()][constants.attachedBody]["posy"], false);
   }

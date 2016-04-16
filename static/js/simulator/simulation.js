@@ -177,7 +177,7 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -517,18 +517,28 @@ function updateSize(body, value){
   Globals.bodyConstants[i].size = value;
 
   var scaledSize = value / getScaleFactor();
-  body.view.setAttribute("width", scaledSize);
-  body.view.setAttribute("height", scaledSize);
+  if(bodyType(body) == "kinematics1D-pulley"){
+    body.view.setAttribute("width", scaledSize*2);
+    body.view.setAttribute("height", scaledSize*2);
+  }
+  else {
+    body.view.setAttribute("width", scaledSize);
+    body.view.setAttribute("height", scaledSize);
+  }
 
   if (body2Constant(body).massType === "square") {
     body.width = scaledSize;
     body.height = scaledSize;
     body.geometry.width = scaledSize;
     body.geometry.height = scaledSize;
-  } else { // if (body.massType === "round") {
+  } else if(body2Constant(body).massType === "round"){
     body.radius = scaledSize / 2;
     body.geometry.radius = scaledSize / 2;
   }
+  else { // pulley
+    body.radius = scaledSize;
+    body.geometry.radius = scaledSize;
+  }    
 
   // Resimulate if there is only one keyframe
   if(Globals.numKeyframes == 1) attemptSimulation();
@@ -578,7 +588,6 @@ function updateImage(body, value){
 // All updates to pos/vel/acc should be routed through here
 // This function should be passed canonical coordinates
 function onPropertyChanged(i, property, value, doTranslation){
-  
   var body = Globals.world.getBodies()[i];
   if(!body) return;
   

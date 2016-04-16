@@ -185,10 +185,13 @@ function drawLines(){
     if(bodyConst[i].parent || bodyConst[i].parent === 0)
       drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
     
-    // If the current body is attached to something and that something is a pulley...    
-    //if((bodyConst[i].attachedTo && bodyConst[i].attachedTo.length > 0) && bodyConst[bodyConst[i].attachedTo].ctype == "kinematics1D-pulley"){
-      //drawRopeLine(bodies[bodyConst[i].attachedTo], bodies[i]);
-    //}
+    // If the current body is attached to something and that something is a pulley...
+    if((bodyConst[i].attachedTo && bodyConst[i].attachedTo.length > 0)){      
+      for(var j=0; j < bodyConst[i].attachedTo.length; j++)        
+        if(bodyType(bodies[bodyConst[i].attachedTo[j]]) == "kinematics1D-pulley"){
+          drawRopeLine(bodies[bodyConst[i].attachedTo[j]], bodies[i]);
+        }
+    }
   }
 }
 
@@ -210,10 +213,9 @@ function drawRopeLine(b1, b2){
     radius *= -1;
   
   ctx.beginPath();
-  ctx.moveTo(x1 + radius,y1);  
+  ctx.moveTo(x1 + radius/getScaleFactor(),y1);
   ctx.lineTo(x2,y2);
   ctx.stroke();
-  
 }
 
 function setNoSelect(value){
@@ -735,7 +737,7 @@ function drawMaster(){
 
 // zoom == +1 -> Zoom in
 // zoom == -1 -> Zoom out
-// otherwise  -> ??
+// otherwise  -> Do nothing
 function simulationZoom(zoom) {
   if (zoom > 0 && Globals.scale < Globals.maxScale) {
     Globals.scale += 1;
@@ -744,10 +746,7 @@ function simulationZoom(zoom) {
   } else {
     return;
   }
-  
-  //var coords = getPosition(e);    
-  //var offset = $("#" + Globals.canvasId).position();
-  
+
   // TODO: Adjust translation according to cursor position while zooming
   Globals.translation.x = 0;
   Globals.translation.y = 0;

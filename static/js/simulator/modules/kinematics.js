@@ -152,7 +152,6 @@ function Kinematics1DModule() {
             // Make move as complete
             Globals.didMove = false;
             setNoSelect(false);
-            
             var index = bIndex(data.body);
             var canon = canonicalTransform(data);
             onPropertyChanged(index, "posx", canon.x, false);
