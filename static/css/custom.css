@@ -74,6 +74,8 @@
   word-break: break-word;
 }
 
+
+
 /* for blue links on about cards */
   .card-action a.dark-link-blue,
   .card-action a.dark-link-blue:link,
@@ -704,7 +706,7 @@ adding for new layout.html
   margin-top: 0;
   margin: auto;
   width:100%;
-  height:90vh;
+  height:100%;
   background-color: #003366;
 }
 
@@ -1106,5 +1108,10 @@ a.start-simulating-action {
 
 #play-button{
   width: 10%;
+}
+
+#menu-row{
+  margin: 0;
+  padding: 0;
 }
 

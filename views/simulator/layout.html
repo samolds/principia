@@ -36,7 +36,7 @@
 
 {{ define "content" }}
 <div id="main-content-container">
-    <nav id="simulator-subnav" >
+  <nav id="simulator-subnav" >
     <div class="nav-wrapper">
       <ul class="left">
         <li><i class="fa fa-file fa-size-small"></i></li>
@@ -70,113 +70,56 @@
     </div>
   </nav>
 
-
-  <!-- <div id="sim-nav" >
-    <nav class="sim-sub-nav">
-      <div class="nav-wrapper ">
-        <ul id="sim-sub-nav-list">
-          <li class="sim-sub-nav" ><a href=""><i class="fa fa-file fa-size-small"></i></a></li>
-          <li class="sim-sub-nav"><a href=""><i class="fa fa-save fa-size-small"></i></a></li>
-          <li class="sim-sub-nav">
-              <div class="switch">
-                <label>
-                  Public
-                  <input id="simulation-is-private" checked="true" type="checkbox" onclick="resetSaveButton()">
-                  <span class="lever"></span>
-                  Private
-                </label>
-              </div>
-          </li>
-          <li></li>
-          <li class="sim-sub-nav center" style="padding-left: 25vh;"><a href="">Title</a></li>
-          <li>
-            <span id="rating" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-            <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
-            </span>
-          </li>
-          <li class="sim-sub-nav right"><a href=""><i class="fa fa-question fa-size-small"></i></a></li>
-        </ul>
-      </div>
-    </nav>
-  </div> -->
-
-<div class="row">
-  <div id="left-menu" >
-    
-    <ul id="left-keyframe-list">
-      <li class="left-menu-item"><span class=" blue-text valign" id="prompt-tab"  ><i class="fa fa-pencil-square-o fa-size-medium"></i></span></li>
-      <li class="left-menu-item"><span class=" blue-text valign" id="keyframes-tab"  ><i class="fa fa-key fa-size-medium"></i></span></li>
-      <li class="left-menu-item"><span class=" blue-text valign" id="graphs-tab"  ><i class="fa fa-line-chart fa-size-medium"></i></span></li>
-    </ul>
-
-  </div>
-
-   <div id="right-menu" >
-    <!-- Tabs -->
-    <ul id="" class="">
-      <li class="right-menu-item"><span class=" blue-text valign" id="toolbox-tab"  ><i class="fa fa-cubes fa-size-medium"></i></span></li>
-      <li class="right-menu-item"><span class=" blue-text valign" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></span></li>
-      <li class="right-menu-item"><span class=" blue-text valign" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></span></li>
-      <li class="right-menu-item"><span class=" blue-text valign" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></span></li>
-
-      <div class="indicator blue" style="z-index: 1;"></div>
-    </ul>
-  </div>
-
-  <div id="simulator-window">
-    <div  id="viewport"  ></div>
-    <div class="zoom-controls-container">
-      <div class="zoom-controls">
-        <a id="zoom-control-in" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-plus"></i></a>
-        <a id="zoom-control-out" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-minus"></i></a>
-      </div>
+  <div class="row" id="menu-row">
+    <div id="left-menu" >
+      <ul id="left-keyframe-list">
+        <li class="left-menu-item"><span class=" blue-text valign" id="prompt-tab"  ><i class="fa fa-pencil-square-o fa-size-medium"></i></span></li>
+        <li class="left-menu-item"><span class=" blue-text valign" id="keyframes-tab"  ><i class="fa fa-key fa-size-medium"></i></span></li>
+        <li class="left-menu-item"><span class=" blue-text valign" id="graphs-tab"  ><i class="fa fa-line-chart fa-size-medium"></i></span></li>
+      </ul>
     </div>
-  </div>
-<div>
 
-<!-- <div class="row">
-  <div id="play-bumper-left" >
-    <p></p>
-  </div>
+    <div id="right-menu" >
+      <ul id="" class="">
+        <li class="right-menu-item"><span class=" blue-text valign" id="toolbox-tab"  ><i class="fa fa-cubes fa-size-medium"></i></span></li>
+        <li class="right-menu-item"><span class=" blue-text valign" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></span></li>
+        <li class="right-menu-item"><span class=" blue-text valign" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></span></li>
+        <li class="right-menu-item"><span class=" blue-text valign" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></span></li>
+        <div class="indicator blue" style="z-index: 1;"></div>
+      </ul>
+    </div>
 
-  <div id="play-bumper-right" >
-    <p></p>
-  </div>
-
-  <div id="play-button-range">
-    <div class="col ">
-      <div class="help-tooltip-container">
-        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
-          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
-        </button>
-        <div id="help-tooltip-play" class="help-tooltip card">
-          <p>Click play or scrub to a specific frame with the slider!</p>
+    <div id="simulator-window">
+      <div  id="viewport"  ></div>
+      <div class="zoom-controls-container">
+        <div class="zoom-controls">
+          <a id="zoom-control-in" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-plus"></i></a>
+          <a id="zoom-control-out" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-minus"></i></a>
         </div>
       </div>
     </div>
-    <div class="col" id="play-range">
+  </div>
+
+  <!-- Play button and slider -->
+  <div class="" id="play-container">
+    <div class="left" id="play-button">
+        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+        </button>
+    </div>
+    <div class="right" id="play-range">
       <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
     </div>
   </div>
-<div> -->
 
-
-
-<!-- Play button and slider -->
-<div class="" id="play-container">
-  <div class="left" id="play-button">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
-        <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
-      </button>
+  <div class="main-container simulator-container" id="comments-frag">
+    {{ template "commentsFrag" . }}
   </div>
-  <div class="right" id="play-range">
-    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-  </div>
-</div>
 
+  
 
+</div><!--end page -->
 
-</div>  <!--end page -->
 
 
 <!--prompt-->
