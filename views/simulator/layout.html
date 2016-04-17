@@ -34,39 +34,87 @@
 {{ end }}
 
 
-
 {{ define "content" }}
 <div id="main-content-container">
-  <div id="sim-nav" >
+    <nav id="simulator-subnav" >
+    <div class="nav-wrapper">
+      <ul class="left">
+        <li><i class="fa fa-file fa-size-small"></i></li>
+        <li><i class="fa fa-save fa-size-small"></i></li>
+        <li>
+          <div class="switch">
+                <label>
+                  Public
+                  <input id="simulation-is-private" checked="true" type="checkbox" onclick="resetSaveButton()">
+                  <span class="lever"></span>
+                  Private
+                </label>
+          </div>
+        </li>
+        <li class="subnav-pad-left"> 
+          <div >
+          {{ if .Data.new }}
+            <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="resetSaveButton()"></input>
+          {{ else }}
+            <input id="simulation-name" type="text" value="New Simulation" onkeypress="resetSaveButton()"></input>
+          {{ end }}
+        </div>
+        </li>
+        <li class="">
+          <span id="rating" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+            <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+            </span>
+        </li>
+        <li class="sim-sub-nav "><a href=""><i class="fa fa-question fa-size-small"></i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- <div id="sim-nav" >
     <nav class="sim-sub-nav">
       <div class="nav-wrapper ">
         <ul id="sim-sub-nav-list">
-          <li class="sim-sub-nav" ><a href="sass.html"><i class="fa fa-file fa-size-small"></i></a></li>
-          <li class="sim-sub-nav"><a href="badges.html"><i class="fa fa-save fa-size-small"></i></a></li>
+          <li class="sim-sub-nav" ><a href=""><i class="fa fa-file fa-size-small"></i></a></li>
+          <li class="sim-sub-nav"><a href=""><i class="fa fa-save fa-size-small"></i></a></li>
+          <li class="sim-sub-nav">
+              <div class="switch">
+                <label>
+                  Public
+                  <input id="simulation-is-private" checked="true" type="checkbox" onclick="resetSaveButton()">
+                  <span class="lever"></span>
+                  Private
+                </label>
+              </div>
+          </li>
           <li></li>
-          <li></li>
-          <li class="sim-sub-nav center" style="padding-left: 25vh;"><a href="collapsible.html">Title</a></li>
-          <li class="sim-sub-nav right"><a href="mobile.html"><i class="fa fa-question fa-size-small"></i></a></li>
+          <li class="sim-sub-nav center" style="padding-left: 25vh;"><a href="">Title</a></li>
+          <li>
+            <span id="rating" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+            <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+            </span>
+          </li>
+          <li class="sim-sub-nav right"><a href=""><i class="fa fa-question fa-size-small"></i></a></li>
         </ul>
       </div>
     </nav>
-  </div>
+  </div> -->
 
 <div class="row">
-  <div id="left-menu">
-    <div id="left-menu-button">
-      <i  class="fa fa-chevron-right fa-size-medium blue-text"></i>
-    </div>
+  <div id="left-menu" >
+    
     <ul id="left-keyframe-list">
-
+      <li class="left-menu-item"><span class=" blue-text valign" id="prompt-tab"  ><i class="fa fa-pencil-square-o fa-size-medium"></i></span></li>
+      <li class="left-menu-item"><span class=" blue-text valign" id="keyframes-tab"  ><i class="fa fa-key fa-size-medium"></i></span></li>
+      <li class="left-menu-item"><span class=" blue-text valign" id="graphs-tab"  ><i class="fa fa-line-chart fa-size-medium"></i></span></li>
     </ul>
 
   </div>
 
-   <div id="right-menu">
+   <div id="right-menu" >
     <!-- Tabs -->
     <ul id="" class="">
-      <li class="right-menu-item" onclick = "" ><span class=" blue-text valign " id="toolbox-tab"  ><i class="fa fa-cubes fa-size-medium"></i></span></li>
+      <li class="right-menu-item"><span class=" blue-text valign" id="toolbox-tab"  ><i class="fa fa-cubes fa-size-medium"></i></span></li>
       <li class="right-menu-item"><span class=" blue-text valign" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i></span></li>
       <li class="right-menu-item"><span class=" blue-text valign" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i></span></li>
       <li class="right-menu-item"><span class=" blue-text valign" id="overview-tab"><i class="fa fa-list fa-size-medium"></i></span></li>
@@ -77,28 +125,154 @@
 
   <div id="simulator-window">
     <div  id="viewport"  ></div>
+    <div class="zoom-controls-container">
+      <div class="zoom-controls">
+        <a id="zoom-control-in" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-plus"></i></a>
+        <a id="zoom-control-out" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-minus"></i></a>
+      </div>
+    </div>
   </div>
 <div>
 
+<!-- <div class="row">
+  <div id="play-bumper-left" >
+    <p></p>
+  </div>
+
+  <div id="play-bumper-right" >
+    <p></p>
+  </div>
+
+  <div id="play-button-range">
+    <div class="col ">
+      <div class="help-tooltip-container">
+        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+        </button>
+        <div id="help-tooltip-play" class="help-tooltip card">
+          <p>Click play or scrub to a specific frame with the slider!</p>
+        </div>
+      </div>
+    </div>
+    <div class="col" id="play-range">
+      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+    </div>
+  </div>
+<div> -->
 
 
 
-
+<!-- Play button and slider -->
+<div class="" id="play-container">
+  <div class="left" id="play-button">
+      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+        <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+      </button>
+  </div>
+  <div class="right" id="play-range">
+    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
+  </div>
+</div>
 
 
 
 </div>  <!--end page -->
 
 
+<!--prompt-->
+<div id="prompt" class = "center-align card-panel">
+  <h5 class="pad-sides">Prompt</h5>
+  <div class="input-field">
+    <textarea id="textarea1" class="materialize-textarea"></textarea>
+    <label for="textarea1">Textarea</label>
+  </div>
+</div>
+
+<!--keyframes-->
+<div id="keyframes-slide" class = "center-align card-panel">
+  <h5 class="pad-sides">Keyframes</h5>
+
+  <div class="help-tooltip-container">
+    <div class="row">
+      <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
+      <h5>Keyframes:
+        <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
+        <!-- Solution Modal Trigger -->
+      </h5>
+    </div>
+    <div id="help-tooltip-keyframes" class="help-tooltip card">
+      <p>
+        Multiple keyframes are used to set up the initial and final states of your model so
+        that the frames inbetween can be solved for. You can even set up intermediate key
+        frames. The solution will display in the "Solution Details" window.
+      </p>
+    </div>
+  </div>
+
+
+  <div id="keyframelist">
+    <ul id="keyframe-list">
+      <li>
+        <div class="keyframe-tile">
+          <h6>Frame 1: </h6>
+          <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
+          <div class="input-field">
+            <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+            <label for="keyframe-0-dt" class="active">dt</label>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  
+</div>
+
+<!--graph-->
+<div id="graphs-slide" class = "center-align card-panel">
+  <h5 class="pad-sides">Graphs</h5>
+  <!-- Graphing acceleration velocity and position -->
+
+    <div id="pvaGraphContainer">
+      <ul class="collapsible" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header active"><i class="material-icons"></i>Position</div>
+          <div class="collapsible-body">
+            <div id="positionGraph"></div>
+          </div>
+          
+        </li>
+        <li>
+          <div class="collapsible-header active"><i class="material-icons"></i>Velocity/Acceleration</div>
+          <div class="collapsible-body" >
+            <div id ="vaGraph"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+
+
+</div>
+
 <!-- Toolbox -->
-    <div id="toolbox" >
-      <div class="center-align ">
+    <div id="toolbox" class="z-depth-2 center-align">
+      <div class="center-align">
         <h5 class="pad-sides">Toolbox</h5>
         <ul class="property-window-list">
           <li class="toolbox-item-container card" title="Point Mass">
             <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
             <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/mass.png" component="kinematics1D-mass"/>
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/roundmass.png" component="kinematics1D-roundmass"/>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+              <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+            </div>
+          </li>
+          <li class="toolbox-item-container card" title="Point Mass">
+            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+            <div class="valign-wrapper">
+              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/squaremass.png" component="kinematics1D-squaremass"/>
             </div>
             <div class="card-reveal">
               <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
@@ -158,7 +332,7 @@
 
     <!-- Properties window for each element -->
     <div id="elementprops">
-      <div class="center-align">
+      <div class="center-align ">
         <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
 
         <!-- Properties that apply to all components -->
@@ -334,8 +508,8 @@
 
 <!-- Hideable global properties window for each element -->
     <div id="globalprops">
-      <div class="center-align">
-        <h5 class="pad-sides">Global Properties</h5>
+      <div class="center-align ">
+        <h5 class="pad-sides principia-blue-color pad-title">Global Properties</h5>
         <div class="row">
           <div class="input-field col s6">
             <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
@@ -356,7 +530,7 @@
             <label for="coord-sys" class="active">Coordinate System</label>
           </div>
         </div>
-        <!--
+        
         <div class="row">
           <div class="input-field col s6">
             <select id="glob-length-unit" class="browser-default">
@@ -383,7 +557,7 @@
             <label for="glob-time-unit" class="active">Time Unit</label>
           </div>
         </div>
-        -->
+        
         <div class="row">
           <div class="col s5">
             <div class="toolbox-item-container card" title="Origin">
@@ -415,7 +589,7 @@
 
 <!-- Overview with a dynamically populated list of all active elements -->
     <div id="overview">
-      <div class="center-align">
+      <div class="center-align ">
         <h5 class="pad-sides">Scene Overview</h5>
         <div class="row" >
           <ul id ="overview-list"></ul>
@@ -440,13 +614,7 @@
 
 
 
-<!-- Graphing acceleration velocity and position -->
-<div class="row">
-  <div id="pvaGraphContainer" class="col s12">
-    <div id="positionGraph"></div>
-    <div id="vaGraph"></div>
-  </div>
-</div>
+
 
 
 

@@ -62,6 +62,14 @@
   background-color: #0066cc;
 }
 
+.principia-blue-color {
+  color: #0066cc;
+}
+
+.pad-title{
+  padding-bottom: 15px;
+}
+
 .page-header {
   word-break: break-word;
 }
@@ -458,6 +466,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     padding: 0;
     list-style-type: none;
     list-style-image: none;
+
   }
 
   .property-window-list li {
@@ -477,7 +486,8 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     height: 100px;
     background-color: #e8f5e9;
     padding: 0;
-    margin: 0;
+    margin: auto;
+    display: inline-block;
   }
 
   .toolbox-item-container .valign-wrapper {
@@ -583,7 +593,7 @@ i.fa.fa-size-large {
 /* end simulator window context menu */
 
 #positionGraph, #vaGraph {
-  height: 275px;
+  height: 200px;
   width:100%;
 }
 
@@ -687,12 +697,6 @@ a#help-tooltips:hover {
   height: 100%;
 }
 
-#sim
-{
-
-
-}
-
 /*----------------
 adding for new layout.html
 */
@@ -704,45 +708,14 @@ adding for new layout.html
   background-color: #003366;
 }
 
-#sim-nav{
-
-}
-
-.sim-sub-nav {
-  background-color: #eaeaea !important; /* because of materialize stupidness */
-  height: 40px;
-}
-
-.sim-sub-nav ul li {
- 
-}
-
-.sim-sub-nav ul li a{
-  height: 40px;
-  
-  font-size: 1em;
-  
-}
-.sim-sub-nav ul li a i{
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.sim-sub-nav ul li:hover,
-.sim-sub-nav ul li.active {
-  background-color: #003366;
-}
-
 #left-menu{
+  z-index: 3;
+  position: relative;
   width: 80px;
   height: 80vh;
-  background-color: white;
+  background-color: #F5F7F7;
   float: left;
-  margin: 0px;
-  padding: 0px;
 
-  text-align: center;
 }
 
 #right-menu{
@@ -750,57 +723,70 @@ adding for new layout.html
   position: relative;
   width: 80px;
   height: 80vh;
-  background-color: white;
+  background-color: #F5F7F7;
   float: right;
 
 }
 
 #simulator-window{
-  width: 85%;
-  height: 78vh;
+  width: 100%;
+  height: 80vh;
   background-color: clear;
-  padding-top: 8px;
-  margin-left: auto;
-  margin-right: auto;
-
+  padding-top: 0px;
+  
+  padding-left: 80px;
+  padding-right: 80px;
 }
 
 #viewport{
-  background-color: grey;
+  background-color: white;
   width :100%;
   height: 80vh;
-  margin: 0px;
-  padding: 0px;
+  margin: 0px; 
 }
 
 .right-menu-item{
   z-index:2;
   text-align: center;
-  margin-top: 30px;
-}
-
-#left-menu-button{
-  text-align: center;
-  background-color: grey;
   padding-top: 10px;
   padding-bottom: 10px;
-
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
-#sim-sub-nav-list{
- padding-left: 170px;
+.right-menu-item:hover{
+  background-color: grey;
+}
+
+.left-menu-item{
+  z-index:2;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.left-menu-item:hover{
+  background-color: grey;
 }
 
 /*----slide menus----*/
-.right-slide-menu {
+
+#prompt,
+#keyframes-slide,
+#graphs-slide
+{
   z-index:1;
-  width: 240px;
-  height: 80vh;
+  width: 340px;
+  height: 300px;
   position: absolute;
-  background-color: red;
-  right: -240px;
+  background-color: #E8E8E8;
+  left: -280px;
   top:104px;
   margin:0px;
+
+  overflow-y: scroll;
 
   transition: all .5s ;
   -webkit-transition: all .5s ;
@@ -808,6 +794,21 @@ adding for new layout.html
   -ms-transition: all .5s;
   
 }
+
+#keyframes-slide{
+  top:164px;
+}
+
+#graphs-slide{
+  top:215px;
+  width: 500px;
+  height:475px;
+  left: -500px;
+  padding: 5px;
+
+}
+
+
 
 #overview,
 #globalprops,
@@ -817,8 +818,8 @@ adding for new layout.html
   width: 240px;
   height: 80vh;
   position: absolute;
-  background-color: blue;
-  right: -240px;
+  background-color: #E8E8E8;
+  right: -280px;
   top:104px;
   margin:0px;
 
@@ -827,6 +828,16 @@ adding for new layout.html
   -moz-transition: all .5s ;
   -ms-transition: all .5s;
   
+}
+
+#toolbox{
+  padding-left: 17px;
+  text-align: center;
+
+}
+
+#globalprops{
+  padding:5px;
 }
 
 .inherit-size {
@@ -999,5 +1010,100 @@ a.start-simulating-action {
 
 .zoom-controls .btn {
   padding: 0 0.5em;
+}
+
+#simulator-subnav{
+  z-index: 5;
+  height: 40px;
+  background-color: #eaeaea;
+}
+
+
+#simulator-subnav .nav-wrapper ul li:hover,
+#simulator-subnav .nav-wrapper ul li:focus{
+  background-color: transparent;
+  color: #999999;
+
+}
+
+#simulator-subnav .nav-wrapper ul{
+  margin-left: 60px;
+}
+
+
+
+.subnav-pad-left{
+  margin-left: 150px;
+}
+
+#simulator-subnav .nav-wrapper,
+#simulator-subnav .nav-wrapper ul,
+#simulator-subnav .nav-wrapper ul li,
+#simulator-subnav .nav-wrapper ul li i,
+#simulator-subnav .nav-wrapper ul li input
+{
+  height: 40px;
+  line-height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: black;
+
+  position: relative;
+
+}
+
+.play-bumper-left,
+.play-bumper-right{
+  width: 80px;
+  margin:0px;
+  padding:0px;
+  background-color: red;
+
+}
+.play-bumper-left{
+  float: left;
+   z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #F5F7F7;
+  float: left;
+}
+
+.play-bumper-right{
+  float: right;
+   z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #F5F7F7;
+  
+}
+
+#play-button-range{
+ width: 100%;
+  height: 80vh;
+  background-color: clear;
+  padding-top: 0px;
+  display: inline-block;
+  padding-left: 80px;
+  padding-right: 80px;
+}
+
+#play-container{
+  width:100%;
+  height: 50px;
+  background-color: #eaeaea;
+  padding-left: 80px;
+  margin-right: 80px;
+  display:inline-block;
+  position:relative;
+}
+#play-range{
+  width: 90%;
+}
+
+#play-button{
+  width: 10%;
 }
 

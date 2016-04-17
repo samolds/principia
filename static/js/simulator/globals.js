@@ -163,14 +163,7 @@ var Globals = {
   lastPos: {x: 0, y: 0},
   isPanning: false,
   
-  translation: {x: 0, y: 0}, 
-
-//right ui menu flags
-
-  rightMenuActive: false,
-
-  activeRightTabName: ""
-  
+  translation: {x: 0, y: 0}
 };
 
 

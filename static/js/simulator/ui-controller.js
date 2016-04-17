@@ -132,8 +132,7 @@ function updateBooleanProperty(body, property, value){
   // Special case: Handle showing/hiding the graph div
   if(property === "showGraph"){
     var allHidden = (graphBodyIndices().length === 0);
-    if(allHidden){ $("#pvaGraphContainer").hide(); }         
-    else { $("#pvaGraphContainer").show(); updatePVAChart(); }
+    if(!allHidden){ updatePVAChart(); }         
   }
   
   drawMaster();
@@ -905,24 +904,48 @@ function rightSlideMenuOpen(e)
   }
 
 
-//if its open, close it, 
-  if(Globals.rightMenuActive){
-    console.log("open")
+  check = $("#" + selector).css("right");
 
-    $("#" + selector).css("right", "-280px");
-    Globals.rightMenuActive = false;
+  $("#toolbox").css("right", "-280px");
+  $("#elementprops").css("right", "-280px");
+  $("#globalprops").css("right", "-280px");
+  $("#overview").css("right", "-280px");
+
+  if(check === "-280px")
+  {
+    $("#" + selector).css("right", "80px");
   }
-  else{
-  console.log("closed");
-  $("#" + selector).css("right", "80px");
-  Globals.rightMenuActive = true;
-  }
+
 }
 
-// $(function() {
-//   $('.right-menu-item').click(function() {
-//     console.log("sup fool?");
-//     $("#right-slide-menu").css("right", "80px");
-//   });
-// })
+function leftSlideMenuOpen(e)
+{
+  id = e.currentTarget.firstChild.id;
+  selector = "";
+  if(id == "prompt-tab"){
+    console.log("prompt");
+    selector = "prompt";
+  }
+  else if(id == "keyframes-tab"){
+    console.log("keyframes");
+    selector = "keyframes-slide";
+  }
+  else if(id == "graphs-tab"){
+    console.log("graphs");
+    selector = "graphs-slide";
+  }
+  
+  check = $("#" + selector).css("left");
+
+  $("#prompt").css("left", "-280px");
+  $("#keyframes-slide").css("left", "-280px");
+  $("#graphs-slide").css("left", "-500px");
+
+  if(check === "-280px" || check === "-500px")
+  {
+    $("#" + selector).css("left", "80px");
+  }
+
+}
+
 

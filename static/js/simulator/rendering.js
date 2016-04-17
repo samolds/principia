@@ -667,7 +667,7 @@ function postRender(isKeyframe){
   var xmod = Math.floor(Globals.translation.x/incr)*incr;
   if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
   for(var i=-100; i <= can.width+100; i+= incr)    
-    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), 490);
+    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10);
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas

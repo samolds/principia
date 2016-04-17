@@ -135,10 +135,7 @@ function updatePVAChart() {
 
   arr = graphBodyIndices();
 
-  if(arr.length == 0) {
-    $('#pvaGraphContainer').hide();
-    return;
-  }
+ 
 
   // Mod by the number of bodies we need to draw
   if(Globals.frame % arr.length !== 0) {
@@ -337,6 +334,7 @@ $(document).ready(function(){
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
 
   $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
+  $('.left-menu-item').on("click", function(event) { leftSlideMenuOpen(event); } );
 
 
   $(document).on('keyup', function(event) {keyUp(event)});

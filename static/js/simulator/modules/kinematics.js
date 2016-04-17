@@ -181,8 +181,7 @@ function Kinematics1DModule() {
         $('body').css({cursor: "move"});
         Globals.isPanning = true;
 
-        Globals.selectedBody = false;
-        document.getElementById("toolbox-tab").click();  
+        Globals.selectedBody = false;  
         drawMaster();
       });
     
