@@ -51,7 +51,7 @@
                 </label>
           </div>
         </li>
-        <li class="subnav-pad-left"> 
+        <li class="subnav-pad-left right"> 
           <div >
           {{ if .Data.new }}
             <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" onkeypress="resetSaveButton()"></input>
@@ -62,10 +62,10 @@
         </li>
         <li class="">
           <span id="rating" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-            <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+            <a onclick="saveRating()"><i id="star-icon" class="  fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
             </span>
         </li>
-        <li class="sim-sub-nav "><a href=""><i class="fa fa-question fa-size-small"></i></a></li>
+        <li class="sim-sub-nav right"><a href=""><i class="  fa fa-question fa-size-small"></i></a></li>
       </ul>
     </div>
   </nav>
@@ -345,7 +345,7 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()">Remove <i class="fa fa-trash"></i></a>
+              <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()"> <i class="fa fa-trash"></i></a>
             </div>
           </li>
           <li class="property-item" principia-property="posx">
