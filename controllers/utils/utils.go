@@ -165,6 +165,7 @@ func BuildCommentData(ctx appengine.Context, comObj models.Comment, commentKey *
 	com.KeyName = comObj.KeyName
 	com.Contents = comObj.Contents
 	com.CreationDate = comObj.CreationDate
+	com.PrettyCreationDate = comObj.CreationDate.Format("January _2, 2006")
 	com.AuthorName = author.DisplayName
 	com.AuthorID = author.KeyName
 	com.AuthorImageSrcUrl = profileImageSrc

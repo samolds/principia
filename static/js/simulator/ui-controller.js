@@ -104,12 +104,16 @@ function toggleSimulator(){
   if (Globals.running) {
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
     $("#play-pause-icon").removeClass("fa-play")
-    $("#play-pause-icon").addClass("fa-pause")    
+    $("#play-pause-icon").removeClass("play-pad")
+    $("#play-pause-icon").addClass("fa-pause") 
+    $("#play-pause-icon").addClass("pause-pad")   
   } 
   else {
     clearInterval(Globals.anim);
     $("#play-pause-icon").removeClass("fa-pause")
+    $("#play-pause-icon").removeClass("pause-pad")
     $("#play-pause-icon").addClass("fa-play")
+    $("#play-pause-icon").addClass("play-pad")
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }
@@ -132,10 +136,18 @@ function updateBooleanProperty(body, property, value){
   // Special case: Handle showing/hiding the graph div
   if(property === "showGraph"){
     var allHidden = (graphBodyIndices().length === 0);
-    if(allHidden){ $("#pvaGraphContainer").hide(); }         
-    else { $("#pvaGraphContainer").show(); updatePVAChart(); }
+    if (!allHidden) {
+      $('.pva-graph-no-graph-text').hide()
+      $('#positionGraph').show()
+      $('#vaGraph').show()
+      updatePVAChart();
+    } else {
+      $('.pva-graph-no-graph-text').show()
+      $('#positionGraph').hide()
+      $('#vaGraph').hide()
+    }
   }
-  
+
   drawMaster();
 }
 
@@ -389,7 +401,7 @@ function addKeyframe(){
       $($(li).children()[0]).addClass("input-field-variable");
       $(li).append(
       "<div class=\"input-field-unknown-container\" title=\"Mark this value as unknown.\">" +
-        "<a class=\"input-field-unknown btn green accent-1\"><img class=\"clickable responsive-img\" src=\"/static/img/toolbox/shrug.png\" width=\"30\"/></a>" +
+        "<a class=\"input-field-unknown btn accent-1\"><img class=\"clickable responsive-img\" src=\"/static/img/toolbox/shrug.png\" width=\"30\"/></a>" +
       "</div>");
     }
     
@@ -718,6 +730,8 @@ function deleteBody(bodyIndex){
     Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
     Globals.selectedBody = false;
     toggleMenuOff(); // Hides any open context menus
+    if ($("#elementprops-tab").hasClass("active-side-menu-item"))
+      rightSlideMenuClose();
 
     // Begin Spring and Pulley specific logic!
 
@@ -835,10 +849,10 @@ function selectBody(bodyIndex){
   selectPropertyInputType(Globals.selectedBody, "accx");
   selectPropertyInputType(Globals.selectedBody, "accy");
     
-  if(bodyIndex !== 0) 
-    $("#elementprops-tab").click();
-  else
+  if (bodyIndex === 0 && !$("#globalprops-tab").hasClass("active-side-menu-item"))
     $("#globalprops-tab").click();
+  else if (!$("#elementprops-tab").hasClass("active-side-menu-item"))
+    $("#elementprops-tab").click();
     
   drawMaster();
 }
@@ -872,4 +886,82 @@ function keyDown(e)
  
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;
+}
+
+function rightSlideMenuOpen(e)
+{
+  id = e.currentTarget.id;
+  selector = "";
+  if(id == "toolbox-tab"){
+    selector = "toolbox";
+  }
+  else if(id == "elementprops-tab"){
+    selector = "elementprops";
+  }
+  else if(id == "globalprops-tab"){
+    selector = "globalprops";
+  }
+  else if(id == "overview-tab"){
+    selector = "overview";
+  }
+
+  check = $("#" + selector).css("right");
+  rightSlideMenuClose(e);
+
+  if (check === "-280px") {
+    $("#" + selector).css("right", "80px");
+    $("#" + id).addClass("active-side-menu-item");
+  }
+}
+
+function rightSlideMenuClose(e) {
+  $("#toolbox").css("right", "-280px");
+  $("#elementprops").css("right", "-280px");
+  $("#globalprops").css("right", "-280px");
+  $("#overview").css("right", "-280px");
+
+  $("#toolbox-tab").removeClass("active-side-menu-item");
+  $("#elementprops-tab").removeClass("active-side-menu-item");
+  $("#globalprops-tab").removeClass("active-side-menu-item");
+  $("#overview-tab").removeClass("active-side-menu-item");
+}
+
+function leftSlideMenuOpen(e)
+{
+  id = e.currentTarget.id;
+  selector = "";
+  if(id == "prompt-tab"){
+    selector = "prompt-slide";
+  }
+  else if(id == "keyframes-tab"){
+    selector = "keyframes-slide";
+  }
+  else if(id == "graphs-tab"){
+    selector = "graphs-slide";
+  }
+
+  else if(id == "solution-tab"){
+    selector = "solution-slide";
+  }
+  
+  check = $("#" + selector).css("left");
+  leftSlideMenuClose(e);
+
+  if(check === "-600px")
+  {
+    $("#" + selector).css("left", "80px");
+    $("#" + id).addClass("active-side-menu-item");
+  }
+}
+
+function leftSlideMenuClose(e) {
+  $("#prompt-slide").css("left", "-600px");
+  $("#keyframes-slide").css("left", "-600px");
+  $("#graphs-slide").css("left", "-600px");
+  $("#solution-slide").css("left", "-600px");
+
+  $("#prompt-tab").removeClass("active-side-menu-item");
+  $("#keyframes-tab").removeClass("active-side-menu-item");
+  $("#graphs-tab").removeClass("active-side-menu-item");
+  $("#solution-tab").removeClass("active-side-menu-item");
 }

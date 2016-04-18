@@ -10,11 +10,7 @@
 
 .main-container {
   margin: auto;
-  width: 90%;
-}
-
-.simulator-container {
-  width: 1100px;
+  width: 99%;
 }
 
 .clear {
@@ -62,9 +58,19 @@
   background-color: #0066cc;
 }
 
+.principia-blue-color {
+  color: #0066cc;
+}
+
+.pad-title{
+  padding-bottom: 15px;
+}
+
 .page-header {
   word-break: break-word;
 }
+
+
 
 /* for blue links on about cards */
   .card-action a.dark-link-blue,
@@ -119,6 +125,8 @@
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    overflow-x: hidden;
+    background-color: #dddddd;
   }
 
   main {
@@ -173,10 +181,6 @@ header {
   color: #0066cc !important; /* because of materialize stupidness */
 }
 
-body {
-  background-color: #dddddd;
-}
-
 .home-background {
   height: 100%;
   padding-bottom: 100px;
@@ -205,20 +209,21 @@ body {
 
 /* custom form color */
   /* label focus color */
-  .input-field input[type=text]:focus + label {
+  .input-field input[type=text]:focus + label,
+  .input-field input[type=number]:focus + label,
+  .input-field textarea.materialize-textarea:focus:not([readonly])+label
+  {
     color: #29b6f6;
   }
+
   /* label underline focus color */
+  .input-field textarea.materialize-textarea:focus:not([readonly]),
   .input-field input[type=text]:focus {
     border-bottom: 1px solid #29b6f6;
     box-shadow: 0 1px 0 0 #29b6f6;
   }
   /* icon prefix focus color */
   .input-field .prefix.active {
-    color: #29b6f6;
-  }
-
-  .input-field input[type=number]:focus + label {
     color: #29b6f6;
   }
 
@@ -234,6 +239,14 @@ body {
 
   .switch > label {
     padding-top: .75rem;
+  }
+
+  .switch label input[type=checkbox]:checked+.lever {
+    background-color: #29b6f6;
+  }
+
+  .switch label input[type=checkbox]:checked+.lever:after {
+    background-color: #109ddd;
   }
   
   .input-field-variable {
@@ -256,16 +269,6 @@ body {
   }
 /* end custom form */
 
-
-/* simulator canvas */
-  .simulator {
-    height: 500px;
-    border: 2px solid #888;
-    background-color: #e3f2fd;
-  }
-/* end simulator */
-
-
 /* keyframe thumbnails */
   .keyframe {
     height: 120px;
@@ -277,21 +280,19 @@ body {
 
 #keyframelist ul{
     list-style-type: none;
-    white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
-#keyframelist li{
-    display: inline-block;
+#keyframelist li {
     margin: 0px;
     padding: 0px;
     max-height: 255px;
     min-height: 255px;
     vertical-align: top;
+  float: left;
 }
 
 .keyframe-tile{
+  display: inline-block;
   margin: 0px;
   margin-right: 10px;
   padding: 0px;
@@ -331,20 +332,7 @@ body {
   padding: 0px;  
 }
 
-/*this is to vertically space tab icons*/
-.tabs li i {
-  margin: 10px;
-}
-
-.row {
-  padding: 0px;
-}
-
 /* for tabs styling */
-.tabs li a:hover i{
-  color: #90caf9;
-}
-
 /* simulator properties window */
   .prop-window {
     position: absolute;
@@ -375,56 +363,9 @@ body {
 
 
 
-/*comments*/
-.bubble-content {
-  color: #fff;
-  position:relative;
-  float:left;
-  margin-left:12px;
-  width:400px;
-  padding:0px 20px;
-  border-radius:10px;
-  background-color:#333333;
-  box-shadow:1px 1px 5px rgba(0,0,0,.2);
-}
-
-.bubble-content .character-counter {
-  color: #fff;
-}
-
 textarea.comment-text {
-  padding-top: 0;
+  padding: 0;
 }
-
-.point {
-  border-top:10px solid transparent;
-  border-bottom:10px solid transparent;
-  border-right: 12px solid #333;
-  position:absolute;
-  left:-10px;
-  top:12px;
-} 
-
-.all-bubble-content {
-  position:relative;
-  float:left;
-  margin-left:12px;
-  width:400px;
-  padding:0px 20px;
-  border-radius:10px;
-  background-color:#e0e0e0;
-  box-shadow:1px 1px 5px rgba(0,0,0,.2);
-}
-
-.all-point {
-  border-top:10px solid transparent;
-  border-bottom:10px solid transparent;
-  border-right: 12px solid #e0e0e0;
-  position:absolute;
-  left:-10px;
-  top:12px;
-} 
-
 
 /* logo stuff */
   .nav-bar-principia-logo {
@@ -458,6 +399,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     padding: 0;
     list-style-type: none;
     list-style-image: none;
+
   }
 
   .property-window-list li {
@@ -475,9 +417,10 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     position: relative;
     width: 100px;
     height: 100px;
-    background-color: #e8f5e9;
+    background-color: #84C7C1;
     padding: 0;
-    margin: 0;
+    margin: auto;
+    display: inline-block;
   }
 
   .toolbox-item-container .valign-wrapper {
@@ -485,7 +428,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   }
 
   .toolbox-item-container .card-reveal {
-    background-color: #a5d6a7;
+    background-color: #26A69A;
     white-space: normal;
     text-align: left;
     padding: 5px;
@@ -499,7 +442,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   }
 
   .toolbox-item-container:hover {
-    background-color: #c8e6c9;
+    background-color: #9deae2;
   }
 
   .toolbox-item {
@@ -517,7 +460,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
 /* solution details box */
 .solution-details-container {
   height: 300px;
-  overflow: auto;
 }
 
 .solution-details-container p {
@@ -583,8 +525,8 @@ i.fa.fa-size-large {
 /* end simulator window context menu */
 
 #positionGraph, #vaGraph {
-  height: 275px;
-  width:100%;
+  height: 240px;
+  width: 100%;
 }
 
 .fa-lg-custom {
@@ -596,74 +538,6 @@ i.fa.fa-size-large {
   cursor: hand;
 }
 
-#help-tooltips {
-  padding-left: 14px;
-}
-
-a#help-tooltips,
-a#help-tooltips:link,
-a#help-tooltips:visited {
-  color: #ff8f00;
-}
-
-a#help-tooltips:hover {
-  color: #ff6f00;
-}
-
-.help-tooltip-container {
-  position: relative;
-}
-
-.help-tooltip {
-  display: none;
-  position: absolute;
-  color: #000000;
-  background-color: #ffd54f;
-  padding: 5px 5px;
-  z-index: 15;
-  white-space: normal;
-}
-
-.help-tooltip p {
-  margin: 0;
-  padding: 0;
-}
-
-#help-tooltip-properties {
-  top: -85px;
-  right: 25px;
-  width: 275px;
-}
-
-#help-tooltip-toolbox {
-  top: 310px;
-  right: 75px;
-  width: 200px;
-}
-
-#help-tooltip-simulator {
-  top: 200px;
-  left: 200px;
-  width: 300px;
-}
-
-#help-tooltip-play {
-  top: -15px;
-  left: 40px;
-  width: 300px;
-}
-
-#help-tooltip-keyframes {
-  top: -35px;
-  left: 175px;
-  width: 330px;
-}
-
-#help-tooltip-fbd {
-  color: blue;
-  background-color: #ffffff;
-}
-
 /** via http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting **/
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -671,8 +545,187 @@ a#help-tooltips:hover {
   -khtml-user-select: none;    /* Konqueror */
   -moz-user-select: none;      /* Firefox */
   -ms-user-select: none;       /* IE/Edge */
-  user-select: none;           /* non-prefixed version, currently
-                                  not supported by any browser */
+  user-select: none;           /* non-prefixed version, currently not supported by any browser */
+}
+
+#left-menu {
+  z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #eaeaea;
+  background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
+  background: linear-gradient(to bottom, #eaeaea, #dddddd);
+  float: left;
+  padding-top: 20px;
+  /*border-top: 2px solid #ffffff;*/
+}
+
+#right-menu {
+  z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #eaeaea;
+  background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
+  background: linear-gradient(to bottom, #eaeaea, #dddddd);
+  float: right;
+  padding-top: 20px;
+  /*border-top: 2px solid #ffffff;*/
+}
+
+#simulator-window {
+  padding-left: 80px;
+  padding-right: 80px;
+}
+
+#viewport {
+  background-color: #ffffff;
+  height: 80vh;
+}
+
+.right-menu-item ,
+.left-menu-item {
+  z-index:2;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.right-menu-item:hover,
+.left-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  
+    margin: 0;
+    padding: 10px
+
+}
+
+.right-menu-item.active-side-menu-item,
+.left-menu-item.active-side-menu-item {
+  background-color: #222222;
+  margin: 0;
+  padding: 10px;
+}
+
+.right-menu-item.active-side-menu-item:hover,
+.left-menu-item.active-side-menu-item:hover {
+  background-color: #444444;
+}
+
+i.right-menu-item-close {
+  float: left;
+  color: #222222;
+  z-index: 10;
+}
+
+i.left-menu-item-close {
+  float: right;
+  color: #222222;
+  z-index: 10;
+}
+
+/*----slide menus----*/
+
+#prompt-slide,
+#keyframes-slide,
+#graphs-slide,
+#solution-slide {
+  z-index:1;
+  width: 340px;
+  height: 300px;
+  position: absolute;
+  background-color: #eeeeee;
+  left: -600px;
+  top: 120px;
+  margin: 0;
+
+  overflow-y: auto;
+
+  transition: all .5s ;
+  -webkit-transition: all .5s ;
+  -moz-transition: all .5s ;
+  -ms-transition: all .5s;
+}
+
+#prompt-slide {
+  width: 500px;
+  height:475px;
+  top: 140px;
+}
+
+#keyframes-slide{
+  top:210px;
+  width: 360px;
+  height: 400px;
+  overflow-y: scroll;
+}
+
+#graphs-slide{
+  top: 283px;
+  width: 500px;
+  height: 400px;
+}
+
+#solution-slide{
+  top: 357px;
+  width: 500px;
+  height: 325px;
+}
+
+#overview,
+#globalprops,
+#elementprops,
+#toolbox {
+  z-index: 1;
+  width: 270px;
+  height: 75vh;
+  position: absolute;
+  background-color: #eeeeee;
+  right: -280px;
+  top: 120px;
+  margin: 0;
+
+  overflow-y: scroll;
+
+  transition: all .5s ;
+  -webkit-transition: all .5s ;
+  -moz-transition: all .5s ;
+  -ms-transition: all .5s;
+}
+
+#toolbox {
+  padding-left: 25px;
+  text-align: center;
+}
+
+#globalprops{
+  padding:5px;
+}
+
+#elementprops{
+  padding-left: 8px;
+}
+
+.toggle-label{
+  font-size: .4;
+}
+
+.property-item .input-field .switch label{
+  font-size: .6rem;
+}
+
+select,
+select.browser-default{
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.switch label .lever{
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .inherit-size {
@@ -728,6 +781,10 @@ a#help-tooltips:hover {
   .simulation-thumb-description {
     color: #ffffff;
     background: #222222;
+    word-wrap: break-word;
+  }
+
+  .comment-simulation-name {
     word-wrap: break-word;
   }
 
@@ -846,3 +903,182 @@ a.start-simulating-action {
 .zoom-controls .btn {
   padding: 0 0.5em;
 }
+
+#simulator-subnav {
+  z-index: 5;
+  height: 40px;
+  background-color: #d6d6d6;
+}
+
+#simulator-subnav .nav-wrapper li:hover {
+  background-color: #d6d6d6;
+}
+
+#simulator-subnav .nav-wrapper .clickable:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#simulator-subnav .nav-wrapper li,
+#simulator-subnav .nav-wrapper li i,
+#simulator-subnav .nav-wrapper li a,
+#simulator-subnav .nav-wrapper li p,
+#simulator-subnav .nav-wrapper li input {
+  height: 40px;
+  line-height: 40px;
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+
+#simulator-subnav .nav-wrapper {
+  overflow-x: hidden;
+  width: 100%;
+  padding: 0 10px;
+}
+
+#simulator-subnav .nav-wrapper .simulator-title {
+  border-bottom: 2px solid #222222;
+}
+
+#simulator-subnav .nav-wrapper .simulator-title input {
+  width: 86%;
+  margin-left: 1em;
+}
+
+#simulator-subnav .nav-wrapper li {
+  max-width: 25em;
+  overflow: hidden;
+  padding: 0 15px;
+}
+
+#simulator-subnav .nav-wrapper li p,
+#simulator-subnav .nav-wrapper li i,
+#simulator-subnav .nav-wrapper li input {
+  color: #000000;
+}
+
+#simulator-subnav .nav-wrapper li a,
+#simulator-subnav .nav-wrapper li a i,
+#simulator-subnav .nav-wrapper li.clickable, 
+#simulator-subnav .nav-wrapper li.clickable i,
+#simulator-subnav .nav-wrapper li .switch {
+  color: #039be5;
+}
+
+.play-bumper-left,
+.play-bumper-right {
+  width: 80px;
+  margin:0px;
+  padding:0px;
+  background-color: red;
+}
+
+.left-play-bumper{
+  float: left;
+  z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #F5F7F7;
+  float: left;
+}
+
+.right-play-bumper{
+  float: right;
+  z-index: 3;
+  position: relative;
+  width: 80px;
+  height: 80vh;
+  background-color: #F5F7F7;
+  
+}
+
+#play-container{
+  z-index:10;
+  width:100%;
+  height: 50px;
+  padding-left: 80px;
+  margin-right: 80px;
+  padding-top: 0px;
+  padding-right: 80px;
+  
+  position:relative;
+
+  background-color: #424242;
+}
+
+.play-pad{
+  padding-left: 3px;
+}
+.pause-pad{
+  padding-left: 1px;
+}
+
+#play-range {
+  height: 50px;
+  margin-right: 0px;
+  float: right;
+  position: absolute;
+  left: 130px;
+  vertical-align: center;
+  text-align: center;
+  padding-top: 7px;
+}
+
+#play-button {
+  width: 50px;
+  height: 50px;
+
+  float: left;
+  vertical-align: center;
+  text-align: center;
+  padding-top: 6px;
+}
+
+#menu-row {
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  overflow-x: hidden;
+}
+
+#simulatorFrameRange{
+  background-color: transparent;
+  
+}
+.comment-container{
+  padding-left: 80px;
+  padding-right: 80px;
+  margin: 20px auto;
+
+}
+
+/*Readding the help tooltip container for FBD box*/
+.help-tooltip {
+  display: none;
+  position: absolute;
+  color: #000000;
+  background-color: #ffd54f;
+  padding: 5px 5px;
+  z-index: 15;
+  white-space: normal;
+}
+
+.help-tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+#help-tooltip-fbd {
+  color: blue;
+  background-color: #ffffff;
+}
+
+.calculated-width {
+    width: -moz-calc(100% - 210px);
+    width: -webkit-calc(100% - 210px);
+    width: calc(100% - 210px);
+}
+/*dont put anything after this ^  (.calculated-width) for some reason its not recognizing anything after it*/

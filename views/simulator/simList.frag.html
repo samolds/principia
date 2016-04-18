@@ -26,9 +26,11 @@
               <p>
                 Favorited {{ $simulation.RatingTotal }} times
               </p>
+              {{ if $simulation.Description }}
               <p>
                 {{ $simulation.Description }}
               </p>
+              {{ end }}
               {{ if $.Data.userIsOwner }}
               <div class="card-action">
                 <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement.parentElement.parentElement)">
@@ -55,9 +57,11 @@
               <p>
                 Favorited {{ $simulation.RatingTotal }} times
               </p>
+              {{ if $simulation.Description }}
               <p>
                 {{ $simulation.Description }}
               </p>
+              {{ end }}
               {{ if $.Data.userIsOwner }}
               <div class="card-action">
                 <a class="dark-link-blue clickable" onClick="deleteSimulation('/simulator/{{ $simulation.Type }}/{{ $simulation.KeyName }}', null, this.parentElement.parentElement.parentElement.parentElement)">

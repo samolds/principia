@@ -128,17 +128,24 @@ function registerPVAChartEvents() {
       // // },
     });
 
-    updatePVAChart();
+    var allHidden = (graphBodyIndices().length === 0);
+    if (!allHidden) {
+      $('.pva-graph-no-graph-text').hide()
+      $('#positionGraph').show()
+      $('#vaGraph').show()
+      updatePVAChart();
+    } else {
+      $('.pva-graph-no-graph-text').show()
+      $('#positionGraph').hide()
+      $('#vaGraph').hide()
+    }
 }
 
 function updatePVAChart() {
 
   arr = graphBodyIndices();
 
-  if(arr.length == 0) {
-    $('#pvaGraphContainer').hide();
-    return;
-  }
+ 
 
   // Mod by the number of bodies we need to draw
   if(Globals.frame % arr.length !== 0) {
@@ -336,6 +343,12 @@ $(document).ready(function(){
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
 
+  $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
+  $('.left-menu-item').on("click", function(event) { leftSlideMenuOpen(event); } );
+
+  $('.right-menu-item-close').on("click", function(event) { rightSlideMenuClose(event); } );
+  $('.left-menu-item-close').on("click", function(event) { leftSlideMenuClose(event); } );
+
   $(document).on('keyup', function(event) {keyUp(event)});
   $(document).on('keydown', function(event) {keyDown(event)});
   
@@ -353,13 +366,12 @@ $(document).ready(function(){
   // Events for handling changing the unit
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
+
   $('#glob-timestep-unit').on("change", function() { 
       Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); 
       if(Globals.numKeyframes == 1) attemptSimulation();
       drawMaster();
   });
-  
-  $('#help-tooltips').on("click", function() { displayTooltips(); });
   
   $("#elementprops-tab").on("click", function() { 
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 

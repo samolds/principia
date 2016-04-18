@@ -452,8 +452,8 @@ function drawFBD(){
               "</p>"
               );
 
-  var topPos = selectedBody.state.pos.y + Globals.translation.y + bodySize;
-  var leftPos = selectedBody.state.pos.x + Globals.translation.x + bodySize;
+  var topPos = selectedBody.state.pos.y + Globals.translation.y + (bodySize/2) + 100;
+  var leftPos = selectedBody.state.pos.x + Globals.translation.x + (bodySize/2) + 85;
 
   /*
   // Body is too far right
@@ -611,8 +611,11 @@ function viewportToKeyCanvas(n){
   if(n === false) n = lastKF();  
   var canvas = $('#' + Globals.canvasId)[0].children[0];  
   var keycanvas = $("#keyframe-" + n)[0];
-  keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
-  keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+  if(keycanvas != undefined)
+  {
+    keycanvas.getContext('2d').clearRect(0, 0, keycanvas.width, keycanvas.height);
+    keycanvas.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, keycanvas.width, keycanvas.height);
+  }
 }
 
 // Adds post world.render() effects including property windows, springs, vectors, and highlights.
@@ -676,13 +679,13 @@ function postRender(isKeyframe){
   var ymod = Math.floor(Globals.translation.y/incr)*incr;
   if(ymod < 0 && Globals.translation.y !== ymod) ymod += incr;  
   for(var i=-100; i <= can.height+100; i+= incr)    
-    can.ctx.fillText("" + (swapYpos(i, false) + ymod)*getScaleFactor(), 0, (i + Globals.translation.y % incr));
+    can.ctx.fillText("  " + (swapYpos(i, false) + ymod)*getScaleFactor(), 0, (i + Globals.translation.y % incr));
   
   // Draw x grid labels
   var xmod = Math.floor(Globals.translation.x/incr)*incr;
   if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
   for(var i=-100; i <= can.width+100; i+= incr)    
-    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), 490);
+    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10);
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas

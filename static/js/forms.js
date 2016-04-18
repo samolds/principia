@@ -34,8 +34,8 @@ function formPost(path, parameters, successMessage) {
     xhr.onload = function() { // After the post is done, redirect
       if (xhr.readyState === xhr.DONE) {
         if (xhr.status === 200) {
-          window.location = xhr.responseText; // Redirects to saved simulation link
           successToast(successMessage);
+          window.location = xhr.responseText; // Redirects to saved simulation link
         } else {
           failToast(xhr.responseText);
         }
@@ -49,8 +49,8 @@ function formPost(path, parameters, successMessage) {
             $("#save-button").removeClass( "blue" )
             $("#save-button").addClass( "green" )
           }
-          window.location.reload(); // Necessary to get new image save form "action" attribute
           successToast(successMessage);
+          window.location.reload(); // Necessary to get new image save form "action" attribute
         } else {
           failToast(xhr.responseText);
         }
@@ -89,6 +89,10 @@ function saveSimulation(postURL){
 }
 
 function deleteSimulation(simUrl, redirectUrl, element) {
+  if (!confirm("Are you sure you want to delete this simulation?")) {
+    return;
+  }
+
   $.ajax({
       url: simUrl,
       type: 'DELETE',
@@ -167,17 +171,18 @@ function saveComment() {
 // Save new rating to the datastore
 // and refresh the ratings
 function saveRating() {
-    ratingObj = { Score: 1 };
+  ratingObj = { Score: 1 };
 
+  if (GlobalKeyNames.Simulation) {
     $.post("/api/simulator/" + GlobalKeyNames.Simulation + "/ratings", ratingObj)
       .done(function() { 
         refreshRatings();
         successToast('Rating updated successfully!');
       })
-      .fail(function(xhr, textStatus, errorThrown) {
+        .fail(function(xhr, textStatus, errorThrown) {
         failToast(xhr.responseText);
-      });
-
+    });
+  }
 }
 
 
@@ -200,8 +205,8 @@ function refreshCommentsList() {
           imgDisplay = "<img src='" + comment.AuthorImageSrcUrl + "' class='responsive-img'>"
         }
 
-        result += "<div class='col s12'>";
-        result +=   "<div class='row'>";
+        result += "<div class='row'>";
+        result +=   "<div class='col s10'>";
         result +=     "<div class='card-panel valign-wrapper'>";
         result +=       "<div class='col s3'>";
         result +=         "<div class='center-align'>";
@@ -209,6 +214,9 @@ function refreshCommentsList() {
         result +=         "</div>";
         result +=         "<div class='center-align'>";
         result +=           "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
+        result +=         "</div>";
+        result +=         "<div class='center-align'>";
+        result +=           "<small>" + comment.PrettyCreationDate + "</small>";
         result +=         "</div>";
         result +=       "</div>";
         result +=       "<div class='col s9'>";
@@ -279,13 +287,11 @@ function isNewSim(){
 }
 
 function getfocus() {
-    document.getElementById("simulation-name").focus();
-    document.getElementById("simulation-name-label").style.display = "initial";
-
+    //document.getElementById("simulation-name").focus();
+    //document.getElementById("simulation-name-label").style.display = "initial";
 }
 
 function losefocus() {
-    document.getElementById("simulation-name").blur();
-    document.getElementById("simulation-name-label").style.display = "none";
-
+    //document.getElementById("simulation-name").blur();
+    //document.getElementById("simulation-name-label").style.display = "none";
 }

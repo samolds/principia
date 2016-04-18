@@ -21,7 +21,6 @@ var (
 	userDir = tmplDir + "user/"
 	testDir = tmplDir + "test/"
 
-	simFrag     = simDir + "simulator.frag.html"
 	simListFrag = simDir + "simList.frag.html"
 	comFrag     = simDir + "comments.frag.html"
 
@@ -45,7 +44,7 @@ var (
 
 		"simulator/browse":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, simDir+"browse.html")),
 		"simulator/mobile":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"mobile.html")),
-		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
+		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"kinematics.html")),
 
 		"user/simulations":  template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"simulations.html")),
 		"user/interactions": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"interactions.html")),
