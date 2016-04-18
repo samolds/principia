@@ -177,7 +177,7 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -289,7 +289,7 @@ function collisionSolver(){
   drawMaster(); 
   
 
-  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  //MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
 // Creates a shallow copy of the specified variable
@@ -484,13 +484,11 @@ function updateKeyframes(components){
     drawMaster();    
   }
 
-  // With one keyframe, immediately resimulate using new object
-  if(nKF == 1) attemptSimulation();
-  else {
+  if(nKF > 1){
     dirty();
     Globals.keyframe = getKF();
     highlightKeycanvas(Globals.keyframe);
-    drawMaster();    
+    drawMaster();
   }
 }
 
@@ -519,18 +517,28 @@ function updateSize(body, value){
   Globals.bodyConstants[i].size = value;
 
   var scaledSize = value / getScaleFactor();
-  body.view.setAttribute("width", scaledSize);
-  body.view.setAttribute("height", scaledSize);
+  if(bodyType(body) == "kinematics1D-pulley"){
+    body.view.setAttribute("width", scaledSize*2);
+    body.view.setAttribute("height", scaledSize*2);
+  }
+  else {
+    body.view.setAttribute("width", scaledSize);
+    body.view.setAttribute("height", scaledSize);
+  }
 
   if (body2Constant(body).massType === "square") {
     body.width = scaledSize;
     body.height = scaledSize;
     body.geometry.width = scaledSize;
     body.geometry.height = scaledSize;
-  } else { // if (body.massType === "round") {
+  } else if(body2Constant(body).massType === "round"){
     body.radius = scaledSize / 2;
     body.geometry.radius = scaledSize / 2;
   }
+  else { // pulley
+    body.radius = scaledSize;
+    body.geometry.radius = scaledSize;
+  }    
 
   // Resimulate if there is only one keyframe
   if(Globals.numKeyframes == 1) attemptSimulation();
@@ -580,7 +588,6 @@ function updateImage(body, value){
 // All updates to pos/vel/acc should be routed through here
 // This function should be passed canonical coordinates
 function onPropertyChanged(i, property, value, doTranslation){
-  
   var body = Globals.world.getBodies()[i];
   if(!body) return;
   
@@ -665,6 +672,17 @@ function resetSaveButton(){
   $("#save-button").addClass( "blue" );
 }
 
+function totalAcceleration(body){
+  var dt = Globals.world.timestep();
+  var state = body.state;
+  var spring_a = applySpringForces(body);
+  var pulley_f = applyPulleyForces(body, dt);
+  var pulley_a = getPulleyAcceleration(body, pulley_f);
+  
+  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((body.treatment == "dynamic")? Globals.gravity[0]: 0),
+          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic")? Globals.gravity[1]: 0)};
+}
+
 // Custom integrator: On each iteration, updates velocity then position of each component
 // TODO: Change to Runge-Kutta
 Physics.integrator('principia-integrator', function( parent ){
@@ -677,23 +695,20 @@ Physics.integrator('principia-integrator', function( parent ){
       var body = bodies[i];
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
-      var state = body.state;        
-      state.old = cloneState(body.state);
       
-      state.vel.x += state.acc.x * dt + spring_a[0];
-      state.vel.y += state.acc.y * dt + spring_a[1];
+      var state = body.state;
+      state.old = cloneState(body.state);
+
+      // Get direction to pulley, apply acceleration to that direction
+      var pulley_f = applyPulleyForces(body, dt);
+      var pulley_a = getPulleyAcceleration(body, pulley_f);
+      
+      state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
+      state.vel.y += state.acc.y * dt + spring_a[1] + pulley_a[1];
       
       if(body.treatment == "dynamic"){
         state.vel.x += Globals.gravity[0] * dt;
         state.vel.y += Globals.gravity[1] * dt;
-      }
-      
-      // Deal with pulleys
-      if((typeof consts.attachedTo !== 'undefined') 
-        && Globals.bodyConstants[consts.attachedTo].ctype == "kinematics1D-pulley")
-      {        
-        var pulley = bodies[consts.attachedTo];
-        applyPulley(pulley, state, consts, dt);
       }
       
       state.angular.vel += state.angular.acc;
@@ -707,9 +722,9 @@ Physics.integrator('principia-integrator', function( parent ){
       var state = body.state;
       var temp = cloneState(body.state);
       
-      if(Globals.bodyConstants[i].attachedTo) {        
-        state.pos.x += state.vel.x;// * dt; //+ state.acc.x * 0.5 * dt*dt;
-        state.pos.y += state.vel.y;// * dt; //+ state.acc.y * 0.5 * dt*dt;
+      if(Globals.bodyConstants[i].attachedTo && Globals.bodyConstants[i].attachedTo.length > 0) {
+        state.pos.x += state.vel.x;
+        state.pos.y += state.vel.y;
       }
       
       else if (bodyType(body) == "kinematics1D-mass") {
@@ -718,12 +733,14 @@ Physics.integrator('principia-integrator', function( parent ){
         state.pos.y += state.old.vel.y * dt + (state.acc.y + Globals.gravity[1]) * 0.5 * dt*dt;  
       }
       
-      // Attached element must tag along
+      // Attached spring element must tag along
       if(body2Constant(body).attachedTo){
-        var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo];
-        if(body2Constant(attachedTo).ctype != "kinematics1D-pulley"){
-          attachedTo.state.pos.x = state.pos.x;
-          attachedTo.state.pos.y = state.pos.y;
+        for(var j=0; j < body2Constant(body).attachedTo.length; j++){
+          var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo[j]];
+          if(body2Constant(attachedTo).ctype != "kinematics1D-pulley"){
+            attachedTo.state.pos.x = state.pos.x;
+            attachedTo.state.pos.y = state.pos.y;
+          }
         }
       }
       

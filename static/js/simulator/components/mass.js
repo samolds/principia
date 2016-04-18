@@ -69,18 +69,24 @@ function addMass(data, massType){
 
   // Add the component to the world and update all keyframes
   world.add(component);
+  bodyConstants[bodyConstants.length-1].attachedTo = [];
   updateKeyframes([component]);
   Globals.massBodyCounter++;
                   
   // Assign constants
-  bodyConstants[bodyConstants.length-1].massType = massType;
-  bodyConstants[bodyConstants.length-1].mass = 1.0;
+  bodyConstants[bodyConstants.length-1].massType = massType;  
   bodyConstants[bodyConstants.length-1].size = size;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
+  bodyConstants[bodyConstants.length-1].mass = 1.0;
+  
+  
+  // Allow a mass to attach directly to a spring or pulley
+  attachSpring(component);
+  attachPulley(component);
   
   return component;
 }

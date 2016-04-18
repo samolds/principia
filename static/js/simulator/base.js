@@ -367,6 +367,12 @@ $(document).ready(function(){
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
 
+  $('#glob-timestep-unit').on("change", function() { 
+      Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); 
+      if(Globals.numKeyframes == 1) attemptSimulation();
+      drawMaster();
+  });
+  
   $("#elementprops-tab").on("click", function() { 
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
   });

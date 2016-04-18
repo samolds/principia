@@ -107,12 +107,17 @@ function convertUnit(value, type, invert){
   if(type.slice(-1) == "y" && Globals.coordinateSystem == "polar")
     return value;
   
+  var l = Globals.lengthFactor;
+  var t = Globals.timeFactor;
+  
   if(type == "posx" || type == "posy")
-    return invert? value * 1.0/Globals.lengthFactor :
-                   value * Globals.lengthFactor;
+    return invert? value * (1.0/l) : value * l;
+  else if(type== "velx" || type == "vely")
+    return invert? value * (1.0/l)*t : value * l * (1.0/t);
+  else if(type== "accx" || type == "accy")
+    return invert? value * (1.0/l)*t*t : value * Globals.lengthFactor * (1.0/(t*t));
   else
-    return invert? value * 1.0/Globals.lengthFactor * Globals.timeFactor :
-                   value * Globals.lengthFactor * 1.0/Globals.timeFactor;
+    return value;
 }
 
 function getLabel(body){
@@ -143,9 +148,7 @@ function magnitude(x, y){ return Math.sqrt(x*x + y*y); }
 function clamp(min, x, max) { return Math.min(Math.max(x, min), max); }
 
 function getOldValue(body, property){
-  var keyframe = Globals.keyframe;
-  if(keyframe === false) keyframe = lastKF();
-  
+  var keyframe = getKF();  
   var state = Globals.keyframeStates[keyframe][bIndex(body)];
   var constants = body2Constant(body);
   
@@ -179,6 +182,14 @@ function canonicalTransform(data) {
   var result = {};
   result.x = data.x * getScaleFactor() - Globals.translation.x * getScaleFactor();
   result.y = swapYpos(data.y, false) * getScaleFactor() + Globals.translation.y * getScaleFactor();
+  return result;
+}
+
+function canonicalTransformNT(data)
+{
+  var result = {};
+  result.x = data.x * getScaleFactor();
+  result.y = swapYpos(data.y, false) * getScaleFactor();
   return result;
 }
 
