@@ -919,14 +919,6 @@ a.start-simulating-action {
   padding: 0 0.5em;
 }
 
-
-
-
-
-
-
-
-
 #simulator-subnav {
   z-index: 5;
   height: 40px;
@@ -1035,7 +1027,6 @@ a.start-simulating-action {
   padding: 0;
 }
 
-<<<<<<< HEAD
 body{
   overflow-x: hidden;
 }
@@ -1047,8 +1038,6 @@ body{
 
 }
 
-=======
->>>>>>> ba9de55c339882ce1fd589e1e1ac6ca6aaefe2c5
 .calculated-width {
     width: -moz-calc(100% - 210px);
     width: -webkit-calc(100% - 210px);
