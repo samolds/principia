@@ -61,7 +61,8 @@
           </label>
         </div>
       </li>
-      <li class="simulator-title center-align clickable"> 
+      <li class="simulator-title clickable input-field"> 
+        <i class="fa fa-pencil fa-size-tiny prefix"></i>
         {{ if .Data.new }}
           <input id="simulation-name" type="text" value="New Simulation"></input>
         {{ else }}
@@ -500,12 +501,12 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn" id="ramp-properties-flip-horz">Flip Horz.</a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz">Flip <i class="fa fa-arrows-h fa-size-tiny"></i></a>
             </div>
           </li>          
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn" id="ramp-properties-flip-vert">Flip Vert.</a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert">Flip <i class="fa fa-arrows-v fa-size-tiny"></i></a>
             </div>
           </li>
         </ul>
