@@ -554,6 +554,16 @@ function clickListener(e) {
   }
 }
 
+function bodyClickListener(e) {
+  var id = e.target.id;
+  if (id === 'simulation-name' || id === 'simulation-description'
+      || id === 'comments-frag' || id === 'comment-contents') {
+    toggleMenuOff();
+    Globals.selectedBody = false;
+    drawMaster();
+  }
+}
+
 function panZoomUpdate(data) {
   var bodies = Globals.world.getBodies();
   var mouseX = data.x;

@@ -211,6 +211,10 @@ $(document).ready(function(){
   $( '#viewport' ).on("click", function(event){
     clickListener(event);
   });
+
+  $(document).on('click', function(event) {
+    bodyClickListener(event);
+  });
   
 
   $('#viewport').on("mousedown", function(event){
