@@ -1,7 +1,7 @@
 {{ define "title" }} - User Interactions{{ end }}
 
 {{ define "content" }}
-  {{ if .Data.userIsOwner }}
+  {{ if .Data.userOwnsPage }}
     <div class="container pad-top pad-bottom">
       <div class="center-align">
         <h3 class="page-header">My Favorited Simulations</h3>

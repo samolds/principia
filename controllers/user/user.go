@@ -105,9 +105,10 @@ func InteractionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"simulations": simulations,
-		"comments":    comments,
-		"userIsOwner": userIsOwner,
+		"simulations":  simulations,
+		"comments":     comments,
+		"userIsOwner":  false,
+		"userOwnsPage": userIsOwner,
 	}
 
 	controllers.BaseHandler(w, r, "user/interactions", data)
