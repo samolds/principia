@@ -72,77 +72,141 @@ function addSpring(data)
 // Applies spring forces to the specified body and returns corresponding acceleration in [x,y]
 function applySpringForces(body) {
     var a = [0,0];    
-    var constants = body2Constant(body)
+
+    if(bodyType(body) != "kinematics1D-mass" || body2Constant(body).mass == 0) return a;
+
+    var springF = getSpringForce(body);
+    a[0] = springF[0] / body2Constant(body).mass;
+    a[1] = springF[1] / body2Constant(body).mass;
+
+    return a;
+}
+
+function getSpringForce(body)
+{
+  var constants = body2Constant(body);
+  
+  var springFx = 0;
+  var springFy = 0;
+  
+  for(var i=0; i < constants.attachedTo.length; i++){
+    // Get the 'i'th spring child this body is attached to
+    var attached = Globals.world.getBodies()[constants.attachedTo[i]];
     
-    // Skip bodies not attached to a spring
-    if(constants.attachedTo){
-      var attached = Globals.world.getBodies()[constants.attachedTo];
+    // The parent element represents the equilibrium point
+    if(body2Constant(attached).ctype == "kinematics1D-spring-child"){
+      var spring_idx = Globals.bodyConstants[constants.attachedTo[i]].parent;      
+      var spring = Globals.world.getBodies()[spring_idx];
       
-      if(body2Constant(attached).ctype != "kinematics1D-spring-child") return a;
+      // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m      
+      var factor = getScaleFactor();
+      var origin = {x:Globals.variableMap[getKF()][spring_idx].posx ,y:Globals.variableMap[getKF()][spring_idx].posy};
+      var attached = {x:attached.state.pos.x*factor, y:swapYpos(attached.state.pos.y, false)*factor};
+      var k = body2Constant(spring).k;
       
-      var spring_idx = Globals.bodyConstants[constants.attachedTo].parent;
-      var spring = Globals.world.getBodies()[spring_idx]; // The parent element represents the equilibrium point
-      var properties = body2Constant(spring);
-      if(body2Constant(body).mass == 0) return a;
-      
-      // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m
-      var origin = [spring.state.pos.x, spring.state.pos.y];     
-      var springFx = -properties.k * (attached.state.pos.x - origin[0]);
-      var springFy = -properties.k * (attached.state.pos.y - origin[1]);
-      a[0] = springFx / body2Constant(body).mass;
-      a[1] = springFy / body2Constant(body).mass;
+      springFx += (-k * (attached.x - origin.x));
+      springFy -= (-k * (attached.y - origin.y));            
     }
-    
-  return a;
+  }
+  
+  return [springFx, springFy];  
 }
 
 // Removes relationship between body and spring it is currently assigned to if it is delta units away.
 function detachSpring(body){
-  var world = Globals.world;
-  var delta = 50;
   
-  if(body2Constant(body).attachedTo || body2Constant(body).attachedTo === 0)
-  {
-    var attachedTo = world.getBodies()[body2Constant(body).attachedTo];
+  var world = Globals.world;
+  var delta = Globals.delta;
+  
+  var remove = [];
+  
+  if(bodyType(body) == "kinematics1D-mass"){
+    var targets = body2Constant(body).attachedTo;
+    for(var j=0; j < targets.length; j++){      
+      var target = world.getBodies()[targets[j]];
+      
+      if(bodyType(target) == "kinematics1D-pulley") continue;
     
-    // Don't detach from pulleys
-    if(body2Constant(attachedTo).ctype == "kinematics1D-pulley") return;
-    
-    if(distance(body.state.pos.x, body.state.pos.y, attachedTo.state.pos.x, attachedTo.state.pos.y) > delta) {        
-        delete body2Constant(attachedTo).attachedBody;
-        delete body2Constant(body).attachedTo;
+      if(distance(body.state.pos.x, body.state.pos.y, target.state.pos.x, target.state.pos.y) > delta){
+        remove.push(j);
+        delete body2Constant(target).attachedBody;
+      }
+    }
+  
+    var counter = 0;
+    for(var j=0; j<remove.length; j++)
+    {
+        var target = remove[j];
+        targets.splice(target-counter, 1);
+        counter++;
     }
   }
+  
+  if(bodyType(body) == "kinematics1D-sprint-child"){
+    var target = body2Constant(body).attachedBody;
+    delete body2Constant(body).attachedBody;
+    body2Constant(Globals.world.getBodies()[target]).attachedTo.splice(bIndex(body), 1);
+  }
+  
 }
 
 // Adds relationship between body and spring if it is within delta units to the stretched point
 function attachSpring(body){  
+  
+  var constants = body2Constant(body);
+  
+  if(constants.ctype != "kinematics1D-mass" && constants.ctype != "kinematics1D-spring-child")
+    return;
+  
+  var isMass = constants.ctype == "kinematics1D-mass";
   var world = Globals.world;
-  var bodies = world.getBodies();
-  var kState = Globals.keyframeStates[Globals.keyframe];
+  var bodies = world.getBodies();  
   var i = world.getBodies().indexOf(body);
   var delta = Globals.delta;
+  var attached = false;
   
-  for(var j=0; j<bodies.length; j++){
-    var attachBody = bodies[j];
+  for(var j=1; j<bodies.length; j++){
     
-    // Prevent multiple bodies from attaching to the same spring
-    if(body2Constant(attachBody).attachedBody) continue;
+    // Attempt to form attachment to specified body
+    var target = bodies[j];
+    var t_constants = body2Constant(target);
     
-    if(distance(body.state.pos.x, body.state.pos.y, attachBody.state.pos.x, attachBody.state.pos.y) <= delta){
-      if(body2Constant(body).ctype == "kinematics1D-mass" && body2Constant(attachBody).ctype == "kinematics1D-spring-child"){
-        body2Constant(attachBody).attachedBody = bIndex(body);
-        body2Constant(body).attachedTo = bIndex(attachBody);
-        
-        kState[i].pos.x = attachBody.state.pos.x;
-        kState[i].pos.y = attachBody.state.pos.y;
-        body.state.pos.x = attachBody.state.pos.x;
-        body.state.pos.y = attachBody.state.pos.y;             
-             
-        // Attempt to update the corresponding variable
-        if(Globals.useKeyframes) updateVariable(body, "posx", attachBody.state.pos.x);
-        if(Globals.useKeyframes) updateVariable(body, "posy", attachBody.state.pos.y);        
+    // The body is only a candidate if within delta pixels
+    if(distance(body.state.pos.x, body.state.pos.y, target.state.pos.x, target.state.pos.y) > delta)
+      continue;
+    
+    // If the original body is a mass, ensure that we are attempting to attach to a free spring child
+    if(isMass && t_constants.ctype == "kinematics1D-spring-child")
+    {
+      if(!t_constants.attachedBody)
+      {
+        t_constants.attachedBody = i;
+        constants.attachedTo.push(j);
+        attached = true;
       }
+    }    
+    // If the original body is a spring-child, allow it to attach to any mass
+    else if(!isMass && t_constants.ctype == "kinematics1D-mass")
+    {      
+      body2Constant(body).attachedBody = bIndex(target);
+      body2Constant(target).attachedTo.push(bIndex(body));
+      attached = true;
     }
+  }
+  
+  // If the original body is a mass, snap to the first body it attached to and snap all others to the same spot
+  if(isMass && constants.attachedTo.length > 0 && attached){
+    onPropertyChanged(i, "posx", Globals.variableMap[getKF()][constants.attachedTo[0]]["posx"], false);
+    onPropertyChanged(i, "posy", Globals.variableMap[getKF()][constants.attachedTo[0]]["posy"], false);
+    for(var j=1; j < constants.attachedTo.length; j++){
+      onPropertyChanged(constants.attachedTo[j], "posx", Globals.variableMap[getKF()][i]["posx"], false);
+      onPropertyChanged(constants.attachedTo[j], "posy", Globals.variableMap[getKF()][i]["posy"], false);  
+    }
+  }
+  
+  // If the original body is a spring, snap it to the mass is attached to
+  if(!isMass && constants.attachedBody && attached){
+    onPropertyChanged(i, "posx", Globals.variableMap[getKF()][constants.attachedBody]["posx"], false);
+    onPropertyChanged(i, "posy", Globals.variableMap[getKF()][constants.attachedBody]["posy"], false);
   }
 }

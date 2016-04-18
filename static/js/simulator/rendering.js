@@ -34,7 +34,8 @@ function displayVariableValues(body){
     
     // Use user unit
     position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
-    
+    velocity = [convertUnit(velocity[0], "velx", false), convertUnit(velocity[1], "vely", false)];
+    acceleration = [convertUnit(acceleration[0], "accx", false), convertUnit(acceleration[1], "accy", false)];
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
@@ -50,10 +51,7 @@ function displayVariableValues(body){
       
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
-   
-    // TODO fix unit conversions
-    //if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);  
-    
+       
     $('#general-properties-position-x').val(position[0].toFixed(precision));
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
@@ -136,6 +134,10 @@ function displayElementValues(bod){
       $('#pointmass-properties-size').val(constants.size);
       $('#pointmass-properties-img').val(constants.img);
 
+      var total_acceleration = totalAcceleration(bod);
+      $('#pointmass-properties-acceleration-x-total').val(convertUnit(total_acceleration.x, "accx", false).toFixed(precision));
+      $('#pointmass-properties-acceleration-y-total').val((mod * convertUnit(total_acceleration.y, "accy", false)).toFixed(precision));
+      
       $('#pointmass-properties-vector')[0].checked = constants.vectors;
       $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
       $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;
@@ -185,9 +187,12 @@ function drawLines(){
     if(bodyConst[i].parent || bodyConst[i].parent === 0)
       drawSpringLine(bodies[bodyConst[i].parent], bodies[i]);
     
-    // If the current body is attached to something and that something is a pulley...    
-    if((bodyConst[i].attachedTo || bodyConst[i].attachedTo === 0) && bodyConst[bodyConst[i].attachedTo].ctype == "kinematics1D-pulley"){
-      drawRopeLine(bodies[bodyConst[i].attachedTo], bodies[i]);
+    // If the current body is attached to something and that something is a pulley...
+    if((bodyConst[i].attachedTo && bodyConst[i].attachedTo.length > 0)){      
+      for(var j=0; j < bodyConst[i].attachedTo.length; j++)        
+        if(bodyType(bodies[bodyConst[i].attachedTo[j]]) == "kinematics1D-pulley"){
+          drawRopeLine(bodies[bodyConst[i].attachedTo[j]], bodies[i]);
+        }
     }
   }
 }
@@ -210,10 +215,9 @@ function drawRopeLine(b1, b2){
     radius *= -1;
   
   ctx.beginPath();
-  ctx.moveTo(x1 + radius,y1);  
+  ctx.moveTo(x1 + radius/getScaleFactor(),y1);
   ctx.lineTo(x2,y2);
   ctx.stroke();
-  
 }
 
 function setNoSelect(value){
@@ -276,14 +280,14 @@ function drawSpringLine(b1, b2){
     for(; y<=ymax; y+=incr){
       incr = (Math.abs(y - ymin) < delta || Math.abs(y - ymax) < delta) ? 1: Math.PI/2;
       var xnew = x + Math.sin(y*wavelength)*amplitude;
-      var ynew = y;    
+      var ynew = y;
       ctx.lineTo(xnew,ynew);
       x += (m*incr);
     }
   }
   else
   {
-    var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;    
+    var xmin = x1 < x2? x1: x2; var xmax = x1 > x2? x1: x2;
     var ys = (x1 == xmin)? y1:y2; var ye = (x1 == xmin)? y2:y1;      
     var dx = xmax-xmin; var dy = ye-ys; var m = dy/dx;
     
@@ -348,8 +352,9 @@ function drawVectors(){
   for(var i=0; i < bodies.length; i++){
     if(Math.abs(bodies[i].state.vel.x) > maxVx) maxVx = Math.abs(bodies[i].state.vel.x);
     if(Math.abs(bodies[i].state.vel.y) > maxVy) maxVy = Math.abs(bodies[i].state.vel.y);
-    if(Math.abs(bodies[i].state.acc.x + Globals.gravity[0]) > maxAx) maxAx = Math.abs(bodies[i].state.acc.x + Globals.gravity[0]);
-    if(Math.abs(bodies[i].state.acc.y + Globals.gravity[1]) > maxAy) maxAy = Math.abs(bodies[i].state.acc.y + Globals.gravity[1]);
+    var acceleration = totalAcceleration(bodies[i]);
+    if(Math.abs(acceleration.x) > maxAx) maxAx = Math.abs(acceleration.x);
+    if(Math.abs(acceleration.y) > maxAy) maxAy = Math.abs(acceleration.y);
   }
   
   for(var i=0; i < bodies.length; i++){
@@ -401,22 +406,30 @@ function drawFBD(){
   var xGlobalForce = Globals.gravity[0] * mass;
   var yGlobalForce = Globals.gravity[1] * mass;
 
-  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2));
-  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2));
-  totalInternalForce = totalInternalForce.toFixed(2);
-  totalGlobalForce = totalGlobalForce.toFixed(2);
+  var springForce = getSpringForce(selectedBody);
+  var xSpringForce = springForce[0];
+  var ySpringForce = springForce[1];
+  
+  var totalInternalForce = Math.sqrt(Math.pow(xInternalForce, 2) + Math.pow(yInternalForce, 2)).toFixed(2);
+  var totalGlobalForce = Math.sqrt(Math.pow(xGlobalForce, 2) + Math.pow(yGlobalForce, 2)).toFixed(2);
+  var totalSpringForce = Math.sqrt(Math.pow(xSpringForce, 2) + Math.pow(ySpringForce, 2)).toFixed(2);
 
   // Limit length of vectors?
   xInternalForce = clamp(-200, xInternalForce * 10, 200);
   yInternalForce = clamp(-200, yInternalForce * 10, 200);
   xGlobalForce = clamp(-200, xGlobalForce * 10, 200);
   yGlobalForce = clamp(-200, yGlobalForce * 10, 200);
+  xSpringForce = clamp(-200, xSpringForce * 10, 200);
+  ySpringForce = clamp(-200, ySpringForce * 10, 200);
 
   // Internal Force
   drawTipToTail(xInternalForce, yInternalForce, 'grey', 'grey', 'grey', false, selectedBody);
 
   // Global Force
   drawTipToTail(xGlobalForce, yGlobalForce, 'blue', 'blue', 'blue', false, selectedBody);
+  
+  // Spring Force
+  drawTipToTail(xSpringForce, ySpringForce, 'orange', 'orange', 'orange', false, selectedBody);
 
   // TODO:
   // Spring Force
@@ -433,7 +446,11 @@ function drawFBD(){
                "</p>" +
                "<p style='color:blue'>" +
                   "Global Force: " + totalGlobalForce +
-              "</p>");
+              "</p>" +
+               "<p style='color:orange'>" +
+                  "Spring Force: " + totalSpringForce +
+              "</p>"
+              );
 
   var topPos = selectedBody.state.pos.y + Globals.translation.y + bodySize;
   var leftPos = selectedBody.state.pos.x + Globals.translation.x + bodySize;
@@ -462,8 +479,9 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   
   var vx_amt = (body.state.vel.x / maxVx) * 200.0;
   var vy_amt = (body.state.vel.y / maxVy) * 200.0;
-  var ax_amt = ((body.state.acc.x + Globals.gravity[0]) / maxAx) * 100.0;
-  var ay_amt = ((body.state.acc.y + Globals.gravity[1]) / maxAy) * 100.0;
+  var acceleration = totalAcceleration(body);
+  var ax_amt = ((acceleration.x) / maxAx) * 100.0;
+  var ay_amt = ((acceleration.y) / maxAy) * 100.0;
   
   var canvas = Globals.world.renderer();
   var ctx = canvas.ctx;
@@ -723,7 +741,7 @@ function drawMaster(){
 
 // zoom == +1 -> Zoom in
 // zoom == -1 -> Zoom out
-// otherwise  -> ??
+// otherwise  -> Do nothing
 function simulationZoom(zoom) {
   if (zoom > 0 && Globals.scale < Globals.maxScale) {
     Globals.scale += 1;
@@ -732,10 +750,7 @@ function simulationZoom(zoom) {
   } else {
     return;
   }
-  
-  //var coords = getPosition(e);    
-  //var offset = $("#" + Globals.canvasId).position();
-  
+
   // TODO: Adjust translation according to cursor position while zooming
   Globals.translation.x = 0;
   Globals.translation.y = 0;
@@ -743,13 +758,13 @@ function simulationZoom(zoom) {
   // Rescale and bias images
   var factor = (zoom < 0)? 0.5: 2.0;
   var numBodies = Globals.world.getBodies().length;
-  for(var i=1; i < numBodies; i++){
+  for(var i=0; i < numBodies; i++){
     
     var body = Globals.world.getBodies()[i];
     var bodyConst = body2Constant(body);
     if (bodyConst.ctype == "kinematics1D-mass" || bodyConst.ctype == "kinematics1D-pulley") {
       updateImage(body, bodyConst.img);
-      updateSize(body, bodyConst.size);
+      updateSize(body, bodyConst.size);      
     } else if (bodyConst.ctype == "kinematics1D-surface") {
       setSurfaceWidth(body, bodyConst.surfaceWidth);
       setSurfaceHeight(body, bodyConst.surfaceHeight);
@@ -773,5 +788,6 @@ function simulationZoom(zoom) {
     }
   }
   
+  attemptSimulation();
   drawMaster();
 }

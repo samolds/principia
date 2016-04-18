@@ -770,8 +770,10 @@ function deleteBody(bodyIndex){
       } else if (i >= startIndex && bod.ctype.indexOf("spring") !== -1) {
         bod.child -= decSize;
       } else if (bod.ctype.indexOf("mass") !== -1) {
-        if (bod.attachedTo !== null && bod.attachedTo >= startIndex)
-          bod.attachedTo -= decSize;
+        for (var j = 0; j < bod.attachedTo.length; j++) {
+          if (bod.attachedTo[j] >= startIndex)
+            bod.attachedTo[j] -= decSize;
+        }
       }
     }
 
@@ -787,8 +789,9 @@ function deleteBody(bodyIndex){
       }
       for (i = 0; i < len; i++) {
         bod = Globals.bodyConstants[i];
-        if (bod.attachedTo !== undefined && bod.attachedTo === refToDelete) {
-         delete bod.attachedTo;
+        refIndex = bod.attachedTo.indexOf(refToDelete)
+        if (refIndex !== -1) {
+          bod.attachedTo.splice(refIndex, refIndex + 1)
         }
       }
     }
@@ -850,19 +853,7 @@ function keyUp(e)
     Globals.fbdDown = false; 
     drawFBD();
   }
-  
-  if (e.keyCode == 66) 
-  {
-    var data = { 'type': "kinematics1D-mass", 'x': 335/2, 'y': 250, 'blockSimulation':true};
-    Globals.world.emit('addComponent', data);
-  }
-  if(e.keyCode == 67)
-  {
-    //debugger;
-    updatePropertyRedraw(Globals.world.getBodies()[1], "posy", 0);
-  }
-  
-  
+    
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;
     if(Globals.numKeyframes == 1 && wasSet)

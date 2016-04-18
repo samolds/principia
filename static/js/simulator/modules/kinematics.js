@@ -93,6 +93,7 @@ function Kinematics1DModule() {
             break;
         }
 
+        if(Globals.numKeyframes === 1) attemptSimulation();
         drawMaster();
       });
 
@@ -151,18 +152,20 @@ function Kinematics1DModule() {
             // Make move as complete
             Globals.didMove = false;
             setNoSelect(false);
-            
             var index = bIndex(data.body);
             var canon = canonicalTransform(data);
             onPropertyChanged(index, "posx", canon.x, false);
             onPropertyChanged(index, "posy", canon.y, false);
             
-            if(Globals.bodyConstants[index].ctype == "kinematics1D-mass")
+            if(bodyType(data.body) == "kinematics1D-mass" || bodyType(data.body) == "kinematics1D-spring-child")
             {
-              attachSpring(data.body);
               detachSpring(data.body);
-              attachPulley(data.body);          
+              attachSpring(data.body);
+              attachPulley(data.body);
             }
+            
+            if(bodyType(data.body) == "kinematics1D-pulley")
+              movePulley(data);
             
             if(index === 0 || index === Globals.originObject)
               moveOrigin({"x":canon.x, "y":canon.y}, false);
