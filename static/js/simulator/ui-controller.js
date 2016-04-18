@@ -717,6 +717,8 @@ function deleteBody(bodyIndex){
     Globals.world.removeBody(Globals.world.getBodies()[bodyIndex]);
     Globals.selectedBody = false;
     toggleMenuOff(); // Hides any open context menus
+    if ($("#elementprops-tab").hasClass("active-side-menu-item"))
+      rightSlideMenuClose();
 
     // Begin Spring and Pulley specific logic!
 

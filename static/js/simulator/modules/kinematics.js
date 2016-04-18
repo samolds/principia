@@ -183,6 +183,9 @@ function Kinematics1DModule() {
 
         Globals.selectedBody = false;  
         drawMaster();
+
+        if ($("#elementprops-tab").hasClass("active-side-menu-item"))
+          rightSlideMenuClose();
       });
     
       // add things to the world
