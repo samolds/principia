@@ -113,7 +113,7 @@ function attachPulley(body){
 
         if(changed){
           // Attempt to update the corresponding variable
-          var position = pulley_const.right_open? pulley_const.attach_left: pulley_const.attach_right;         
+          var position = pulley_const.right_open? pulley_const.attach_left: pulley_const.attach_right;          
           onPropertyChanged(i, "posx", position.x, false);
           onPropertyChanged(i, "posy", position.y, false);
           drawMaster();
