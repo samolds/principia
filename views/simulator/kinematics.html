@@ -593,5 +593,45 @@
 </div>
 <!---------- End Simulator and property window  ---------->
 
+<!-- This is the context menu -->
+<div class="context-menu">
+  <span>Object Properties</span>
+  <ul>
+    <li class="context-menu-item">
+      <span>Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input class="vector-toggle" id="pointmass-properties-vector-cmenu" type="checkbox"></input>
+          <span class="lever"></span>
+          On
+        </label>
+      </div>
+    </li>
+    <li class="context-menu-item">
+      <span>Tip-to-Tail Vectors</span>
+      <div class="switch">
+        <label>
+          Off
+          <input class="ttt-toggle" id="pointmass-properties-vector-ttt-cmenu" type="checkbox"></input>
+          <span class="lever"></span>
+          On
+        </label>
+      </div>
+    </li>
+    <li class="context-menu-item">
+      <span>PVA Graph</span>
+      <div class="switch">
+        <label>
+          Off
+          <input class="pvagraph-toggle" id="pointmass-properties-pvagraph-cmenu" type="checkbox"></input>
+          <span class="lever"></span>
+          On
+        </label>
+      </div>
+    </li>
+  </ul>
+</div>
+
 
 {{ end }}
