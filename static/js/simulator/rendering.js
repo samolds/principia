@@ -435,8 +435,8 @@ function drawFBD(){
                   "Global Force: " + totalGlobalForce +
               "</p>");
 
-  var topPos = selectedBody.state.pos.y + Globals.translation.y + bodySize;
-  var leftPos = selectedBody.state.pos.x + Globals.translation.x + bodySize;
+  var topPos = selectedBody.state.pos.y + Globals.translation.y + (bodySize/2) + 100;
+  var leftPos = selectedBody.state.pos.x + Globals.translation.x + (bodySize/2) + 85;
 
   /*
   // Body is too far right

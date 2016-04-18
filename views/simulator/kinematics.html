@@ -2,7 +2,7 @@
 
 {{ define "scripts" }}
 <script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 <script src="/static/js/simulator/globals.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
@@ -21,11 +21,11 @@
 <script src="/static/js/lib/canvasjs.min.js"></script>
 
 <script>
-  Kinematics1D.initModule({{ .Data.simulation.Simulator }});
-  var GlobalKeyNames = {
-    User: {{ .User.KeyName }},
-    Simulation: {{ .Data.simulation.KeyName }},
-  }
+Kinematics1D.initModule({{ .Data.simulation.Simulator }});
+var GlobalKeyNames = {
+  User: {{ .User.KeyName }},
+  Simulation: {{ .Data.simulation.KeyName }},
+}
 </script>
 
 <script src="/static/js/simulator/base.js"></script>
@@ -36,83 +36,83 @@
 {{ define "content" }}
 
 {{ if and (.IsLoggedIn) (.Data.isOwner) }} <!-- The navbar for a logged in owner -->
-  <nav id="simulator-subnav" role="navigation">
-    <ul class="left nav-wrapper">
-      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
-      {{ if not .Data.new }}
-      <li class="clickable"><a id="delete-button"
-        onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
-          <i class="fa fa-trash fa-size-small"></i> Delete
-        </a>
-      </li>
-      {{ end }}
-      <li class="clickable" onclick="saveSimulation({{ .Data.imageUploadUrl }})"><i class="fa fa-save fa-size-small"></i> Save</li>
-      <li class="clickable">
-        <div class="switch">
-          <label>
-            Public
-            {{ if .Data.simulation.IsPrivate }}
-              <input id="simulation-is-private" checked="true" type="checkbox">
-            {{ else }}
-              <input id="simulation-is-private" type="checkbox">
-            {{ end }}
-            <span class="lever"></span>
-            Private
-          </label>
-        </div>
-      </li>
-      <li class="simulator-title clickable input-field"> 
-        <i class="fa fa-pencil fa-size-tiny prefix"></i>
-        {{ if .Data.new }}
-          <input id="simulation-name" type="text" value="New Simulation"></input>
+<nav id="simulator-subnav" role="navigation">
+  <ul class="left nav-wrapper">
+    <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
+    {{ if not .Data.new }}
+    <li class="clickable"><a id="delete-button"
+      onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
+      <i class="fa fa-trash fa-size-small"></i> Delete
+    </a>
+  </li>
+  {{ end }}
+  <li class="clickable" onclick="saveSimulation({{ .Data.imageUploadUrl }})"><i class="fa fa-save fa-size-small"></i> Save</li>
+  <li class="clickable">
+    <div class="switch">
+      <label>
+        Public
+        {{ if .Data.simulation.IsPrivate }}
+        <input id="simulation-is-private" checked="true" type="checkbox">
         {{ else }}
-          <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
+        <input id="simulation-is-private" type="checkbox">
         {{ end }}
-      </li>
-      <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
-      {{ if not .Data.new }}
-      <li class="clickable right">
-        <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-          <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
-        </span>
-      </li>
-      {{ end }}
-    </ul>
-  </nav>
+        <span class="lever"></span>
+        Private
+      </label>
+    </div>
+  </li>
+  <li class="simulator-title clickable input-field"> 
+    <i class="fa fa-pencil fa-size-tiny prefix"></i>
+    {{ if .Data.new }}
+    <input id="simulation-name" type="text" value="New Simulation"></input>
+    {{ else }}
+    <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
+    {{ end }}
+  </li>
+  <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
+  {{ if not .Data.new }}
+  <li class="clickable right">
+    <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+      <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+    </span>
+  </li>
+  {{ end }}
+</ul>
+</nav>
 {{ else }} <!-- The normal navbar -->
-  <nav id="simulator-subnav" role="navigation">
-    <ul class="left nav-wrapper">
-      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
-      <li class="simulator-title center-align"> 
-        {{ if .Data.new }}
-          <p>New Simulation</p>
-        {{ else }}
-          <p>{{ .Data.simulation.Name }}</p>
-        {{ end }}
-      </li>
-      {{ if not .Data.new }}
-        <li class="clickable">
-          <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
-        </li>
+<nav id="simulator-subnav" role="navigation">
+  <ul class="left nav-wrapper">
+    <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
+    <li class="simulator-title center-align"> 
+      {{ if .Data.new }}
+      <p>New Simulation</p>
+      {{ else }}
+      <p>{{ .Data.simulation.Name }}</p>
       {{ end }}
-      <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
-      {{ if not .Data.new }}
-        {{ if .IsLoggedIn }}
-          <li class="right clickable">
-            <span id="ratings" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-              <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
-            </span>
-          </li>
-        {{ else }}
-          <li class="right">
-            <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-              <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
-            </span>
-          </li>
-        {{ end }}
-      {{ end }}
-    </ul>
-  </nav>
+    </li>
+    {{ if not .Data.new }}
+    <li class="clickable">
+      <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
+    </li>
+    {{ end }}
+    <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
+    {{ if not .Data.new }}
+    {{ if .IsLoggedIn }}
+    <li class="right clickable">
+      <span id="ratings" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+      </span>
+    </li>
+    {{ else }}
+    <li class="right">
+      <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+        <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+      </span>
+    </li>
+    {{ end }}
+    {{ end }}
+  </ul>
+</nav>
 {{ end }}
 
 <div class="simulator">
@@ -142,6 +142,8 @@
         <a id="zoom-control-out" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-minus"></i></a>
       </div>
     </div>
+    <div id="help-tooltip-fbd" class="help-tooltip card">
+    </div>
   </div>
 </div>
 
@@ -157,9 +159,9 @@
 </div>
 
 <div class="comment-container">
-{{ if not .Data.new }}
+  {{ if not .Data.new }}
   {{ template "commentsFrag" . }}
-{{ end }}
+  {{ end }}
 </div>
 
 
@@ -170,23 +172,23 @@
   <div class="center-align valign inherit-size">
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
-      <div class="input-field">
-        <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
-        <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
-      </div>
+    <div class="input-field">
+      <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
+      <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
+    </div>
     {{ else if .Data.simulation.Description }}
-      <div>
-        <label>Simulation Description</label>
-        <p>{{ .Data.simulation.Description }}</p>
-      </div>
+    <div>
+      <label>Simulation Description</label>
+      <p>{{ .Data.simulation.Description }}</p>
+    </div>
     {{ else if and (not .IsLoggedIn) (.Data.new) }}
-      <p>
-        <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
-        <span>and save a description for your simulation!</span>
-      </p>
+    <p>
+      <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
+      <span>and save a description for your simulation!</span>
+    </p>
     {{ else }}
-      <h5 class="pad-sides">Simulation Description</h5>
-      <p>No Description has been written...</p>
+    <h5 class="pad-sides">Simulation Description</h5>
+    <p>No Description has been written...</p>
     {{ end }}
   </div>
 </div>
@@ -254,58 +256,58 @@
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     <h5>Solution details:</h5>
     <div class="clear"></div>
-      <p id="solution-details"></p>
+    <p id="solution-details"></p>
   </div>
 </div>
 
 
 <!-- Toolbox -->
-    <div id="toolbox" class="z-depth-1 center-align">
-      <div class="center-align">
-        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
-        <h5 class="pad-sides">Toolbox</h5>
-        <div class="clear"></div>
-        <ul class="property-window-list">
-          <li class="toolbox-item-container card" title="Point Mass">
-            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
-            <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/roundmass.png" component="kinematics1D-roundmass"/>
-            </div>
-            <div class="card-reveal">
-              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-              <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
-            </div>
-          </li>
-          <li class="toolbox-item-container card" title="Point Mass">
-            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
-            <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/squaremass.png" component="kinematics1D-squaremass"/>
-            </div>
-            <div class="card-reveal">
-              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-              <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
-            </div>
-          </li>
-          <li class="toolbox-item-container card" title="Ramp">
-            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
-            <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
-            </div>
-            <div class="card-reveal">
-              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-              <p>Ramps are static and affect the movement of point mass objects.</p>
-            </div>
-          </li>
-          <li class="toolbox-item-container card" title="Spring">
-            <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
-            <div class="valign-wrapper">
-              <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
-            </div>
-            <div class="card-reveal">
-              <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-              <p>Attatch a point mass to the right end of a spring to see it in action.</p>
-            </div>
-          </li>
+<div id="toolbox" class="z-depth-1 center-align">
+  <div class="center-align">
+    <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
+    <h5 class="pad-sides">Toolbox</h5>
+    <div class="clear"></div>
+    <ul class="property-window-list">
+      <li class="toolbox-item-container card" title="Point Mass">
+        <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+        <div class="valign-wrapper">
+          <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/roundmass.png" component="kinematics1D-roundmass"/>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+          <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+        </div>
+      </li>
+      <li class="toolbox-item-container card" title="Point Mass">
+        <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+        <div class="valign-wrapper">
+          <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/squaremass.png" component="kinematics1D-squaremass"/>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+          <p>Point Masses are the staple of Principia. They can be given velocity, acceleration, mass, size, or drawn with different images.</p>
+        </div>
+      </li>
+      <li class="toolbox-item-container card" title="Ramp">
+        <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+        <div class="valign-wrapper">
+          <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/ramp.png" component="kinematics1D-ramp"/>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+          <p>Ramps are static and affect the movement of point mass objects.</p>
+        </div>
+      </li>
+      <li class="toolbox-item-container card" title="Spring">
+        <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+        <div class="valign-wrapper">
+          <img class="toolbox-item draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/spring.png" component="kinematics1D-spring"/>
+        </div>
+        <div class="card-reveal">
+          <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+          <p>Attatch a point mass to the right end of a spring to see it in action.</p>
+        </div>
+      </li>
           <!-- Pulley
           <li class="toolbox-item-container card" title="Pulley">
             <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
@@ -513,10 +515,7 @@
       </div>
     </div>
 
-
-
-
-<!-- Hideable global properties window for each element -->
+    <!-- Hideable global properties window for each element -->
     <div id="globalprops" class="z-depth-1">
       <div class="center-align ">
         <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
@@ -598,10 +597,7 @@
       </div>
     </div>
 
-
-
-
-<!-- Overview with a dynamically populated list of all active elements -->
+    <!-- Overview with a dynamically populated list of all active elements -->
     <div id="overview" class="z-depth-1">
       <div class="center-align ">
         <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
@@ -656,5 +652,10 @@
   </ul>
 </div>
 
+
+<!-- Help Tooltips -->
+<!-- <div class="help-tooltip-container"> -->
+  
+<!-- </div> -->
 
 {{ end }}
