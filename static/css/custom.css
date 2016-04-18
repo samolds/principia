@@ -453,7 +453,6 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
 /* solution details box */
 .solution-details-container {
   height: 300px;
-  overflow: auto;
 }
 
 .solution-details-container p {
