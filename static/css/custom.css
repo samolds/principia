@@ -638,7 +638,7 @@ i.left-menu-item-close {
   height: 300px;
   position: absolute;
   background-color: #eeeeee;
-  left: -280px;
+  left: -600px;
   top: 120px;
   margin: 0;
 
@@ -653,7 +653,6 @@ i.left-menu-item-close {
 #prompt-slide {
   width: 500px;
   height:475px;
-  left: -500px;
 }
 
 #keyframes-slide{
@@ -667,13 +666,11 @@ i.left-menu-item-close {
   top: 230px;
   width: 500px;
   height:475px;
-  left: -500px;
 }
 
 #solution-slide{
   top: 310px;
   width: 500px;
-  left: -500px;
   height: 375px;
 }
 
