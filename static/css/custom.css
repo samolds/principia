@@ -615,7 +615,9 @@ a#help-tooltips:hover {
   position: relative;
   width: 80px;
   height: 80vh;
-  background-color: #F5F7F7;
+  background-color: #eaeaea;
+  background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
+  background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: left;
 }
 
@@ -624,7 +626,9 @@ a#help-tooltips:hover {
   position: relative;
   width: 80px;
   height: 80vh;
-  background-color: #F5F7F7;
+  background-color: #eaeaea;
+  background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
+  background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: right;
 }
 
@@ -648,7 +652,7 @@ a#help-tooltips:hover {
 }
 
 .right-menu-item:hover {
-  background-color: #dddddd;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .left-menu-item {
@@ -661,23 +665,22 @@ a#help-tooltips:hover {
 }
 
 .left-menu-item:hover {
-  background-color: #dddddd;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 /*----slide menus----*/
 
 #prompt,
 #keyframes-slide,
-#graphs-slide
-{
+#graphs-slide {
   z-index:1;
   width: 340px;
   height: 300px;
   position: absolute;
-  background-color: #E8E8E8;
+  background-color: #eeeeee;
   left: -280px;
-  top:104px;
-  margin:0px;
+  top: 110px;
+  margin: 0;
 
   overflow-y: scroll;
 
@@ -699,32 +702,30 @@ a#help-tooltips:hover {
   padding: 5px;
 }
 
-
-
 #overview,
 #globalprops,
 #elementprops,
 #toolbox {
-  z-index:1;
+  z-index: 1;
   width: 240px;
-  height: 80vh;
+  height: 75vh;
   position: absolute;
-  background-color: #E8E8E8;
+  background-color: #eeeeee;
   right: -280px;
-  top:104px;
-  margin:0px;
+  top: 110px;
+  margin: 0;
+
+  overflow-y: scroll;
 
   transition: all .5s ;
   -webkit-transition: all .5s ;
   -moz-transition: all .5s ;
   -ms-transition: all .5s;
-  
 }
 
-#toolbox{
+#toolbox {
   padding-left: 17px;
   text-align: center;
-
 }
 
 #globalprops{
@@ -985,7 +986,7 @@ a.start-simulating-action {
 
 .right-play-bumper{
   float: right;
-   z-index: 3;
+  z-index: 3;
   position: relative;
   width: 80px;
   height: 80vh;
@@ -996,7 +997,6 @@ a.start-simulating-action {
 #play-container{
   width:100%;
   height: 50px;
-  background-color: #eaeaea;
   padding-left: 80px;
   margin-right: 80px;
   padding-top: 0px;
