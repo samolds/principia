@@ -877,15 +877,19 @@ function keyUp(e)
   }
 }
 
-function keyDown(e)
-{
+function keyDown(e) {
+  if (!Globals.selectedBody)
+    return;
+
   if (e.keyCode == 86) Globals.vDown = true;
   if (e.keyCode == 65) Globals.aDown = true;
   if (e.keyCode == 70) {
     Globals.fbdDown = true; 
     drawFBD();
   }
-  if(e.keyCode == 46 && Globals.selectedBody) { // del
+  if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del
+    e.preventDefault();
+
     var index = bIndex(Globals.selectedBody);
     if(index !== 0)
       deleteBody(index);
