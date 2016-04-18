@@ -10,7 +10,6 @@ function displayTooltips() {
     // Scroll to 20px above the tooltip toggle
     window.scroll(0, (tooltipToggle.position().top - 50))
 
-    $('#toolbox-tab').click();
     $('#help-tooltip-simulator').show();
     $('#help-tooltip-properties').show();
     $('#help-tooltip-toolbox').show();

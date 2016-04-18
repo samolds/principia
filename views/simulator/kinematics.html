@@ -39,7 +39,7 @@
 {{ if and (.IsLoggedIn) (.Data.isOwner) }} <!-- The navbar for a logged in owner -->
   <nav id="simulator-subnav" role="navigation">
     <ul class="left nav-wrapper">
-      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
+      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
       {{ if not .Data.new }}
       <li class="clickable"><a id="delete-button"
         onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
@@ -82,7 +82,7 @@
 {{ else }} <!-- The normal navbar -->
   <nav id="simulator-subnav" role="navigation">
     <ul class="left nav-wrapper">
-      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
+      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> New</a></li>
       <li class="simulator-title center-align"> 
         {{ if .Data.new }}
           <p>New Simulation</p>
@@ -118,20 +118,19 @@
 <div class="simulator">
   <div id="left-menu">
     <ul>
-      <li class="clickable left-menu-item"><span class="blue-text valign" id="prompt-tab"><i class="fa fa-pencil-square-o fa-size-medium"></i> <small>Description</small></span></li>
-      <li class="clickable left-menu-item"><span class="blue-text valign" id="keyframes-tab"><i class="fa fa-key fa-size-medium"></i> <small>Keyframes</small></span></li>
-      <li class="clickable left-menu-item"><span class="blue-text valign" id="graphs-tab"><i class="fa fa-line-chart fa-size-medium"></i> <small>Graphs</small></span></li>
-      <li class="clickable left-menu-item"><span class="blue-text valign" id="solution-tab"><i class="fa fa-lightbulb-o fa-size-medium"></i> <small>Solution</small></span></li>
-      
+      <li class="clickable left-menu-item" id="prompt-tab"><span class="blue-text valign"><i class="fa fa-pencil-square-o fa-size-medium"></i> <small>Description</small></span></li>
+      <li class="clickable left-menu-item" id="keyframes-tab"><span class="blue-text valign"><i class="fa fa-key fa-size-medium"></i> <small>Keyframes</small></span></li>
+      <li class="clickable left-menu-item" id="graphs-tab"><span class="blue-text valign"><i class="fa fa-line-chart fa-size-medium"></i> <small>Graphs</small></span></li>
+      <li class="clickable left-menu-item" id="solution-tab"><span class="blue-text valign"><i class="fa fa-lightbulb-o fa-size-medium"></i> <small>Solution</small></span></li>
     </ul>
   </div>
 
   <div id="right-menu">
     <ul>
-      <li class="clickable right-menu-item"><span class="blue-text valign" id="toolbox-tab"><i class="fa fa-cubes fa-size-medium"></i> <small>Toolbox</small></span></li>
-      <li class="clickable right-menu-item"><span class="blue-text valign" id="elementprops-tab"><i class="fa fa-info-circle fa-size-medium"></i> <small>Properties</small></span></li>
-      <li class="clickable right-menu-item"><span class="blue-text valign" id="globalprops-tab"><i class="fa fa-globe fa-size-medium"></i> <br/><small>Global</small></span></li>
-      <li class="clickable right-menu-item"><span class="blue-text valign" id="overview-tab"><i class="fa fa-list fa-size-medium"></i> <small>Overview</small></span></li>
+      <li class="clickable right-menu-item" id="toolbox-tab"><span class="blue-text valign"><i class="fa fa-cubes fa-size-medium"></i> <small>Toolbox</small></span></li>
+      <li class="clickable right-menu-item" id="elementprops-tab"><span class="blue-text valign"><i class="fa fa-info-circle fa-size-medium"></i> <small>Properties</small></span></li>
+      <li class="clickable right-menu-item" id="globalprops-tab"><span class="blue-text valign"><i class="fa fa-globe fa-size-medium"></i> <br/><small>Global</small></span></li>
+      <li class="clickable right-menu-item" id="overview-tab"><span class="blue-text valign"><i class="fa fa-list fa-size-medium"></i> <small>Overview</small></span></li>
     </ul>
   </div>
 
@@ -169,34 +168,37 @@
 <!--prompt-->
 <div id="prompt" class="card-panel valign-wrapper">
   <div class="center-align valign inherit-size">
-  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
-    <div class="input-field">
-      <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}"></input>
-      <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
-    </div>
-  {{ else if .Data.simulation.Description }}
-    <div>
-      <label>Simulation Description</label>
-      <p>{{ .Data.simulation.Description }}</p>
-    </div>
-  {{ else if and (not .IsLoggedIn) (.Data.new) }}
-    <p>
-      <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
-      <span>and save a description for your simulation!</span>
-    </p>
-  {{ else }}
-    <h5 class="pad-sides">Simulation Description</h5>
-    <p>No Description has been written...</p>
-  {{ end }}
+    <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
+    {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+      <div class="input-field">
+        <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}"></input>
+        <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
+      </div>
+    {{ else if .Data.simulation.Description }}
+      <div>
+        <label>Simulation Description</label>
+        <p>{{ .Data.simulation.Description }}</p>
+      </div>
+    {{ else if and (not .IsLoggedIn) (.Data.new) }}
+      <p>
+        <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
+        <span>and save a description for your simulation!</span>
+      </p>
+    {{ else }}
+      <h5 class="pad-sides">Simulation Description</h5>
+      <p>No Description has been written...</p>
+    {{ end }}
   </div>
 </div>
 
 <!--keyframes-->
 <div id="keyframes-slide" class="card-panel">
   <div class="help-tooltip-container">
+    <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     <h5>Keyframes:
       <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
     </h5>
+    <div class="clear"></div>
     <div id="help-tooltip-keyframes" class="help-tooltip card">
       <p>
         Multiple keyframes are used to set up the initial and final states of your model so
@@ -224,7 +226,9 @@
 
 <!--graph-->
 <div id="graphs-slide" class="center-align card-panel">
+  <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
   <h5 class="pad-sides">Graphs</h5>
+  <div class="clear"></div>
 
   <!-- Graphing acceleration velocity and position -->
   <ul class="collapsible" data-collapsible="expandable">
@@ -253,13 +257,16 @@
 
 <!-- Solution Details -->
 <!-- <div id="solution-slide" class = "center-align card-panel">
+  <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
   <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
 </div> -->
 
 <!--Solution-->
 <div id="solution-slide" class=" yellow lighten-4">
   <div class=" solution-details-container">
+    <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     <h5>Solution details:</h5>
+    <div class="clear"></div>
     <p id="solution-details"></p>
   </div>
   <!-- <div class="modal-footer yellow lighten-5">
@@ -271,7 +278,9 @@
 <!-- Toolbox -->
     <div id="toolbox" class="z-depth-1 center-align">
       <div class="center-align">
+        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
         <h5 class="pad-sides">Toolbox</h5>
+        <div class="clear"></div>
         <ul class="property-window-list">
           <li class="toolbox-item-container card" title="Point Mass">
             <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
@@ -347,7 +356,9 @@
     <!-- Properties window for each element -->
     <div id="elementprops" class="z-depth-1">
       <div class="center-align ">
+        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
         <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
+        <div class="clear"></div>
 
         <!-- Properties that apply to all components -->
         <ul class="property-window-list hide" id="general-properties">
@@ -523,7 +534,9 @@
 <!-- Hideable global properties window for each element -->
     <div id="globalprops" class="z-depth-1">
       <div class="center-align ">
-        <h5 class="pad-sides principia-blue-color pad-title">Global Properties</h5>
+        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
+        <h5 class="pad-sides pad-title">Global Properties</h5>
+        <div class="clear"></div>
         <div class="row">
           <div class="input-field col s6">
             <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
@@ -604,7 +617,9 @@
 <!-- Overview with a dynamically populated list of all active elements -->
     <div id="overview" class="z-depth-1">
       <div class="center-align ">
+        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
         <h5 class="pad-sides">Scene Overview</h5>
+        <div class="clear"></div>
         <div class="row" >
           <ul id ="overview-list"></ul>
         </div>

@@ -831,10 +831,10 @@ function selectBody(bodyIndex){
   selectPropertyInputType(Globals.selectedBody, "accx");
   selectPropertyInputType(Globals.selectedBody, "accy");
     
-  if(bodyIndex !== 0) 
-    $("#elementprops-tab").click();
-  else
+  if (bodyIndex === 0 && !$("#globalprops-tab").hasClass("active-side-menu-item"))
     $("#globalprops-tab").click();
+  else if (!$("#elementprops-tab").hasClass("active-side-menu-item"))
+    $("#elementprops-tab").click();
     
   drawMaster();
 }
@@ -884,7 +884,7 @@ function keyDown(e)
 
 function rightSlideMenuOpen(e)
 {
-  id = e.currentTarget.firstChild.id;
+  id = e.currentTarget.id;
   selector = "";
   if(id == "toolbox-tab"){
     selector = "toolbox";
@@ -899,24 +899,30 @@ function rightSlideMenuOpen(e)
     selector = "overview";
   }
 
-
   check = $("#" + selector).css("right");
+  rightSlideMenuClose(e);
 
+  if (check === "-280px") {
+    $("#" + selector).css("right", "80px");
+    $("#" + id).addClass("active-side-menu-item");
+  }
+}
+
+function rightSlideMenuClose(e) {
   $("#toolbox").css("right", "-280px");
   $("#elementprops").css("right", "-280px");
   $("#globalprops").css("right", "-280px");
   $("#overview").css("right", "-280px");
 
-  if(check === "-280px")
-  {
-    $("#" + selector).css("right", "80px");
-  }
-
+  $("#toolbox-tab").removeClass("active-side-menu-item");
+  $("#elementprops-tab").removeClass("active-side-menu-item");
+  $("#globalprops-tab").removeClass("active-side-menu-item");
+  $("#overview-tab").removeClass("active-side-menu-item");
 }
 
 function leftSlideMenuOpen(e)
 {
-  id = e.currentTarget.firstChild.id;
+  id = e.currentTarget.id;
   selector = "";
   if(id == "prompt-tab"){
     selector = "prompt";
@@ -934,14 +940,23 @@ function leftSlideMenuOpen(e)
   }
   
   check = $("#" + selector).css("left");
+  leftSlideMenuClose(e);
 
+  if(check === "-280px" || check === "-500px")
+  {
+    $("#" + selector).css("left", "80px");
+    $("#" + id).addClass("active-side-menu-item");
+  }
+}
+
+function leftSlideMenuClose(e) {
   $("#prompt").css("left", "-280px");
   $("#keyframes-slide").css("left", "-280px");
   $("#graphs-slide").css("left", "-500px");
   $("#solution-slide").css("left", "-280px");
 
-  if(check === "-280px" || check === "-500px")
-  {
-    $("#" + selector).css("left", "80px");
-  }
+  $("#prompt-tab").removeClass("active-side-menu-item");
+  $("#keyframes-tab").removeClass("active-side-menu-item");
+  $("#graphs-tab").removeClass("active-side-menu-item");
+  $("#solution-tab").removeClass("active-side-menu-item");
 }
