@@ -167,26 +167,36 @@
 <!-- Initially hidden elements -->
 
 <!--prompt-->
-<div id="prompt" class = "center-align card-panel">
-  <h5 class="pad-sides">Prompt</h5>
-  <div class="input-field">
-    <textarea id="textarea1" class="materialize-textarea"></textarea>
-    <label for="textarea1">Textarea</label>
+<div id="prompt" class="card-panel valign-wrapper">
+  <div class="center-align valign inherit-size">
+  {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+    <div class="input-field">
+      <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}"></input>
+      <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
+    </div>
+  {{ else if .Data.simulation.Description }}
+    <div>
+      <label>Simulation Description</label>
+      <p>{{ .Data.simulation.Description }}</p>
+    </div>
+  {{ else if and (not .IsLoggedIn) (.Data.new) }}
+    <p>
+      <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
+      <span>and save a description for your simulation!</span>
+    </p>
+  {{ else }}
+    <h5 class="pad-sides">Simulation Description</h5>
+    <p>No Description has been written...</p>
+  {{ end }}
   </div>
 </div>
 
 <!--keyframes-->
-<div id="keyframes-slide" class = "center-align card-panel">
-  <h5 class="pad-sides">Keyframes</h5>
-
+<div id="keyframes-slide" class="card-panel">
   <div class="help-tooltip-container">
-    <div class="row">
-      <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
-      <h5>Keyframes:
-        <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
-        <!-- Solution Modal Trigger -->
-      </h5>
-    </div>
+    <h5>Keyframes:
+      <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
+    </h5>
     <div id="help-tooltip-keyframes" class="help-tooltip card">
       <p>
         Multiple keyframes are used to set up the initial and final states of your model so
@@ -195,7 +205,6 @@
       </p>
     </div>
   </div>
-
 
   <div id="keyframelist">
     <ul id="keyframe-list">
@@ -211,31 +220,40 @@
       </li>
     </ul>
   </div>
-  
 </div>
 
 <!--graph-->
-<div id="graphs-slide" class = "center-align card-panel">
+<div id="graphs-slide" class="center-align card-panel">
   <h5 class="pad-sides">Graphs</h5>
-  <!-- Graphing acceleration velocity and position -->
 
-    <div id="pvaGraphContainer">
-      <ul class="collapsible" data-collapsible="expandable">
-        <li>
-          <div class="collapsible-header active"><i class="material-icons"></i>Position</div>
-          <div class="collapsible-body">
+  <!-- Graphing acceleration velocity and position -->
+  <ul class="collapsible" data-collapsible="expandable">
+    <li>
+      <div class="collapsible-header active">Position</div>
+      <div class="collapsible-body">
+        <div class="row">
+          <div class="col s12">
             <div id="positionGraph"></div>
           </div>
-          
-        </li>
-        <li>
-          <div class="collapsible-header active"><i class="material-icons"></i>Velocity/Acceleration</div>
-          <div class="collapsible-body" >
-            <div id ="vaGraph"></div>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="collapsible-header">Velocity/Acceleration</div>
+      <div class="collapsible-body">
+        <div class="row">
+          <div class="col s12">
+            <div id="vaGraph"></div>
           </div>
-        </li>
-      </ul>
-    </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- Solution Details -->
+<div id="solution-slide" class = "center-align card-panel">
+  <a id="solution-detail-button" class="waves-effect waves-light btn modal-trigger purple darken-1" href="#solutionModal" style="display: none;">Solution Details</a>
 </div>
 
 <!--Solution-->
