@@ -619,6 +619,8 @@ a#help-tooltips:hover {
   background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: left;
+  padding-top: 20px;
+  border-top: 4px solid #ffffff;
 }
 
 #right-menu {
@@ -630,6 +632,8 @@ a#help-tooltips:hover {
   background: -webkit-linear-gradient(to bottom, #eaeaea, #dddddd); /* chrome 10-25, safari 5.1-6 */
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: right;
+  padding-top: 20px;
+  border-top: 4px solid #ffffff;
 }
 
 #simulator-window {
@@ -642,19 +646,7 @@ a#help-tooltips:hover {
   height: 80vh;
 }
 
-.right-menu-item {
-  z-index:2;
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.right-menu-item:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
+.right-menu-item,
 .left-menu-item {
   z-index:2;
   text-align: center;
@@ -664,8 +656,31 @@ a#help-tooltips:hover {
   margin-right: 10px;
 }
 
+.right-menu-item:hover,
 .left-menu-item:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.right-menu-item.active-side-menu-item,
+.left-menu-item.active-side-menu-item {
+  background-color: #222222;
+  margin: 0;
+  padding: 10px;
+}
+
+.right-menu-item.active-side-menu-item:hover,
+.left-menu-item.active-side-menu-item:hover {
+  background-color: #444444;
+}
+
+i.right-menu-item-close {
+  float: left;
+  color: #222222;
+}
+
+i.left-menu-item-close {
+  float: right;
+  color: #222222;
 }
 
 /*----slide menus----*/
@@ -680,7 +695,7 @@ a#help-tooltips:hover {
   position: absolute;
   background-color: #eeeeee;
   left: -280px;
-  top: 110px;
+  top: 120px;
   margin: 0;
 
   overflow-y: scroll;
@@ -717,7 +732,7 @@ a#help-tooltips:hover {
   position: absolute;
   background-color: #eeeeee;
   right: -280px;
-  top: 110px;
+  top: 120px;
   margin: 0;
 
   overflow-y: scroll;
@@ -808,7 +823,6 @@ select.browser-default{
 
   .simulation-thumb {
     background: #222222;
-    max-height: 115px;
   }
 
   .simulation-thumb-description {

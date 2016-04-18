@@ -336,6 +336,8 @@ $(document).ready(function(){
   $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
   $('.left-menu-item').on("click", function(event) { leftSlideMenuOpen(event); } );
 
+  $('.right-menu-item-close').on("click", function(event) { rightSlideMenuClose(event); } );
+  $('.left-menu-item-close').on("click", function(event) { leftSlideMenuClose(event); } );
 
   $(document).on('keyup', function(event) {keyUp(event)});
   $(document).on('keydown', function(event) {keyDown(event)});
