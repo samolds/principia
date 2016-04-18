@@ -712,7 +712,7 @@ a#help-tooltips:hover {
 #elementprops,
 #toolbox {
   z-index: 1;
-  width: 240px;
+  width: 270px;
   height: 75vh;
   position: absolute;
   background-color: #eeeeee;
@@ -729,7 +729,7 @@ a#help-tooltips:hover {
 }
 
 #toolbox {
-  padding-left: 17px;
+  padding-left: 25px;
   text-align: center;
 }
 
@@ -739,6 +739,25 @@ a#help-tooltips:hover {
 
 #elementprops{
   padding-left: 8px;
+}
+
+.toggle-label{
+  font-size: .4;
+}
+
+.property-item .input-field .switch label{
+  font-size: .6rem;
+}
+
+select,
+select.browser-default{
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.switch label .lever{
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .inherit-size {

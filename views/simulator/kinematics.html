@@ -121,7 +121,7 @@
       <li class="clickable left-menu-item"><span class="blue-text valign" id="prompt-tab"><i class="fa fa-pencil-square-o fa-size-medium"></i> <small>Description</small></span></li>
       <li class="clickable left-menu-item"><span class="blue-text valign" id="keyframes-tab"><i class="fa fa-key fa-size-medium"></i> <small>Keyframes</small></span></li>
       <li class="clickable left-menu-item"><span class="blue-text valign" id="graphs-tab"><i class="fa fa-line-chart fa-size-medium"></i> <small>Graphs</small></span></li>
-      <li class="clickable left-menu-item"><span class="blue-text valign" id="solution-tab"><i class="fa fa-lightbulb-o fa-size-medium"></i> <small>Solution</small></span></li>
+      <li class="clickable left-menu-item"><span class="blue-text valign" id="solution-tab"><i class="fa fa-lightbulb-o fa-size-medium pad-sides"></i> <small>Solution</small></span></li>
       
     </ul>
   </div>
@@ -156,7 +156,6 @@
     <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
   </div>
 </div>
-
 
 {{ if not .Data.new }}
   {{ template "commentsFrag" . }}
@@ -416,22 +415,23 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <select id="pointmass-properties-img" class="browser-default">
+              <select id="pointmass-properties-img" class="browser-default img-select">
                 <option disabled>Display As:</option>
-                <option value="0" selected="selected">Mass</option>
-                <option value="1">Weight</option>
-                <option value="2">Car</option>
-                <option value="3">Sail Boat</option>
-                <option value="4">Speed Boat</option>
-                <option value="5">Mascot</option>
-                <option value="6">Dart</option>
-                <option value="7">Jogger</option>
-                <option value="8">Rocket</option>
-                <option value="9">Dalton</option>
-                <option value="10">Danny</option>
-                <option value="11">Matthew</option>
-                <option value="12">Sam</option>
-                <option value="13">Logo</option>
+                <option value="0" selected="selected">Mass Round</option>
+                <option value="1" >Mass Square</option>
+                <option value="2">Weight</option>
+                <option value="3">Car</option>
+                <option value="4">Sail Boat</option>
+                <option value="5">Speed Boat</option>
+                <option value="6">Mascot</option>
+                <option value="7">Dart</option>
+                <option value="8">Jogger</option>
+                <option value="9">Rocket</option>
+                <option value="10">Dalton</option>
+                <option value="11">Danny</option>
+                <option value="12">Matthew</option>
+                <option value="13">Sam</option>
+                <option value="14">Logo</option>
               </select>
               <label for="pointmass-properties-img" class="active">Display As</label>
             </div>
@@ -451,7 +451,7 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <span>Tip-to-Tail Vectors</span>
+              <span>Tip-to-Tail</span>
               <div class="switch">
                 <label>
                   Off
@@ -466,7 +466,7 @@
             <div class="input-field">
               <span>PVA Graph</span>
               <div class="switch">
-                <label>
+                <label class="toggle-label">
                   Off
                   <input class="pvagraph-toggle" id="pointmass-properties-pvagraph" type="checkbox"></input>
                   <span class="lever"></span>
@@ -523,7 +523,7 @@
 <!-- Hideable global properties window for each element -->
     <div id="globalprops" class="z-depth-1">
       <div class="center-align ">
-        <h5 class="pad-sides principia-blue-color pad-title">Global Properties</h5>
+        <h5 class="pad-sides pad-title">Global Properties</h5>
         <div class="row">
           <div class="input-field col s6">
             <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
@@ -573,7 +573,8 @@
         </div>
         
         <div class="row">
-          <div class="col s5">
+          <div class="col s12 center-align">
+            <h6>Origin:</h6>
             <div class="toolbox-item-container card" title="Origin">
               <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
               <div class="valign-wrapper">
@@ -581,16 +582,17 @@
               </div>
               <div class="card-reveal">
                 <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-                <p>Change the origin of the simulation!</p>
+                <p>Drag this onto the simulator window to change the origin of the simulation!</p>
               </div>
             </div>
           </div>
-
-          <div class="input-field col s3">
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
             <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-xorigin" class="active">Origin X</label>
           </div>
-          <div class="input-field col s3">
+          <div class="input-field col s6">
             <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
             <label for="glob-yorigin" class="active">Origin Y</label>
           </div>
