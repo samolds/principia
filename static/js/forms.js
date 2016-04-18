@@ -202,22 +202,24 @@ function refreshCommentsList() {
         }
 
         result += "<div class='row'>";
-        result +=   "<div class='card-panel valign-wrapper'>";
-        result +=     "<div class='col m3 s4'>";
-        result +=       "<div class='center-align'>";
-        result +=         "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
+        result +=   "<div class='col s10'>";
+        result +=     "<div class='card-panel valign-wrapper'>";
+        result +=       "<div class='col s3'>";
+        result +=         "<div class='center-align'>";
+        result +=           "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
+        result +=         "</div>";
+        result +=         "<div class='center-align'>";
+        result +=           "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
+        result +=         "</div>";
+        result +=         "<div class='center-align'>";
+        result +=           "<small>" + comment.PrettyCreationDate + "</small>";
+        result +=         "</div>";
         result +=       "</div>";
-        result +=       "<div class='center-align'>";
-        result +=         "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
+        result +=       "<div class='col s9'>";
+        result +=         "<span class='black-text'>";
+        result +=           comment.Contents
+        result +=         "</span>";
         result +=       "</div>";
-        result +=       "<div class='center-align'>";
-        result +=         "<small>" + comment.PrettyCreationDate + "</small>";
-        result +=       "</div>";
-        result +=     "</div>";
-        result +=     "<div class='col m9 s8'>";
-        result +=       "<span class='black-text'>";
-        result +=         comment.Contents
-        result +=       "</span>";
         result +=     "</div>";
         result +=   "</div>";
         result += "</div>";
