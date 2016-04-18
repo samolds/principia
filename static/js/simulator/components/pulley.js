@@ -69,11 +69,6 @@ function addPulley(data){
   return [component];
 }
 
-function scalePulley(body, data)
-{
-  
-}
-
 function movePulley(data)
 {
   var displaySize = 100/getScaleFactor();
@@ -139,22 +134,22 @@ function getPulleyAcceleration(body, magnitude)
     if(bodyType(bodies[consts.attachedTo[i]]) == "kinematics1D-pulley")
       pulley = bodies[consts.attachedTo[i]];
     
-  var radius = body2Constant(pulley).radius * (consts.side == "left")? 1: -1;
-    
-  var x1 = body.state.pos.x;
-  var x2 = Globals.variableMap[0][bIndex(pulley)].posx - 50;
-  var y1 = swapYpos(body.state.pos.y, false);
+  var radius = body2Constant(pulley).radius * ((consts.side == "left")? 1: -1);
+  
+  var canon = canonicalTransform({x:body.state.pos.x,y:body.state.pos.y});
+  var x1 = canon.x;//body.state.pos.x;
+  var x2 = Globals.variableMap[0][bIndex(pulley)].posx - radius;
+  var y1 = canon.y;//swapYpos(body.state.pos.y, false) * getScaleFactor();
   var y2 = Globals.variableMap[0][bIndex(pulley)].posy;
   
   var x = x1-x2;
   var y = y1-y2;
   
-  if(Math.abs(x) <= 5 && Math.abs(y) <= 5) return [-body.state.acc.x - body.state.vel.x, -body.state.acc.y - body.state.vel.y];
-  
   var getAngle = function(x,y) { return Math.atan2(y,x); }
   
-  var angle = -getAngle(x,y);  
-  return [-Math.cos(angle) * magnitude, -Math.sin(angle) * magnitude];
+  var m = consts.mass;
+  var angle = -getAngle(x,y);
+  return [(-Math.cos(angle) * magnitude)/m, (-Math.sin(angle) * magnitude)/m];
 }
 
 function applyPulleyForces(pulley_body, dt) { 
@@ -209,52 +204,6 @@ function applyPulleyForces(pulley_body, dt) {
         y += Globals.gravity[1] * dt;
       }
       
-      return Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
-}
-
-// Applies pulley physics to the specified state object using specified pulley.
-// Assumes that the caller has already identified 'state' as being attached to the pulley.
-function applyPulley(body, dt)
-{
-  /*
-  var bodies = Globals.world.getBodies();
-  var pulleyConsts = body2Constant(pulley);
-        
-  // Make sure pulley has two bodies attached before applying special rules
-  if(pulleyConsts.attachedBodyRight){
-  
-    // Get mass of each body
-    var m1 = Globals.bodyConstants[pulleyConsts.attachedBodyLeft].mass;
-    var m2 = Globals.bodyConstants[pulleyConsts.attachedBodyRight].mass;          
-    
-    // Magnitude of acceleration
-    var pulley_a = (m1*Globals.gravity[1]*dt - m2*Globals.gravity[1]*dt)/(m1+m2);
-    
-    // Ready to accelerate up, reverse direction if this is the heavier mass
-    if(pulley_a < 0 && (consts.mass == m1 && m1 > m2) || (consts.mass == m2 && m2 > m1) )
-      pulley_a *= -1;
-
-    // Ready to accelerate down, reverse direction if this is the lighter mass
-    if(pulley_a > 0 && (consts.mass == m1 && m1 < m2) || (consts.mass == m2 && m2 < m1) )
-      pulley_a *= -1;
-       
-    // Just for fun, animate the pulley spinning
-    if(m1 > m2 && Globals.gravity[1] != 0)
-      pulley.state.angular.vel = -1 * (m1 - m2)/20.0;
-    else if(m2 > m1 && Globals.gravity[1] != 0)
-      pulley.state.angular.vel = (m2 - m1)/20.0;
-       
-    // Handle reaching the top?
-    if((m1 < m2 && bodies[pulleyConsts.attachedBodyLeft].state.pos.y <= pulley.state.pos.y) ||(m1 > m2 && bodies[pulleyConsts.attachedBodyRight].state.pos.y <= pulley.state.pos.y)){
-      pulley_a = 0;
-      pulley.state.angular.vel = 0;
-      
-      bodies[pulleyConsts.attachedBodyLeft].state.vel.y = 0;
-      bodies[pulleyConsts.attachedBodyRight].state.vel.y = 0;
-    }
-       
-    // Add effect of pulley    
-    state.vel.y += pulley_a;
-    
-  }*/
+      var m = body2Constant(body).mass;
+      return Math.sqrt(Math.pow(x*m,2)+Math.pow(y*m,2));
 }

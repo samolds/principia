@@ -34,7 +34,8 @@ function displayVariableValues(body){
     
     // Use user unit
     position = [convertUnit(position[0], "posx", false), convertUnit(position[1], "posy", false)];
-    
+    velocity = [convertUnit(velocity[0], "velx", false), convertUnit(velocity[1], "vely", false)];
+    acceleration = [convertUnit(acceleration[0], "accx", false), convertUnit(acceleration[1], "accy", false)];
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
@@ -50,10 +51,7 @@ function displayVariableValues(body){
       
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
     }
-   
-    // TODO fix unit conversions
-    //if(Globals.coordinateSystem == "cartesian") position[1] = swapYpos(position[1], false);  
-    
+       
     $('#general-properties-position-x').val(position[0].toFixed(precision));
     $('#general-properties-position-y').val(position[1].toFixed(precision));
 
@@ -760,7 +758,7 @@ function simulationZoom(zoom) {
     var bodyConst = body2Constant(body);
     if (bodyConst.ctype == "kinematics1D-mass" || bodyConst.ctype == "kinematics1D-pulley") {
       updateImage(body, bodyConst.img);
-      updateSize(body, bodyConst.size);
+      updateSize(body, bodyConst.size);      
     } else if (bodyConst.ctype == "kinematics1D-surface") {
       setSurfaceWidth(body, bodyConst.surfaceWidth);
       setSurfaceHeight(body, bodyConst.surfaceHeight);

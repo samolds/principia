@@ -177,7 +177,7 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -289,7 +289,7 @@ function collisionSolver(){
   drawMaster(); 
   
 
-  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  //MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
 // Creates a shallow copy of the specified variable
@@ -684,11 +684,12 @@ Physics.integrator('principia-integrator', function( parent ){
       var body = bodies[i];
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
-      var pulley_f = applyPulleyForces(body, dt);
+      
       var state = body.state;        
       state.old = cloneState(body.state);
-      
+
       // Get direction to pulley, apply acceleration to that direction
+      var pulley_f = applyPulleyForces(body, dt);
       pulley_a = getPulleyAcceleration(body, pulley_f);
       
       state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
@@ -711,8 +712,8 @@ Physics.integrator('principia-integrator', function( parent ){
       var temp = cloneState(body.state);
       
       if(Globals.bodyConstants[i].attachedTo && Globals.bodyConstants[i].attachedTo.length > 0) {
-        state.pos.x += state.vel.x;// * dt; //+ state.acc.x * 0.5 * dt*dt;
-        state.pos.y += state.vel.y;// * dt; //+ state.acc.y * 0.5 * dt*dt;
+        state.pos.x += state.vel.x;
+        state.pos.y += state.vel.y;
       }
       
       else if (bodyType(body) == "kinematics1D-mass") {
@@ -721,7 +722,7 @@ Physics.integrator('principia-integrator', function( parent ){
         state.pos.y += state.old.vel.y * dt + (state.acc.y + Globals.gravity[1]) * 0.5 * dt*dt;  
       }
       
-      // Attached element must tag along
+      // Attached spring element must tag along
       if(body2Constant(body).attachedTo){
         for(var j=0; j < body2Constant(body).attachedTo.length; j++){
           var attachedTo = Globals.world.getBodies()[body2Constant(body).attachedTo[j]];

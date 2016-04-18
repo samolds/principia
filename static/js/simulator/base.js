@@ -353,7 +353,8 @@ $(document).ready(function(){
   // Events for handling changing the unit
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
-
+  $('#glob-timestep-unit').on("change", function() { Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); if(Globals.numKeyframes == 1) attemptSimulation(); });
+  
   $('#help-tooltips').on("click", function() { displayTooltips(); });
   
   $("#elementprops-tab").on("click", function() { 
