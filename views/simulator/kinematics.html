@@ -149,12 +149,11 @@
   </div>
 </div>
 
-
-{{ template "commentsFrag" . }}
-
-
-
-
+{{ if .Data.simulation.KeyName }}
+  <div class="main-container simulator-container" id="comments-frag">
+    {{ template "commentsFrag" . }}
+  </div>
+{{ end }}
 
 
 
