@@ -410,7 +410,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
     position: relative;
     width: 100px;
     height: 100px;
-    background-color: #e8f5e9;
+    background-color: #84C7C1;
     padding: 0;
     margin: auto;
     display: inline-block;
@@ -421,7 +421,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   }
 
   .toolbox-item-container .card-reveal {
-    background-color: #a5d6a7;
+    background-color: #26A69A;
     white-space: normal;
     text-align: left;
     padding: 5px;
@@ -435,7 +435,7 @@ input[type=checkbox] .lever::-webkit-slider-thumb {
   }
 
   .toolbox-item-container:hover {
-    background-color: #c8e6c9;
+    background-color: #9deae2;
   }
 
   .toolbox-item {
