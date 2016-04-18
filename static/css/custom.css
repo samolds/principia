@@ -666,13 +666,13 @@ i.left-menu-item-close {
 #graphs-slide{
   top: 283px;
   width: 500px;
-  height: 400px;
+  height: 47%;
 }
 
 #solution-slide{
   top: 357px;
   width: 500px;
-  height: 325px;
+  height: 40%;
 }
 
 #overview,
@@ -1049,6 +1049,7 @@ body{
   
 }
 .comment-container{
+  z-index: 3;
   padding-left: 80px;
   padding-right: 80px;
   margin: 20px auto;
