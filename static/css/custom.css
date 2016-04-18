@@ -558,7 +558,7 @@ i.fa.fa-size-large {
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: left;
   padding-top: 20px;
-  border-top: 2px solid #ffffff;
+  /*border-top: 2px solid #ffffff;*/
 }
 
 #right-menu {
@@ -571,7 +571,7 @@ i.fa.fa-size-large {
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: right;
   padding-top: 20px;
-  border-top: 2px solid #ffffff;
+  /*border-top: 2px solid #ffffff;*/
 }
 
 #simulator-window {
@@ -909,11 +909,11 @@ a.start-simulating-action {
 #simulator-subnav {
   z-index: 5;
   height: 40px;
-  background-color: #eaeaea;
+  background-color: #d6d6d6;
 }
 
 #simulator-subnav .nav-wrapper li:hover {
-  background-color: #eaeaea;
+  background-color: #d6d6d6;
 }
 
 #simulator-subnav .nav-wrapper .clickable:hover {
