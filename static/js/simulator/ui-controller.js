@@ -104,12 +104,16 @@ function toggleSimulator(){
   if (Globals.running) {
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
     $("#play-pause-icon").removeClass("fa-play")
-    $("#play-pause-icon").addClass("fa-pause")    
+    $("#play-pause-icon").removeClass("play-pad")
+    $("#play-pause-icon").addClass("fa-pause") 
+    $("#play-pause-icon").addClass("pause-pad")   
   } 
   else {
     clearInterval(Globals.anim);
     $("#play-pause-icon").removeClass("fa-pause")
+    $("#play-pause-icon").removeClass("pause-pad")
     $("#play-pause-icon").addClass("fa-play")
+    $("#play-pause-icon").addClass("play-pad")
     if(Globals.frame == 0){
       $("#keyframe-0").attr("style","border:4px solid #0000cc");
     }

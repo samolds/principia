@@ -645,7 +645,7 @@ a#help-tooltips:hover {
   height: 80vh;
 }
 
-.right-menu-item,
+.right-menu-item ,
 .left-menu-item {
   z-index:2;
   text-align: center;
@@ -658,6 +658,10 @@ a#help-tooltips:hover {
 .right-menu-item:hover,
 .left-menu-item:hover {
   background-color: rgba(0, 0, 0, 0.1);
+  
+    margin: 0;
+    padding: 10px
+
 }
 
 .right-menu-item.active-side-menu-item,
@@ -1040,7 +1044,17 @@ a.start-simulating-action {
   padding-right: 80px;
   
   position:relative;
+
+  background-color: #444444;
 }
+
+.play-pad{
+  padding-left: 3px;
+}
+.pause-pad{
+  padding-left: 1px;
+}
+
 
 #play-range {
   height: 50px;
