@@ -21,10 +21,11 @@ type Comment struct {
 // All data necessary for nicely displaying a comment in a view
 type CommentData struct {
 	Comment
-	AuthorName        string
-	AuthorID          string
-	AuthorImageSrcUrl string
-	SimulationName    string
-	SimulationID      string
-	SimulationType    string
+	PrettyCreationDate string
+	AuthorName         string
+	AuthorID           string
+	AuthorImageSrcUrl  string
+	SimulationName     string
+	SimulationID       string
+	SimulationType     string
 }

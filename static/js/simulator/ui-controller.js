@@ -945,7 +945,4 @@ function leftSlideMenuOpen(e)
   {
     $("#" + selector).css("left", "80px");
   }
-
 }
-
-

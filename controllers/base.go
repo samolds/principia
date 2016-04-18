@@ -21,7 +21,6 @@ var (
 	userDir = tmplDir + "user/"
 	testDir = tmplDir + "test/"
 
-	simFrag     = simDir + "simulator.frag.html"
 	simListFrag = simDir + "simList.frag.html"
 	comFrag     = simDir + "comments.frag.html"
 
@@ -45,15 +44,13 @@ var (
 
 		"simulator/browse":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, simDir+"browse.html")),
 		"simulator/mobile":     template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"mobile.html")),
-		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"kinematics.html")),
+		"simulator/kinematics": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simDir+"kinematics.html")),
 
 		"user/simulations":  template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"simulations.html")),
 		"user/interactions": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"interactions.html")),
 		"user/profile":      template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, simListFrag, userDir+"profile.html")),
 
 		"test/kinematics": template.Must(template.ParseFiles(testDir + "KinematicsRunner.html")),
-
-		"simulator/layout": template.Must(template.New("").Funcs(templateHelpers).ParseFiles(base, comFrag, simFrag, simDir+"layout.html")),
 	}
 )
 
@@ -199,7 +196,7 @@ func BaseHandler(w http.ResponseWriter, r *http.Request, templ string, data map[
 	detect := mobiledetect.NewMobileDetect(r, nil)
 	var err error
 
-	if (detect.IsMobile() || true) && templ == "simulator/kinematics" {
+	if detect.IsMobile() && templ == "simulator/kinematics" {
 		// Render mobile specific template
 		if data["new"] == true { // Have to specifically check because data["new"] type is interface, not bool
 			// The user cannot create new simulations on mobile

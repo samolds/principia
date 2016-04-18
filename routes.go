@@ -30,8 +30,6 @@ func init() {
 	router.HandleFunc("/simulator/kinematics", simulator.NewKinematicsHandler)
 	router.HandleFunc("/simulator/kinematics/{simulationID:[0-9]+}", simulator.EditKinematicsHandler)
 
-	router.HandleFunc("/simulator/layout", controllers.LayoutHandler)
-
 	// User pages
 	router.HandleFunc("/user/{userID:[0-9]+}", user.ProfileHandler)
 	router.HandleFunc("/user/{userID:[0-9]+}/simulations", user.SimulationsHandler)
