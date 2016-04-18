@@ -1013,7 +1013,6 @@ a.start-simulating-action {
   padding-left: 1px;
 }
 
-
 #play-range {
   height: 50px;
   margin-right: 0px;
@@ -1053,6 +1052,27 @@ body{
   padding-right: 80px;
   margin: 20px auto;
 
+}
+
+/*Readding the help tooltip container for FBD box*/
+.help-tooltip {
+  display: none;
+  position: absolute;
+  color: #000000;
+  background-color: #ffd54f;
+  padding: 5px 5px;
+  z-index: 15;
+  white-space: normal;
+}
+
+.help-tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+#help-tooltip-fbd {
+  color: blue;
+  background-color: #ffffff;
 }
 
 .calculated-width {
