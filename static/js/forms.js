@@ -89,6 +89,10 @@ function saveSimulation(postURL){
 }
 
 function deleteSimulation(simUrl, redirectUrl, element) {
+  if (!confirm("Are you sure you want to delete this simulation?")) {
+    return;
+  }
+
   $.ajax({
       url: simUrl,
       type: 'DELETE',

@@ -128,7 +128,17 @@ function registerPVAChartEvents() {
       // // },
     });
 
-    updatePVAChart();
+    var allHidden = (graphBodyIndices().length === 0);
+    if (!allHidden) {
+      $('.pva-graph-no-graph-text').hide()
+      $('#positionGraph').show()
+      $('#vaGraph').show()
+      updatePVAChart();
+    } else {
+      $('.pva-graph-no-graph-text').show()
+      $('#positionGraph').hide()
+      $('#vaGraph').hide()
+    }
 }
 
 function updatePVAChart() {

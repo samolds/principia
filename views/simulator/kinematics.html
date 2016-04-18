@@ -61,7 +61,8 @@
           </label>
         </div>
       </li>
-      <li class="simulator-title center-align clickable"> 
+      <li class="simulator-title clickable input-field"> 
+        <i class="fa fa-pencil fa-size-tiny prefix"></i>
         {{ if .Data.new }}
           <input id="simulation-name" type="text" value="New Simulation"></input>
         {{ else }}
@@ -165,7 +166,7 @@
 <!-- Initially hidden elements -->
 
 <!--prompt-->
-<div id="prompt" class="card-panel valign-wrapper">
+<div id="prompt-slide" class="card-panel valign-wrapper">
   <div class="center-align valign inherit-size">
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
@@ -226,6 +227,7 @@
       <div class="collapsible-body">
         <div class="row">
           <div class="col s12">
+            <p class="pva-graph-no-graph-text">No Graph to show.</p>
             <div id="positionGraph"></div>
           </div>
         </div>
@@ -236,6 +238,7 @@
       <div class="collapsible-body">
         <div class="row">
           <div class="col s12">
+            <p class="pva-graph-no-graph-text">No Graph to show.</p>
             <div id="vaGraph"></div>
           </div>
         </div>
@@ -498,12 +501,12 @@
           </li>
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn" id="ramp-properties-flip-horz">Flip Horz.</a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz">Flip <i class="fa fa-arrows-h fa-size-tiny"></i></a>
             </div>
           </li>          
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn" id="ramp-properties-flip-vert">Flip Vert.</a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert">Flip <i class="fa fa-arrows-v fa-size-tiny"></i></a>
             </div>
           </li>
         </ul>

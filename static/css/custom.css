@@ -209,20 +209,21 @@ header {
 
 /* custom form color */
   /* label focus color */
-  .input-field input[type=text]:focus + label {
+  .input-field input[type=text]:focus + label,
+  .input-field input[type=number]:focus + label,
+  .input-field textarea.materialize-textarea:focus:not([readonly])+label
+  {
     color: #29b6f6;
   }
+
   /* label underline focus color */
+  .input-field textarea.materialize-textarea:focus:not([readonly]),
   .input-field input[type=text]:focus {
     border-bottom: 1px solid #29b6f6;
     box-shadow: 0 1px 0 0 #29b6f6;
   }
   /* icon prefix focus color */
   .input-field .prefix.active {
-    color: #29b6f6;
-  }
-
-  .input-field input[type=number]:focus + label {
     color: #29b6f6;
   }
 
@@ -238,6 +239,14 @@ header {
 
   .switch > label {
     padding-top: .75rem;
+  }
+
+  .switch label input[type=checkbox]:checked+.lever {
+    background-color: #29b6f6;
+  }
+
+  .switch label input[type=checkbox]:checked+.lever:after {
+    background-color: #109ddd;
   }
   
   .input-field-variable {
@@ -271,21 +280,19 @@ header {
 
 #keyframelist ul{
     list-style-type: none;
-    white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
-#keyframelist li{
-    display: inline-block;
+#keyframelist li {
     margin: 0px;
     padding: 0px;
     max-height: 255px;
     min-height: 255px;
     vertical-align: top;
+  float: left;
 }
 
 .keyframe-tile{
+  display: inline-block;
   margin: 0px;
   margin-right: 10px;
   padding: 0px;
@@ -620,7 +627,7 @@ i.left-menu-item-close {
 
 /*----slide menus----*/
 
-#prompt,
+#prompt-slide,
 #keyframes-slide,
 #graphs-slide,
 #solution-slide {
@@ -641,20 +648,31 @@ i.left-menu-item-close {
   -ms-transition: all .5s;
 }
 
-#keyframes-slide{
-  top:185px;
-}
-
-#graphs-slide{
-  top:265px;
+#prompt-slide {
   width: 500px;
   height:475px;
   left: -500px;
-  padding: 5px;
+}
+
+#keyframes-slide{
+  top:185px;
+  width: 360px;
+  height: 400px;
+  overflow-y: scroll;
+}
+
+#graphs-slide{
+  top: 230px;
+  width: 500px;
+  height:475px;
+  left: -500px;
 }
 
 #solution-slide{
-  top: 335px;
+  top: 310px;
+  width: 500px;
+  left: -500px;
+  height: 375px;
 }
 
 #overview,
@@ -919,12 +937,16 @@ a.start-simulating-action {
 }
 
 #simulator-subnav .nav-wrapper .simulator-title {
-  min-width: 1em;
   border-bottom: 2px solid #222222;
 }
 
+#simulator-subnav .nav-wrapper .simulator-title input {
+  width: 86%;
+  margin-left: 1em;
+}
+
 #simulator-subnav .nav-wrapper li {
-  max-width: 30%;
+  max-width: 25em;
   overflow-x: scroll;
   padding: 0 15px;
 }
