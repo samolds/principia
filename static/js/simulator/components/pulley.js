@@ -128,7 +128,89 @@ function attachPulley(body){
   } 
 }
 
-function applyPulleyForces(body, dt) { return [0,0]; }
+function getPulleyAcceleration(body, magnitude)
+{
+  var bodies = Globals.world.getBodies();
+  var consts = body2Constant(body);
+  if(!consts.side) return [0,0];
+  
+  var pulley = null;
+  for(var i=0; i < consts.attachedTo.length; i++)
+    if(bodyType(bodies[consts.attachedTo[i]]) == "kinematics1D-pulley")
+      pulley = bodies[consts.attachedTo[i]];
+    
+  var radius = body2Constant(pulley).radius * (consts.side == "left")? 1: -1;
+    
+  var x1 = body.state.pos.x;
+  var x2 = Globals.variableMap[0][bIndex(pulley)].posx - 50;
+  var y1 = swapYpos(body.state.pos.y, false);
+  var y2 = Globals.variableMap[0][bIndex(pulley)].posy;
+  
+  var x = x1-x2;
+  var y = y1-y2;
+  
+  if(Math.abs(x) <= 5 && Math.abs(y) <= 5) return [-body.state.acc.x - body.state.vel.x, -body.state.acc.y - body.state.vel.y];
+  
+  var getAngle = function(x,y) { return Math.atan2(y,x); }
+  
+  var angle = -getAngle(x,y);  
+  return [-Math.cos(angle) * magnitude, -Math.sin(angle) * magnitude];
+}
+
+function applyPulleyForces(pulley_body, dt) { 
+      
+      var consts_original = body2Constant(pulley_body);
+      var bodies = Globals.world.getBodies();
+      
+      if(!consts_original.side) return 0;
+      
+      var side = consts_original.side;
+      
+      var body = null;
+      for(var i=0; i < consts_original.attachedTo.length; i++)
+      {
+        var index = consts_original.attachedTo[i];
+        var pulley = bodies[index];
+        if(bodyType(pulley) != "kinematics1D-pulley") continue;
+        var pulley_consts = body2Constant(pulley);
+        
+        
+        if(side == "left")
+        {
+          if(pulley_consts.attachedBodyRight){
+            body = bodies[pulley_consts.attachedBodyRight];
+          }
+          else
+            continue;            
+        }
+        else if(side == "right")
+        {
+          if(pulley_consts.attachedBodyLeft){
+            body = bodies[pulley_consts.attachedBodyLeft];
+          }
+          else
+            continue;
+        }
+      }      
+      
+      
+      if(!body) return 0;
+      
+      var spring_a = applySpringForces(body);
+      var state = body.state;              
+      var x = 0;
+      var y = 0;
+      
+      x += state.acc.x * dt + spring_a[0];
+      y += state.acc.y * dt + spring_a[1];
+      
+      if(body.treatment == "dynamic"){
+        x += Globals.gravity[0] * dt;
+        y += Globals.gravity[1] * dt;
+      }
+      
+      return Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+}
 
 // Applies pulley physics to the specified state object using specified pulley.
 // Assumes that the caller has already identified 'state' as being attached to the pulley.

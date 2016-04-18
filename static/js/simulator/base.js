@@ -372,5 +372,5 @@ $(document).ready(function(){
   registerPVAChartEvents();
   
   // Configure MathJax
-  //MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 });

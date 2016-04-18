@@ -177,7 +177,7 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -684,9 +684,12 @@ Physics.integrator('principia-integrator', function( parent ){
       var body = bodies[i];
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
-      var pulley_a = applyPulleyForces(body, dt);
+      var pulley_f = applyPulleyForces(body, dt);
       var state = body.state;        
       state.old = cloneState(body.state);
+      
+      // Get direction to pulley, apply acceleration to that direction
+      pulley_a = getPulleyAcceleration(body, pulley_f);
       
       state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
       state.vel.y += state.acc.y * dt + spring_a[1] + pulley_a[1];
