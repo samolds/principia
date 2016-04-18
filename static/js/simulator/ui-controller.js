@@ -950,7 +950,6 @@ function leftSlideMenuOpen(e)
   }
 
   else if(id == "solution-tab"){
-    console.log("SOLUTION");
     selector = "solution-slide";
   }
   
