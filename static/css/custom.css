@@ -519,8 +519,8 @@ i.fa.fa-size-large {
 /* end simulator window context menu */
 
 #positionGraph, #vaGraph {
-  height: 200px;
-  width:100%;
+  height: 240px;
+  width: 100%;
 }
 
 .fa-lg-custom {
