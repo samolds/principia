@@ -692,15 +692,19 @@ a#help-tooltips:hover {
 }
 
 #keyframes-slide{
-  top:164px;
+  top:185px;
 }
 
 #graphs-slide{
-  top:215px;
+  top:265px;
   width: 500px;
   height:475px;
   left: -500px;
   padding: 5px;
+}
+
+#solution-slide{
+  top: 335px;
 }
 
 #overview,
