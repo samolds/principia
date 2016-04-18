@@ -723,6 +723,12 @@ function preRender()
 
 // Sets the world state to the currently selected frame and renders it.
 function drawMaster(){
+
+  if(Globals.loading) {
+    console.log("Aborted")
+    return;
+  }
+
   var world = Globals.world;
   var frame = Globals.frame;
   var keyframe = Globals.keyframe;
