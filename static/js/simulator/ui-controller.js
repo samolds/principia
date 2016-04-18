@@ -887,19 +887,15 @@ function rightSlideMenuOpen(e)
   id = e.currentTarget.firstChild.id;
   selector = "";
   if(id == "toolbox-tab"){
-    console.log("toolbox");
     selector = "toolbox";
   }
   else if(id == "elementprops-tab"){
-    console.log("element");
     selector = "elementprops";
   }
   else if(id == "globalprops-tab"){
-    console.log("global");
     selector = "globalprops";
   }
   else if(id == "overview-tab"){
-    console.log("overview");
     selector = "overview";
   }
 
@@ -923,15 +919,12 @@ function leftSlideMenuOpen(e)
   id = e.currentTarget.firstChild.id;
   selector = "";
   if(id == "prompt-tab"){
-    console.log("prompt");
     selector = "prompt";
   }
   else if(id == "keyframes-tab"){
-    console.log("keyframes");
     selector = "keyframes-slide";
   }
   else if(id == "graphs-tab"){
-    console.log("graphs");
     selector = "graphs-slide";
   }
   

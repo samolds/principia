@@ -661,7 +661,7 @@ function postRender(isKeyframe){
   var ymod = Math.floor(Globals.translation.y/incr)*incr;
   if(ymod < 0 && Globals.translation.y !== ymod) ymod += incr;  
   for(var i=-100; i <= can.height+100; i+= incr)    
-    can.ctx.fillText("" + (swapYpos(i, false) + ymod)*getScaleFactor(), 0, (i + Globals.translation.y % incr));
+    can.ctx.fillText("  " + (swapYpos(i, false) + ymod)*getScaleFactor(), 0, (i + Globals.translation.y % incr));
   
   // Draw x grid labels
   var xmod = Math.floor(Globals.translation.x/incr)*incr;
