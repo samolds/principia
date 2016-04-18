@@ -4,15 +4,16 @@
 <script type="text/javascript"
   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
+<script src="/static/js/simulator/globals.js"></script>
 <script src="/static/js/lib/physicsjs/physicsjs-full.js"></script>
 <script src="/static/js/lib/eq-solver.js"></script>
-<script src="/static/js/simulator/globals.js"></script>
 <script src="/static/js/simulator/simulation.js"></script>
 <script src="/static/js/simulator/ui-controller.js"></script>
 <script src="/static/js/simulator/rendering.js"></script>
 <script src="/static/js/simulator/utility.js"></script>
 <script src="/static/js/simulator/components/origin.js"></script>
 <script src="/static/js/simulator/components/mass.js"></script>
+<script src="/static/js/simulator/components/surface.js"></script>
 <script src="/static/js/simulator/components/ramp.js"></script>
 <script src="/static/js/simulator/components/spring.js"></script>
 <script src="/static/js/simulator/components/pulley.js"></script>
@@ -20,11 +21,11 @@
 <script src="/static/js/lib/canvasjs.min.js"></script>
 
 <script>
+  Kinematics1D.initModule({{ .Data.simulation.Simulator }});
   var GlobalKeyNames = {
     User: {{ .User.KeyName }},
     Simulation: {{ .Data.simulation.KeyName }},
   }
-  Kinematics1D.initModule({{ .Data.simulation.Simulator }});
 </script>
 
 <script src="/static/js/simulator/base.js"></script>
@@ -34,48 +35,60 @@
 {{ end }}
 
 {{ define "content" }}
-<!-- Simulator Name and Author -->
-<div class="container">
-  <div class="row">
-    <div class="col s6">
-      <h4 class="page-header">{{ .Data.simulation.Name }}</h4>
-      <small>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></small>
-    </div>
-    <div class="col s1 right pad-sides">
-      <h4 id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-        {{ if .IsLoggedIn }}
+<nav id="simulator-subnav" role="navigation">
+  <ul class="left nav-wrapper">
+    <li class="pad-sides"> 
+    <li class="simulator-title center-align"> 
+      <p>{{ .Data.simulation.Name }}</p>
+    </li>
+      <li class="clickable">
+        <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
+      </li>
+    <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
+    {{ if .IsLoggedIn }}
+      <li class="right clickable">
+        <span id="ratings" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
           <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
-        {{ else }}
+        </span>
+      </li>
+    {{ else }}
+      <li class="right">
+        <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
           <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
-        {{ end }}
-      </h4>
+        </span>
+      </li>
+    {{ end }}
+  </ul>
+</nav>
+
+<!-- Simulator -->
+<div class="simulator">
+  <div id="viewport"></div>
+  <div class="zoom-controls-container">
+    <div class="zoom-controls">
+      <a id="zoom-control-in" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-plus"></i></a>
+      <a id="zoom-control-out" class="waves-effect waves-light btn brown lighten-5 black-text"><i class="fa fa-minus"></i></a>
     </div>
   </div>
 </div>
 
-<!-- Simulator -->
-<div style="height: 500px;" id="viewport" class="white card"></div>
-
-<!-- Play button and slider -->
-<div class="container">
-  <div class="row">
-    <div class="col s1">
-      <div class="help-tooltip-container">
-        <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
-          <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
-        </button>
-      </div>
-    </div>
-    <div class="col s11">
-      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-    </div>
+<div id="play-container">
+  <div id="play-button">
+    <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+      <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny play-pad"></i></span>
+    </button>
+  </div>
+  <div class="calculated-width" id="play-range">
+    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
   </div>
 </div>
 
 <!-- Comments -->
+<div class="comment-container">
 {{ if not .Data.new }}
   {{ template "commentsFrag" . }}
 {{ end }}
+</div>
 
 
 

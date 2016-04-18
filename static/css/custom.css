@@ -618,11 +618,13 @@ i.fa.fa-size-large {
 i.right-menu-item-close {
   float: left;
   color: #222222;
+  z-index: 10;
 }
 
 i.left-menu-item-close {
   float: right;
   color: #222222;
+  z-index: 10;
 }
 
 /*----slide menus----*/
