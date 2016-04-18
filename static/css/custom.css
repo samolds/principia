@@ -1072,6 +1072,10 @@ body{
   padding: 0;
 }
 
+.preserve-newline {
+  white-space: pre-wrap;
+}
+
 #help-tooltip-fbd {
   color: blue;
   background-color: #ffffff;

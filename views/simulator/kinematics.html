@@ -169,19 +169,17 @@ var GlobalKeyNames = {
 
 <!--prompt-->
 <div id="prompt-slide" class="card-panel valign-wrapper">
-  <div class="center-align valign inherit-size">
+  <div class="valign inherit-size">
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
-    <div class="clear"></div>
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+    <div class="clear"></div>
     <div class="input-field">
       <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
       <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
     </div>
     {{ else if .Data.simulation.Description }}
-    <div>
-      <label>Simulation Description</label>
-      <p>{{ .Data.simulation.Description }}</p>
-    </div>
+    <h5 class="pad-sides">Simulation Description</h5>
+    <p class="preserve-newline">{{ .Data.simulation.Description }}</p>
     {{ else if and (not .IsLoggedIn) (.Data.new) }}
     <p>
       <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
@@ -540,12 +538,12 @@ var GlobalKeyNames = {
           </li>
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz">Flip <i class="fa fa-arrows-h fa-size-tiny"></i></a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz"><small>Flip <i class="fa fa-arrows-h fa-size-tiny"></i></small></a>
             </div>
           </li>          
           <li class="property-item">
             <div class="input-field">
-              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert">Flip <i class="fa fa-arrows-v fa-size-tiny"></i></a>
+              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert"><small>Flip <i class="fa fa-arrows-v fa-size-tiny"></i></small></a>
             </div>
           </li>
         </ul>

@@ -100,8 +100,15 @@ function Kinematics1DModule() {
       // resize events
       window.addEventListener('resize', function () {
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
+        
+        var dy = renderer.height - viewportBounds.y*2;
+        var bodies = Globals.world.getBodies();
+        for(var i=0; i < bodies.length; i++){
+          bodies[i].state.pos.y += dy;
+        }
+                
         viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);        
-        //edgeBounce.setAABB(viewportBounds); // update the boundaries
+
         drawMaster();
       }, true);
    
