@@ -73,7 +73,3 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	BaseHandler(w, r, "dormant/home", data)
 }
-
-func LayoutHandler(w http.ResponseWriter, r *http.Request) {
-	BaseHandler(w, r, "simulator/layout", nil)
-}

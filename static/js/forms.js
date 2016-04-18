@@ -167,17 +167,18 @@ function saveComment() {
 // Save new rating to the datastore
 // and refresh the ratings
 function saveRating() {
-    ratingObj = { Score: 1 };
+  ratingObj = { Score: 1 };
 
+  if (GlobalKeyNames.Simulation) {
     $.post("/api/simulator/" + GlobalKeyNames.Simulation + "/ratings", ratingObj)
       .done(function() { 
         refreshRatings();
         successToast('Rating updated successfully!');
       })
-      .fail(function(xhr, textStatus, errorThrown) {
+        .fail(function(xhr, textStatus, errorThrown) {
         failToast(xhr.responseText);
-      });
-
+    });
+  }
 }
 
 
@@ -200,22 +201,23 @@ function refreshCommentsList() {
           imgDisplay = "<img src='" + comment.AuthorImageSrcUrl + "' class='responsive-img'>"
         }
 
-        result += "<div class='col s12'>";
-        result +=   "<div class='row'>";
-        result +=     "<div class='card-panel valign-wrapper'>";
-        result +=       "<div class='col s3'>";
-        result +=         "<div class='center-align'>";
-        result +=           "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
-        result +=         "</div>";
-        result +=         "<div class='center-align'>";
-        result +=           "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
-        result +=         "</div>";
+        result += "<div class='row'>";
+        result +=   "<div class='card-panel valign-wrapper'>";
+        result +=     "<div class='col m3 s4'>";
+        result +=       "<div class='center-align'>";
+        result +=         "<a href='/user/" + comment.AuthorID + "'>" + imgDisplay + "</a>";
         result +=       "</div>";
-        result +=       "<div class='col s9'>";
-        result +=         "<span class='black-text'>";
-        result +=           comment.Contents
-        result +=         "</span>";
+        result +=       "<div class='center-align'>";
+        result +=         "<a href='/user/" + comment.AuthorID + "'><small>" + displayName + "</small></a>";
         result +=       "</div>";
+        result +=       "<div class='center-align'>";
+        result +=         "<small>" + comment.PrettyCreationDate + "</small>";
+        result +=       "</div>";
+        result +=     "</div>";
+        result +=     "<div class='col m9 s8'>";
+        result +=       "<span class='black-text'>";
+        result +=         comment.Contents
+        result +=       "</span>";
         result +=     "</div>";
         result +=   "</div>";
         result += "</div>";
