@@ -169,19 +169,17 @@ var GlobalKeyNames = {
 
 <!--prompt-->
 <div id="prompt-slide" class="card-panel valign-wrapper">
-  <div class="center-align valign inherit-size">
+  <div class="valign inherit-size">
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
-    <div class="clear"></div>
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
+    <div class="clear"></div>
     <div class="input-field">
       <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
       <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
     </div>
     {{ else if .Data.simulation.Description }}
-    <div>
-      <label>Simulation Description</label>
-      <p>{{ .Data.simulation.Description }}</p>
-    </div>
+    <h5 class="pad-sides">Simulation Description</h5>
+    <p class="preserve-newline">{{ .Data.simulation.Description }}</p>
     {{ else if and (not .IsLoggedIn) (.Data.new) }}
     <p>
       <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
