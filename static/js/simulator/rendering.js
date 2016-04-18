@@ -134,6 +134,10 @@ function displayElementValues(bod){
       $('#pointmass-properties-size').val(constants.size);
       $('#pointmass-properties-img').val(constants.img);
 
+      var total_acceleration = totalAcceleration(bod);
+      $('#pointmass-properties-acceleration-x-total').val(convertUnit(total_acceleration.x, "accx", false).toFixed(precision));
+      $('#pointmass-properties-acceleration-y-total').val((mod * convertUnit(total_acceleration.y, "accy", false)).toFixed(precision));
+      
       $('#pointmass-properties-vector')[0].checked = constants.vectors;
       $('#pointmass-properties-vector-ttt')[0].checked = constants.vectors_ttt;
       $('#pointmass-properties-pvagraph')[0].checked = constants.showGraph;
@@ -348,8 +352,9 @@ function drawVectors(){
   for(var i=0; i < bodies.length; i++){
     if(Math.abs(bodies[i].state.vel.x) > maxVx) maxVx = Math.abs(bodies[i].state.vel.x);
     if(Math.abs(bodies[i].state.vel.y) > maxVy) maxVy = Math.abs(bodies[i].state.vel.y);
-    if(Math.abs(bodies[i].state.acc.x + Globals.gravity[0]) > maxAx) maxAx = Math.abs(bodies[i].state.acc.x + Globals.gravity[0]);
-    if(Math.abs(bodies[i].state.acc.y + Globals.gravity[1]) > maxAy) maxAy = Math.abs(bodies[i].state.acc.y + Globals.gravity[1]);
+    var acceleration = totalAcceleration(bodies[i]);
+    if(Math.abs(acceleration.x) > maxAx) maxAx = Math.abs(acceleration.x);
+    if(Math.abs(acceleration.y) > maxAy) maxAy = Math.abs(acceleration.y);
   }
   
   for(var i=0; i < bodies.length; i++){
@@ -474,8 +479,9 @@ function drawVectorLine(body, maxVx, maxVy, maxAx, maxAy){
   
   var vx_amt = (body.state.vel.x / maxVx) * 200.0;
   var vy_amt = (body.state.vel.y / maxVy) * 200.0;
-  var ax_amt = ((body.state.acc.x + Globals.gravity[0]) / maxAx) * 100.0;
-  var ay_amt = ((body.state.acc.y + Globals.gravity[1]) / maxAy) * 100.0;
+  var acceleration = totalAcceleration(body);
+  var ax_amt = ((acceleration.x) / maxAx) * 100.0;
+  var ay_amt = ((acceleration.y) / maxAy) * 100.0;
   
   var canvas = Globals.world.renderer();
   var ctx = canvas.ctx;

@@ -672,6 +672,17 @@ function resetSaveButton(){
   $("#save-button").addClass( "blue" );
 }
 
+function totalAcceleration(body){
+  var dt = Globals.world.timestep();
+  var state = body.state;
+  var spring_a = applySpringForces(body);
+  var pulley_f = applyPulleyForces(body, dt);
+  var pulley_a = getPulleyAcceleration(body, pulley_f);
+  
+  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((body.treatment == "dynamic")? Globals.gravity[0]: 0),
+          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic")? Globals.gravity[1]: 0)};
+}
+
 // Custom integrator: On each iteration, updates velocity then position of each component
 // TODO: Change to Runge-Kutta
 Physics.integrator('principia-integrator', function( parent ){
@@ -685,12 +696,12 @@ Physics.integrator('principia-integrator', function( parent ){
       var consts = body2Constant(body);
       var spring_a = applySpringForces(body);
       
-      var state = body.state;        
+      var state = body.state;
       state.old = cloneState(body.state);
 
       // Get direction to pulley, apply acceleration to that direction
       var pulley_f = applyPulleyForces(body, dt);
-      pulley_a = getPulleyAcceleration(body, pulley_f);
+      var pulley_a = getPulleyAcceleration(body, pulley_f);
       
       state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
       state.vel.y += state.acc.y * dt + spring_a[1] + pulley_a[1];

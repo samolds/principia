@@ -161,7 +161,7 @@ function Kinematics1DModule() {
             {
               detachSpring(data.body);
               attachSpring(data.body);
-              attachPulley(data.body);          
+              attachPulley(data.body);
             }
             
             if(bodyType(data.body) == "kinematics1D-pulley")
