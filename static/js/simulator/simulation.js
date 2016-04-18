@@ -177,7 +177,7 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -289,7 +289,7 @@ function collisionSolver(){
   drawMaster(); 
   
 
-  //MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
 // Creates a shallow copy of the specified variable

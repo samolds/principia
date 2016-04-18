@@ -781,6 +781,9 @@ function simulationZoom(zoom) {
       setRampWidth(body, bodyConst.rampWidth, true);
       setRampHeight(body, bodyConst.rampHeight, true);
     }
+    else if(i == 0){
+      updateSize(body, bodyConst.size);
+    }
     
     // Scale within existing keyframe states
     for(var j=0; j < Globals.keyframeStates.length; j++){
@@ -790,11 +793,12 @@ function simulationZoom(zoom) {
     }
     
     // Scale within existing simulation states
-    for(var j=0; j < Globals.states[i].length; j++){
-      var state = Globals.states[i][j];
-      state.pos.x *= factor;
-      state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
-    }
+    if(Globals.states[i])
+      for(var j=0; j < Globals.states[i].length; j++){
+        var state = Globals.states[i][j];
+        state.pos.x *= factor;
+        state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
+      }
   }
   
   attemptSimulation();
