@@ -271,21 +271,19 @@ header {
 
 #keyframelist ul{
     list-style-type: none;
-    white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
-#keyframelist li{
-    display: inline-block;
+#keyframelist li {
     margin: 0px;
     padding: 0px;
     max-height: 255px;
     min-height: 255px;
     vertical-align: top;
+  float: left;
 }
 
 .keyframe-tile{
+  display: inline-block;
   margin: 0px;
   margin-right: 10px;
   padding: 0px;
@@ -620,7 +618,7 @@ i.left-menu-item-close {
 
 /*----slide menus----*/
 
-#prompt,
+#prompt-slide,
 #keyframes-slide,
 #graphs-slide,
 #solution-slide {
@@ -641,20 +639,31 @@ i.left-menu-item-close {
   -ms-transition: all .5s;
 }
 
-#keyframes-slide{
-  top:185px;
-}
-
-#graphs-slide{
-  top:265px;
+#prompt-slide {
   width: 500px;
   height:475px;
   left: -500px;
-  padding: 5px;
+}
+
+#keyframes-slide{
+  top:185px;
+  width: 360px;
+  height: 400px;
+  overflow-y: scroll;
+}
+
+#graphs-slide{
+  top: 230px;
+  width: 500px;
+  height:475px;
+  left: -500px;
 }
 
 #solution-slide{
-  top: 335px;
+  top: 310px;
+  width: 500px;
+  left: -500px;
+  height: 375px;
 }
 
 #overview,

@@ -136,9 +136,18 @@ function updateBooleanProperty(body, property, value){
   // Special case: Handle showing/hiding the graph div
   if(property === "showGraph"){
     var allHidden = (graphBodyIndices().length === 0);
-    if(!allHidden){ updatePVAChart(); }         
+    if (!allHidden) {
+      $('.pva-graph-no-graph-text').hide()
+      $('#positionGraph').show()
+      $('#vaGraph').show()
+      updatePVAChart();
+    } else {
+      $('.pva-graph-no-graph-text').show()
+      $('#positionGraph').hide()
+      $('#vaGraph').hide()
+    }
   }
-  
+
   drawMaster();
 }
 
@@ -931,7 +940,7 @@ function leftSlideMenuOpen(e)
   id = e.currentTarget.id;
   selector = "";
   if(id == "prompt-tab"){
-    selector = "prompt";
+    selector = "prompt-slide";
   }
   else if(id == "keyframes-tab"){
     selector = "keyframes-slide";
@@ -956,10 +965,10 @@ function leftSlideMenuOpen(e)
 }
 
 function leftSlideMenuClose(e) {
-  $("#prompt").css("left", "-280px");
+  $("#prompt-slide").css("left", "-500px");
   $("#keyframes-slide").css("left", "-280px");
   $("#graphs-slide").css("left", "-500px");
-  $("#solution-slide").css("left", "-280px");
+  $("#solution-slide").css("left", "-500px");
 
   $("#prompt-tab").removeClass("active-side-menu-item");
   $("#keyframes-tab").removeClass("active-side-menu-item");
