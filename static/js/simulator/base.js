@@ -118,13 +118,13 @@ function dataURItoBlob(dataURI) {
 function registerPVAChartEvents() {
   positionChart = new CanvasJS.Chart("positionGraph",{
       // // axisX:{
-      // //   maximum: 4000,
+      // //   maximum: 1000,
       // // },
     });
 
     vaChart = new CanvasJS.Chart("vaGraph",{
       // // axisX:{
-      // //   maximum: 4000,
+      // //   maximum: 1000,
       // // },
     });
 

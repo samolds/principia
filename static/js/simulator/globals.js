@@ -154,7 +154,7 @@ var Globals = {
               ],
 
 // Number of frames to attempt to simulate before declaring simulation failure
-  maxFrames: 4000,
+  maxFrames: 1000,
   
   maxNumKeyframes: 5,
 
