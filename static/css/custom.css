@@ -653,23 +653,24 @@ i.left-menu-item-close {
 #prompt-slide {
   width: 500px;
   height:475px;
+  top: 140px;
 }
 
 #keyframes-slide{
-  top:185px;
+  top:210px;
   width: 360px;
   height: 400px;
   overflow-y: scroll;
 }
 
 #graphs-slide{
-  top: 230px;
+  top: 283px;
   width: 500px;
   height:475px;
 }
 
 #solution-slide{
-  top: 310px;
+  top: 357px;
   width: 500px;
   height: 375px;
 }
