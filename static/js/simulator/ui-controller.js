@@ -883,6 +883,11 @@ function keyDown(e)
     Globals.fbdDown = true; 
     drawFBD();
   }
+  if(e.keyCode == 46 && Globals.selectedBody) { // del
+    var index = bIndex(Globals.selectedBody);
+    if(index !== 0)
+      deleteBody(index);
+  }
  
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;
