@@ -185,6 +185,14 @@ function canonicalTransform(data) {
   return result;
 }
 
+function canonicalTransformNT(data)
+{
+  var result = {};
+  result.x = data.x * getScaleFactor();
+  result.y = swapYpos(data.y, false) * getScaleFactor();
+  return result;
+}
+
 /* Returns a value obtained by transforming PhysicsJS canonical coordinate to pixel coordinate (target) */
 function pixelTransform(canon, coordinate, doTranslation){
   

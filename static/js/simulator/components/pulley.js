@@ -134,13 +134,14 @@ function getPulleyAcceleration(body, magnitude)
     if(bodyType(bodies[consts.attachedTo[i]]) == "kinematics1D-pulley")
       pulley = bodies[consts.attachedTo[i]];
     
+  var attach = (consts.side == "left")? body2Constant(pulley).attach_left: body2Constant(pulley).attach_right;
   var radius = body2Constant(pulley).radius * ((consts.side == "left")? 1: -1);
   
-  var canon = canonicalTransform({x:body.state.pos.x,y:body.state.pos.y});
-  var x1 = canon.x;//body.state.pos.x;
-  var x2 = Globals.variableMap[0][bIndex(pulley)].posx - radius;
-  var y1 = canon.y;//swapYpos(body.state.pos.y, false) * getScaleFactor();
-  var y2 = Globals.variableMap[0][bIndex(pulley)].posy;
+  var canon = canonicalTransformNT({x:body.state.pos.x,y:body.state.pos.y});
+  var x1 = canon.x;
+  var x2 = attach.x;
+  var y1 = canon.y;
+  var y2 = attach.y;
   
   var x = x1-x2;
   var y = y1-y2;
