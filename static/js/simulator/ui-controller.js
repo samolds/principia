@@ -927,12 +927,18 @@ function leftSlideMenuOpen(e)
   else if(id == "graphs-tab"){
     selector = "graphs-slide";
   }
+
+  else if(id == "solution-tab"){
+    console.log("SOLUTION");
+    selector = "solution-slide";
+  }
   
   check = $("#" + selector).css("left");
 
   $("#prompt").css("left", "-280px");
   $("#keyframes-slide").css("left", "-280px");
   $("#graphs-slide").css("left", "-500px");
+  $("#solution-slide").css("left", "-280px");
 
   if(check === "-280px" || check === "-500px")
   {

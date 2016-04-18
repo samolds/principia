@@ -672,7 +672,8 @@ a#help-tooltips:hover {
 
 #prompt,
 #keyframes-slide,
-#graphs-slide {
+#graphs-slide,
+#solution-slide {
   z-index:1;
   width: 340px;
   height: 300px;
@@ -1015,7 +1016,6 @@ a.start-simulating-action {
   text-align: center;
   padding-top: 7px;
 }
-
 
 #play-button {
   width: 50px;
