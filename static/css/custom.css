@@ -125,6 +125,8 @@
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    overflow-x: hidden;
+    background-color: #dddddd;
   }
 
   main {
@@ -177,10 +179,6 @@ header {
 .principia-footer-color a:hover,
 .principia-footer-color a:active {
   color: #0066cc !important; /* because of materialize stupidness */
-}
-
-body {
-  background-color: #dddddd;
 }
 
 .home-background {
@@ -261,16 +259,6 @@ body {
     padding-top: 5px;
   }
 /* end custom form */
-
-
-/* simulator canvas */
-  .simulator {
-    height: 900px;
-    border: 2px solid #888;
-    background-color: #e3f2fd;
-  }
-/* end simulator */
-
 
 /* keyframe thumbnails */
   .keyframe {
@@ -795,6 +783,7 @@ a#help-tooltips:hover {
 
   .simulation-thumb {
     background: #222222;
+    max-height: 115px;
   }
 
   .simulation-thumb-description {
@@ -925,6 +914,14 @@ a.start-simulating-action {
   background-color: #eaeaea;
 }
 
+#simulator-subnav .nav-wrapper li:hover {
+  background-color: #eaeaea;
+}
+
+#simulator-subnav .nav-wrapper .clickable:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 #simulator-subnav .nav-wrapper li,
 #simulator-subnav .nav-wrapper li i,
 #simulator-subnav .nav-wrapper li a,
@@ -943,8 +940,13 @@ a.start-simulating-action {
   padding: 0 10px;
 }
 
+#simulator-subnav .nav-wrapper .simulator-title {
+  min-width: 1em;
+  border-bottom: 2px solid #222222;
+}
+
 #simulator-subnav .nav-wrapper li {
-  max-width: 25%;
+  max-width: 30%;
   overflow-x: scroll;
   padding: 0 15px;
 }
@@ -956,7 +958,10 @@ a.start-simulating-action {
 }
 
 #simulator-subnav .nav-wrapper li a,
-#simulator-subnav .nav-wrapper li a i {
+#simulator-subnav .nav-wrapper li a i,
+#simulator-subnav .nav-wrapper li.clickable, 
+#simulator-subnav .nav-wrapper li.clickable i,
+#simulator-subnav .nav-wrapper li .switch {
   color: #039be5;
 }
 

@@ -39,7 +39,7 @@
 {{ if and (.IsLoggedIn) (.Data.isOwner) }} <!-- The navbar for a logged in owner -->
   <nav id="simulator-subnav" role="navigation">
     <ul class="left nav-wrapper">
-      <li><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
+      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
       {{ if not .Data.new }}
       <li class="clickable"><a id="delete-button"
         onclick="deleteSimulation('/simulator/{{ .Data.simulation.Type }}/{{ .Data.simulation.KeyName }}', '/simulator/{{ .Data.simulation.Type }}', null)">
@@ -48,7 +48,7 @@
       </li>
       {{ end }}
       <li class="clickable" onclick="saveSimulation({{ .Data.imageUploadUrl }})"><i class="fa fa-save fa-size-small"></i> Save</li>
-      <li>
+      <li class="clickable">
         <div class="switch">
           <label>
             Public
@@ -62,7 +62,7 @@
           </label>
         </div>
       </li>
-      <li> 
+      <li class="simulator-title center-align clickable"> 
         {{ if .Data.new }}
           <input id="simulation-name" type="text" value="New Simulation"></input>
         {{ else }}
@@ -71,7 +71,7 @@
       </li>
       <li class="clickable right"><i class="fa fa-question fa-size-small"></i></li>
       {{ if not .Data.new }}
-      <li class="right">
+      <li class="clickable right">
         <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
           <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
         </span>
@@ -82,8 +82,8 @@
 {{ else }} <!-- The normal navbar -->
   <nav id="simulator-subnav" role="navigation">
     <ul class="left nav-wrapper">
-      <li><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
-      <li> 
+      <li class="clickable"><a href="/simulator/kinematics"><i class="fa fa-file-o fa-size-small"></i> Fresh</a></li>
+      <li class="simulator-title center-align"> 
         {{ if .Data.new }}
           <p>New Simulation</p>
         {{ else }}
@@ -91,23 +91,31 @@
         {{ end }}
       </li>
       {{ if not .Data.new }}
-        <li>
+        <li class="clickable">
           <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
         </li>
       {{ end }}
       <li class="clickable right"><i class="fa fa-question fa-size-small"></i></li>
-      {{ if and (not .Data.new) (.IsLoggedIn) }}
-      <li class="right">
-        <span id="rating" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
-          <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
-        </span>
-      </li>
+      {{ if not .Data.new }}
+        {{ if .IsLoggedIn }}
+          <li class="right clickable">
+            <span id="ratings" class="tooltipped left" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+              <a onclick="saveRating()"><i id="star-icon" class="fa fa-star-o waves-effect waves-light yellow-text text-accent-4"></i></a>
+            </span>
+          </li>
+        {{ else }}
+          <li class="right">
+            <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
+              <i class="fa fa-star waves-effect waves-light grey-text text-lighten-1"></i>
+            </span>
+          </li>
+        {{ end }}
       {{ end }}
     </ul>
   </nav>
 {{ end }}
 
-<div class="row" id="menu-row">
+<div class="simulator">
   <div id="left-menu">
     <ul>
       <li class="clickable left-menu-item"><span class="blue-text valign" id="prompt-tab"><i class="fa fa-pencil-square-o fa-size-medium"></i> <small>Description</small></span></li>
@@ -136,33 +144,21 @@
   </div>
 </div>
 
-<div class="row" id="menu-row">
-  <div id="play-container">
-    <div id="play-button">
-      <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
-        <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
-      </button>
-    </div>
-    <div class="calculated-width" id="play-range">
-      <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
-    </div>
+<div id="play-container">
+  <div id="play-button">
+    <button type="button" class="waves-effect waves-light btn-floating blue darken-1" id="playpause">
+      <span aria-hidden="true"><i id="play-pause-icon" class="fa fa-play fa-size-tiny"></i></span>
+    </button>
+  </div>
+  <div class="calculated-width" id="play-range">
+    <input type="range" min="0" max="3999" step="1" value="0" id="simulatorFrameRange" oninput="onRangeUpdate()" />
   </div>
 </div>
 
-{{ if .Data.simulation.KeyName }}
-  <div class="main-container simulator-container" id="comments-frag">
-    {{ template "commentsFrag" . }}
-  </div>
+
+{{ if not .Data.new }}
+  {{ template "commentsFrag" . }}
 {{ end }}
-
-
-
-
-
-
-
-
-
 
 
 

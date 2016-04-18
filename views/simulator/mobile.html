@@ -74,9 +74,9 @@
 </div>
 
 <!-- Comments -->
-<div class="container" id="comments-frag">
+{{ if not .Data.new }}
   {{ template "commentsFrag" . }}
-</div>
+{{ end }}
 
 
 
