@@ -531,74 +531,6 @@ i.fa.fa-size-large {
   cursor: hand;
 }
 
-#help-tooltips {
-  padding-left: 14px;
-}
-
-a#help-tooltips,
-a#help-tooltips:link,
-a#help-tooltips:visited {
-  color: #ff8f00;
-}
-
-a#help-tooltips:hover {
-  color: #ff6f00;
-}
-
-.help-tooltip-container {
-  position: relative;
-}
-
-.help-tooltip {
-  display: none;
-  position: absolute;
-  color: #000000;
-  background-color: #ffd54f;
-  padding: 5px 5px;
-  z-index: 15;
-  white-space: normal;
-}
-
-.help-tooltip p {
-  margin: 0;
-  padding: 0;
-}
-
-#help-tooltip-properties {
-  top: -85px;
-  right: 25px;
-  width: 275px;
-}
-
-#help-tooltip-toolbox {
-  top: 310px;
-  right: 75px;
-  width: 200px;
-}
-
-#help-tooltip-simulator {
-  top: 200px;
-  left: 200px;
-  width: 300px;
-}
-
-#help-tooltip-play {
-  top: -15px;
-  left: 40px;
-  width: 300px;
-}
-
-#help-tooltip-keyframes {
-  top: -35px;
-  left: 175px;
-  width: 330px;
-}
-
-#help-tooltip-fbd {
-  color: blue;
-  background-color: #ffffff;
-}
-
 /** via http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting **/
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -831,6 +763,10 @@ select.browser-default{
   .simulation-thumb-description {
     color: #ffffff;
     background: #222222;
+    word-wrap: break-word;
+  }
+
+  .comment-simulation-name {
     word-wrap: break-word;
   }
 

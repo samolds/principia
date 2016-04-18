@@ -33,7 +33,8 @@
                 <p>{{ $comment.Contents }}</p>
               </div>
               <div class="col s3">
-                <p>
+                <small>{{ $comment.PrettyCreationDate }}</small>
+                <p class="comment-simulation-name">
                   <a href="/simulator/{{ $comment.SimulationType }}/{{ $comment.SimulationID }}">{{ $comment.SimulationName }}</a>
                 </p>
               </div>

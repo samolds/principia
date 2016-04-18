@@ -357,8 +357,6 @@ $(document).ready(function(){
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
 
-  $('#help-tooltips').on("click", function() { displayTooltips(); });
-  
   $("#elementprops-tab").on("click", function() { 
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
   });

@@ -30,7 +30,6 @@
 
 <script src="/static/js/simulator/base.js"></script>
 <script src="/static/js/forms.js"></script>
-<script src="/static/js/view.js"></script>
 {{ end }}
 
 
@@ -69,7 +68,7 @@
           <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
         {{ end }}
       </li>
-      <li class="clickable right"><i class="fa fa-question fa-size-small"></i></li>
+      <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
       {{ if not .Data.new }}
       <li class="clickable right">
         <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
@@ -95,7 +94,7 @@
           <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
         </li>
       {{ end }}
-      <li class="clickable right"><i class="fa fa-question fa-size-small"></i></li>
+      <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
       {{ if not .Data.new }}
         {{ if .IsLoggedIn }}
           <li class="right clickable">
@@ -170,7 +169,7 @@
     <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
       <div class="input-field">
-        <input id="simulation-description" type="text" value="{{ .Data.simulation.Description }}"></input>
+        <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
         <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
       </div>
     {{ else if .Data.simulation.Description }}
@@ -192,21 +191,11 @@
 
 <!--keyframes-->
 <div id="keyframes-slide" class="card-panel">
-  <div class="help-tooltip-container">
-    <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
-    <h5>Keyframes:
-      <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
-    </h5>
-    <div class="clear"></div>
-    <div id="help-tooltip-keyframes" class="help-tooltip card">
-      <p>
-        Multiple keyframes are used to set up the initial and final states of your model so
-        that the frames inbetween can be solved for. You can even set up intermediate key
-        frames. The solution will display in the "Solution Details" window.
-      </p>
-    </div>
-  </div>
-
+  <i class="left-menu-item-close clickable fa fa-times fa-size-large"></i>
+  <h5>Keyframes:
+    <a class="btn-floating btn-small waves-effect waves-light red" id="add-keyframe"><i class="fa fa-plus"></i></a>
+  </h5>
+  <div class="clear"></div>
   <div id="keyframelist">
     <ul id="keyframe-list">
       <li>
@@ -618,17 +607,6 @@
           <ul id ="overview-list"></ul>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="help-tooltip-container">
-    <div id="help-tooltip-simulator" class="help-tooltip card">
-      <p>Drag any component from the toolbox into the simulator, select it, give it some velocity, then click play!</p>
-    </div>
-    <div id="help-tooltip-properties" class="help-tooltip card">
-      <p>Navigate between the Toolbox, the Element Properties, the Global Properties, and the Overview panels.</p>
-    </div>
-    <div id="help-tooltip-toolbox" class="help-tooltip card">
-      <p>Drag any of the desired components above into the simulator!</p>
     </div>
   </div>
 </div>
