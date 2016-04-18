@@ -396,8 +396,6 @@ function drawFBD(){
   var fbdHelp = $("#help-tooltip-fbd");
 
   // TODO: Make force arrows the same color as the label in help box
-  context.font = 'bold 10pt Calibri';
-
   var mass = body2Constant(selectedBody).mass;
 
   var xInternalForce = selectedBody.state.acc.x * mass;

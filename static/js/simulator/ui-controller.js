@@ -871,6 +871,8 @@ function selectBody(bodyIndex){
 
 function keyUp(e)
 {
+  if ($(document.activeElement).is("input") || $(document.activeElement).is("textarea"))
+    return;
   var wasSet = (Globals.aDown || Globals.vDown);
   
   if (e.keyCode == 86) Globals.vDown = false;
