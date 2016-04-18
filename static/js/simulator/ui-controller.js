@@ -888,7 +888,7 @@ function keyUp(e)
 }
 
 function keyDown(e) {
-  if (!Globals.selectedBody)
+  if ($(document.activeElement).is("input") || $(document.activeElement).is("textarea"))
     return;
 
   if (e.keyCode == 86) Globals.vDown = true;
