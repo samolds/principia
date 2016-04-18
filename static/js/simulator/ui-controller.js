@@ -956,7 +956,7 @@ function leftSlideMenuOpen(e)
   check = $("#" + selector).css("left");
   leftSlideMenuClose(e);
 
-  if(check === "-280px" || check === "-500px")
+  if(check === "-600px")
   {
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
@@ -964,10 +964,10 @@ function leftSlideMenuOpen(e)
 }
 
 function leftSlideMenuClose(e) {
-  $("#prompt-slide").css("left", "-500px");
-  $("#keyframes-slide").css("left", "-280px");
-  $("#graphs-slide").css("left", "-500px");
-  $("#solution-slide").css("left", "-500px");
+  $("#prompt-slide").css("left", "-600px");
+  $("#keyframes-slide").css("left", "-600px");
+  $("#graphs-slide").css("left", "-600px");
+  $("#solution-slide").css("left", "-600px");
 
   $("#prompt-tab").removeClass("active-side-menu-item");
   $("#keyframes-tab").removeClass("active-side-menu-item");

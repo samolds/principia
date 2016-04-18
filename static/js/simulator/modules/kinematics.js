@@ -109,8 +109,13 @@ function Kinematics1DModule() {
         //hide context menu
         toggleMenuOff();
          
-        if(data.body){          
+        var index = bIndex(data.body);
+        if(data.body && index !== 0){
           selectBody(bIndex(data.body), bIndex(data.body) === 0); // Only switch tabs if not the origin!
+        }
+
+        if (index === 0 && !($("#globalprops-tab").hasClass("active-side-menu-item"))) {
+          $("#globalprops-tab").click();
         }
       });
   
@@ -133,9 +138,6 @@ function Kinematics1DModule() {
           
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
-          
-          if(index === 0)
-            $("#globalprops-tab").click();          
           
           drawMaster();
         }
@@ -184,7 +186,7 @@ function Kinematics1DModule() {
         Globals.selectedBody = false;  
         drawMaster();
 
-        if ($("#elementprops-tab").hasClass("active-side-menu-item"))
+        if ($("#elementprops-tab").hasClass("active-side-menu-item") || $("#globalprops-tab").hasClass("active-side-menu-item"))
           rightSlideMenuClose();
       });
     
