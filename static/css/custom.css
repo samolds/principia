@@ -551,7 +551,7 @@ i.fa.fa-size-large {
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: left;
   padding-top: 20px;
-  border-top: 4px solid #ffffff;
+  border-top: 2px solid #ffffff;
 }
 
 #right-menu {
@@ -564,7 +564,7 @@ i.fa.fa-size-large {
   background: linear-gradient(to bottom, #eaeaea, #dddddd);
   float: right;
   padding-top: 20px;
-  border-top: 4px solid #ffffff;
+  border-top: 2px solid #ffffff;
 }
 
 #simulator-window {
