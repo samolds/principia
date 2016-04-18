@@ -850,19 +850,7 @@ function keyUp(e)
     Globals.fbdDown = false; 
     drawFBD();
   }
-  
-  if (e.keyCode == 66) 
-  {
-    var data = { 'type': "kinematics1D-mass", 'x': 335/2, 'y': 250, 'blockSimulation':true};
-    Globals.world.emit('addComponent', data);
-  }
-  if(e.keyCode == 67)
-  {
-    //debugger;
-    updatePropertyRedraw(Globals.world.getBodies()[1], "posy", 0);
-  }
-  
-  
+    
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;
     if(Globals.numKeyframes == 1 && wasSet)

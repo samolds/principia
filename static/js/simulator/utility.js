@@ -116,6 +116,8 @@ function convertUnit(value, type, invert){
     return invert? value * (1.0/l)*t : value * l * (1.0/t);
   else if(type== "accx" || type == "accy")
     return invert? value * (1.0/l)*t*t : value * Globals.lengthFactor * (1.0/(t*t));
+  else
+    return value;
 }
 
 function getLabel(body){

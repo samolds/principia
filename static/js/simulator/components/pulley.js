@@ -149,6 +149,8 @@ function getPulleyAcceleration(body, magnitude)
   
   var m = consts.mass;
   var angle = -getAngle(x,y);
+    
+  
   return [(-Math.cos(angle) * magnitude)/m, (-Math.sin(angle) * magnitude)/m];
 }
 
@@ -162,10 +164,12 @@ function applyPulleyForces(pulley_body, dt) {
       var side = consts_original.side;
       
       var body = null;
+      var pulley = null;
       for(var i=0; i < consts_original.attachedTo.length; i++)
       {
         var index = consts_original.attachedTo[i];
-        var pulley = bodies[index];
+        pulley = bodies[index];
+                        
         if(bodyType(pulley) != "kinematics1D-pulley") continue;
         var pulley_consts = body2Constant(pulley);
         
@@ -204,6 +208,15 @@ function applyPulleyForces(pulley_body, dt) {
         y += Globals.gravity[1] * dt;
       }
       
+      
+            
       var m = body2Constant(body).mass;
+      
+      if(side == "left")
+      {
+        var test = Math.sqrt(Math.pow(x*m,2)+Math.pow(y*m,2)) - applyPulleyForces(body,dt);
+        pulley.state.angular.vel = test;
+      }
+      
       return Math.sqrt(Math.pow(x*m,2)+Math.pow(y*m,2));
 }
