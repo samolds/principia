@@ -523,10 +523,18 @@ i.fa.fa-size-large {
 }
 
 /* end simulator window context menu */
+.graph-row {
+  margin-bottom: 0;
+}
+.graph-container {
+  padding: 0 !important;
+  width: 100%;
+}
 
 #positionGraph, #vaGraph {
-  height: 240px;
-  width: 520px;
+  height: 260px;
+  width: 80%;
+  margin: auto;
 }
 
 .fa-lg-custom {
