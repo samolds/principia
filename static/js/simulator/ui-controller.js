@@ -283,7 +283,22 @@ function updatePropertyRedraw(body, property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(bIndex(body), property, value, false);
+  
+  if(property == "mass")            value = clamp(0.1,value,10);
+  if(property == "surfaceWidth")    value = clamp(1,value,500);
+  if(property == "surfaceHeight")   value = clamp(1,value,500);
+  if(property == "surfaceFriction") value = clamp(0,value,1);
+  if(property == "rampWidth")       value = clamp(1,value,500);
+  if(property == "rampHeight")      value = clamp(1,value,500);
+  if(property == "rampAngle")       value = clamp(20,value,70);
+  if(property == "rampFriction")    value = clamp(0,value,1);
+  if(property == "k")               value = clamp(0.001,value,0.05);
+  
+  var index = bIndex(body);
+  if(property == "k" && bodyType(body) === "kinematics1D-spring-child")
+    index = body2Constant(body).parent;
+  
+  onPropertyChanged(index, property, value, false);
   
   if(Globals.numKeyframes == 1) attemptSimulation();  
   drawMaster();

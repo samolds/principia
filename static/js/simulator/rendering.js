@@ -151,7 +151,13 @@ function displayElementValues(bod){
       $('#ramp-properties-height').val(Math.abs(constants.rampHeight));
       $('#ramp-properties-angle').val(Math.abs(constants.rampAngle));
       $('#ramp-properties-friction').val(Math.abs(constants.rampFriction));
+    } else if (constants.ctype === "kinematics1D-spring" || constants.ctype === "kinematics1D-spring-child"){      
+      if(constants.ctype === "kinematics1D-spring")
+        $('#spring-properties-k').val(Math.abs(constants.k));
+      else
+        $('#spring-properties-k').val(Math.abs(Globals.bodyConstants[constants.parent].k));
     }
+    
     
   } else {
     $('#general-properties-nickname').val("");
@@ -635,8 +641,10 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
     $('#general-properties').removeClass('hide');
 
+    
     switch (bodConstants.ctype) {
       case 'kinematics1D-mass':
         $('#pointmass-properties').removeClass('hide');
@@ -648,6 +656,8 @@ function postRender(isKeyframe){
         $('#ramp-properties').removeClass('hide');
         break;
       case 'kinematics1D-spring':
+      case 'kinematics1D-spring-child':
+        $('#spring-properties').removeClass('hide');
         break;
     }
   } else {
@@ -655,6 +665,7 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
   }
 
   if(isKeyframe){

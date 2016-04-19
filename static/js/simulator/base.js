@@ -281,7 +281,11 @@ $(document).ready(function(){
   $("#pointmass-properties-pvagraph").on("change", function() {
     updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph')[0].checked);
   });
-
+  
+  // Spring specific event
+  $('#spring-properties-k').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'k', $('#spring-properties-k').val());
+  });
 
   // Surface specific events
   $('#surface-properties-width').on("change", function(){
