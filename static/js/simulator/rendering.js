@@ -798,3 +798,23 @@ function simulationZoom(zoom) {
   attemptSimulation();
   drawMaster();
 }
+
+function colorToolbox(enable){
+  var restricted = $(".restricted");
+  if(enable){
+    // Color the restricted items green, add draggable/clickable class
+    restricted.css("background", "");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).addClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).off('dragstart');
+    }
+  }
+  else {
+    // Color the restricted items red, remove draggable/clickable class    
+    restricted.css("background", "#998");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).removeClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).on('dragstart', function(event) { event.preventDefault(); });
+    }
+  }
+}

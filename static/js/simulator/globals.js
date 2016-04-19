@@ -110,7 +110,7 @@ var Globals = {
   
   // Scale factor in clicks (display only, the canvas should be zoomed in by 2^scale)
   scale: 0,
-  
+      
   // -- CONSTANTS -- \\
   // Controls speed of frame change while animating
   delay: 250,  

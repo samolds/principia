@@ -57,6 +57,15 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
+        if(Globals.numKeyframes > 1){
+          if(data.type == "kinematics1D-surface" ||
+             data.type == "kinematics1D-spring" ||
+             data.type == "kinematics1D-pulley" ||
+             data.type == "kinematics1D-ramp"){
+               return;
+             }
+        }
+        
         var canon = canonicalTransform(data);
         data.x = canon.x;
         data.y = canon.y;

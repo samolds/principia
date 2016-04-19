@@ -72,9 +72,15 @@ function handleDragStop(event, ui){
 
 function updateRangeLabel() { 
   var dt = Globals.world.timestep();
-  $('#play-range-label').html(
-    (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4)
-  ); 
+  
+  if(Globals.keyframe !== false)
+    $('#play-range-label').html(
+      (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4) + " (s)"
+    ); 
+  else
+    $('#play-range-label').html(
+      (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4) + " (s)"
+    ); 
 }
 
 // Scrubs to selected frame
@@ -373,8 +379,15 @@ function updateCoords(coord_sys){
 // Adds a new keyframe, up to the limit
 function addKeyframe(){
   
-  if (Globals.numKeyframes == Globals.maxNumKeyframes)
+  if (Globals.numKeyframes == Globals.maxNumKeyframes){
+    failToast("You have the maximum number of keyframes.");
     return;
+  }
+  
+  if(containsRestricted()){
+    failToast("You must only use point masses components to utilize multiple keyframes.");
+    return;
+  }
   
   if(Globals.running)
     toggleSimulator();
@@ -418,6 +431,8 @@ function addKeyframe(){
       var property = $(event.target).parents().eq(2).attr("principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
+    
+    colorToolbox(false);
   }
 }
 
@@ -460,6 +475,8 @@ function removeKeyframe(event){
       var li = variables[i];
       $(li).children()[1].remove();
     }
+    
+    colorToolbox(true);
   }
   
   // Special case: User deletes currently selected keyframe
@@ -851,8 +868,8 @@ function deleteBody(bodyIndex){
         }
       }
     }
-    // End Spring and Pulley specific logic!
-
+    // End Spring and Pulley specific logic!    
+    
     simulate();
     drawMaster();
     updateKeyframes();
@@ -984,6 +1001,19 @@ function leftSlideMenuOpen(e)
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
+}
+
+function containsRestricted()
+{
+  var bodies = Globals.world.getBodies();
+  for(var i=0; i<bodies.length; i++)
+  {
+    var type = bodyType(bodies[i]);
+    if(type != "kinematics1D-origin" && type != "kinematics1D-mass" && type != "kinematics1D-origin")
+      return true;
+  }
+  
+  return false;
 }
 
 function leftSlideMenuClose(e) {

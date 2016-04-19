@@ -208,14 +208,14 @@ $(document).ready(function(){
   $( '#viewport' ).on("contextmenu", function(event){
     contextMenuListener(event);
   });
+  
   $( '#viewport' ).on("click", function(event){
     clickListener(event);
   });
 
   $(document).on('click', function(event) {
     bodyClickListener(event);
-  });
-  
+  });  
 
   $('#viewport').on("mousedown", function(event){
     event.preventDefault();
