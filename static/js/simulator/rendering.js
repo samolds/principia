@@ -40,17 +40,21 @@ function displayVariableValues(body){
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
-      position = cartesian2Polar([position[0], position[1]]);
-      
+            
       var temp;
-      if(velocity[1] == "?") 
-        temp = velocity[0];      
-      velocity = cartesian2Polar([velocity[0], velocity[1]]);
+      if(position[1] == "?") temp = position[0];      
+      position = cartesian2Polar([position[0], position[1]]);
+      if(temp) position = [temp, "?"];
       
-      if(temp) 
-        velocity = [temp, "?"];
+      temp = null;
+      if(velocity[1] == "?") temp = velocity[0];      
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);      
+      if(temp) velocity = [temp, "?"];
       
+      temp = null;
+      if(acceleration[1] == "?") temp = acceleration[0];
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
+      if(temp) acceleration = [temp, "?"];
     }
        
     $('#general-properties-position-x').val(position[0].toFixed(precision));

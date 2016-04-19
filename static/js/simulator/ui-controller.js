@@ -265,7 +265,7 @@ function updatePropertyRedraw(body, property, value){
     // Update properties within simulator, draw, and return
     onPropertyChanged(index, property.substring(0,3) + "x", point[0], false);
     
-    if(point[1] === -0){
+    if(property.length >= 4 && property.substring(3) === "x" && property != "posx"){
       point[1] = "?";
     }
     
