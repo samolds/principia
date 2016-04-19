@@ -39,22 +39,20 @@ function addPulley(data){
   if(!Globals.loading){
     addToVariableMap(
       {
-        r: dRadius,
+        r: 50,
         posx: data.x, 
         posy: data.y
       }
     );
   }
   
-  
-  
   world.add(component);
   updateKeyframes([component]);
   Globals.pulleyBodyCounter++;
   
-  bodyConstants[bodyConstants.length-1].radius = dRadius;  
-  bodyConstants[bodyConstants.length-1].attach_left  = canonicalTransformNT({x:data.x - dRadius, y:swapYpos(data.y, false)});
-  bodyConstants[bodyConstants.length-1].attach_right = canonicalTransformNT({x:data.x + dRadius, y:swapYpos(data.y, false)});
+  bodyConstants[bodyConstants.length-1].radius = 50;
+  bodyConstants[bodyConstants.length-1].attach_left  = {x: data.x-50, y:data.y};
+  bodyConstants[bodyConstants.length-1].attach_right = {x: data.x+50, y:data.y};
   
   bodyConstants[bodyConstants.length-1].left_open = true;
   bodyConstants[bodyConstants.length-1].right_open = true;
@@ -64,7 +62,7 @@ function addPulley(data){
   bodyConstants[bodyConstants.length-1].nickname = "pulley " + (getLabel(component));
 
   bodyConstants[bodyConstants.length-1].img = "/static/img/toolbox/pulley.png";
-  bodyConstants[bodyConstants.length-1].size = dRadius;
+  bodyConstants[bodyConstants.length-1].size = 50;
 
   return [component];
 }
@@ -133,7 +131,13 @@ function getPulleyAcceleration(body, magnitude)
   for(var i=0; i < consts.attachedTo.length; i++)
     if(bodyType(bodies[consts.attachedTo[i]]) == "kinematics1D-pulley")
       pulley = bodies[consts.attachedTo[i]];
-    
+  
+  // Lazy deletion of side property
+  if(pulley == null){
+    delete consts.side;
+    return [0,0];
+  }
+  
   var attach = (consts.side == "left")? body2Constant(pulley).attach_left: body2Constant(pulley).attach_right;
   var radius = body2Constant(pulley).radius * ((consts.side == "left")? 1: -1);
   

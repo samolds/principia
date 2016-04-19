@@ -777,12 +777,7 @@ function simulationZoom(zoom) {
       setRampWidth(body, bodyConst.rampWidth, true);
       setRampHeight(body, bodyConst.rampHeight, true);
     }
-    /*
-    else if(i == 0){
-      updateSize(body, bodyConst.size);
-    }
-    */
-    
+        
     // Scale within existing keyframe states
     for(var j=0; j < Globals.keyframeStates.length; j++){
       var state = Globals.keyframeStates[j][bIndex(body)];

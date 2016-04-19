@@ -899,7 +899,7 @@ function keyDown(e) {
     Globals.fbdDown = true; 
     drawFBD();
   }
-  if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del
+  if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del and backspace
     e.preventDefault();
 
     var index = bIndex(Globals.selectedBody);
