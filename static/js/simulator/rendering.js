@@ -11,9 +11,9 @@ function drawLoop(){
 
   // Update range, draw simulation at that frame, and increment counter
   $("#simulatorFrameRange").val(Globals.frame)
-  updateRangeLabel();
-  
+    
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  updateRangeLabel();
   highlightKeycanvas(Globals.keyframe, "yellow");
   
   drawMaster();

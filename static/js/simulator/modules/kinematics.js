@@ -57,6 +57,8 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
+        var originalKeyframe = Globals.keyframe;
+        
         if(Globals.numKeyframes > 1){
           if(data.type == "kinematics1D-surface" ||
              data.type == "kinematics1D-spring" ||
@@ -103,6 +105,8 @@ function Kinematics1DModule() {
         }
 
         if(Globals.numKeyframes === 1) attemptSimulation();
+        Globals.keyframe = originalKeyframe;
+        highlightKeycanvas(Globals.keyframe);
         drawMaster();
       });
 

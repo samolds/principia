@@ -71,15 +71,17 @@ function handleDragStop(event, ui){
 }
 
 function updateRangeLabel() { 
-  var dt = Globals.world.timestep();
-  
-  if(Globals.keyframe !== false)
+  var dt = Globals.world.timestep();  
+  var ft = (Globals.keyframes.indexOf(Globals.totalFrames) != -1)? 
+                                                Globals.keyframeTimes[kIndex(Globals.totalFrames)].toPrecision(4) :
+                                                                     (dt*Globals.totalFrames - dt).toPrecision(4) ;
+  if(Globals.keyframes.indexOf(Globals.frame) != -1)
     $('#play-range-label').html(
-      (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4) + " (s)"
+      (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ ft  + " (s)"
     ); 
   else
     $('#play-range-label').html(
-      (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4) + " (s)"
+      (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ ft + " (s)"
     ); 
 }
 
@@ -93,11 +95,11 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
-  
-  updateRangeLabel();  
-  
+      
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+    
+  updateRangeLabel();
     
   // Highlight mini canvas
   highlightKeycanvas(Globals.keyframe, "yellow");
@@ -284,6 +286,7 @@ function updatePropertyRedraw(body, property, value){
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
   
+  // Master clamping location
   if(property == "mass")            value = clamp(0.1,value,10);
   if(property == "surfaceWidth")    value = clamp(1,value,500);
   if(property == "surfaceHeight")   value = clamp(1,value,500);
@@ -375,16 +378,16 @@ function updateCoords(coord_sys){
       $('#y-position-label').html("Y Position");
       $('#x-velocity-label').html("X Velocity");
       $('#y-velocity-label').html("Y Velocity");
-      $('#x-acceleration-label').html("X Acceleration");
-      $('#y-acceleration-label').html("Y Acceleration");
+      $('#x-acceleration-label').html("X Thrust");
+      $('#y-acceleration-label').html("Y Thrust");
     }
     else if(coord_sys == "polar"){
       $('#x-position-label').html("r Position");
       $('#y-position-label').html("Θ Position");
       $('#x-velocity-label').html("r Velocity");
       $('#y-velocity-label').html("Θ Velocity");
-      $('#x-acceleration-label').html("r Acceleration");
-      $('#y-acceleration-label').html("Θ Acceleration");
+      $('#x-acceleration-label').html("r Thrust");
+      $('#y-acceleration-label').html("Θ Thrust");
     }
     
     // Redraw (forces update of displayed values)
