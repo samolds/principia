@@ -2,6 +2,7 @@ package api
 
 import (
 	"appengine"
+	"appengine/blobstore"
 	"appengine/datastore"
 	"controllers/utils"
 	"encoding/json"
@@ -19,6 +20,13 @@ import (
 // entire template
 func ApiErrorResponse(w http.ResponseWriter, err string, code int) {
 	http.Error(w, err, code)
+}
+
+// Takes a blobstore key and serves the file with the appropriate headers
+func BlobstoreFileServer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	blobKey := vars["blobKey"]
+	blobstore.Send(w, appengine.BlobKey(blobKey))
 }
 
 // GET returns JSON all comments associated with the simulationID passed in the url
