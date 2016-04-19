@@ -4,7 +4,6 @@ import (
 	"appengine"
 	"appengine/blobstore"
 	"appengine/datastore"
-	appengineImage "appengine/image"
 	"controllers"
 	"controllers/api"
 	"controllers/utils"
@@ -154,9 +153,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Get the profile image they may or may not
 		var userProfileImageSrc string
-		userProfileImage, err := appengineImage.ServingURL(ctx, pageUser.ImageBlobKey, nil)
-		if err == nil {
-			userProfileImageSrc = userProfileImage.Path
+		if len(string(pageUser.ImageBlobKey)) > 0 {
+			userProfileImageSrc = "/api/img/" + string(pageUser.ImageBlobKey)
 		}
 
 		// Only want to generate an image upload user if it is the user's profile page
@@ -225,14 +223,6 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		newImage := blobs["ProfileImage"]
 		if len(newImage) != 0 {
 			// Delete the old profile photo if they already had one
-			// Delete the url displaying the old thumbnail image in the blobstore
-			err = appengineImage.DeleteServingURL(ctx, pageUser.ImageBlobKey)
-			if err != nil {
-				api.ApiErrorResponse(w, "Can't delete the image's serving URL: "+err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			// Delete the old thumbnail image in the blobstore
 			err = blobstore.Delete(ctx, pageUser.ImageBlobKey)
 			if err != nil {
 				api.ApiErrorResponse(w, "Can't delete the blobstore image: "+err.Error(), http.StatusInternalServerError)
