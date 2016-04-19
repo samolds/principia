@@ -526,7 +526,7 @@ i.fa.fa-size-large {
 
 #positionGraph, #vaGraph {
   height: 240px;
-  width: 100%;
+  width: 520px;
 }
 
 .fa-lg-custom {
@@ -665,14 +665,14 @@ i.left-menu-item-close {
 
 #graphs-slide{
   top: 283px;
-  width: 500px;
+  width: 560px;
   height: 425px;
 }
 
 #solution-slide{
   top: 357px;
   width: 500px;
-  height: 350px;
+  height: 360px;
 }
 
 #overview,
