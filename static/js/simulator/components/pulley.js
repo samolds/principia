@@ -53,8 +53,8 @@ function addPulley(data){
   Globals.pulleyBodyCounter++;
   
   bodyConstants[bodyConstants.length-1].radius = dRadius;  
-  bodyConstants[bodyConstants.length-1].attach_left  = canonicalTransform({x:data.x - dRadius, y:swapYpos(data.y, false)});
-  bodyConstants[bodyConstants.length-1].attach_right = canonicalTransform({x:data.x + dRadius, y:swapYpos(data.y, false)});
+  bodyConstants[bodyConstants.length-1].attach_left  = canonicalTransformNT({x:data.x - dRadius, y:swapYpos(data.y, false)});
+  bodyConstants[bodyConstants.length-1].attach_right = canonicalTransformNT({x:data.x + dRadius, y:swapYpos(data.y, false)});
   
   bodyConstants[bodyConstants.length-1].left_open = true;
   bodyConstants[bodyConstants.length-1].right_open = true;
