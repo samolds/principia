@@ -70,6 +70,13 @@ function handleDragStop(event, ui){
   dirty();
 }
 
+function updateRangeLabel() { 
+  var dt = Globals.world.timestep();
+  $('#play-range-label').html(
+    (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ (dt*Globals.totalFrames - dt).toPrecision(4)
+  ); 
+}
+
 // Scrubs to selected frame
 function onRangeUpdate(){
   // Prevent use of timeline until simulation is complete
@@ -80,6 +87,8 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
+  
+  updateRangeLabel();  
   
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   

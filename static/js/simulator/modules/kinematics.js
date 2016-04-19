@@ -420,6 +420,7 @@ function Kinematics1DModule() {
     highlightKeycanvas(0);
     Globals.keyframe = 0;
     setStateKF(0);
+    updateRangeLabel();
     drawMaster();
   }
   

@@ -374,6 +374,7 @@ $(document).ready(function(){
   $('#glob-timestep-unit').on("change", function() { 
       Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); 
       if(Globals.numKeyframes == 1) attemptSimulation();
+      updateRangeLabel();
       drawMaster();
   });
   
