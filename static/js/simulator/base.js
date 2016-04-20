@@ -209,6 +209,8 @@ $(document).ready(function(){
     contextMenuListener(event);
   });
   $( '#viewport' ).on("click", function(event){
+    if ("activeElement" in document)
+      document.activeElement.blur();
     clickListener(event);
   });
 

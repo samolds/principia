@@ -349,12 +349,14 @@ function Kinematics1DModule() {
     for(var i=0; i<tempKF.length-1; i++)
       addKeyframe();
     
+    Globals.variableMap = restore.variableMap;
     
     for(var i=1; i<tempBC.length; i++)
     {
       var type = tempBC[i].ctype;      
       var x = tempKF[0][i].pos._[0];
-      var y = tempKF[0][i].pos._[1];
+      //var y = tempKF[0][i].pos._[1];
+      var y = 0;
       var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
 
       if (tempBC[i].massType !== undefined)
@@ -387,7 +389,8 @@ function Kinematics1DModule() {
       {        
         var KF = tempKF[i][j];
         Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
-        Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        //Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        Globals.keyframeStates[i][j].pos.y = swapYpos(Globals.variableMap[i][j].posy, false);
         Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
         Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
         Globals.keyframeStates[i][j].acc.x = KF.acc._[0];
@@ -397,8 +400,6 @@ function Kinematics1DModule() {
       }
       
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
-    
-    Globals.variableMap = restore.variableMap;
     
     
     for(var i=tempKF.length-1; i>=0; i--){
