@@ -674,13 +674,13 @@ i.left-menu-item-close {
 #graphs-slide{
   top: 283px;
   width: 560px;
-  height: 425px;
+  height: 47%;
 }
 
 #solution-slide{
   top: 357px;
   width: 500px;
-  height: 360px;
+  height: 42%;
 }
 
 #overview,
@@ -689,7 +689,7 @@ i.left-menu-item-close {
 #toolbox {
   z-index: 1;
   width: 270px;
-  height: 540px;
+  height: 75vh;
   position: absolute;
   background-color: #eeeeee;
   right: -280px;
