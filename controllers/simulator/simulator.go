@@ -56,11 +56,17 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 			return
 		}
 
+    simulationName := formValues["Name"][0]
+		if len(simulationName) > 50 || len(simulationName) == 0 {
+			api.ApiErrorResponse(w, "Simulation Name must not be empty and must be shorter than 50 characters.", http.StatusInternalServerError)
+			return
+		}
+
 		// Create the simulation object
 		creationTime := time.Now()
 		simulation = models.Simulation{
 			KeyName:       keyName,
-			Name:          formValues["Name"][0],
+			Name:          simulationName,
 			Simulator:     formValues["Contents"][0],
 			Type:          simType,
 			Description:   formValues["Description"][0],
@@ -154,8 +160,14 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			return
 		}
 
+    simulationName := formValues["Name"][0]
+		if len(simulationName) > 50 || len(simulationName) == 0 {
+			api.ApiErrorResponse(w, "Simulation Name must not be empty and must be shorter than 50 characters.", http.StatusInternalServerError)
+			return
+		}
+
 		// Update the simulation with new values, including the new thumbnail image key
-		simulation.Name = formValues["Name"][0]
+		simulation.Name = simulationName
 		simulation.Simulator = formValues["Contents"][0]
 		simulation.Description = formValues["Description"][0]
 		simulation.IsPrivate = utils.StringToBool(formValues["IsPrivate"][0])

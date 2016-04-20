@@ -232,9 +232,21 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			pageUser.ImageBlobKey = newImage[0].BlobKey
 		}
 
+    displayName := formValues["DisplayName"][0]
+		if len(displayName) > 50 {
+			api.ApiErrorResponse(w, "Your Display Name must be shorter than 50 characters.", http.StatusInternalServerError)
+			return
+		}
+
+		interests := formValues["Interests"][0]
+		if len(interests) > 1500 {
+			api.ApiErrorResponse(w, "Your Interests must be shorter than 1500 characters.", http.StatusInternalServerError)
+			return
+		}
+
 		// Update user information
-		pageUser.DisplayName = formValues["DisplayName"][0]
-		pageUser.Interests = formValues["Interests"][0]
+		pageUser.DisplayName = displayName
+		pageUser.Interests = interests
 
 		_, err = datastore.Put(ctx, pageUserKey, &pageUser)
 		if err != nil {

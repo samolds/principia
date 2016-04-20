@@ -22,7 +22,7 @@
         {{ if .Data.userIsOwner }}
         <div class="input-field">
           <label for="user-display-name" id="user-display-label">Display Name</label>
-          <input id="user-display-name" value="{{ .Data.user.DisplayName }}" type="text" class="validate">
+          <input id="user-display-name" value="{{ .Data.user.DisplayName }}" type="text" class="validate" maxlength="50">
         </div>
         <div>
           <label>Email</label>
@@ -83,7 +83,7 @@
         {{ if .Data.userIsOwner }}
         <div class="input-field">
           <label for="user-interests">Areas Of Interest:</label>
-          <textarea id="user-interests" class="materialize-textarea" length="120">{{ .Data.user.Interests }}</textarea>
+          <textarea id="user-interests" class="materialize-textarea" length="1500">{{ .Data.user.Interests }}</textarea>
         </div>
         {{ else }}
         <div>

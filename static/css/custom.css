@@ -784,6 +784,8 @@ select.browser-default{
 
   .simulation-thumb {
     background: #222222;
+    width: 180px;
+    height: 135px;
   }
 
   .simulation-thumb-description {

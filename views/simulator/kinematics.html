@@ -64,9 +64,9 @@ var GlobalKeyNames = {
   <li class="simulator-title clickable input-field"> 
     <i class="fa fa-pencil fa-size-tiny prefix"></i>
     {{ if .Data.new }}
-    <input id="simulation-name" type="text" value="New Simulation"></input>
+    <input id="simulation-name" type="text" value="New Simulation" maxlength="50"></input>
     {{ else }}
-    <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}"></input>
+    <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" maxlength="50"></input>
     {{ end }}
   </li>
   <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
@@ -174,7 +174,7 @@ var GlobalKeyNames = {
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
     <div class="clear"></div>
     <div class="input-field">
-      <textarea id="simulation-description" type="text" class="materialize-textarea">{{ .Data.simulation.Description }}</textarea>
+      <textarea id="simulation-description" type="text" class="materialize-textarea" length="1000000">{{ .Data.simulation.Description }}</textarea>
       <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
     </div>
     {{ else if .Data.simulation.Description }}

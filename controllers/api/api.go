@@ -53,8 +53,8 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		formMessage := r.FormValue("Contents")
-		if len(formMessage) < 1 {
-			ApiErrorResponse(w, "Cannot create empty comments", http.StatusBadRequest)
+		if len(formMessage) == 0 || len(formMessage) > 500 {
+			ApiErrorResponse(w, "Cannot create empty comments or comments longer than 500 characters", http.StatusBadRequest)
 			return
 		}
 
