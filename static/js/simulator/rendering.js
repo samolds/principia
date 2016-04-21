@@ -211,11 +211,14 @@ function drawRopeLine(b1, b2){
   
   // Get modifier based on pulley radius and which side of the pulley it is on
   var radius = Globals.bodyConstants[bIndex(b1)].radius;
-  if(Globals.bodyConstants[bIndex(b2)].side == "left")
+  var padding = 5;
+  if(Globals.bodyConstants[bIndex(b2)].side == "left"){
     radius *= -1;
+    padding *= -1;
+  }
   
   ctx.beginPath();
-  ctx.moveTo(x1 + radius/getScaleFactor(),y1);
+  ctx.moveTo(x1 + radius/getScaleFactor() - padding/getScaleFactor(),y1);
   ctx.lineTo(x2,y2);
   ctx.stroke();
 }
@@ -621,7 +624,7 @@ function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
   var originObject = Globals.originObject;
   
-  drawLines();
+  //drawLines();
 
   // Only draw vectors if we aren't currently looking at a FBD
   if(!Globals.fbdDown || !selectedBody) {
@@ -717,6 +720,8 @@ function preRender()
     can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
                  {'x':can.width, 'y':(i + Globals.translation.y % incr)},
                  { strokeStyle: '#eeeeee',lineWidth: 1});
+                 
+  drawLines();
 }
 
 // Sets the world state to the currently selected frame and renders it.
