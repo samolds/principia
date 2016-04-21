@@ -417,7 +417,7 @@ function Kinematics1DModule() {
       }
       
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
-    
+      Globals.originObject = restore.originObject;
     
     for(var i=tempKF.length-1; i>=0; i--){
       Globals.keyframe = i;

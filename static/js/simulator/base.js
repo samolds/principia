@@ -40,7 +40,8 @@ function exportToJson(){
     maxFrames:Globals.maxFrames,
     timelineReady:Globals.timelineReady,
     origin:Globals.origin,
-    coordinateSystem: Globals.coordinateSystem
+    coordinateSystem: Globals.coordinateSystem,
+    originObject: Globals.originObject
   }
   
   return JSON.stringify(json);

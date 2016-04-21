@@ -751,18 +751,17 @@ function drawMaster(){
   var keyframe = Globals.keyframe;
   
   Globals.world.renderer().ctx.clearRect(0, 0, Globals.world.renderer().width, Globals.world.renderer().height);
-  preRender();
-  
+
   if(keyframe !== false){
-    setStateKF(keyframe);
-    world.render(false);
-    postRender(true);
+    setStateKF(keyframe);  
   }
   else if(frame !== false) {
-    setState(frame);
-    world.render(false);
-    postRender(false);
+    setState(frame);  
   } 
+  
+  preRender();    
+  world.render();
+  postRender(Globals.keyframe !== false);  
 }
 
 // zoom == +1 -> Zoom in
