@@ -70,6 +70,21 @@ function handleDragStop(event, ui){
   dirty();
 }
 
+function updateRangeLabel() { 
+  var dt = Globals.world.timestep();  
+  var ft = (Globals.keyframes.indexOf(Globals.totalFrames) != -1)? 
+                                                Globals.keyframeTimes[kIndex(Globals.totalFrames)].toPrecision(4) :
+                                                                     (dt*Globals.totalFrames - dt).toPrecision(4) ;
+  if(Globals.keyframes.indexOf(Globals.frame) != -1)
+    $('#play-range-label').html(
+      (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ ft  + " (s)"
+    ); 
+  else
+    $('#play-range-label').html(
+      (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ ft + " (s)"
+    ); 
+}
+
 // Scrubs to selected frame
 function onRangeUpdate(){
   // Prevent use of timeline until simulation is complete
@@ -80,9 +95,11 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
-  
+      
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+    
+  updateRangeLabel();
     
   // Highlight mini canvas
   highlightKeycanvas(Globals.keyframe, "yellow");
@@ -248,7 +265,7 @@ function updatePropertyRedraw(body, property, value){
     // Update properties within simulator, draw, and return
     onPropertyChanged(index, property.substring(0,3) + "x", point[0], false);
     
-    if(point[1] === -0){
+    if(property.length >= 4 && property.substring(3) === "x" && property != "posx"){
       point[1] = "?";
     }
     
@@ -268,7 +285,23 @@ function updatePropertyRedraw(body, property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(bIndex(body), property, value, false);
+  
+  // Master clamping location
+  if(property == "mass")            value = clamp(0.1,value,10);
+  if(property == "surfaceWidth")    value = clamp(1,value,500);
+  if(property == "surfaceHeight")   value = clamp(1,value,500);
+  if(property == "surfaceFriction") value = clamp(0,value,1);
+  if(property == "rampWidth")       value = clamp(1,value,500);
+  if(property == "rampHeight")      value = clamp(1,value,500);
+  if(property == "rampAngle")       value = clamp(20,value,70);
+  if(property == "rampFriction")    value = clamp(0,value,1);
+  if(property == "k")               value = clamp(0.001,value,0.05);
+  
+  var index = bIndex(body);
+  if(property == "k" && bodyType(body) === "kinematics1D-spring-child")
+    index = body2Constant(body).parent;
+  
+  onPropertyChanged(index, property, value, false);
   
   if(Globals.numKeyframes == 1) attemptSimulation();  
   drawMaster();
@@ -345,16 +378,16 @@ function updateCoords(coord_sys){
       $('#y-position-label').html("Y Position");
       $('#x-velocity-label').html("X Velocity");
       $('#y-velocity-label').html("Y Velocity");
-      $('#x-acceleration-label').html("X Acceleration");
-      $('#y-acceleration-label').html("Y Acceleration");
+      $('#x-acceleration-label').html("X Thrust");
+      $('#y-acceleration-label').html("Y Thrust");
     }
     else if(coord_sys == "polar"){
       $('#x-position-label').html("r Position");
       $('#y-position-label').html("Θ Position");
       $('#x-velocity-label').html("r Velocity");
       $('#y-velocity-label').html("Θ Velocity");
-      $('#x-acceleration-label').html("r Acceleration");
-      $('#y-acceleration-label').html("Θ Acceleration");
+      $('#x-acceleration-label').html("r Thrust");
+      $('#y-acceleration-label').html("Θ Thrust");
     }
     
     // Redraw (forces update of displayed values)
@@ -364,8 +397,15 @@ function updateCoords(coord_sys){
 // Adds a new keyframe, up to the limit
 function addKeyframe(){
   
-  if (Globals.numKeyframes == Globals.maxNumKeyframes)
+  if (Globals.numKeyframes == Globals.maxNumKeyframes){
+    failToast("You have the maximum number of keyframes.");
     return;
+  }
+  
+  if(containsRestricted()){
+    failToast("You must only use point masses components to utilize multiple keyframes.");
+    return;
+  }
   
   if(Globals.running)
     toggleSimulator();
@@ -409,6 +449,8 @@ function addKeyframe(){
       var property = $(event.target).parents().eq(2).attr("principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
+    
+    colorToolbox(false);
   }
 }
 
@@ -451,6 +493,8 @@ function removeKeyframe(event){
       var li = variables[i];
       $(li).children()[1].remove();
     }
+    
+    colorToolbox(true);
   }
   
   // Special case: User deletes currently selected keyframe
@@ -842,8 +886,8 @@ function deleteBody(bodyIndex){
         }
       }
     }
-    // End Spring and Pulley specific logic!
-
+    // End Spring and Pulley specific logic!    
+    
     simulate();
     drawMaster();
     updateKeyframes();
@@ -899,7 +943,7 @@ function keyDown(e) {
     Globals.fbdDown = true; 
     drawFBD();
   }
-  if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del
+  if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del and backspace
     e.preventDefault();
 
     var index = bIndex(Globals.selectedBody);
@@ -975,6 +1019,19 @@ function leftSlideMenuOpen(e)
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
+}
+
+function containsRestricted()
+{
+  var bodies = Globals.world.getBodies();
+  for(var i=0; i<bodies.length; i++)
+  {
+    var type = bodyType(bodies[i]);
+    if(type != "kinematics1D-origin" && type != "kinematics1D-mass" && type != "kinematics1D-origin")
+      return true;
+  }
+  
+  return false;
 }
 
 function leftSlideMenuClose(e) {

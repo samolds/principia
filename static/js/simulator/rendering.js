@@ -11,8 +11,9 @@ function drawLoop(){
 
   // Update range, draw simulation at that frame, and increment counter
   $("#simulatorFrameRange").val(Globals.frame)
-  
+    
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  updateRangeLabel();
   highlightKeycanvas(Globals.keyframe, "yellow");
   
   drawMaster();
@@ -39,17 +40,21 @@ function displayVariableValues(body){
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
-      position = cartesian2Polar([position[0], position[1]]);
-      
+            
       var temp;
-      if(velocity[1] == "?") 
-        temp = velocity[0];      
-      velocity = cartesian2Polar([velocity[0], velocity[1]]);
+      if(position[1] == "?") temp = position[0];      
+      position = cartesian2Polar([position[0], position[1]]);
+      if(temp) position = [temp, "?"];
       
-      if(temp) 
-        velocity = [temp, "?"];
+      temp = null;
+      if(velocity[1] == "?") temp = velocity[0];      
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);      
+      if(temp) velocity = [temp, "?"];
       
+      temp = null;
+      if(acceleration[1] == "?") temp = acceleration[0];
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
+      if(temp) acceleration = [temp, "?"];
     }
        
     $('#general-properties-position-x').val(position[0].toFixed(precision));
@@ -150,7 +155,13 @@ function displayElementValues(bod){
       $('#ramp-properties-height').val(Math.abs(constants.rampHeight));
       $('#ramp-properties-angle').val(Math.abs(constants.rampAngle));
       $('#ramp-properties-friction').val(Math.abs(constants.rampFriction));
+    } else if (constants.ctype === "kinematics1D-spring" || constants.ctype === "kinematics1D-spring-child"){      
+      if(constants.ctype === "kinematics1D-spring")
+        $('#spring-properties-k').val(Math.abs(constants.k));
+      else
+        $('#spring-properties-k').val(Math.abs(Globals.bodyConstants[constants.parent].k));
     }
+    
     
   } else {
     $('#general-properties-nickname').val("");
@@ -637,8 +648,10 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
     $('#general-properties').removeClass('hide');
 
+    
     switch (bodConstants.ctype) {
       case 'kinematics1D-mass':
         $('#pointmass-properties').removeClass('hide');
@@ -650,6 +663,8 @@ function postRender(isKeyframe){
         $('#ramp-properties').removeClass('hide');
         break;
       case 'kinematics1D-spring':
+      case 'kinematics1D-spring-child':
+        $('#spring-properties').removeClass('hide');
         break;
     }
   } else {
@@ -657,6 +672,7 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
   }
 
   if(isKeyframe){
@@ -782,12 +798,7 @@ function simulationZoom(zoom) {
       setRampWidth(body, bodyConst.rampWidth, true);
       setRampHeight(body, bodyConst.rampHeight, true);
     }
-    /*
-    else if(i == 0){
-      updateSize(body, bodyConst.size);
-    }
-    */
-    
+        
     // Scale within existing keyframe states
     for(var j=0; j < Globals.keyframeStates.length; j++){
       var state = Globals.keyframeStates[j][bIndex(body)];
@@ -806,4 +817,24 @@ function simulationZoom(zoom) {
   
   attemptSimulation();
   drawMaster();
+}
+
+function colorToolbox(enable){
+  var restricted = $(".restricted");
+  if(enable){
+    // Color the restricted items green, add draggable/clickable class
+    restricted.css("background", "");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).addClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).off('dragstart');
+    }
+  }
+  else {
+    // Color the restricted items red, remove draggable/clickable class    
+    restricted.css("background", "#998");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).removeClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).on('dragstart', function(event) { event.preventDefault(); });
+    }
+  }
 }

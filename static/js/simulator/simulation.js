@@ -100,6 +100,7 @@ function attemptSimulation(){
             // Missing results on final pass
             if(!results[0] && pass == nKF-2){
               $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.\n";
+              MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
               Globals.timelineReady = false;
               return;
             }        
@@ -113,6 +114,7 @@ function attemptSimulation(){
                 $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!\n";
                 Globals.keyframeTimes[keyframe2] = false;
                 Globals.timelineReady = false;
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
                 return;
               }
               
@@ -177,7 +179,9 @@ function attemptSimulation(){
   // Update the simulation render
   drawMaster();
   
-  //MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
+  updateRangeLabel();
+  
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
 function collisionSolver(){
@@ -289,7 +293,7 @@ function collisionSolver(){
   drawMaster(); 
   
 
-  //MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
 // Creates a shallow copy of the specified variable
@@ -512,7 +516,7 @@ function updateGravity(coordinate, value){
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
-  value = isNaN(value) ? body2Constant(body).size : clamp(1, value, 500);
+  value = isNaN(value) ? body2Constant(body).size : clamp(5, value, 500);
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
 

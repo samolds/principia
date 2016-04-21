@@ -57,6 +57,17 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
+        var originalKeyframe = Globals.keyframe;
+        
+        if(Globals.numKeyframes > 1){
+          if(data.type == "kinematics1D-surface" ||
+             data.type == "kinematics1D-spring" ||
+             data.type == "kinematics1D-pulley" ||
+             data.type == "kinematics1D-ramp"){
+               return;
+             }
+        }
+        
         var canon = canonicalTransform(data);
         data.x = canon.x;
         data.y = canon.y;
@@ -94,6 +105,8 @@ function Kinematics1DModule() {
         }
 
         if(Globals.numKeyframes === 1) attemptSimulation();
+        Globals.keyframe = originalKeyframe;
+        highlightKeycanvas(Globals.keyframe);
         drawMaster();
       });
 
@@ -143,6 +156,9 @@ function Kinematics1DModule() {
 
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
+          
+          if(bodyType(data.body) == "kinematics1D-pulley")
+            movePulley(data);
           
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
@@ -422,6 +438,7 @@ function Kinematics1DModule() {
     highlightKeycanvas(0);
     Globals.keyframe = 0;
     setStateKF(0);
+    updateRangeLabel();
     drawMaster();
   }
   
