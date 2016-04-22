@@ -701,8 +701,10 @@ function postRender(isKeyframe){
   // Draw x grid labels
   var xmod = Math.floor(Globals.translation.x/incr)*incr;
   if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
-  for(var i=-100; i <= can.width+100; i+= incr)    
-    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10);
+  for(var i=-100; i <= can.width+100; i+= incr){  
+    if(Globals.scale < 0 && i%(incr*2)==0) continue;
+    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10, incr);
+  }
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas
