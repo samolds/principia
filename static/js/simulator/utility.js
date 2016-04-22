@@ -3,14 +3,18 @@
   This file contains utility functions for mathematics and physics operations
 */
 
-// Gets the Euclidean distance between the specified points
+/* 
+  Gets the Euclidean distance between the specified points 
+*/
 function distance(x1,y1, x2,y2){
   var dx = x2-x1;
   var dy = y2-y1;
   with(Math){ return sqrt(pow(dx,2)+pow(dy,2)); }
 }
 
-// Returns a state of zero values
+/* 
+  Returns a new state containing zero values 
+*/
 function defaultState(){
   var dstate = { 
     pos: new Physics.vector(),
@@ -21,17 +25,23 @@ function defaultState(){
   return dstate;
 }
 
-// Returns a clone of the provided state's elements
+/* 
+  Returns a clone of the provided state's elements 
+*/
 function cloneState(state){
   var acc = state.acc.clone(); var vel = state.vel.clone(); var pos = state.pos.clone();
   var ang = {"acc": state.angular.acc, "vel": state.angular.vel, "pos": state.angular.pos};
   return {"acc": acc, "vel": vel, "pos": pos, "angular": ang};
 }
 
-//Returns the index of the specified body within the world
+/* 
+  Returns the index of the specified body within the world 
+*/
 function bIndex(body){ return Globals.world.getBodies().indexOf(body); }
 
-// Returns and array of all body indices where showGraph === true
+/* 
+  Returns an array of all body indices where showGraph === true
+*/
 function graphBodyIndices(){
   result = [];
 
@@ -45,29 +55,37 @@ function graphBodyIndices(){
   return result;
 }
 
-//Returns the index of the specified frame as a keyframe
+/*
+  Returns the index of the specified frame as a keyframe
+*/
 function kIndex(frame) { return Globals.keyframes.indexOf(frame); }
 
-// Returns the constants associated with the specified body
+/* 
+  Returns the constants associated with the specified body
+*/
 function body2Constant(body){ return Globals.bodyConstants[bIndex(body)]; }
 
-// Transforms from user-defined coordinate system to default PhysicsJS coordinate system
-function origin2Physics(point){
-  return [point[0] + Globals.origin[0], point[1] + Globals.origin[1]];
-}
+/* 
+  Transforms from user-defined coordinate system with modified origin to default PhysicsJS coordinate system 
+*/
+function origin2Physics(point){ return [point[0] + Globals.origin[0], point[1] + Globals.origin[1]]; }
 
-// Transforms from user-defined coordinate system to default PhysicsJS coordinate system
+/*
+  Transforms from user-defined coordinate system with modified origin to default PhysicsJS coordinate system
+*/
 function origin2PhysicsScalar(coordinate, value){
   var value = parseFloat(value);
   return coordinate == "x"? value + Globals.origin[0]: value + Globals.origin[1];
 }
 
-// Transforms from default PhysicsJS coordinate system to user-defined coordinate system
-function physics2Origin(point){
-  return [point[0] - Globals.origin[0], point[1] - Globals.origin[1]];
-}
+/*
+  Transforms from default PhysicsJS coordinate system to user-defined coordinate system with modified origin
+*/
+function physics2Origin(point){ return [point[0] - Globals.origin[0], point[1] - Globals.origin[1]]; }
 
-// Transforms from Cartesian to Polar (assumes point is in user-defined coordinate system)
+/*
+  Transforms from Cartesian to Polar (assumes point is in user-defined coordinate system)
+*/
 function cartesian2Polar(point){
   var x = point[0];
   var y = point[1];
@@ -79,8 +97,7 @@ function cartesian2Polar(point){
   if(x < 0) theta += 180; // Handles Q2, Q3
   if(x > 0 && y < 0) theta += 360; // Handles Q4 
   
-  if(x == 0)
-  {
+  if(x == 0){
     if(y > 0) theta = 90;
     else if(y < 0) theta = 270;
     else theta = 0;
@@ -89,27 +106,43 @@ function cartesian2Polar(point){
   return [magnitude(x,y), theta];
 }
 
+/*
+  Transforms from polar to cartesian coordinates
+*/
 function polar2Cartesian(point){
   // Note that testing shows that there is potentially ~1e-7 rounding error
   return [point[0] * Math.cos(deg2rad(point[1])), point[0] * Math.sin(deg2rad(point[1]))];
 }
 
+/*
+  Transforms from radians to degrees
+*/
 function rad2deg(rads) { return 57.2957795131 * rads; }
 
+/*
+  Transforms from degrees to radians
+*/
 function deg2rad(degs) { return 0.01745329251 * degs; }
 
+/*
+  Transforms the given value to a user unit type, e.g. meters to kilometers
+  The type of value must be given to note which unit to use when converting
+  Invert can be set to true to convert back
+*/
 function convertUnit(value, type, invert){
   
   if(value == "" || isNaN(value)) 
     return value;
   
-  // No conversion for degrees
+  // No conversion for degrees!
   if(type.slice(-1) == "y" && Globals.coordinateSystem == "polar")
     return value;
   
+  // Alias length and time factors
   var l = Globals.lengthFactor;
   var t = Globals.timeFactor;
   
+  // Apply length and time factors as necessary, otherwise return the value as is
   if(type == "posx" || type == "posy")
     return invert? value * (1.0/l) : value * l;
   else if(type== "velx" || type == "vely")
@@ -120,6 +153,9 @@ function convertUnit(value, type, invert){
     return value;
 }
 
+/*
+  Returns a default label for the specified body
+*/
 function getLabel(body){
 
   switch(bodyType(body)){
@@ -129,11 +165,18 @@ function getLabel(body){
     case 'kinematics1D-ramp':    return Globals.rampBodyCounter;
     case 'kinematics1D-spring':  return Globals.springBodyCounter;
   }
+  
   return 0;
 }
 
+/*
+  Returns the type of the specified body as a string
+*/
 function bodyType(body) { return body2Constant(body).ctype; }
 
+/*
+  Returns the most recently passed keyframe relative to the selected frame
+*/
 function lastKF(){
   for(var frame = Globals.frame; frame >= 0; frame--){
     var keyframe = ($.inArray(frame, Globals.keyframes) != -1)? kIndex(frame): false;
@@ -143,10 +186,19 @@ function lastKF(){
   }
 }
 
+/*
+  Returns the magnitude of the specified x,y values
+*/
 function magnitude(x, y){ return Math.sqrt(x*x + y*y); }
 
+/*
+  Returns x, or limits it to a min/max bound
+*/
 function clamp(min, x, max) { return Math.min(Math.max(x, min), max); }
 
+/*
+  Returns the last assigned value of the specified property for the specified body
+*/
 function getOldValue(body, property){
   var keyframe = getKF();  
   var state = Globals.keyframeStates[keyframe][bIndex(body)];
@@ -167,17 +219,28 @@ function getOldValue(body, property){
   return 0;
 }
 
+/*
+  Swaps a y coordinate to be relative to the bottom of the canvas, or vice versa
+*/
 function swapYpos(value, invert){
   var height = $("#" + Globals.canvasId).children()[0].height;
   return invert? value - height: height - value;
 }
 
-// Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
+/* 
+  Returns either the current keyframe if it is set, or the immediately previous keyframe if it is not
+*/
 function getKF() { return (Globals.keyframe !== false)? Globals.keyframe: lastKF(); }
 
+/*
+  Returns a factor to scale objects by based on current scale level
+*/
 function getScaleFactor() { return Math.pow(2, Globals.scale * -1); }
 
-/*  Uses given data (assumed pixel coordinates) to return result contain PhysicsJS canonical coordinates */
+/*
+  Uses given data (assumed pixel coordinates) to return result contain PhysicsJS canonical coordinates
+  Includes a tranformation cancelling the effects of any camera translation
+*/
 function canonicalTransform(data) { 
   var result = {};
   result.x = data.x * getScaleFactor() - Globals.translation.x * getScaleFactor();
@@ -185,15 +248,20 @@ function canonicalTransform(data) {
   return result;
 }
 
-function canonicalTransformNT(data)
-{
+/*
+  Uses given data (assumed pixel coordinates) to return result contain PhysicsJS canonical coordinates
+  Does not include a transformation to undo camera translation
+*/
+function canonicalTransformNT(data){
   var result = {};
   result.x = data.x * getScaleFactor();
   result.y = swapYpos(data.y, false) * getScaleFactor();
   return result;
 }
 
-/* Returns a value obtained by transforming PhysicsJS canonical coordinate to pixel coordinate (target) */
+/*
+  Returns a value obtained by transforming PhysicsJS canonical coordinate to pixel coordinate (target)
+*/
 function pixelTransform(canon, coordinate, doTranslation){
   
   var scale = getScaleFactor();
@@ -201,7 +269,9 @@ function pixelTransform(canon, coordinate, doTranslation){
   return (coordinate == "x")? canon/scale - translate.x: swapYpos(canon/scale, false) - translate.y;
 }
 
-/* Returns the pixel coordinate of the specified body (current position) */
+/*
+  Returns the pixel coordinate of the specified body (current position on canvas)
+*/
 function pixelCoordinate(body){
   var result = {};
   result.x = body.state.pos.x + Globals.translation.x;

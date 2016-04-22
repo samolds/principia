@@ -1,6 +1,7 @@
 /*
   globals.js -- 
-  This file contains all variables meant for general use by any physics module.
+  This file contains all variables meant for general use by any physics module and contains
+  the simulator's global state
 */
 var Globals = {
 
@@ -25,6 +26,8 @@ var Globals = {
 
   // Saved information for scrubbing through simulation
   // states[0] will always match keyframeStates[0]
+  // states contains one array per frame, which contains one PhysicsJS body.state object per body in the simulation
+  // These values are not canonical. They depend on the camera position and screen size
   states: [],
 
   // Position values for the position line graph
@@ -36,16 +39,17 @@ var Globals = {
   // Acceleration values for the acceleration line graph
   accelStates: [],
 
-  // Currently selected keyframe INDEX (without respect to timeline/states frames), FALSE if not on keyframe
+  // Currently selected keyframe index (without respect to timeline/states frames), false if not on keyframe
   keyframe: 0,
   
-  // State at each keyframe (One inner array per keyframe)
+  // State at each keyframe (One inner array per keyframe, COUNT(bodies) state entries per inner array)
+  // These values are not canonical. They depend on the camera position and screen size
   keyframeStates: [[]],
 
   // Time associated with each keyframe (false if unknown)
   keyframeTimes: [0],
 
-  // Index of key frames within timeline (i.e. states) (false if not associated with timeline frame yet)
+  // Index of key frames within timeline (false if not associated with timeline frame yet)
   keyframes: [0],
 
   // Number of keyframes for current simulation
@@ -64,7 +68,8 @@ var Globals = {
   selectedBody: false,
 
   // For each keyframe:
-  // A list of bodies and their associated variable values  
+  // A list of bodies and their associated variable values
+  // Variable values are CANONICAL: they contain the true coordinates irrespective of camera location and screen size
   variableMap: [[]],
 
   // Equation solver for currently loaded module
@@ -82,17 +87,14 @@ var Globals = {
   // False if the origin is a fixed point, otherwise the origin moves along with the object stored in this variable
   originObject: false,
   
-  // Coordinate system currently used (Cartesian or Polar)
+  // Coordinate system currently used (cartesian or polar)
   coordinateSystem: "cartesian",
 
+  // Counters used for each body (used to assign default nicknames)
   massBodyCounter: 0,
-
   pulleyBodyCounter: 0,
-
   surfaceBodyCounter: 0,
-
   rampBodyCounter: 0,
-
   springBodyCounter: 0,
 
   // Flags for keys being held down or that vectors have been updated
@@ -127,10 +129,10 @@ var Globals = {
   // Displayed precision (Under the hood, maintains default precision)
   dPrecision: 3,
   
-  // Number of pixels within range for attaching objects (for springs or moving origin)
+  // Number of pixels within range for attaching objects (for springs, moving origin, pulleys)
   delta: 50,
   
-  // Minimum and maximum scale factor
+  // Minimum and maximum scale factor clicks
   minScale: -2,  
   maxScale: 3,
   
@@ -153,22 +155,24 @@ var Globals = {
               "/static/img/logo/logo.png",
               ],
 
-// Number of frames to attempt to simulate before declaring simulation failure
+  // Number of frames to attempt to simulate
   maxFrames: 1000,
   
+  // Maximum number of keyframes
   maxNumKeyframes: 5,
   
+  // Maximum number of bodies
   maxNumBodies: 20,
 
-
-  // Panning around the canvas
+  // Last position of cursor when panning
   lastPos: {x: 0, y: 0},
-  isPanning: false,
   
+  // Flag raised when panning is in progress
+  isPanning: false,
+
+  // The sum total of how the camera has been adjusted by panning
   translation: {x: 0, y: 0}
 };
-
-
 
 //context menu 
 var menu = document.querySelector("#context-menu");

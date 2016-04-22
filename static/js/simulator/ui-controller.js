@@ -25,7 +25,9 @@ $(".draggable").draggable({
     zIndex: 20,
 });
 
-// Event fired when user is done dragging component that is not part of PhysicJS world (origin target)
+/* 
+  Event fired when user is done dragging component that is not part of PhysicJS world (origin target)
+*/
 function handleUIDragStop(event, ui){
   // Left and top of helper img
   var left = ui.offset.left;
@@ -46,7 +48,9 @@ function handleUIDragStop(event, ui){
   drawMaster();
 }
 
-// Event fired when user is done dragging component from toolbox
+/* 
+  Event fired when user is done dragging component from toolbox
+*/
 function handleDragStop(event, ui){  
   var type = ui.helper[0].getAttribute("component");
 
@@ -70,11 +74,18 @@ function handleDragStop(event, ui){
   dirty();
 }
 
+/*
+  Redisplays the time counter above the range
+*/
 function updateRangeLabel() { 
-  var dt = Globals.world.timestep();  
+  var dt = Globals.world.timestep(); // dt value is property of world
+  
+  // For final time: Use either dt * the frame index, or an analytically solved keyframe time
   var ft = (Globals.keyframes.indexOf(Globals.totalFrames) != -1)? 
                                                 Globals.keyframeTimes[kIndex(Globals.totalFrames)].toPrecision(4) :
                                                                      (dt*Globals.totalFrames - dt).toPrecision(4) ;
+  
+  // For current time: As above, use either dt * the frame index, or an analytically solved keyframe time
   if(Globals.keyframes.indexOf(Globals.frame) != -1)
     $('#play-range-label').html(
       (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ ft  + " (s)"
@@ -85,7 +96,9 @@ function updateRangeLabel() {
     ); 
 }
 
-// Scrubs to selected frame
+/* 
+  Scrubs to selected frame
+*/
 function onRangeUpdate(){
   // Prevent use of timeline until simulation is complete
   if(!Globals.timelineReady){
@@ -108,24 +121,25 @@ function onRangeUpdate(){
   updatePVAChart();
 }
 
-// Toggles the state of the simulator between running and paused
+/*
+  Toggles the state of the simulator between running and paused
+*/
 function toggleSimulator(){
   if(!Globals.timelineReady) return;
   var span = $("#playpause").children()[0];
   Globals.running = !Globals.running;
   
-  // Set frame delay based on total number of delays.
-  // TODO: Consider having the user specify this via global options
+  // Set frame delay for a default animation speed  
   Globals.delay = 25;
   
-  if (Globals.running) {
+  if (Globals.running) { // Toggle off
     Globals.anim = setInterval(function() { drawLoop() }, Globals.delay);
     $("#play-pause-icon").removeClass("fa-play")
     $("#play-pause-icon").removeClass("play-pad")
     $("#play-pause-icon").addClass("fa-pause") 
     $("#play-pause-icon").addClass("pause-pad")   
   } 
-  else {
+  else { // Toggle on
     clearInterval(Globals.anim);
     $("#play-pause-icon").removeClass("fa-pause")
     $("#play-pause-icon").removeClass("pause-pad")
@@ -138,10 +152,14 @@ function toggleSimulator(){
   }
 }
 
-// Sets a boolean property to the specified value
+/* 
+  Sets a boolean property to the specified value 
+*/
 function updateBooleanProperty(body, property, value){
   Globals.bodyConstants[bIndex(body)][property] = value;
 
+  // Three primary boolean properties are permitted to be updated:
+  // Displaying vectors, tip-to-tail-vectors, and graphs
   if (property === "vectors") {
     $(".vector-toggle").prop("checked", value)
   } else if (property === "vectors_ttt") {
@@ -165,11 +183,14 @@ function updateBooleanProperty(body, property, value){
     }
   }
 
+   // Redraw
   drawMaster();
 }
 
-// Handler for clicking a mini canvas and setting state to that keyframe
-// n can either be a string containing a dash followed by the keyframe number or the number itself
+/*
+  Handler for clicking a mini canvas and setting state to that keyframe
+  n can either be a string containing a dash followed by the keyframe number or the number itself
+*/
 function selectKeyframe(n){
 	var frame = isNaN(n)? n.target.id.split("-")[1]: n;
 	Globals.keyframe = parseInt(frame);  
@@ -196,8 +217,12 @@ function selectKeyframe(n){
 	drawMaster();
 }
 
+/*
+  Handle assigning transparency to objects with unknown positions
+  Also removes transparency is an object has known positions
+*/
 function assignAlpha(){
-  // Handle assigning transparency to objects with unknown positions
+  
   var frame = getKF();
   var variables = Globals.variableMap;
   for(var i=1; i < Globals.world.getBodies().length; i++){
@@ -211,13 +236,18 @@ function assignAlpha(){
   }
 }
 
+/*
+  Updates the nickname of the specified body
+*/
 function updateNickname(body, name){
   body2Constant(body).nickname = name;
   dirty();
   drawMaster();
 }
 
-// Wrapper for updating properties followed by immediate resimulate and redraw
+/* 
+  Wrapper for updating properties followed by immediate resimulate and redraw 
+*/
 function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
@@ -307,6 +337,9 @@ function updatePropertyRedraw(body, property, value){
   drawMaster();
 }
 
+/*
+  Swaps HTML inputs between text/number based on whether they contain "unknown" (variables) or a value
+*/
 function selectPropertyInputType(body, property){
   var index = bIndex(body);
   var type = isNaN(Globals.variableMap[getKF()][index][property])? "text": "number";
@@ -350,13 +383,20 @@ function selectPropertyInputType(body, property){
   }
 }
 
+/*
+  Changes the specified body's specified property to the opposite of its current state (known/unknown)
+*/
 function toggleUnknown(body, property){
+  
+  // Unknowns must be toggled within a keyframe
   if(Globals.keyframe === false) {
     var frame = lastKF();
     setStateKF(frame);
     Globals.keyframe = frame;
     highlightKeycanvas(Globals.keyframe);
   }
+  
+  // Swap between NaN to indicate unknown or 0 to indicate a known value that can be modified
   var index = bIndex(body);
   if(isNaN(Globals.variableMap[Globals.keyframe][index][property])){
     onPropertyChanged(index, property, 0, false);
@@ -365,14 +405,20 @@ function toggleUnknown(body, property){
     onPropertyChanged(index, property, Number.NaN, false);
   }
   
+  // Adjust the HTML input type to match
   selectPropertyInputType(body, property)
   
+  // Redraw the frame
   drawMaster();
 }
 
-// Update the coordinate system to 'polar' or 'cartesian'
+/* 
+  Update the coordinate system to 'polar' or 'cartesian' 
+*/
 function updateCoords(coord_sys){
     Globals.coordinateSystem = coord_sys;
+    
+    // Swap HTML display
     if(coord_sys == "cartesian"){
       $('#x-position-label').html("X Position");
       $('#y-position-label').html("Y Position");
@@ -394,14 +440,18 @@ function updateCoords(coord_sys){
     drawMaster();
   }
 
-// Adds a new keyframe, up to the limit
+/* 
+  Handler for adding a new keyframe, up to the limit
+*/
 function addKeyframe(){
   
+  // Don't allow multiple keyframes if the user reaches the limit
   if (Globals.numKeyframes == Globals.maxNumKeyframes){
     failToast("You have the maximum number of keyframes.");
     return;
   }
   
+  // Don't allow multiple keyframes if there is a restricted component
   if(containsRestricted()){
     failToast("You must only use point mass components to utilize multiple keyframes.");
     return;
@@ -410,6 +460,7 @@ function addKeyframe(){
   if(Globals.running)
     toggleSimulator();
   
+  // Append a new keyframe-tile div along with the mini-canvas and time input
   $('#keyframe-list').append("<li> " +
                      " <div class='keyframe-tile'> " +
                       "  <div class='remove-keyframe-btn'> " +
@@ -425,13 +476,17 @@ function addKeyframe(){
                       " </div> " +
                    " </li>");
 
+  // Register events for the newly added keyframe
   $('#keyframe-' + (Globals.numKeyframes)).on("click", function(event) { selectKeyframe(event); } );
   $('#remove-keyframe-' + (Globals.numKeyframes)).on("click", function(event) { removeKeyframe(event); } );
     
+  // Copy bodies into new keyframe
   pushDuplicates();
   
+  // Increment keyframe counter
   Globals.numKeyframes++;
   
+  // If multiple keyframes just became available, add an input to mark unknowns to valid fields
   if(Globals.numKeyframes == 2)
   {
     var variables = $("[principia-property]");
@@ -445,15 +500,20 @@ function addKeyframe(){
       "</div>");
     }
     
+    // Register event for new input
     $('.input-field-unknown').on("click", function(event){
       var property = $(event.target).parents().eq(2).attr("principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
     
+    // Disable components that don't work with multiple keyframes
     colorToolbox(false);
   }
 }
 
+/*
+  Handler for clicking the delete keyframe button
+*/
 function removeKeyframe(event){
   var eventFrame = event.target;  
   
@@ -467,6 +527,7 @@ function removeKeyframe(event){
   
   var keyframeTiles = $(".keyframe-tile");
   
+  // Reassign indices of each keyframe tile
   for(var i=index+1; i<keyframeTiles.length; i++)
   {
     var keyframeTile = keyframeTiles[i];
@@ -481,10 +542,11 @@ function removeKeyframe(event){
   $(eventFrame).parents().eq(3).remove();
   Globals.numKeyframes--;
   
+  // Returned to sandbox mode:
   if(Globals.numKeyframes == 1)
   {
-    $(".input-field-variable").removeClass("input-field-variable");
-    
+    // Disable input and event handler for adding variables
+    $(".input-field-variable").removeClass("input-field-variable");    
     $('.input-field-unknown').off();
     
     var variables = $("[principia-property]");
@@ -494,6 +556,7 @@ function removeKeyframe(event){
       $(li).children()[1].remove();
     }
     
+    // Re-enable restricted components
     colorToolbox(true);
   }
   
@@ -506,6 +569,9 @@ function removeKeyframe(event){
   }
 }
 
+/*
+  Updates the length factor
+*/
 function updateLengthUnit(factor){
   Globals.lengthFactor = parseFloat(factor);
   
@@ -513,6 +579,9 @@ function updateLengthUnit(factor){
   drawMaster();
 }
 
+/*
+  Updates the time factor
+*/
 function updateTimeUnit(factor){
   Globals.timeFactor = parseFloat(factor);
   
@@ -524,6 +593,9 @@ var menu = document.querySelector(".context-menu");
 var menuState = 0;
 var activeClassName = "context-menu--active";
 
+/*
+  Gets a mouse position relative to the canvas
+*/
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -532,6 +604,9 @@ function getMousePos(canvas, evt) {
   };
 }
 
+/*
+  Enables the context menu
+*/
 function toggleMenuOn() {
   if ( menuState !== 1 ) {
     menuState = 1;
@@ -539,6 +614,9 @@ function toggleMenuOn() {
   }
 }
 
+/*
+  Disables the context menu
+*/
 function toggleMenuOff() {
   if ( menuState !== 0 ) {
     menuState = 0;
@@ -546,13 +624,16 @@ function toggleMenuOff() {
   }
 }
 
+/*
+  Event handler for a custom context menu
+*/
 function contextMenuListener(event) {
   if (Globals.selectedBody === false) {
     toggleMenuOff();
     return;
   }
 
-  // override normal context menu
+  // Override normal context menu
   event.preventDefault();
 
   var canvas = document.getElementById("viewport");
@@ -591,6 +672,9 @@ function contextMenuListener(event) {
   }
 }
 
+/*
+  Handler that removes context menu after a standard click
+*/
 function clickListener(e) {
   var button = e.which || e.button;
   if ( button === 1 ) {
@@ -598,6 +682,9 @@ function clickListener(e) {
   }
 }
 
+/*
+  Toggles the menu off when clicking outside the canvas
+*/
 function bodyClickListener(e) {
   var id = e.target.id;
   if (id === 'simulation-name' || id === 'simulation-description'
@@ -608,22 +695,31 @@ function bodyClickListener(e) {
   }
 }
 
+/*
+  Handles panning the camera and keeping track of the resulting
+  global translation
+*/
 function panZoomUpdate(data) {
   var bodies = Globals.world.getBodies();
   var mouseX = data.x;
   var mouseY = data.y;
+  
+  // Find the difference of mouse positions
   var dx = mouseX - Globals.lastPos.x;
   var dy = mouseY - Globals.lastPos.y;
   
   var can = Globals.world.renderer();
 
+  // Store the current mouse position for the next update
   Globals.lastPos.x = mouseX;
   Globals.lastPos.y = mouseY;
-  var trans = Globals.translation;
   
+  // Accumulate global translation
+  var trans = Globals.translation;  
   trans.x += dx; 
   trans.y += dy;
   
+  // Redraw the frame
   drawMaster();
 }
 
@@ -692,32 +788,40 @@ function positionMenu(e) {
   }
 }
 
-// Selects and centers the camera on the body with the specified index
+/* 
+  Selects and centers the camera on the body with the specified index
+*/
 function centerBody(i){  
   selectBody(i);
   var bodies = Globals.world.getBodies();
   
+  // Find the coordinates that would center the body
   var x = -Globals.selectedBody.state.pos.x + Globals.world.renderer().width/2;
   var y = swapYpos(Globals.selectedBody.state.pos.y, false) - Globals.world.renderer().height/2;
   
+  // Translate the camera to those coordintates and draw the frame
   Globals.translation.x = x;
   Globals.translation.y = y;
-
   drawMaster();
 }
 
+/*
+  Populates the overview tab with entries
+*/
 function populateOverview(e) {
 
   var bodies = Globals.world.getBodies();
   var consts = Globals.bodyConstants;
+  
+  // Clear the current overview
   var $list = $("#overview-list");
-
   $list.html("");
 
+  // For each (non-origin) body:
   for(var i = 1; i < bodies.length; i++)
   {
-    var img;
-    //img = bodies[i].view;
+    // Find an appropriate image
+    var img;    
     switch(consts[i].ctype)
     {
       case "kinematics1D-mass":
@@ -737,6 +841,8 @@ function populateOverview(e) {
         img = "/static/img/toolbox/spring.png";
         break;
     }
+    
+    // Add a matching li with the image, nickname, and delete button to the overview
      $list.append(
     "<li >" +
       "<div class ='row clickable'>"+
@@ -755,6 +861,9 @@ function populateOverview(e) {
   }
 }
 
+/*
+  Deletes the body with the specified index from the world
+*/
 function deleteBody(bodyIndex){
   // If called without a parameter, get the index of the currently selected body
   if (bodyIndex === undefined) {
@@ -912,9 +1021,13 @@ function deleteBody(bodyIndex){
   }
 }
 
+/*
+  Selects the body with the specified index
+*/
 function selectBody(bodyIndex){
   Globals.selectedBody = Globals.world.getBodies()[bodyIndex];
   
+  // Update HTML element input types based on status of each variable
   selectPropertyInputType(Globals.selectedBody, "posx");
   selectPropertyInputType(Globals.selectedBody, "posy");
   selectPropertyInputType(Globals.selectedBody, "velx");
@@ -922,18 +1035,23 @@ function selectBody(bodyIndex){
   selectPropertyInputType(Globals.selectedBody, "accx");
   selectPropertyInputType(Globals.selectedBody, "accy");
     
+  // Open the globals tab (origin was selected) or the properties tab (some other body was selected)
   if (bodyIndex === 0 && !$("#globalprops-tab").hasClass("active-side-menu-item"))
     $("#globalprops-tab").click();
   else if (!$("#elementprops-tab").hasClass("active-side-menu-item"))
     $("#elementprops-tab").click();
     
+  // Redraw
   drawMaster();
 }
 
-function keyUp(e)
-{
+/*
+  Custom event handler for key releases
+*/
+function keyUp(e){
   if ($(document.activeElement).is("input") || $(document.activeElement).is("textarea"))
     return;
+  
   var wasSet = (Globals.aDown || Globals.vDown);
   
   if (e.keyCode == 86) Globals.vDown = false;
@@ -943,6 +1061,7 @@ function keyUp(e)
     drawFBD();
   }
     
+  // Lower flag for vector modification and rerun the simulation
   if(!Globals.vDown && !Globals.aDown){
     Globals.vChanging = false;
     if(Globals.numKeyframes == 1 && wasSet)
@@ -950,6 +1069,9 @@ function keyUp(e)
   }
 }
 
+/*
+  Custom event handler for key presses
+*/
 function keyDown(e) {
   if ($(document.activeElement).is("input") || $(document.activeElement).is("textarea"))
     return;
@@ -963,17 +1085,35 @@ function keyDown(e) {
   if((e.keyCode == 8 || e.keyCode == 46) && Globals.selectedBody) { // del and backspace
     e.preventDefault();
 
+    // Delete the specified body, so long as it is not the origin!
     var index = bIndex(Globals.selectedBody);
     if(index !== 0)
       deleteBody(index);
   }
  
+  // Raise flag that a vector is being modified
   if(Globals.vDown || Globals.aDown)
     Globals.vChanging = true;
 }
 
-function rightSlideMenuOpen(e)
-{
+/*
+  Returns true if this simulation contains an element that restricts multiple keyframes, otherwise false
+*/
+function containsRestricted(){
+  var bodies = Globals.world.getBodies();
+  for(var i=0; i<bodies.length; i++){
+    var type = bodyType(bodies[i]);
+    if(type != "kinematics1D-origin" && type != "kinematics1D-mass" && type != "kinematics1D-origin")
+      return true;
+  }
+  
+  return false;
+}
+
+/*
+  Opens the right slide menu
+*/
+function rightSlideMenuOpen(e){
   id = e.currentTarget.id;
   selector = "";
   if(id == "toolbox-tab"){
@@ -998,7 +1138,10 @@ function rightSlideMenuOpen(e)
   }
 }
 
-function rightSlideMenuClose(e) {
+/*
+  Closes the right slide menu
+*/
+function rightSlideMenuClose(e){
   $("#toolbox").css("right", "-280px");
   $("#elementprops").css("right", "-280px");
   $("#globalprops").css("right", "-280px");
@@ -1010,8 +1153,10 @@ function rightSlideMenuClose(e) {
   $("#overview-tab").removeClass("active-side-menu-item");
 }
 
-function leftSlideMenuOpen(e)
-{
+/*
+  Opens the left slide menu
+*/
+function leftSlideMenuOpen(e){
   id = e.currentTarget.id;
   selector = "";
   if(id == "prompt-tab"){
@@ -1038,19 +1183,9 @@ function leftSlideMenuOpen(e)
   }
 }
 
-function containsRestricted()
-{
-  var bodies = Globals.world.getBodies();
-  for(var i=0; i<bodies.length; i++)
-  {
-    var type = bodyType(bodies[i]);
-    if(type != "kinematics1D-origin" && type != "kinematics1D-mass" && type != "kinematics1D-origin")
-      return true;
-  }
-  
-  return false;
-}
-
+/*
+  Closes the left slide menu
+*/
 function leftSlideMenuClose(e) {
   $("#prompt-slide").css("left", "-600px");
   $("#keyframes-slide").css("left", "-600px");

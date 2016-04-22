@@ -3,7 +3,10 @@
   This file defines functions related to 'surface' physics components
 */
 
-// Add a surface component to current world using the specified coordinates
+/*
+  Add a surface component to current world using the specified canonical coordinates in the data object
+  This function sets up associated constants and variables and returns the PhysicsJS component that was added
+*/
 function addSurface(data){
   var world = Globals.world;
   var bodyConstants = Globals.bodyConstants;
@@ -46,6 +49,9 @@ function addSurface(data){
   return component;
 }
 
+/*
+  Updates a surface-specific property with the specified value
+*/
 function updateSurface(body, property, value) {
   if (bodyType(body) !== "kinematics1D-surface")
     return;
@@ -62,6 +68,9 @@ function updateSurface(body, property, value) {
   }
 }
 
+/*
+  Modifies the width of the specified surface (within reasonable limits)
+*/
 function setSurfaceWidth(body, value) {
   value = parseFloat(value);
   if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
@@ -75,6 +84,9 @@ function setSurfaceWidth(body, value) {
   Globals.bodyConstants[bIndex(body)]["surfaceWidth"] = value.toFixed(Globals.dPrecision);
 }
 
+/*
+  Modifies the height of the specified surface (within reasonable limits)
+*/
 function setSurfaceHeight(body, value) {
   value = parseFloat(value);
   if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
@@ -88,6 +100,9 @@ function setSurfaceHeight(body, value) {
   Globals.bodyConstants[bIndex(body)]["surfaceHeight"] = value.toFixed(Globals.dPrecision);
 }
 
+/*
+  Modifies the friction of the specified surface (within reasonable limits)
+*/
 function setSurfaceFriction(body, value) {
   value = parseFloat(value);
   if (Math.abs(value) > 1.0 || value < 0.0 || isNaN(value))

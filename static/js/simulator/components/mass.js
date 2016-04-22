@@ -3,8 +3,11 @@
   This file defines functions related to 'mass' physics components
 */
 
-// Add a mass component to current world using the specified coordinates
-// massType === "square" or "round"
+/*
+  Add a mass component to current world using the specified canonical coordinates in the data object
+  massType === "square" or "round": Determines how the mass will be rendered
+  This function sets up associated constants and variables and returns the PhysicsJS component that was added
+*/
 function addMass(data, massType){
   var world = Globals.world;
   var bodyConstants = Globals.bodyConstants;
@@ -69,22 +72,27 @@ function addMass(data, massType){
 
   // Add the component to the world and update all keyframes
   world.add(component);
-  bodyConstants[bodyConstants.length-1].attachedTo = [];
+  bodyConstants[bodyConstants.length-1].attachedTo = []; // This constant is assigned first
   updateKeyframes([component]);
   Globals.massBodyCounter++;
                   
-  // Assign constants
+  // Assign constants:
+  
+  // Determines how this point mass is displayed:
   bodyConstants[bodyConstants.length-1].massType = massType;  
   bodyConstants[bodyConstants.length-1].size = size;
   bodyConstants[bodyConstants.length-1].img  = imgIdx;
+  
+  // Toggles for displaying (optionally tip-to-tail) vectors and a graph of this mass
   bodyConstants[bodyConstants.length-1].vectors = true;
   bodyConstants[bodyConstants.length-1].vectors_ttt = false;
   bodyConstants[bodyConstants.length-1].showGraph = false;
+  
+  // Default name and value for this mass
   bodyConstants[bodyConstants.length-1].nickname = "mass " + (getLabel(component));
   bodyConstants[bodyConstants.length-1].mass = 1.0;
-  
-  
-  // Allow a mass to attach directly to a spring or pulley
+
+  // Allow a mass to attach directly to a spring or pulley as it is placed
   attachSpring(component);
   attachPulley(component);
   

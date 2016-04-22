@@ -3,8 +3,10 @@
   This file contains functions related to running (but not displaying) the underlying simulation.
 */
 
-// Attempts to run a simulation using the currently defined keyframes and variables.
-// A user can only access the timeline if this method succeeds.
+/* 
+  Attempts to run a simulation using the currently defined keyframes and variables.
+  A user can only access the timeline if this method succeeds.
+*/
 function attemptSimulation(){
   
   var world          = Globals.world;
@@ -122,22 +124,26 @@ function attemptSimulation(){
               if(keyframe2 == nKF-1)
                 Globals.totalFrames = Math.ceil(Globals.keyframeTimes[keyframe2]/Globals.world.timestep());
             }
-                   
+  
+            // Update initial keyframe states to match solved results
             keyframeStates[keyframe1][body]["pos"]["x"] = results[1]["x0"];
             keyframeStates[keyframe1][body]["pos"]["y"] = swapYpos(results[1]["y0"], false);
             keyframeStates[keyframe1][body]["vel"]["x"] = results[1]["vx0"];
             keyframeStates[keyframe1][body]["vel"]["y"] = -results[1]["vy0"];
 
+            // Update initial keyframe variables to match solved results
             kf1_variables[body].posx = results[1]["x0"];
             kf1_variables[body].posy = results[1]["y0"];
             kf1_variables[body].velx = results[1]["vx0"];
             kf1_variables[body].vely = results[1]["vy0"];
             
+            // Update final keyframe states to match solved results
             keyframeStates[keyframe2][body]["pos"]["x"] = results[1]["xf"];
             keyframeStates[keyframe2][body]["pos"]["y"] = swapYpos(results[1]["yf"], false);
             keyframeStates[keyframe2][body]["vel"]["x"] = results[1]["vxf"];
             keyframeStates[keyframe2][body]["vel"]["y"] = -results[1]["vyf"];
             
+            // Update final keyframe variables to match solved results
             kf2_variables[body].posx = results[1]["xf"];
             kf2_variables[body].posy = results[1]["yf"];
             kf2_variables[body].velx = results[1]["vxf"];
@@ -157,6 +163,7 @@ function attemptSimulation(){
       } // End for-each keyframe
     } // End for-each pass
             
+    // Update the range with the solved number of frames
     $('#simulatorFrameRange')[0].max = Globals.totalFrames;
     
     // Associate keyframes with a real frame
@@ -177,13 +184,16 @@ function attemptSimulation(){
   simulate();
   
   // Update the simulation render
-  drawMaster();
-  
+  drawMaster();  
   updateRangeLabel();
   
+  // Typeset any MathJax
   MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
 
+/*
+  Special case of the solver to handle computing a heading for when two bodies collide
+*/
 function collisionSolver(){
   var world          = Globals.world;
   var solver         = Globals.solver;
@@ -200,11 +210,11 @@ function collisionSolver(){
   world.getBodies()[2].treatment = "ghost";
   
   // Variables should be easier to generalize than the S.o.E., but for now,
-  // assume body 1 is the coast guard and body 2 is the other boat.
+  // assume body 1 is the origin and body 2 is the target
   var coast_guard = world.getBodies()[1].state;
   var other_boat  = world.getBodies()[2].state;
   
-  // Read in x0 vx, y0 vy, C (First 4 are from other boat, C is coast guard speed)
+  // Read in x0 vx, y0 vy, C (First 4 are from target, C is speed of origin)
   var x0 = other_boat.pos.x - Globals.origin[0];
   var y0 = swapYpos(other_boat.pos.y, false) - Globals.origin[1];
   var vx = other_boat.vel.x;
@@ -214,7 +224,7 @@ function collisionSolver(){
   var polar_pos = cartesian2Polar([x0, y0]);
   var polar_vel = cartesian2Polar([vx, vy]);
       
-  // This is the gross hard-coded math that doesn't generalize yet, but can at least
+  // This is the gross hard-coded math that doesn't generalize well yet, but can at least
   // work with other values for the same type of problem.
   var termA = 2*y0*vy + 2*x0*vx;
   var termB = -(C*C) + vx*vx + vy*vy;    
@@ -271,6 +281,7 @@ function collisionSolver(){
   var fx = Globals.keyframeStates[0][1].pos.x + Globals.keyframeStates[0][1].vel.x * t;
   var fy = Globals.keyframeStates[0][1].pos.y + Globals.keyframeStates[0][1].vel.y * t;
   
+  // Save solved vales in keyframe states
   Globals.keyframeStates[1][1].pos.x = fx;
   Globals.keyframeStates[1][1].pos.y = fy;
   Globals.keyframeStates[1][1].vel.x = result[0];
@@ -287,16 +298,19 @@ function collisionSolver(){
     drawMaster();
   }
   
+  // Highlight and render the first frame
   highlightKeycanvas(0);
   Globals.keyframe = 0;
   Globals.timelineReady = true;
   drawMaster(); 
   
-
+  // Typeset the math
   MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-details"]);
 }
 
-// Creates a shallow copy of the specified variable
+/*
+  Creates a shallow copy of the specified variable
+*/
 function cloneVariable(variable){
   var out = {};
   for(var key in variable)
@@ -304,17 +318,20 @@ function cloneVariable(variable){
   return out;
 }
 
-// Adds a variable object to each keyframe
+/*
+  Adds a variable object to each keyframe
+*/
 function addToVariableMap(variable){
   for(var i=0; i < Globals.numKeyframes; i++)
     Globals.variableMap[i].push(cloneVariable(variable));
 }
 
-// Pushes a duplicate variable map and keyframe state; used when
-// adding a new keyframe so that it ends up with the same bodies.
+/*
+  Pushes a duplicate variable map and keyframe state; used when
+  adding a new keyframe so that it ends up with the same bodies.
+*/
 function pushDuplicates(){
   // Previous keyframe, with one variable map per body
-  
   // The variable map is already built if simulation is being loaded
   if(!Globals.loading){
     // If this is an active simulation, the variables must be copied to the new keyframe
@@ -344,7 +361,9 @@ function pushDuplicates(){
   Globals.timelineReady = false;
 }
 
-// Having solved for all variable, iterates through the simulation states and saves all resulting frames.
+/* 
+  Having solved for all variables, iterates through the simulation states and saves all resulting frames.
+*/
 function simulate(){
   var i;
   var j;
@@ -416,15 +435,20 @@ function simulate(){
         y: Math.sqrt(Math.pow(Globals.states[j][i].acc.y, 2) + Math.pow(Globals.states[j][i].acc.x, 2))
       });
     }
+    
+    // Integrates velocity/position
     Globals.world.step();
   }
   
+  // Highlight the first frame and mark the timeline as ready
   highlightKeycanvas(0);    
   Globals.keyframe = 0;
   Globals.timelineReady = true;
 }
 
-// Updates a variable in the specified body to have the specified value
+/* 
+  Updates a variable in the specified body to have the specified value 
+*/
 function updateVariable(body, variable, value){
   if(Globals.loading) return;
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
@@ -443,7 +467,9 @@ function updateVariable(body, variable, value){
     
 }
 
-// Set the state of the world to match keyframe n
+/*
+  Set the state of the world to match keyframe n
+*/
 function setStateKF(n){
   var bodies = Globals.world.getBodies();
   for (var i = 0; i < bodies.length; i++){
@@ -453,7 +479,9 @@ function setStateKF(n){
   }
 }
 
-// Set the state of the world to match simulation frame n
+/* 
+  Set the state of the world to match simulation frame n
+*/
 function setState(n){
   var bodies = Globals.world.getBodies();
   
@@ -468,7 +496,9 @@ function setState(n){
   }
 }
 
-// Adds the specified components to each keyframe and redraws the mini canvases
+/* 
+  Adds the specified components to each keyframe and redraws the mini canvases
+*/
 function updateKeyframes(components){
   var world = Globals.world;
   var nKF = Globals.keyframeStates.length;
@@ -484,11 +514,12 @@ function updateKeyframes(components){
       KFs[i].push(cloneState(component.state));
     }
  
-    // If mini-canvases exist, paint to them now
+    // If mini-canvases exist, paint to them now via drawMaster
     Globals.keyframe = i;
     drawMaster();    
   }
 
+  // Mark the simulation as unsaved, highlight the latest keyframe, and repaint the screen
   if(nKF > 1){
     dirty();
     Globals.keyframe = getKF();
@@ -497,12 +528,13 @@ function updateKeyframes(components){
   }
 }
 
+/*
+  Updates global gravity in the specified coordinate to match the specified value
+*/
 function updateGravity(coordinate, value){
   value = parseFloat(value);  
   if(isNaN(value)) return;
-  
-  // TODO: Handle unit conversion
-  
+    
   if(coordinate == "x")
     Globals.gravity[0] = value;
   else
@@ -514,6 +546,9 @@ function updateGravity(coordinate, value){
     attemptSimulation();
 }
 
+/*
+  Updates the size of the specified body (in px) to match the specified value (but scaled to current zoom level)
+*/
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
@@ -531,12 +566,12 @@ function updateSize(body, value){
     body.view.setAttribute("height", scaledSize);
   }
 
-  if (body2Constant(body).massType === "square") {
+  if (body2Constant(body).massType === "square") { // square point mass
     body.width = scaledSize;
     body.height = scaledSize;
     body.geometry.width = scaledSize;
     body.geometry.height = scaledSize;
-  } else if(body2Constant(body).massType === "round"){
+  } else if(body2Constant(body).massType === "round"){ // round point mass
     body.radius = scaledSize / 2;
     body.geometry.radius = scaledSize / 2;
   }
@@ -551,6 +586,9 @@ function updateSize(body, value){
   drawMaster();
 }
 
+/*
+  Updates the image used to dislay the specified body
+*/
 function updateImage(body, value){
   if(!body) return;
   
@@ -588,10 +626,11 @@ function updateImage(body, value){
   
 }
 
-
-// Handler for updating a property to have a specific value
-// All updates to pos/vel/acc should be routed through here
-// This function should be passed canonical coordinates
+/*
+  Handler for updating a property to have a specific value
+  All updates to pos/vel/acc should be routed through here
+  This function should be passed a canonical coordinate if modifying position
+*/
 function onPropertyChanged(i, property, value, doTranslation){
   var body = Globals.world.getBodies()[i];
   if(!body) return;
@@ -603,6 +642,8 @@ function onPropertyChanged(i, property, value, doTranslation){
   // Reparse the value, assigning NaN if the parse fails
   value = parseFloat(value);
   
+  // Special case: Catch any attempts to modify 'x' properties of objects attached to a pulley
+  // Objects attached to a pulley must hang directly above/below the point they are attached to
   var pulley = getAttachedPulley(body);
   if(pulley){
     if(property == "velx" || property == "accx")
@@ -627,9 +668,10 @@ function onPropertyChanged(i, property, value, doTranslation){
   // Invalidate the timeline
   dirty();
   
-  // Attempt to update the corresponding variable
+  // Attempt to update the corresponding variable with the canonical value
   if(bIndex(body) !== 0) updateVariable(body, property, value);
   
+  // Update alpha channel appropriately, indicating whether the position is fully specified
   assignAlpha();
  
   // Don't do anything else if the value is unknown
@@ -639,13 +681,15 @@ function onPropertyChanged(i, property, value, doTranslation){
   switch(property){
     // Position updates
     case 'posx':        
-        value = pixelTransform(value, "x", doTranslation); // Convert canon to pixel for state/kstate!
+        value = pixelTransform(value, "x", doTranslation); // Convert canonical x to pixel x for state/kstate!
         body.state.pos.x = value;
         kState[i].pos.x = value;
+        
+        // If this is a pulley, use the movePulley function so any attached bodies are also updated
         if(bodyType(body) == "kinematics1D-pulley") movePulley({body:body, x:value, y:body.state.pos.y});
         break;
     case 'posy':        
-        value = pixelTransform(value, "y", doTranslation); // Convert canon to pixel for state/kstate!
+        value = pixelTransform(value, "y", doTranslation); // Convert canonical y to pixel y for state/kstate!
         body.state.pos.y = value;
         kState[i].pos.y = value;
         break;
@@ -671,22 +715,31 @@ function onPropertyChanged(i, property, value, doTranslation){
       updateRamp(body, property, value);
       break;
 
-    // Default case:
+    // Default case: Assign a constant
     default: Globals.bodyConstants[i][property] = value; break;
   }
 }
 
+/*
+  Marks the simulation as needing to be recalculated and unsaved
+*/
 function dirty(){
   if(Globals.numKeyframes == 1) return;  
   Globals.timelineReady = false;
   resetSaveButton();  
 }
 
+/*
+  Adjusts the color of the save button
+*/
 function resetSaveButton(){
   $("#save-button").removeClass( "green" );
   $("#save-button").addClass( "blue" );
 }
 
+/*
+  Computes the total acceleration of the specified body
+*/
 function totalAcceleration(body){
   var dt = Globals.world.timestep();
   var state = body.state;
@@ -699,21 +752,22 @@ function totalAcceleration(body){
           y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic" || pulley)? Globals.gravity[1]: 0)};
 }
 
-// Custom integrator: On each iteration, updates velocity then position of each component
-// TODO: Change to Runge-Kutta
+/* 
+  Custom integrator: On each iteration, updates velocity then position of each component
+*/
 Physics.integrator('principia-integrator', function( parent ){
   return {  
   // Velocity increases by acceleration * dt
   integrateVelocities: function( bodies, dt ){
     
-    // Raise flag on all pulleys
+    // Raise flag on all pulleys that they need to be solved
     for ( var i = 1, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
       if(bodyType(body) == "kinematics1D-pulley")
         body2Constant(body).solve_tension = true;
     }
-    
-    // TODO: Apply forces to modify acceleration before integrating velocity    
+
+    // Loop through and adjust velocity for each body
     for ( var i = 1, l = bodies.length; i < l; ++i ){
       var body = bodies[i];
       var consts = body2Constant(body);
@@ -722,12 +776,13 @@ Physics.integrator('principia-integrator', function( parent ){
       var state = body.state;
       state.old = cloneState(body.state);
 
-      // Get direction to pulley, apply acceleration to that direction
+      // Handle pulleys as its own closed system
       var pulley = getAttachedPulley(body);
       if(pulley){
         applyPulleyForces(body, dt);
       }
       else {
+        // Otherwise compute new velocity using thrust, gravity, and any attached springs
         state.vel.x += state.acc.x * dt + spring_a[0];
         state.vel.y += state.acc.y * dt + spring_a[1];
         if(body.treatment == "dynamic"){
@@ -751,6 +806,7 @@ Physics.integrator('principia-integrator', function( parent ){
         state.pos.x += state.vel.x;
         state.pos.y += state.vel.y;
         
+        // Before saving state, may need to handle a pulley-bound object reaching the end
         var pulley = getAttachedPulley(body);
         if(pulley)
           handlePulleyStop(pulley, body);

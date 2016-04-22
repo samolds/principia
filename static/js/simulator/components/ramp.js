@@ -3,11 +3,16 @@
   This file defines functions related to 'ramp' physics components
 */
 
-// Add a ramp component to current world using the specified coordinates
+/*
+  Add a ramp component to current world using the specified canonical coordinates in the data object
+  This function sets up associated constants and variables and returns the PhysicsJS component that was added
+*/
 function addRamp(data){
   var world = Globals.world;
   var bodyConstants = Globals.bodyConstants;
   var variableMap = Globals.variableMap;
+  
+  // Default width and height (the latter inverted to create a ramp with NE facing slope)
   var width = 100;
   var height = -60;
   
@@ -52,8 +57,10 @@ function addRamp(data){
   return component;
 }
 
-function updateRamp(body, property, value)
-{
+/*
+  Updates a ramp specific property to have the specified value
+*/
+function updateRamp(body, property, value){
   if(bodyType(body) !== "kinematics1D-ramp") return;
   switch(property)
   {
@@ -64,6 +71,10 @@ function updateRamp(body, property, value)
   }
 }
 
+/*
+  Updates the width of a ramp, inverting it if negatives are allowed and the value is < 0
+  The height is fixed, the angle will be modified to compensate
+*/
 function setRampWidth(body, value, allow_negatives){
   value = parseFloat(value);
   if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
@@ -78,20 +89,25 @@ function setRampWidth(body, value, allow_negatives){
   // Get the actual height
   var height = Globals.bodyConstants[bIndex(body)]["rampHeight"];
 
+  // Determine and assign new vertices
   var newVertices = [
             {x: 0, y: 0},
             {x: value / getScaleFactor(), y: 0},
             {x: 0, y: height / getScaleFactor()}];
-
   body.vertices = newVertices;
   body.geometry.setVertices(newVertices);
   body.view = null;
 
+  // Assign a new angle and save the modified width and angle
   var newAngle = Math.atan(height / value) * (180.0 / Math.PI);
   Globals.bodyConstants[bIndex(body)]["rampWidth"] = value.toFixed(Globals.dPrecision);
   Globals.bodyConstants[bIndex(body)]["rampAngle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
+/*
+  Updates the height of a ramp, inverting it if negatives are allowed and the value is < 0
+  The width is fixed, the angle will be modified to compensate
+*/
 function setRampHeight(body, value, allow_negatives){
   value = parseFloat(value);
   if (Math.abs(value) > 100000 || value == 0.0 || isNaN(value))
@@ -106,20 +122,25 @@ function setRampHeight(body, value, allow_negatives){
   // Get the actual width
   var width = Globals.bodyConstants[bIndex(body)]["rampWidth"];
 
+  // Compute and assign new vertices
   var newVertices = [
             {x: 0, y: 0},
             {x: width / getScaleFactor(), y: 0},
             {x: 0, y: value / getScaleFactor()}];
-
   body.vertices = newVertices;
   body.geometry.setVertices(newVertices);
   body.view = null;
 
+  // Compute a new angle, store the new height and angle
   var newAngle = Math.atan(value / width) * (180.0 / Math.PI);
   Globals.bodyConstants[bIndex(body)]["rampHeight"] = value.toFixed(Globals.dPrecision);
   Globals.bodyConstants[bIndex(body)]["rampAngle"] = newAngle.toFixed(Globals.dPrecision);
 }
 
+/*
+  Updates the angle of a ramp
+  The width is fixed, the height will be modified to compensate
+*/
 function setRampAngle(body, value) {
   value = parseFloat(value);
   if (Math.abs(value) > 360.0 || value == 0.0 || isNaN(value))
@@ -145,10 +166,14 @@ function setRampAngle(body, value) {
   body.geometry.setVertices(newVertices);
   body.view = null;
 
+  // Store the new values
   Globals.bodyConstants[bIndex(body)]["rampAngle"] = value.toFixed(Globals.dPrecision);
   Globals.bodyConstants[bIndex(body)]["rampHeight"] = newHeight.toFixed(Globals.dPrecision);
 }
 
+/*
+  Sets the friction coefficient of the specified ramp body
+*/
 function setRampFriction(body, value) {
   value = parseFloat(value);
   if (Math.abs(value) > 1.0 || value < 0.0 || isNaN(value))

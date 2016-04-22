@@ -1,17 +1,18 @@
 /*
   kinematics.js -- 
-  This file defines the primary kinematics modules utilizing the keyframe system.
+  This file defines the primary kinematics modules utilizing the keyframe system
 */
-
 function Kinematics1DModule() {
 
-
-
+  /*
+    Handles initializing the world; A world is a PhysicsJS object containing bodies, interactions,
+    and default behaviors
+  */
   function initWorld() {
     return Physics(function (world) {
       var canvasId = "viewport";
       var canvasEl = document.getElementById(canvasId);
-      var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight);// bounds of the window
+      var viewportBounds = Physics.aabb(0, 0, canvasEl.clientWidth, canvasEl.clientHeight); // bounds of the window
       var edgeBounce;
       var renderer;
       var integrator;
@@ -19,25 +20,25 @@ function Kinematics1DModule() {
       var variableMap = Globals.variableMap;
       var bodyConstants = Globals.bodyConstants;
       
-      world.timestep(0.5); // TODO: should base timestep on dt option
+      // Default dt per frame
+      world.timestep(0.5);
             
-      // create a renderer
+      // Create a renderer
       renderer = Physics.renderer('canvas', {el: canvasId, manual: true});      
       
-      // add the renderer
+      // Add the renderer
       world.add(renderer);
     
-      // add our custom integrator
+      // Add our custom integrator
       integrator = Physics.integrator('principia-integrator', {});
       world.add(integrator);
 
-      // Default image: use pointmass image. Can be changed from select element.
+      // Add the PhysicsJS origin, which will always be the 0th body of a simulation
+      // Image used for origin object
       var img = document.createElement("img");
       img.setAttribute("src", "/static/img/toolbox/origin.png");
       img.setAttribute("width", "20");
       img.setAttribute("height", "20");
-  
-      // Add the PhysicsJS origin
       bodyConstants.push({ctype:"kinematics1D-origin"});
       variableMap[0].push({});
       var origin = Physics.body('circle', {
@@ -51,19 +52,27 @@ function Kinematics1DModule() {
                   angleIndicator: '#ffffff'
                 }
               });
-              
       world.add(origin);
       Globals.keyframeStates[0].push(cloneState(origin.state));
       
+      
+      /*
+        The addComponent interactions allows users to specify a type of body
+        and pixel coordinates where it was dropped to add it to the world
+      */
       world.on('addComponent', function(data) {
         
+        // Basic prevention of adding too many bodies (but allow simulations saved beyond the limit to still load)
         if(Globals.world.getBodies().length >= Globals.maxNumBodies && !Globals.loading){
           failToast("Too many bodies.");
           return;
         }
         
+        // Save the keyframe to return to after redrawing all frames
         var originalKeyframe = Globals.keyframe;
         
+        // Beyond one keyframe, several components are not allowed;
+        // they will be added once the solver can handle their behavior
         if(Globals.numKeyframes > 1){
           if(data.type == "kinematics1D-surface" ||
              data.type == "kinematics1D-spring" ||
@@ -73,16 +82,24 @@ function Kinematics1DModule() {
              }
         }
         
+        // Tranform provided pixel coordinates into canonical coordinates
+        // A canonical coordinate represents the abstract location of a body
+        // without respect to any camera scaling/panning on the part of the user
         var canon = canonicalTransform(data);
-        data.x = canon.x;
+        data.x = canon.x; // Replace pixel coordinates in the data object with canonical ones
         data.y = canon.y;
         
+        // Create a new body based on the type of the provided data
         switch(data.type){
+          
+          // Handle springs and their child element
           case "kinematics1D-spring":         
             bodyConstants.push({ctype:data.type});
             bodyConstants.push({ctype:data.type + "-child"});
             addSpring(data);
             break;
+            
+          // Fall-through case that handles square and round point masses:
           case "kinematics1D-squaremass":
             data.massType = "square";
           case "kinematics1D-roundmass":
@@ -92,49 +109,63 @@ function Kinematics1DModule() {
             bodyConstants.push({ctype:"kinematics1D-mass"});
             addMass(data, data.massType);
             break;
+          
+          // Handle surfaces, ramps, and pulleys:
           case "kinematics1D-surface":
             bodyConstants.push({ctype:data.type});
             addSurface(data);
-            break
+            break;
           case "kinematics1D-ramp":
             bodyConstants.push({ctype:data.type});
             addRamp(data);
-            break
+            break;
           case "kinematics1D-pulley":
             bodyConstants.push({ctype:data.type});
             addPulley(data);
             break;
+          
+          // Special case: Handle moving (rather than adding) the origin
           case "kinematics1D-origin":
             moveOrigin(data, true);
             break;
         }
 
+        // Immediately resimulate if there is a single keyframe
         if(Globals.numKeyframes === 1) attemptSimulation();
+        
+        // Restore the keyframe state and highlight, redraw the current frame
         Globals.keyframe = originalKeyframe;
         highlightKeycanvas(Globals.keyframe);
         drawMaster();
       });
 
-      // resize events
+      // Resize events
       window.addEventListener('resize', function () {
         // as of 0.7.0 the renderer will auto resize... so we just take the values from the renderer
         
+        // The bodies will have to be shifted vertically based on how the window was resized
         var dy = renderer.height - viewportBounds.y*2;
         var bodies = Globals.world.getBodies();
         for(var i=0; i < bodies.length; i++){
           bodies[i].state.pos.y += dy;
         }
                 
-        viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);        
+        viewportBounds = Physics.aabb(0, 0, renderer.width, renderer.height);
 
+        // Redraw the frame
         drawMaster();
       }, true);
    
-      // Note: PhysicsJS zeroes out velocity (ln 8445) - commented out for our simulator    
+      // Note: PhysicsJS zeroes out velocity on grab (ln 8445) - commented out for our simulator
+
+      /*
+        Handles grabbing an object within the canvas
+      */
       world.on('interact:grab', function( data ){ 
         //hide context menu
         toggleMenuOff();
          
+        // Grabbed a body...
         var index = bIndex(data.body);
         if(data.body && index !== 0){
           selectBody(bIndex(data.body), bIndex(data.body) === 0); // Only switch tabs if not the origin!
@@ -145,32 +176,39 @@ function Kinematics1DModule() {
         }
       });
   
+      /*
+        Handles moving an object within the canvas
+      */
       world.on('interact:move', function( data ){        
             
         if (Globals.isPanning)
-          panZoomUpdate(data);
+          panZoomUpdate(data);  // Handle panning
         if(Globals.vChanging){      
-          updateVector(data);
+          updateVector(data);   // Handle vector hotkeys
         }
         else if(data.body && !Globals.vChanging) {      
 
           Globals.didMove = true;
           setNoSelect(true);
           var index = bIndex(data.body);       
-          
-          
-          var canon = canonicalTransform(data);          
-          
+                      
+          // Assign canonical coordinates to the body
+          var canon = canonicalTransform(data);                    
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
 
+          // Special case: Deal with the origin
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
           
+          // Draw the frame
           drawMaster();
         }
       });
   
+      /*
+        Handles releasing the canvas
+      */
       world.on('interact:release', function( data ){         
         $('body').css({cursor: "auto"});
         Globals.isPanning = false;
@@ -182,13 +220,17 @@ function Kinematics1DModule() {
             Globals.didMove = false;
             setNoSelect(false);
             var index = bIndex(data.body);
+            
+            // Update final position of body with canonical coordinates
             var canon = canonicalTransform(data);
             onPropertyChanged(index, "posx", canon.x, false);
             onPropertyChanged(index, "posy", canon.y, false);
             
+            // Handle moving objects attached to pulley
             if(bodyType(data.body) == "kinematics1D-pulley")
               movePulley(data);
             
+            // Handle forming/breaking any attachments
             if(bodyType(data.body) == "kinematics1D-mass" || bodyType(data.body) == "kinematics1D-spring-child")
             {
               detachSpring(data.body);
@@ -197,24 +239,36 @@ function Kinematics1DModule() {
               snapToPulley(data.body);
             }
             
+            // Handle moving the origin
             if(index === 0 || index === Globals.originObject)
               moveOrigin({"x":canon.x, "y":canon.y}, false);
           
             // Resimulate if there is only one keyframe
             if(Globals.numKeyframes == 1) attemptSimulation();
             
+            // Draw the frame
             drawMaster();
         }
       });
 
+      /*
+        Handle tapping the world when there is no body
+      */
       world.on('interact:poke', function(data){    
+        
+        // Remove context menu
         toggleMenuOff();
         Globals.lastPos.x = data.x;
         Globals.lastPos.y = data.y;
+        
+        // Handle panning
         $('body').css({cursor: "move"});
         Globals.isPanning = true;
 
+        // Deselect any active body
         Globals.selectedBody = false;  
+        
+        // Draw the frame
         drawMaster();
 
         if ($("#elementprops-tab").hasClass("active-side-menu-item") || $("#globalprops-tab").hasClass("active-side-menu-item"))
@@ -232,7 +286,12 @@ function Kinematics1DModule() {
       });
 } // end initWorld
 
+  /*
+    Initializes this module, using the specified JSON to restore state if necessary
+  */
   function initModule(json) {
+    
+    // Use the init world function to construct the world and its behavior
     Globals.world = initWorld();
             
     // How the solver object works:
@@ -341,18 +400,21 @@ function Kinematics1DModule() {
       }       
     });
     
+    // Do initial render of origin after the image loads
     if(Globals.world.getBodies()[0].view.complete)
       drawMaster();
     else
       Globals.world.getBodies()[0].view.onload = function() { drawMaster(); };
     
+     // If there is no JSON, the rest can be skipped
      if(!json || json == "{}")
       return;
     
-    Globals.loading = true;
-    
+    // Otherwise, raise the loading flag and start restoring state:
+    Globals.loading = true;    
     var restore = $.parseJSON(json);
     
+    // Most keys can be assigned directly to the appropriate global
     for(var key in restore)
     {
       if(key == "keyframeStates") continue;
@@ -363,15 +425,18 @@ function Kinematics1DModule() {
     
     // Stringified keyframes don't interact well with PhysicsJS
     // Solution: Add the real component to get PhysicsJS state object
-    // Then transfer tempKF values to real corresponding "real" keyframe
+    // Then transfer tempKF values to corresponding "real" keyframe
     var tempKF = restore.keyframeStates;
     var tempBC = restore.bodyConstants;
     
+    // Add keyframes
     for(var i=0; i<tempKF.length-1; i++)
       addKeyframe();
     
+    // Get canonical values from saved variable map
     Globals.variableMap = restore.variableMap;
     
+    // Add all non-origin bodies back to world
     for(var i=1; i<tempBC.length; i++)
     {
       var type = tempBC[i].ctype;      
@@ -404,6 +469,7 @@ function Kinematics1DModule() {
       Globals.selectedBody = false;
     }
     
+    // Restore keyframe states. Note the use of the variable map to get canonical y values and swap to match new canvas size
     for(var i=0; i<tempKF.length; i++)
       for(var j=0; j<tempKF[i].length; j++)
       {        
@@ -418,26 +484,33 @@ function Kinematics1DModule() {
         Globals.keyframeStates[i][j].angular = {acc:angular.acc,vel:angular.vel,pos:angular.pos};
       }
       
+      // Restore the origin
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
       Globals.originObject = restore.originObject;
       if(Globals.originObject !== false)
         Globals.world.getBodies()[0].hidden = true;
+      
+    // Draw for each keyframe to prep mini-canvases
     for(var i=tempKF.length-1; i>=0; i--){
       Globals.keyframe = i;
       drawMaster();
     }
     
+    // Restore coordinate system
     updateCoords(Globals.coordinateSystem);
     if(Globals.coordinateSystem == "polar"){
       $("#coord-sys").children()[1].removeAttribute("selected");
       $("#coord-sys").children()[2].setAttribute("selected", "selected");
     }
     
+    // Resimulate if necessary
     if(Globals.timelineReady)
       simulate();
 
+    // Done loading
     Globals.loading = false;
     
+    // Do final rendering of first frame
     highlightKeycanvas(0);
     Globals.keyframe = 0;
     setStateKF(0);
@@ -445,12 +518,19 @@ function Kinematics1DModule() {
     drawMaster();
   }
   
+  /*
+    Update the timestep that passes between each frame
+  */
   function setDt(dt) { Globals.world.timestep(dt); }
 
+  /*
+    Handles updating vectors via the mouse instead of typing in a value
+  */
   function updateVector(data) {
     var body = Globals.selectedBody;   
     if(body){
       
+        // Update within a keyframe
         if(Globals.keyframe === false) {
           var frame = lastKF();
           setStateKF(frame);
@@ -460,15 +540,18 @@ function Kinematics1DModule() {
       
         var index = bIndex(body);
         
+        // Find how far the cursor is from the body
         var dx = (-body.state.pos.x - Globals.translation.x + data.x) / 8;
         var dy = (-body.state.pos.y - Globals.translation.y + data.y) / 8;
         
         // Rounds number to nearest increment of 0.25
         var snapTo = function(n) { return (Math.round(n*4)/4).toFixed(2); };
         
+        // Snap dx and dy to an increment
         dx = snapTo(dx);
         dy = snapTo(dy);
         
+        // Adjust the velocity vector
         if(Globals.vDown){
           body.state.vel.x = dx;
           body.state.vel.y = dy;
@@ -476,6 +559,7 @@ function Kinematics1DModule() {
           onPropertyChanged(index, "vely", dy, false);
         }
         
+        // Adjust the acceleration vector
         if(Globals.aDown){
           body.state.acc.x = dx;
           body.state.acc.y = dy;
@@ -483,6 +567,7 @@ function Kinematics1DModule() {
           onPropertyChanged(index, "accy", dy, false);
         }
 
+        // Draw the frame
         drawMaster();
       }
   }

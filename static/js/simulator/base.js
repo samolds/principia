@@ -1,9 +1,12 @@
 /*
   base.js --
   This file registers event handlers immediately following module initialization
+  It also contains functions shared between modules but not directly related to the simulation
 */
 
-// Converts the current simulation into a JSON string to be persisted in the data store
+/*
+  Converts the current simulation into a JSON string to be persisted in the data store
+*/
 function exportToJson(){
   // NOTE LIMIT OF 1500 chars - updated with flag to store 1 MB, but consider splitting these up further
   
@@ -30,9 +33,10 @@ function exportToJson(){
     unscaledKeyframeStates = scaledKeyframes;
   }
   
+  // Construct the object containing all values that need to be persisted
   var json = 
   {
-    keyframeStates:unscaledKeyframeStates, //TODO store keyframe states in separate fields, 1 per object per keyframe
+    keyframeStates:unscaledKeyframeStates,
     bodyConstants:Globals.bodyConstants,
     gravity:Globals.gravity,
     variableMap:Globals.variableMap,
@@ -44,12 +48,15 @@ function exportToJson(){
     originObject: Globals.originObject
   }
   
+  // Return the corresponding JSON string
   return JSON.stringify(json);
 }
 
-// Returns contents of a canvas as a jpeg based data url, with the specified
-// background color
-// http://www.mikechambers.com/blog/2011/01/31/setting-the-background-color-when-generating-images-from-canvas-todataurl
+/* 
+  Returns contents of a canvas as a jpeg based data url, with the specified
+  background color
+  via http://www.mikechambers.com/blog/2011/01/31/setting-the-background-color-when-generating-images-from-canvas-todataurl
+*/
 function canvasToImage() {
   // cache height and width
   var canvas = Globals.world.renderer();
@@ -92,9 +99,11 @@ function canvasToImage() {
   return imageData;
 }
 
-// Turns the dataURI created by the canvas to an actual blob that is recognized
-// as a file to be uploaded in a form and saved to the blobstore
-// http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+/*
+ Turns the dataURI created by the canvas to an actual blob that is recognized
+ as a file to be uploaded in a form and saved to the blobstore
+ via http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+*/
 function dataURItoBlob(dataURI) {
   // convert base64/URLEncoded data component to raw binary data held in a string
   var byteString;
@@ -115,40 +124,44 @@ function dataURItoBlob(dataURI) {
   return new Blob([ia], {type:mimeString});
 }
 
-
+/*
+  Helper function to hide registering events related to the PVA graph
+*/
 function registerPVAChartEvents() {
   positionChart = new CanvasJS.Chart("positionGraph",{
       // // axisX:{
       // //   maximum: 1000,
       // // },
-    });
+  });
 
-    vaChart = new CanvasJS.Chart("vaGraph",{
-      // // axisX:{
-      // //   maximum: 1000,
-      // // },
-    });
+  vaChart = new CanvasJS.Chart("vaGraph",{
+    // // axisX:{
+    // //   maximum: 1000,
+    // // },
+  });
 
-    var allHidden = (graphBodyIndices().length === 0);
-    if (!allHidden) {
-      $('.pva-graph-no-graph-text').hide()
-      $('#positionGraph').show()
-      $('#vaGraph').show()
-      updatePVAChart();
-    } else {
-      $('.pva-graph-no-graph-text').show()
-      $('#positionGraph').hide()
-      $('#vaGraph').hide()
-    }
+  var allHidden = (graphBodyIndices().length === 0);
+  if (!allHidden) {
+    $('.pva-graph-no-graph-text').hide()
+    $('#positionGraph').show()
+    $('#vaGraph').show()
+    updatePVAChart();
+  } else {
+    $('.pva-graph-no-graph-text').show()
+    $('#positionGraph').hide()
+    $('#vaGraph').hide()
+  }
 }
 
+/*
+  Renders the Position-Velocity-Acceleration Graphs
+*/
 function updatePVAChart() {
 
+  // Get the array containing the indices of the bodies flagged to be graphed
   arr = graphBodyIndices();
 
- 
-
-  // Mod by the number of bodies we need to draw
+  // Mod by the number of bodies we need to draw to reduce overhead
   if(Globals.frame % arr.length !== 0) {
     return;
   }
@@ -158,15 +171,18 @@ function updatePVAChart() {
   min = Math.max(Globals.frame - 99, 0)
   max = Globals.frame + 1;
 
+  // Loop through each body that is assigned to be graphed
   for (var index = 0, len = arr.length; index < len; index++) {
 
+    // Get a name to associate with the current body
     var bodyIndex = arr[index];
     var name = Globals.bodyConstants[bodyIndex].nickname;
-
     if(!name) {
       name = bodyIndex;
     }
 
+    // Get the data points from the global states populated when simulate is called
+    // Use empty array as a fallback
     if(!Globals.timelineReady) {
       dp1 = [];
       dp2 = [];
@@ -177,6 +193,7 @@ function updatePVAChart() {
       dp3 = Globals.velocityStates[bodyIndex].slice(min, max);
     }
 
+    // Push the Position data
     positionChart.options.data.push({
       type: "line",
       showInLegend: true,
@@ -184,6 +201,7 @@ function updatePVAChart() {
       dataPoints: dp1
     });
 
+    // Push the Acceleration data
     vaChart.options.data.push({
       type: "line",
       showInLegend: true,
@@ -191,6 +209,7 @@ function updatePVAChart() {
       dataPoints: dp2
     });
 
+    // Push the Velocity data
     vaChart.options.data.push({
       type: "line",
       showInLegend: true,
@@ -199,39 +218,53 @@ function updatePVAChart() {
     });
   }
 
+  // Render the two charts
   positionChart.render();
   vaChart.render();
 };
 
-// Entry point for this application. Registers events. The module is initialized in the HTML file for now.
+/* 
+  Entry point for this application. Registers events
+  PhysicsJS events are registed via kinematics.js
+  The kinematics.js module is initialized in views/simulator/kinematics.html.
+*/
 $(document).ready(function(){
-  //Events for canvas
+  
+  //Events for canvas:
+  //==================
+  // Handle right-clicking the viewport for a custom context menu
   $( '#viewport' ).on("contextmenu", function(event){
     contextMenuListener(event);
   });
   
+  // Handle a standard click on the viewport
   $( '#viewport' ).on("click", function(event){
     if ("activeElement" in document)
       document.activeElement.blur();
     clickListener(event);
   });
 
+  // Handle clicking the document element
   $(document).on('click', function(event) {
     bodyClickListener(event);
   });  
 
+  // Block the default mousedown event handler
   $('#viewport').on("mousedown", function(event){
     event.preventDefault();
   });
   
+  // Generate a release PhysicsJS event upon the cursor leaving the viewport
   $('#viewport').on("mouseleave", function(event){    
     Globals.world.emit("interact:release", {});
   });
 
-  // Events for overview tab
+  // Event for overview tab
+  //========================
   $( '#overview-tab' ).on("click", function(event){ populateOverview(event); } );
 
   // Events for properties window
+  //=============================
   $('#general-properties-position-x').on("change", function(){ 
     updatePropertyRedraw(Globals.selectedBody, 'posx', $('#general-properties-position-x').val());
   });
@@ -243,6 +276,7 @@ $(document).ready(function(){
   });
   
   // Point mass specific events
+  // ==========================
   $('#pointmass-properties-velocity-x').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'velx', $('#pointmass-properties-velocity-x').val());
   });
@@ -264,8 +298,6 @@ $(document).ready(function(){
   $('#pointmass-properties-img').on("change", function(){
     updateImage(Globals.selectedBody, $('#pointmass-properties-img option:selected')[0].value);
   });
-
-
   $("#pointmass-properties-vector-cmenu").on("change", function() {
     updateBooleanProperty(Globals.selectedBody, 'vectors', $('#pointmass-properties-vector-cmenu')[0].checked);
   });
@@ -286,11 +318,13 @@ $(document).ready(function(){
   });
   
   // Spring specific event
+  //======================
   $('#spring-properties-k').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'k', $('#spring-properties-k').val());
   });
 
   // Surface specific events
+  //========================
   $('#surface-properties-width').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'surfaceWidth', $('#surface-properties-width').val());
   });
@@ -309,8 +343,8 @@ $(document).ready(function(){
     drawMaster();
   });
 
-
   // Ramp specific events
+  // ====================
   $('#ramp-properties-width').on("change", function(){
     updatePropertyRedraw(Globals.selectedBody, 'rampWidth', $('#ramp-properties-width').val());
   });
@@ -334,32 +368,33 @@ $(document).ready(function(){
     drawMaster();
   });
 
-
-  // enable modals
+  // Enable modals
   $('.modal-trigger').leanModal();
   
-  // Event for clicking solve button
+  // Event for clicking solve/play button
   $('#playpause').on('click', function(){
+    // If the timeline is not ready, solve for unknowns and show the solution
     if (!Globals.timelineReady) {
       attemptSimulation();
       // Show the solution details button
       $('#solution-detail-button').show();
     }
 
+    // Swap simulator running state
     toggleSimulator();
   });
   
-  // Events for selecting mini-canvases representing keyframes
-  // MUST name keyframe divs using this format (splits on -)
+  // Events for selecting mini-canvases representing keyframes  
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
 
+  // Events for the slide-out menus
   $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
   $('.left-menu-item').on("click", function(event) { leftSlideMenuOpen(event); } );
-
   $('.right-menu-item-close').on("click", function(event) { rightSlideMenuClose(event); } );
   $('.left-menu-item-close').on("click", function(event) { leftSlideMenuClose(event); } );
 
+  // Keypress event overrides
   $(document).on('keyup', function(event) {keyUp(event)});
   $(document).on('keydown', function(event) {keyDown(event)});
   
@@ -372,12 +407,14 @@ $(document).ready(function(){
   $('#glob-xorigin').on("change", function(){ moveOriginScalar("x", $('#glob-xorigin').val()); });
   $('#glob-yorigin').on("change", function(){ moveOriginScalar("y", $('#glob-yorigin').val()); });
   
+  // Event for updating the coordinate system
   $('#coord-sys').on("change", function(){ updateCoords( $('#coord-sys').val()); }); 
   
   // Events for handling changing the unit
   $('#glob-length-unit').on("change", function(){ updateLengthUnit( $('#glob-length-unit').val()); }); 
   $('#glob-time-unit').on("change", function(){ updateTimeUnit( $('#glob-time-unit').val()); }); 
 
+  // Event for updating the dt per frame
   $('#glob-timestep-unit').on("change", function() { 
       Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); 
       if(Globals.numKeyframes == 1) attemptSimulation();
@@ -385,10 +422,12 @@ $(document).ready(function(){
       drawMaster();
   });
   
+  // Event for selecting the properties tab
   $("#elementprops-tab").on("click", function() { 
     if(bIndex(Globals.selectedBody) === 0) { Globals.selectedBody = false; drawMaster(); } 
   });
   
+  // Events for handling zooming in and out
   $('#zoom-control-in').on("click", function(e) {
     simulationZoom(1);
   });

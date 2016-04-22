@@ -3,13 +3,16 @@
   This file defines functions related to 'spring' physics components.
 */
 
-// Add a spring component to current world using the specified coordinates
-function addSpring(data)
-{
+/*
+  Add a spring component to current world using the specified coordinates
+  This function sets up associated constants and variables and returns the PhysicsJS components that were added
+*/
+function addSpring(data){
   var world = Globals.world;
   var variableMap = Globals.variableMap;
   var bodyConstants = Globals.bodyConstants;
   
+  // Default radius for the points the spring is drawn between
   var radius = 6/getScaleFactor();
   
   // Generate the primary component (equilibrium point) and its child (point stretched to)
@@ -23,7 +26,8 @@ function addSpring(data)
                 fillStyle: '#000000',
               }
             });
-            
+
+  // Point masses will be allowed to attach to the child component
   var componentChild = Physics.body('circle', {
               treatment:"ghost",
               x: pixelTransform(data.x, "x")+120/getScaleFactor(),
@@ -53,28 +57,37 @@ function addSpring(data)
     );
   }
   
+  // Add both components to the world
   world.add(component);
   world.add(componentChild);
   updateKeyframes([component, componentChild]);
   Globals.springBodyCounter++;
   
+  // Link parent and child
   bodyConstants[bodyConstants.length-2].child = world.getBodies().indexOf(componentChild);
   bodyConstants[bodyConstants.length-1].parent = world.getBodies().indexOf(component);
+  
   bodyConstants[bodyConstants.length-1].vectors = false;
-  bodyConstants[bodyConstants.length-2].k = 0.01;
+  bodyConstants[bodyConstants.length-2].k = 0.01; // Spring constant is associated with parent element
   bodyConstants[bodyConstants.length-2].vectors = false;
+  
+  // Assign nicknames
   bodyConstants[bodyConstants.length-2].nickname = "spring " + (getLabel(component));
   bodyConstants[bodyConstants.length-1].nickname = "spring " + (getLabel(component)) + " end";
   
+  // Return both components
   return [component, componentChild];
 }
 
-// Applies spring forces to the specified body and returns corresponding acceleration in [x,y]
+/* 
+  Applies spring forces to the specified body and returns corresponding acceleration in [x,y] 
+*/
 function applySpringForces(body) {
     var a = [0,0];    
 
     if(bodyType(body) != "kinematics1D-mass" || body2Constant(body).mass == 0) return a;
 
+    // Get the spring force, then F = m*a -> a = F/m
     var springF = getSpringForce(body);
     a[0] = springF[0] / body2Constant(body).mass;
     a[1] = springF[1] / body2Constant(body).mass;
@@ -82,8 +95,10 @@ function applySpringForces(body) {
     return a;
 }
 
-function getSpringForce(body)
-{
+/*
+  Returns total spring forces acting on the specified body as an [x,y] vector
+*/
+function getSpringForce(body){
   var constants = body2Constant(body);
   
   var springFx = 0;
@@ -112,7 +127,10 @@ function getSpringForce(body)
   return [springFx, springFy];  
 }
 
-// Removes relationship between body and spring it is currently assigned to if it is delta units away.
+/* 
+  Removes relationship between body and spring it is currently assigned to if it is delta units away
+  The body can either be a spring-child or a mass
+*/
 function detachSpring(body){
   
   var world = Globals.world;
@@ -120,28 +138,34 @@ function detachSpring(body){
   
   var remove = [];
   
+  // Find targets to remove for a point mass:
   if(bodyType(body) == "kinematics1D-mass"){
     var targets = body2Constant(body).attachedTo;
     for(var j=0; j < targets.length; j++){      
       var target = world.getBodies()[targets[j]];
       
+      // Ignore attached pulleys
       if(bodyType(target) == "kinematics1D-pulley") continue;
     
+      // Valid target:
       if(distance(body.state.pos.x, body.state.pos.y, target.state.pos.x, target.state.pos.y) > delta){
         remove.push(j);
+        
+        // Have the spring-child delete its reference to the mass
         delete body2Constant(target).attachedBody;
       }
     }
   
+    // Splice out the spring index from the mass; careful when handling moving indices
     var counter = 0;
-    for(var j=0; j<remove.length; j++)
-    {
+    for(var j=0; j<remove.length; j++){
         var target = remove[j];
         targets.splice(target-counter, 1);
         counter++;
     }
   }
   
+  // Handle detaching a mass from a spring child: just delete a single reference from each
   if(bodyType(body) == "kinematics1D-sprint-child"){
     var target = body2Constant(body).attachedBody;
     delete body2Constant(body).attachedBody;
@@ -150,7 +174,9 @@ function detachSpring(body){
   
 }
 
-// Adds relationship between body and spring if it is within delta units to the stretched point
+/*
+  Adds relationship between body and spring if it is within delta units to the stretched point
+*/
 function attachSpring(body){  
   
   var constants = body2Constant(body);
