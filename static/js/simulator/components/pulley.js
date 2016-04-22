@@ -77,10 +77,25 @@ function movePulley(data)
   consts.attach_right = canonicalTransform({x:data.x + dRadius, y:data.y});
   
   var bodies = Globals.world.getBodies();
-  if(consts.attachedBodyLeft)
+  if(consts.attachedBodyLeft){
     onPropertyChanged(consts.attachedBodyLeft, "posx", consts.attach_left.x, false);
-  if(consts.attachedBodyRight)
+    var attachedToLeft = Globals.bodyConstants[consts.attachedBodyLeft].attachedTo;
+    for(var i=0; i < attachedToLeft.length; i++){
+      var body = bodies[attachedToLeft[i]];
+      if(bodyType(body) == "kinematics1D-spring-child"){
+        onPropertyChanged(bIndex(body), "posx", consts.attach_left.x, false);     
+      }
+    }
+  }
+  if(consts.attachedBodyRight){
     onPropertyChanged(consts.attachedBodyRight, "posx", consts.attach_right.x, false);
+    var attachedToRight = Globals.bodyConstants[consts.attachedBodyRight].attachedTo;
+    for(var i=0; i < attachedToRight.length; i++){
+      var body = bodies[attachedToRight[i]];
+      if(bodyType(body) == "kinematics1D-spring-child")
+        onPropertyChanged(bIndex(body), "posx", consts.attach_right.x, false);
+    }
+  }
   
 }
 
@@ -143,7 +158,6 @@ function getPulleyAcceleration(body, magnitude)
       pulley = bodies[consts.attachedTo[i]];
 
   return [0, -magnitude];  
-  // G1  - G2 = (m1+m2) a
 }
 
 function getPulleySnapX(body){

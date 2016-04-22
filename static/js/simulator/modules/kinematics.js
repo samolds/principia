@@ -151,14 +151,15 @@ function Kinematics1DModule() {
 
           Globals.didMove = true;
           setNoSelect(true);
-          var index = bIndex(data.body);          
+          var index = bIndex(data.body);       
+          if(bodyType(data.body) == "kinematics1D-pulley")
+            movePulley(data);
+          
           var canon = canonicalTransform(data);
-
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
           
-          if(bodyType(data.body) == "kinematics1D-pulley")
-            movePulley(data);
+          
           
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
@@ -182,6 +183,9 @@ function Kinematics1DModule() {
             onPropertyChanged(index, "posx", canon.x, false);
             onPropertyChanged(index, "posy", canon.y, false);
             
+            if(bodyType(data.body) == "kinematics1D-pulley")
+              movePulley(data);
+            
             if(bodyType(data.body) == "kinematics1D-mass" || bodyType(data.body) == "kinematics1D-spring-child")
             {
               detachSpring(data.body);
@@ -189,9 +193,6 @@ function Kinematics1DModule() {
               attachPulley(data.body);
               snapToPulley(data.body);
             }
-            
-            if(bodyType(data.body) == "kinematics1D-pulley")
-              movePulley(data);
             
             if(index === 0 || index === Globals.originObject)
               moveOrigin({"x":canon.x, "y":canon.y}, false);
