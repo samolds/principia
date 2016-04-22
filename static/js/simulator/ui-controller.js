@@ -287,7 +287,7 @@ function updatePropertyRedraw(body, property, value){
   value = convertUnit(value, property, true);
   
   // Master clamping location
-  if(property == "mass")            value = clamp(0.1,value,10);
+  if(property == "mass")            value = clamp(0.1,value,1000);
   if(property == "surfaceWidth")    value = clamp(1,value,500);
   if(property == "surfaceHeight")   value = clamp(1,value,500);
   if(property == "surfaceFriction") value = clamp(0,value,1);
