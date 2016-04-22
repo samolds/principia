@@ -232,7 +232,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 			pageUser.ImageBlobKey = newImage[0].BlobKey
 		}
 
-    displayName := formValues["DisplayName"][0]
+		displayName := formValues["DisplayName"][0]
 		if len(displayName) > 50 {
 			api.ApiErrorResponse(w, "Your Display Name must be shorter than 50 characters.", http.StatusInternalServerError)
 			return

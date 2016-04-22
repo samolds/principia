@@ -40,7 +40,8 @@ function exportToJson(){
     maxFrames:Globals.maxFrames,
     timelineReady:Globals.timelineReady,
     origin:Globals.origin,
-    coordinateSystem: Globals.coordinateSystem
+    coordinateSystem: Globals.coordinateSystem,
+    originObject: Globals.originObject
   }
   
   return JSON.stringify(json);
@@ -208,6 +209,7 @@ $(document).ready(function(){
   $( '#viewport' ).on("contextmenu", function(event){
     contextMenuListener(event);
   });
+  
   $( '#viewport' ).on("click", function(event){
     if ("activeElement" in document)
       document.activeElement.blur();
@@ -216,8 +218,7 @@ $(document).ready(function(){
 
   $(document).on('click', function(event) {
     bodyClickListener(event);
-  });
-  
+  });  
 
   $('#viewport').on("mousedown", function(event){
     event.preventDefault();
@@ -283,7 +284,11 @@ $(document).ready(function(){
   $("#pointmass-properties-pvagraph").on("change", function() {
     updateBooleanProperty(Globals.selectedBody, 'showGraph', $('#pointmass-properties-pvagraph')[0].checked);
   });
-
+  
+  // Spring specific event
+  $('#spring-properties-k').on("change", function(){
+    updatePropertyRedraw(Globals.selectedBody, 'k', $('#spring-properties-k').val());
+  });
 
   // Surface specific events
   $('#surface-properties-width').on("change", function(){
@@ -376,6 +381,7 @@ $(document).ready(function(){
   $('#glob-timestep-unit').on("change", function() { 
       Globals.world.timestep(parseFloat($('#glob-timestep-unit').val())); 
       if(Globals.numKeyframes == 1) attemptSimulation();
+      updateRangeLabel();
       drawMaster();
   });
   

@@ -11,8 +11,9 @@ function drawLoop(){
 
   // Update range, draw simulation at that frame, and increment counter
   $("#simulatorFrameRange").val(Globals.frame)
-  
+    
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+  updateRangeLabel();
   highlightKeycanvas(Globals.keyframe, "yellow");
   
   drawMaster();
@@ -39,17 +40,21 @@ function displayVariableValues(body){
     
     // Convert to Polar coordinates, if necessary
     if(Globals.coordinateSystem == "polar"){
-      position = cartesian2Polar([position[0], position[1]]);
-      
+            
       var temp;
-      if(velocity[1] == "?") 
-        temp = velocity[0];      
-      velocity = cartesian2Polar([velocity[0], velocity[1]]);
+      if(position[1] == "?") temp = position[0];      
+      position = cartesian2Polar([position[0], position[1]]);
+      if(temp) position = [temp, "?"];
       
-      if(temp) 
-        velocity = [temp, "?"];
+      temp = null;
+      if(velocity[1] == "?") temp = velocity[0];      
+      velocity = cartesian2Polar([velocity[0], velocity[1]]);      
+      if(temp) velocity = [temp, "?"];
       
+      temp = null;
+      if(acceleration[1] == "?") temp = acceleration[0];
       acceleration = cartesian2Polar([acceleration[0], acceleration[1]]);
+      if(temp) acceleration = [temp, "?"];
     }
        
     $('#general-properties-position-x').val(position[0].toFixed(precision));
@@ -150,7 +155,13 @@ function displayElementValues(bod){
       $('#ramp-properties-height').val(Math.abs(constants.rampHeight));
       $('#ramp-properties-angle').val(Math.abs(constants.rampAngle));
       $('#ramp-properties-friction').val(Math.abs(constants.rampFriction));
+    } else if (constants.ctype === "kinematics1D-spring" || constants.ctype === "kinematics1D-spring-child"){      
+      if(constants.ctype === "kinematics1D-spring")
+        $('#spring-properties-k').val(Math.abs(constants.k));
+      else
+        $('#spring-properties-k').val(Math.abs(Globals.bodyConstants[constants.parent].k));
     }
+    
     
   } else {
     $('#general-properties-nickname').val("");
@@ -211,11 +222,14 @@ function drawRopeLine(b1, b2){
   
   // Get modifier based on pulley radius and which side of the pulley it is on
   var radius = Globals.bodyConstants[bIndex(b1)].radius;
-  if(Globals.bodyConstants[bIndex(b2)].side == "left")
+  var padding = 5;
+  if(Globals.bodyConstants[bIndex(b2)].side == "left"){
     radius *= -1;
+    padding *= -1;
+  }
   
   ctx.beginPath();
-  ctx.moveTo(x1 + radius/getScaleFactor(),y1);
+  ctx.moveTo(x1 + radius/getScaleFactor() - padding/getScaleFactor(),y1);
   ctx.lineTo(x2,y2);
   ctx.stroke();
 }
@@ -621,7 +635,7 @@ function postRender(isKeyframe){
   var selectedBody = Globals.selectedBody;
   var originObject = Globals.originObject;
   
-  drawLines();
+  //drawLines();
 
   // Only draw vectors if we aren't currently looking at a FBD
   if(!Globals.fbdDown || !selectedBody) {
@@ -634,8 +648,10 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
     $('#general-properties').removeClass('hide');
 
+    
     switch (bodConstants.ctype) {
       case 'kinematics1D-mass':
         $('#pointmass-properties').removeClass('hide');
@@ -647,6 +663,8 @@ function postRender(isKeyframe){
         $('#ramp-properties').removeClass('hide');
         break;
       case 'kinematics1D-spring':
+      case 'kinematics1D-spring-child':
+        $('#spring-properties').removeClass('hide');
         break;
     }
   } else {
@@ -654,6 +672,7 @@ function postRender(isKeyframe){
     $('#pointmass-properties').addClass('hide');
     $('#surface-properties').addClass('hide');
     $('#ramp-properties').addClass('hide');
+    $('#spring-properties').addClass('hide');
   }
 
   if(isKeyframe){
@@ -682,8 +701,10 @@ function postRender(isKeyframe){
   // Draw x grid labels
   var xmod = Math.floor(Globals.translation.x/incr)*incr;
   if(xmod < 0 && Globals.translation.x !== xmod) xmod += incr;
-  for(var i=-100; i <= can.width+100; i+= incr)    
-    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10);
+  for(var i=-100; i <= can.width+100; i+= incr){  
+    if(Globals.scale < 0 && i%(incr*2)==0) continue;
+    can.ctx.fillText("" + (i - xmod)*getScaleFactor(), (i + Globals.translation.x % incr), can.height - 10, incr);
+  }
 }
 
 // Draws a blue highlight around the nth mini-keyframe canvas
@@ -717,6 +738,8 @@ function preRender()
     can.drawLine({'x':0,         'y':(i + Globals.translation.y % incr)},
                  {'x':can.width, 'y':(i + Globals.translation.y % incr)},
                  { strokeStyle: '#eeeeee',lineWidth: 1});
+                 
+  drawLines();
 }
 
 // Sets the world state to the currently selected frame and renders it.
@@ -730,18 +753,17 @@ function drawMaster(){
   var keyframe = Globals.keyframe;
   
   Globals.world.renderer().ctx.clearRect(0, 0, Globals.world.renderer().width, Globals.world.renderer().height);
-  preRender();
-  
+
   if(keyframe !== false){
-    setStateKF(keyframe);
-    world.render(false);
-    postRender(true);
+    setStateKF(keyframe);  
   }
   else if(frame !== false) {
-    setState(frame);
-    world.render(false);
-    postRender(false);
+    setState(frame);  
   } 
+  
+  preRender();    
+  world.render();
+  postRender(Globals.keyframe !== false);  
 }
 
 // zoom == +1 -> Zoom in
@@ -777,12 +799,7 @@ function simulationZoom(zoom) {
       setRampWidth(body, bodyConst.rampWidth, true);
       setRampHeight(body, bodyConst.rampHeight, true);
     }
-    /*
-    else if(i == 0){
-      updateSize(body, bodyConst.size);
-    }
-    */
-    
+        
     // Scale within existing keyframe states
     for(var j=0; j < Globals.keyframeStates.length; j++){
       var state = Globals.keyframeStates[j][bIndex(body)];
@@ -801,4 +818,24 @@ function simulationZoom(zoom) {
   
   attemptSimulation();
   drawMaster();
+}
+
+function colorToolbox(enable){
+  var restricted = $(".restricted");
+  if(enable){
+    // Color the restricted items green, add draggable/clickable class
+    restricted.css("background", "");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).addClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).off('dragstart');
+    }
+  }
+  else {
+    // Color the restricted items red, remove draggable/clickable class    
+    restricted.css("background", "#998");
+    for(var i=0; i<restricted.length; i++){
+      $(restricted[i].children[1].children[0]).removeClass("draggable clickable ui-draggable ui-draggable-handle");
+      $(restricted[i].children[1].children[0]).on('dragstart', function(event) { event.preventDefault(); });
+    }
+  }
 }

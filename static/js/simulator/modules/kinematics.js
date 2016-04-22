@@ -57,6 +57,22 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
+        if(Globals.world.getBodies().length >= Globals.maxNumBodies && !Globals.loading){
+          failToast("Too many bodies.");
+          return;
+        }
+        
+        var originalKeyframe = Globals.keyframe;
+        
+        if(Globals.numKeyframes > 1){
+          if(data.type == "kinematics1D-surface" ||
+             data.type == "kinematics1D-spring" ||
+             data.type == "kinematics1D-pulley" ||
+             data.type == "kinematics1D-ramp"){
+               return;
+             }
+        }
+        
         var canon = canonicalTransform(data);
         data.x = canon.x;
         data.y = canon.y;
@@ -94,6 +110,8 @@ function Kinematics1DModule() {
         }
 
         if(Globals.numKeyframes === 1) attemptSimulation();
+        Globals.keyframe = originalKeyframe;
+        highlightKeycanvas(Globals.keyframe);
         drawMaster();
       });
 
@@ -138,12 +156,14 @@ function Kinematics1DModule() {
 
           Globals.didMove = true;
           setNoSelect(true);
-          var index = bIndex(data.body);          
-          var canon = canonicalTransform(data);
-
+          var index = bIndex(data.body);       
+          
+          
+          var canon = canonicalTransform(data);          
+          
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
-          
+
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
           
@@ -166,15 +186,16 @@ function Kinematics1DModule() {
             onPropertyChanged(index, "posx", canon.x, false);
             onPropertyChanged(index, "posy", canon.y, false);
             
+            if(bodyType(data.body) == "kinematics1D-pulley")
+              movePulley(data);
+            
             if(bodyType(data.body) == "kinematics1D-mass" || bodyType(data.body) == "kinematics1D-spring-child")
             {
               detachSpring(data.body);
               attachSpring(data.body);
               attachPulley(data.body);
+              snapToPulley(data.body);
             }
-            
-            if(bodyType(data.body) == "kinematics1D-pulley")
-              movePulley(data);
             
             if(index === 0 || index === Globals.originObject)
               moveOrigin({"x":canon.x, "y":canon.y}, false);
@@ -183,7 +204,7 @@ function Kinematics1DModule() {
             if(Globals.numKeyframes == 1) attemptSimulation();
             
             drawMaster();
-        }    
+        }
       });
 
       world.on('interact:poke', function(data){    
@@ -354,8 +375,7 @@ function Kinematics1DModule() {
     for(var i=1; i<tempBC.length; i++)
     {
       var type = tempBC[i].ctype;      
-      var x = tempKF[0][i].pos._[0];
-      //var y = tempKF[0][i].pos._[1];
+      var x = tempKF[0][i].pos._[0];      
       var y = 0;
       var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
 
@@ -388,8 +408,7 @@ function Kinematics1DModule() {
       for(var j=0; j<tempKF[i].length; j++)
       {        
         var KF = tempKF[i][j];
-        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
-        //Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];        
         Globals.keyframeStates[i][j].pos.y = swapYpos(Globals.variableMap[i][j].posy, false);
         Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
         Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
@@ -400,8 +419,9 @@ function Kinematics1DModule() {
       }
       
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
-    
-    
+      Globals.originObject = restore.originObject;
+      if(Globals.originObject !== false)
+        Globals.world.getBodies()[0].hidden = true;
     for(var i=tempKF.length-1; i>=0; i--){
       Globals.keyframe = i;
       drawMaster();
@@ -421,6 +441,7 @@ function Kinematics1DModule() {
     highlightKeycanvas(0);
     Globals.keyframe = 0;
     setStateKF(0);
+    updateRangeLabel();
     drawMaster();
   }
   

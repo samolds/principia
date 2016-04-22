@@ -798,6 +798,10 @@ select.browser-default{
     word-wrap: break-word;
   }
 
+.comment-thumb {
+  max-height: 100px;
+}
+
 /* color gradients used as accents */
   /* all generated from http://uigradients.com */
   .light-accent-gradient-1 { /* Back To Earth */

@@ -39,22 +39,20 @@ function addPulley(data){
   if(!Globals.loading){
     addToVariableMap(
       {
-        r: dRadius,
+        r: 50,
         posx: data.x, 
         posy: data.y
       }
     );
   }
   
-  
-  
   world.add(component);
   updateKeyframes([component]);
   Globals.pulleyBodyCounter++;
   
-  bodyConstants[bodyConstants.length-1].radius = dRadius;  
-  bodyConstants[bodyConstants.length-1].attach_left  = canonicalTransformNT({x:data.x - dRadius, y:swapYpos(data.y, false)});
-  bodyConstants[bodyConstants.length-1].attach_right = canonicalTransformNT({x:data.x + dRadius, y:swapYpos(data.y, false)});
+  bodyConstants[bodyConstants.length-1].radius = 50;
+  bodyConstants[bodyConstants.length-1].attach_left  = {x: data.x-50, y:data.y};
+  bodyConstants[bodyConstants.length-1].attach_right = {x: data.x+50, y:data.y};
   
   bodyConstants[bodyConstants.length-1].left_open = true;
   bodyConstants[bodyConstants.length-1].right_open = true;
@@ -64,7 +62,7 @@ function addPulley(data){
   bodyConstants[bodyConstants.length-1].nickname = "pulley " + (getLabel(component));
 
   bodyConstants[bodyConstants.length-1].img = "/static/img/toolbox/pulley.png";
-  bodyConstants[bodyConstants.length-1].size = dRadius;
+  bodyConstants[bodyConstants.length-1].size = 50;
 
   return [component];
 }
@@ -73,8 +71,32 @@ function movePulley(data)
 {
   var displaySize = 100/getScaleFactor();
   var dRadius = displaySize/2;
-  Globals.bodyConstants[bIndex(data.body)].attach_left  = canonicalTransform({x:data.x - dRadius, y:data.y});
-  Globals.bodyConstants[bIndex(data.body)].attach_right = canonicalTransform({x:data.x + dRadius, y:data.y});
+  
+  var consts = Globals.bodyConstants[bIndex(data.body)];
+  consts.attach_left  = canonicalTransform({x:data.x - dRadius, y:data.y});
+  consts.attach_right = canonicalTransform({x:data.x + dRadius, y:data.y});
+  
+  var bodies = Globals.world.getBodies();
+  if(consts.attachedBodyLeft){
+    onPropertyChanged(consts.attachedBodyLeft, "posx", consts.attach_left.x, false);
+    var attachedToLeft = Globals.bodyConstants[consts.attachedBodyLeft].attachedTo;
+    for(var i=0; i < attachedToLeft.length; i++){
+      var body = bodies[attachedToLeft[i]];
+      if(bodyType(body) == "kinematics1D-spring-child"){
+        onPropertyChanged(bIndex(body), "posx", consts.attach_left.x, false);     
+      }
+    }
+  }
+  if(consts.attachedBodyRight){
+    onPropertyChanged(consts.attachedBodyRight, "posx", consts.attach_right.x, false);
+    var attachedToRight = Globals.bodyConstants[consts.attachedBodyRight].attachedTo;
+    for(var i=0; i < attachedToRight.length; i++){
+      var body = bodies[attachedToRight[i]];
+      if(bodyType(body) == "kinematics1D-spring-child")
+        onPropertyChanged(bIndex(body), "posx", consts.attach_right.x, false);
+    }
+  }
+  
 }
 
 function attachPulley(body){
@@ -100,8 +122,8 @@ function attachPulley(body){
           pulley_const.left_open = false;
           constants.attachedTo.push(bIndex(pulley));
           constants.side = "left";
-          changed = true;
-        }        
+          changed = true;          
+        }
         else if(body2Constant(pulley).right_open)
         {        
           pulley_const.attachedBodyRight = bIndex(body);
@@ -113,6 +135,7 @@ function attachPulley(body){
 
         if(changed){
           // Attempt to update the corresponding variable
+          body.treatment = "ghost";
           var position = pulley_const.right_open? pulley_const.attach_left: pulley_const.attach_right;          
           onPropertyChanged(i, "posx", position.x, false);
           onPropertyChanged(i, "posy", position.y, false);
@@ -133,91 +156,135 @@ function getPulleyAcceleration(body, magnitude)
   for(var i=0; i < consts.attachedTo.length; i++)
     if(bodyType(bodies[consts.attachedTo[i]]) == "kinematics1D-pulley")
       pulley = bodies[consts.attachedTo[i]];
-    
-  var attach = (consts.side == "left")? body2Constant(pulley).attach_left: body2Constant(pulley).attach_right;
-  var radius = body2Constant(pulley).radius * ((consts.side == "left")? 1: -1);
-  
-  var canon = canonicalTransformNT({x:body.state.pos.x,y:body.state.pos.y});
-  var x1 = canon.x;
-  var x2 = attach.x;
-  var y1 = canon.y;
-  var y2 = attach.y;
-  
-  var x = x1-x2;
-  var y = y1-y2;
-  
-  var getAngle = function(x,y) { return Math.atan2(y,x); }
-  
-  var m = consts.mass;
-  var angle = -getAngle(x,y);
-    
-  
-  return [(-Math.cos(angle) * magnitude)/m, (-Math.sin(angle) * magnitude)/m];
+
+  return [0, -magnitude];  
 }
 
-function applyPulleyForces(pulley_body, dt) { 
+function getPulleySnapX(body){
+  var pulley = getAttachedPulley(body);
+  if(pulley){
+    var side = body2Constant(body).side;
+    if(side == "left")
+      return body2Constant(pulley).attach_left.x
+    else
+      return body2Constant(pulley).attach_right.x
+  }
+}
+
+function snapToPulley(body){
+  var pulley = getAttachedPulley(body);
+  if(pulley){
+    var snapX = getPulleySnapX(body);
+    onPropertyChanged(bIndex(body), "posx", snapX, false);
+  }
+}
+
+function handlePulleyStop(pulley, body){
+  var init_y = Globals.keyframeStates[getKF()][bIndex(body)].pos.y;
+  var pulley_y = pulley.state.pos.y;
+  
+  function stop(body, y){
+    body.state.pos.y = y;
+    body.state.vel.x = 0;
+    body.state.vel.y = 0;
+    body.state.acc.x = 0;
+    body.state.acc.y = 0;
+    
+    var opp_body = getOppositePulleyBody(body);
+    if(opp_body){
+      opp_body.state.vel.x = 0;
+      opp_body.state.vel.y = 0;
+      opp_body.state.acc.x = 0;
+      opp_body.state.acc.y = 0;
+    }
+  }
+  
+  if(init_y > pulley_y && body.state.pos.y < pulley_y){
+    stop(body, pulley_y);    
+  }
+  if(init_y == pulley.state.pos.y){
+    stop(body, pulley_y);
+  }
+  if(init_y < pulley_y && body.state.pos.y > pulley_y){
+    stop(body, pulley_y);
+  }  
+}
+
+function getAttachedPulley(body){
+  var pulley = null;
+  var attachedTo = body2Constant(body).attachedTo;
+  var bodies = Globals.world.getBodies();
+  if(attachedTo)
+    for(var i=0; i<attachedTo.length; i++)
+      if(bodyType(bodies[attachedTo[i]]) == "kinematics1D-pulley")
+        pulley = bodies[attachedTo[i]];
       
-      var consts_original = body2Constant(pulley_body);
-      var bodies = Globals.world.getBodies();
-      
-      if(!consts_original.side) return 0;
-      
-      var side = consts_original.side;
-      
-      var body = null;
-      var pulley = null;
-      for(var i=0; i < consts_original.attachedTo.length; i++)
-      {
-        var index = consts_original.attachedTo[i];
-        pulley = bodies[index];
-                        
-        if(bodyType(pulley) != "kinematics1D-pulley") continue;
-        var pulley_consts = body2Constant(pulley);
+  return pulley;
+}
+
+function getOppositePulleyBody(body){
+  var opp_body = null;
+  var pulley = null;
+  var bodies = Globals.world.getBodies();
+  var side = body2Constant(body).side;  
+  var attachedTo = body2Constant(body).attachedTo;
+  
+  if(!side) return null;
+  
+  for(var i=0; i < attachedTo.length; i++){
+    var index = attachedTo[i];
+    pulley = bodies[index];
+                    
+    if(bodyType(pulley) != "kinematics1D-pulley") continue;
+    var pulley_consts = body2Constant(pulley);
+
+    if(side == "left" && pulley_consts.attachedBodyRight)    
+      return bodies[pulley_consts.attachedBodyRight];    
+    else if(side == "right" && pulley_consts.attachedBodyLeft)
+      return bodies[pulley_consts.attachedBodyLeft];    
+  }
+  
+  return null;
+}
+
+function applyPulleyForces(body, dt){
         
-        
-        if(side == "left")
-        {
-          if(pulley_consts.attachedBodyRight){
-            body = bodies[pulley_consts.attachedBodyRight];
-          }
-          else
-            continue;            
-        }
-        else if(side == "right")
-        {
-          if(pulley_consts.attachedBodyLeft){
-            body = bodies[pulley_consts.attachedBodyLeft];
-          }
-          else
-            continue;
-        }
-      }      
+  var bodies = Globals.world.getBodies();
+  var pulley = getAttachedPulley(body);
+  var opp_body = getOppositePulleyBody(body);
+  
+  if(!pulley || !opp_body || !body2Constant(pulley).solve_tension) return 0;
+  
+  body2Constant(pulley).solve_tension = false;
+  
+  // Sum up forces acting on each side
+  var m1 = body2Constant(opp_body).mass;
+  var spring_f1 = getSpringForce(opp_body);
+  var F1 = (Globals.variableMap[getKF()][bIndex(opp_body)].accy * m1 * dt) - spring_f1[1] - (Globals.gravity[1] * dt * m1);
+  
+  var m2 = body2Constant(body).mass;
+  var spring_f2 = getSpringForce(body);
+  var F2 = (Globals.variableMap[getKF()][bIndex(body)].accy * m2 * dt) - spring_f2[1] - (Globals.gravity[1] * dt * m2);
+  
+  if(opp_body.state.pos.y == pulley.state.pos.y) F1 = F2;
+  if(body.state.pos.y == pulley.state.pos.y) F2 = F1;
       
-      
-      if(!body) return 0;
-      
-      var spring_a = applySpringForces(body);
-      var state = body.state;              
-      var x = 0;
-      var y = 0;
-      
-      x += state.acc.x * dt + spring_a[0];
-      y += state.acc.y * dt + spring_a[1];
-      
-      if(body.treatment == "dynamic"){
-        x += Globals.gravity[0] * dt;
-        y += Globals.gravity[1] * dt;
-      }
-      
-      
-            
-      var m = body2Constant(body).mass;
-      
-      if(side == "left")
-      {
-        var test = Math.sqrt(Math.pow(x*m,2)+Math.pow(y*m,2)) - applyPulleyForces(body,dt);
-        pulley.state.angular.vel = test;
-      }
-      
-      return Math.sqrt(Math.pow(x*m,2)+Math.pow(y*m,2));
+  var a = Math.abs((F2 - F1)/(m1+m2));
+  
+  if( F1 > F2){
+    body.state.vel.y += a;
+    opp_body.state.vel.y -= a;
+  }
+  else {
+    body.state.vel.y -= a;
+    opp_body.state.vel.y += a;
+  }
+  
+  var side = body2Constant(body).side;
+  if(side == "left"){
+    var dF = F1 - F2;
+    pulley.state.angular.pos = dF/5;
+  }
+  
+  return 0;
 }

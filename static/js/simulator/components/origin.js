@@ -22,6 +22,7 @@ function moveOrigin(data, doTranslate){
     var body = bodies[j];
     if(distance(body.state.pos.x, swapYpos(body.state.pos.y, false), data.x, data.y) <= delta){
       detach = false;
+      if(Globals.originObject !== false && Globals.didMove && j != Globals.originObject) continue;
       Globals.originObject = j;
       
       if(bIndex(Globals.selectedBody) === 0)

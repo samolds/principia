@@ -70,6 +70,21 @@ function handleDragStop(event, ui){
   dirty();
 }
 
+function updateRangeLabel() { 
+  var dt = Globals.world.timestep();  
+  var ft = (Globals.keyframes.indexOf(Globals.totalFrames) != -1)? 
+                                                Globals.keyframeTimes[kIndex(Globals.totalFrames)].toPrecision(4) :
+                                                                     (dt*Globals.totalFrames - dt).toPrecision(4) ;
+  if(Globals.keyframes.indexOf(Globals.frame) != -1)
+    $('#play-range-label').html(
+      (Globals.keyframeTimes[Globals.keyframe]).toPrecision(4) + "/"+ ft  + " (s)"
+    ); 
+  else
+    $('#play-range-label').html(
+      (dt*(Globals.frame? Globals.frame: 0)).toPrecision(4) + "/"+ ft + " (s)"
+    ); 
+}
+
 // Scrubs to selected frame
 function onRangeUpdate(){
   // Prevent use of timeline until simulation is complete
@@ -80,9 +95,11 @@ function onRangeUpdate(){
   
   // Set new frame and draw it
   Globals.frame = parseInt($("#simulatorFrameRange").val());
-  
+      
   // Update keyframe variable if the selected frame is also a keyframe
   Globals.keyframe = ($.inArray(parseInt(Globals.frame), Globals.keyframes) != -1)? kIndex(Globals.frame): false;   
+    
+  updateRangeLabel();
     
   // Highlight mini canvas
   highlightKeycanvas(Globals.keyframe, "yellow");
@@ -248,7 +265,7 @@ function updatePropertyRedraw(body, property, value){
     // Update properties within simulator, draw, and return
     onPropertyChanged(index, property.substring(0,3) + "x", point[0], false);
     
-    if(point[1] === -0){
+    if(property.length >= 4 && property.substring(3) === "x" && property != "posx"){
       point[1] = "?";
     }
     
@@ -268,7 +285,23 @@ function updatePropertyRedraw(body, property, value){
   if(property == "posx" || property == "posy")
     value = origin2PhysicsScalar(property.slice(-1), value);    
   value = convertUnit(value, property, true);
-  onPropertyChanged(bIndex(body), property, value, false);
+  
+  // Master clamping location
+  if(property == "mass")            value = clamp(0.1,value,1000);
+  if(property == "surfaceWidth")    value = clamp(1,value,100000);
+  if(property == "surfaceHeight")   value = clamp(1,value,100000);
+  if(property == "surfaceFriction") value = clamp(0,value,1);
+  if(property == "rampWidth")       value = clamp(1,value,50000);
+  if(property == "rampHeight")      value = clamp(1,value,50000);
+  if(property == "rampAngle")       value = clamp(10,value,80);
+  if(property == "rampFriction")    value = clamp(0,value,1);
+  if(property == "k")               value = clamp(0.001,value,0.05);
+  
+  var index = bIndex(body);
+  if(property == "k" && bodyType(body) === "kinematics1D-spring-child")
+    index = body2Constant(body).parent;
+  
+  onPropertyChanged(index, property, value, false);
   
   if(Globals.numKeyframes == 1) attemptSimulation();  
   drawMaster();
@@ -345,16 +378,16 @@ function updateCoords(coord_sys){
       $('#y-position-label').html("Y Position");
       $('#x-velocity-label').html("X Velocity");
       $('#y-velocity-label').html("Y Velocity");
-      $('#x-acceleration-label').html("X Acceleration");
-      $('#y-acceleration-label').html("Y Acceleration");
+      $('#x-acceleration-label').html("X Thrust");
+      $('#y-acceleration-label').html("Y Thrust");
     }
     else if(coord_sys == "polar"){
       $('#x-position-label').html("r Position");
       $('#y-position-label').html("Θ Position");
       $('#x-velocity-label').html("r Velocity");
       $('#y-velocity-label').html("Θ Velocity");
-      $('#x-acceleration-label').html("r Acceleration");
-      $('#y-acceleration-label').html("Θ Acceleration");
+      $('#x-acceleration-label').html("r Thrust");
+      $('#y-acceleration-label').html("Θ Thrust");
     }
     
     // Redraw (forces update of displayed values)
@@ -364,8 +397,15 @@ function updateCoords(coord_sys){
 // Adds a new keyframe, up to the limit
 function addKeyframe(){
   
-  if (Globals.numKeyframes == Globals.maxNumKeyframes)
+  if (Globals.numKeyframes == Globals.maxNumKeyframes){
+    failToast("You have the maximum number of keyframes.");
     return;
+  }
+  
+  if(containsRestricted()){
+    failToast("You must only use point mass components to utilize multiple keyframes.");
+    return;
+  }
   
   if(Globals.running)
     toggleSimulator();
@@ -409,6 +449,8 @@ function addKeyframe(){
       var property = $(event.target).parents().eq(2).attr("principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
+    
+    colorToolbox(false);
   }
 }
 
@@ -451,6 +493,8 @@ function removeKeyframe(event){
       var li = variables[i];
       $(li).children()[1].remove();
     }
+    
+    colorToolbox(true);
   }
   
   // Special case: User deletes currently selected keyframe
@@ -719,6 +763,12 @@ function deleteBody(bodyIndex){
 
   // Make sure there is a valid index selected to attempt to delete
   if (bodyIndex > -1) {
+    // Update the origin if the body was the origin object
+    if (bodyIndex === Globals.originObject) {
+      Globals.originObject = false;
+      Globals.world.getBodies[0].visible = true;
+    }
+
     // Get the body constants to delete and remove it from bodyConstants
     var bodToDelete = Globals.bodyConstants[bodyIndex];
     Globals.bodyConstants.splice(bodyIndex, 1);
@@ -794,6 +844,16 @@ function deleteBody(bodyIndex){
       } else if (i >= startIndex && bod.ctype.indexOf("spring") !== -1) {
         bod.child -= decSize;
       } else if (bod.ctype.indexOf("mass") !== -1) {
+        if (deletedBodWasSpring || deletedBodWasSpringChild) {
+          var refToDelete = bodyIndex;
+          if (bodToDelete.child !== undefined) {
+            refToDelete = bodToDelete.child;
+          }
+          var removedAttachmentIndex = bod.attachedTo.indexOf(refToDelete);
+          if (removedAttachmentIndex !== -1) {
+            bod.attachedTo.splice(removedAttachmentIndex, removedAttachmentIndex + 1);
+          }
+        }
         for (var j = 0; j < bod.attachedTo.length; j++) {
           if (bod.attachedTo[j] >= startIndex)
             bod.attachedTo[j] -= decSize;
@@ -804,7 +864,7 @@ function deleteBody(bodyIndex){
     // If the component deleted was a spring or pulley, we need to loop through
     // any of the existing components to check if any of them were attached to
     // the spring or pulley. If they were we need to delete the reference
-    if (deletedBodWasSpring || deletedBodWasPulley) {
+    if (deletedBodWasSpring || deletedBodWasSpringChild || deletedBodWasPulley) {
       // For Springs get the actual reference if it was
       // the parent or child spring node that was deleted
       var refToDelete = bodyIndex;
@@ -814,6 +874,7 @@ function deleteBody(bodyIndex){
       for (i = 0; i < len; i++) {
         bod = Globals.bodyConstants[i];
         if (bod.ctype.indexOf("mass") !== -1) {
+          if(bod.side) delete bod.side;
           refIndex = bod.attachedTo.indexOf(refToDelete)
           if (refIndex !== -1) {
             bod.attachedTo.splice(refIndex, refIndex + 1)
@@ -842,8 +903,8 @@ function deleteBody(bodyIndex){
         }
       }
     }
-    // End Spring and Pulley specific logic!
-
+    // End Spring and Pulley specific logic!    
+    
     simulate();
     drawMaster();
     updateKeyframes();
@@ -975,6 +1036,19 @@ function leftSlideMenuOpen(e)
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
+}
+
+function containsRestricted()
+{
+  var bodies = Globals.world.getBodies();
+  for(var i=0; i<bodies.length; i++)
+  {
+    var type = bodyType(bodies[i]);
+    if(type != "kinematics1D-origin" && type != "kinematics1D-mass" && type != "kinematics1D-origin")
+      return true;
+  }
+  
+  return false;
 }
 
 function leftSlideMenuClose(e) {

@@ -100,6 +100,7 @@ function attemptSimulation(){
             // Missing results on final pass
             if(!results[0] && pass == nKF-2){
               $("#solution-details")[0].textContent += "Error! There is insufficient data to solve for all unknowns.\n";
+              MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
               Globals.timelineReady = false;
               return;
             }        
@@ -113,6 +114,7 @@ function attemptSimulation(){
                 $("#solution-details")[0].textContent += "Error! You would need to reverse time to get to keyframe " + (keyframe2+1) + "!\n";
                 Globals.keyframeTimes[keyframe2] = false;
                 Globals.timelineReady = false;
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
                 return;
               }
               
@@ -176,6 +178,8 @@ function attemptSimulation(){
   
   // Update the simulation render
   drawMaster();
+  
+  updateRangeLabel();
   
   MathJax.Hub.Queue(["Typeset", MathJax.Hub, "solution-details"]);
 }
@@ -422,6 +426,7 @@ function simulate(){
 
 // Updates a variable in the specified body to have the specified value
 function updateVariable(body, variable, value){
+  if(Globals.loading) return;
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
   
   if(isNaN(value))
@@ -512,7 +517,7 @@ function updateGravity(coordinate, value){
 function updateSize(body, value){
   if(!body) return;
   value = parseInt(value);
-  value = isNaN(value) ? body2Constant(body).size : clamp(1, value, 500);
+  value = isNaN(value) ? body2Constant(body).size : clamp(5, value, 500);
   var i = bIndex(body);
   Globals.bodyConstants[i].size = value;
 
@@ -598,6 +603,15 @@ function onPropertyChanged(i, property, value, doTranslation){
   // Reparse the value, assigning NaN if the parse fails
   value = parseFloat(value);
   
+  var pulley = getAttachedPulley(body);
+  if(pulley){
+    if(property == "velx" || property == "accx")
+      value = 0;
+    if(property == "posx")
+      value = getPulleySnapX(body) +
+    ((Globals.didMove && bodyType(Globals.selectedBody) == "kinematics1D-pulley")? Globals.translation.x: 0);
+  }
+  
   // Must be updating one of these properties to allow setting to NaN 
   var allowed_variables =
   [
@@ -628,6 +642,7 @@ function onPropertyChanged(i, property, value, doTranslation){
         value = pixelTransform(value, "x", doTranslation); // Convert canon to pixel for state/kstate!
         body.state.pos.x = value;
         kState[i].pos.x = value;
+        if(bodyType(body) == "kinematics1D-pulley") movePulley({body:body, x:value, y:body.state.pos.y});
         break;
     case 'posy':        
         value = pixelTransform(value, "y", doTranslation); // Convert canon to pixel for state/kstate!
@@ -676,11 +691,12 @@ function totalAcceleration(body){
   var dt = Globals.world.timestep();
   var state = body.state;
   var spring_a = applySpringForces(body);
+  var pulley = getAttachedPulley(body);
   var pulley_f = applyPulleyForces(body, dt);
   var pulley_a = getPulleyAcceleration(body, pulley_f);
   
-  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((body.treatment == "dynamic")? Globals.gravity[0]: 0),
-          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic")? Globals.gravity[1]: 0)};
+  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((body.treatment == "dynamic" || pulley)? Globals.gravity[0]: 0),
+          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic" || pulley)? Globals.gravity[1]: 0)};
 }
 
 // Custom integrator: On each iteration, updates velocity then position of each component
@@ -689,6 +705,13 @@ Physics.integrator('principia-integrator', function( parent ){
   return {  
   // Velocity increases by acceleration * dt
   integrateVelocities: function( bodies, dt ){
+    
+    // Raise flag on all pulleys
+    for ( var i = 1, l = bodies.length; i < l; ++i ){
+      var body = bodies[i];
+      if(bodyType(body) == "kinematics1D-pulley")
+        body2Constant(body).solve_tension = true;
+    }
     
     // TODO: Apply forces to modify acceleration before integrating velocity    
     for ( var i = 1, l = bodies.length; i < l; ++i ){
@@ -700,17 +723,19 @@ Physics.integrator('principia-integrator', function( parent ){
       state.old = cloneState(body.state);
 
       // Get direction to pulley, apply acceleration to that direction
-      var pulley_f = applyPulleyForces(body, dt);
-      var pulley_a = getPulleyAcceleration(body, pulley_f);
-      
-      state.vel.x += state.acc.x * dt + spring_a[0] + pulley_a[0];
-      state.vel.y += state.acc.y * dt + spring_a[1] + pulley_a[1];
-      
-      if(body.treatment == "dynamic"){
-        state.vel.x += Globals.gravity[0] * dt;
-        state.vel.y += Globals.gravity[1] * dt;
+      var pulley = getAttachedPulley(body);
+      if(pulley){
+        applyPulleyForces(body, dt);
       }
-      
+      else {
+        state.vel.x += state.acc.x * dt + spring_a[0];
+        state.vel.y += state.acc.y * dt + spring_a[1];
+        if(body.treatment == "dynamic"){
+          state.vel.x += Globals.gravity[0] * dt;
+          state.vel.y += Globals.gravity[1] * dt;
+        }  
+      }
+
       state.angular.vel += state.angular.acc;
     }
   },
@@ -725,6 +750,10 @@ Physics.integrator('principia-integrator', function( parent ){
       if(Globals.bodyConstants[i].attachedTo && Globals.bodyConstants[i].attachedTo.length > 0) {
         state.pos.x += state.vel.x;
         state.pos.y += state.vel.y;
+        
+        var pulley = getAttachedPulley(body);
+        if(pulley)
+          handlePulleyStop(pulley, body);
       }
       
       else if (bodyType(body) == "kinematics1D-mass") {

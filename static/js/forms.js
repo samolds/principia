@@ -117,7 +117,7 @@ function validateUserImageSelection() {
 
   var imageFiles = document.getElementById("user-profile-image").files;
   if (imageFiles && imageFiles[0].size < 500000) { // 500kB
-    uploadMessage.text = "Ready to save " + imageFiles[0].name + "!";
+    uploadMessage.text = "Just click \"UPDATE!\" to upload " + imageFiles[0].name;
   } else {
     uploadMessage.text = "This image might be too large! The max file size is 500KB";
   }
@@ -200,9 +200,9 @@ function refreshCommentsList() {
           displayName = comment.AuthorName;
         }
 
-        var imgDisplay = "<i class='medium black-text fa fa-user'></i>";
+        var imgDisplay = "<i class='medium black-text fa fa-user comment-thumb'></i>";
         if (comment.AuthorImageSrcUrl) {
-          imgDisplay = "<img src='" + comment.AuthorImageSrcUrl + "' class='responsive-img'>"
+          imgDisplay = "<img src='" + comment.AuthorImageSrcUrl + "' class='responsive-img comment-thumb'>"
         }
 
         result += "<div class='row'>";
