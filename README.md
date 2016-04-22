@@ -4,9 +4,8 @@ Principia is an educational physics playground emphasizing visualizations and in
 This web-based project is designed to helps students reinforce key concepts through visualizing physical scenarios.
 A user can build a system by dragging and dropping elements like ramps, pulleys, or springs into a frame in their
 browser. Then the simulation can be run to see the elements interact with each other over time, with the ability to
-pause the simulation at any point and query the state of an element. Users can save their simulations and share
-them with others. Special privileges are available for instructor accounts to manage a classroom, including the
-ability to incorporate quizzes or assignments into their physics system.
+pause the simulation at any point and query the state of an element. Users can also save their simulations and share
+them with others.
 
 Principia serves as a powerful supplement to any physics classroom or as a playground that would allow students
 to further explore concepts in a visually exciting way.
@@ -93,16 +92,3 @@ To merge everything currently on `master` to `production` before deploying
 * [Slack Channel](http://madadasa.slack.com)
 * [PhysicsJS](http://wellcaffeinated.net/PhysicsJS)
 * [Materialize](http://materializecss.com)
-
-
-### Reviews:
-"JavaScript is a weiner."
-* DW
-
-"No Results for principia. Suggestions for improving the results: Try a larger search area.
-Try a different location. Check the spelling or try alternate spellings. Try a more general
-search. e.g. 'pizza' instead of 'pepperoni'"
-* Yelp
-
-"Physics is boring."
-* Unknown
