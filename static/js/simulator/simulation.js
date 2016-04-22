@@ -426,6 +426,7 @@ function simulate(){
 
 // Updates a variable in the specified body to have the specified value
 function updateVariable(body, variable, value){
+  if(Globals.loading) return;
   var keyframe = (Globals.keyframe !== false)? Globals.keyframe: lastKF();  
   
   if(isNaN(value))
