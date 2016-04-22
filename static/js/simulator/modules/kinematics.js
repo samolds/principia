@@ -57,6 +57,11 @@ function Kinematics1DModule() {
       
       world.on('addComponent', function(data) {
         
+        if(Globals.world.getBodies().length >= Globals.maxNumBodies && !Globals.loading){
+          failToast("Too many bodies.");
+          return;
+        }
+        
         var originalKeyframe = Globals.keyframe;
         
         if(Globals.numKeyframes > 1){
@@ -154,10 +159,7 @@ function Kinematics1DModule() {
           var index = bIndex(data.body);       
           
           
-          var canon = canonicalTransform(data);
-          
-          //if(bodyType(data.body) == "kinematics1D-pulley")
-            //movePulley({body:data.body, x:data.x - Globals.translation.x, y:data.y - Globals.translation.y});
+          var canon = canonicalTransform(data);          
           
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
@@ -418,7 +420,8 @@ function Kinematics1DModule() {
       
       moveOrigin({"x":restore["origin"][0], "y":restore["origin"][1]});
       Globals.originObject = restore.originObject;
-    
+      if(Globals.originObject !== false)
+        Globals.world.getBodies()[0].hidden = true;
     for(var i=tempKF.length-1; i>=0; i--){
       Globals.keyframe = i;
       drawMaster();

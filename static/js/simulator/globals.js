@@ -157,9 +157,11 @@ var Globals = {
   maxFrames: 1000,
   
   maxNumKeyframes: 5,
+  
+  maxNumBodies: 20,
 
 
-// Panning around the canvas
+  // Panning around the canvas
   lastPos: {x: 0, y: 0},
   isPanning: false,
   
