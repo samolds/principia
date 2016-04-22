@@ -152,15 +152,16 @@ function Kinematics1DModule() {
           Globals.didMove = true;
           setNoSelect(true);
           var index = bIndex(data.body);       
-          if(bodyType(data.body) == "kinematics1D-pulley")
-            movePulley(data);
+          
           
           var canon = canonicalTransform(data);
+          
+          //if(bodyType(data.body) == "kinematics1D-pulley")
+            //movePulley({body:data.body, x:data.x - Globals.translation.x, y:data.y - Globals.translation.y});
+          
           onPropertyChanged(index, "posx", canon.x, false);
           onPropertyChanged(index, "posy", canon.y, false);
-          
-          
-          
+
           if(index === 0 || index === Globals.originObject)
             moveOrigin({"x":canon.x, "y":canon.y}, false);
           
@@ -372,8 +373,7 @@ function Kinematics1DModule() {
     for(var i=1; i<tempBC.length; i++)
     {
       var type = tempBC[i].ctype;      
-      var x = tempKF[0][i].pos._[0];
-      //var y = tempKF[0][i].pos._[1];
+      var x = tempKF[0][i].pos._[0];      
       var y = 0;
       var data = { 'type': type, 'x': x, 'y': y, 'blockSimulation':true};
 
@@ -406,8 +406,7 @@ function Kinematics1DModule() {
       for(var j=0; j<tempKF[i].length; j++)
       {        
         var KF = tempKF[i][j];
-        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];
-        //Globals.keyframeStates[i][j].pos.y = KF.pos._[1];
+        Globals.keyframeStates[i][j].pos.x = KF.pos._[0];        
         Globals.keyframeStates[i][j].pos.y = swapYpos(Globals.variableMap[i][j].posy, false);
         Globals.keyframeStates[i][j].vel.x = KF.vel._[0];
         Globals.keyframeStates[i][j].vel.y = KF.vel._[1];
