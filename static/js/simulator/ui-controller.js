@@ -858,6 +858,7 @@ function deleteBody(bodyIndex){
       for (i = 0; i < len; i++) {
         bod = Globals.bodyConstants[i];
         if (bod.ctype.indexOf("mass") !== -1) {
+          if(bod.side) delete bod.side;
           refIndex = bod.attachedTo.indexOf(refToDelete)
           if (refIndex !== -1) {
             bod.attachedTo.splice(refIndex, refIndex + 1)
