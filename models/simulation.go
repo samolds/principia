@@ -36,6 +36,12 @@ type SimulationData struct {
 // the RatingTotal field.
 type ByRating []SimulationData
 
-func (sim ByRating) Len() int           { return len(sim) }
-func (sim ByRating) Swap(i, j int)      { sim[i], sim[j] = sim[j], sim[i] }
-func (sim ByRating) Less(i, j int) bool { return sim[i].RatingTotal > sim[j].RatingTotal }
+func (sim ByRating) Len() int      { return len(sim) }
+func (sim ByRating) Swap(i, j int) { sim[i], sim[j] = sim[j], sim[i] }
+func (sim ByRating) Less(i, j int) bool {
+	if sim[i].RatingTotal == sim[j].RatingTotal {
+		return sim[i].CreationDate.After(sim[j].CreationDate)
+	} else {
+		return sim[i].RatingTotal > sim[j].RatingTotal
+	}
+}

@@ -56,7 +56,7 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 			return
 		}
 
-    simulationName := formValues["Name"][0]
+		simulationName := formValues["Name"][0]
 		if len(simulationName) > 50 || len(simulationName) == 0 {
 			api.ApiErrorResponse(w, "Simulation Name must not be empty and must be shorter than 50 characters.", http.StatusInternalServerError)
 			return
@@ -160,7 +160,7 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			return
 		}
 
-    simulationName := formValues["Name"][0]
+		simulationName := formValues["Name"][0]
 		if len(simulationName) > 50 || len(simulationName) == 0 {
 			api.ApiErrorResponse(w, "Simulation Name must not be empty and must be shorter than 50 characters.", http.StatusInternalServerError)
 			return

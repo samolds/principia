@@ -403,7 +403,7 @@ function addKeyframe(){
   }
   
   if(containsRestricted()){
-    failToast("You must only use point masses components to utilize multiple keyframes.");
+    failToast("You must only use point mass components to utilize multiple keyframes.");
     return;
   }
   
