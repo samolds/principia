@@ -456,6 +456,9 @@ function drawFBD(){
     return;
   }
 
+  // Center on the selected body
+  centerBody(bIndex(selectedBody));
+  
   // Called to remove vectors from the selected body while displaying force vectors
   drawMaster();
 
@@ -513,8 +516,9 @@ function drawFBD(){
               "</p>"
               );
 
-  var topPos = selectedBody.state.pos.y + Globals.translation.y + (bodySize/2) + 100;
-  var leftPos = selectedBody.state.pos.x + Globals.translation.x + (bodySize/2) + 85;
+  // Center the tooltip
+  var topPos = Globals.world.renderer().el.offsetTop + Globals.world.renderer().height/2;
+  var leftPos = Globals.world.renderer().el.offsetLeft + Globals.world.renderer().width/2;
   fbdHelp.css({top: topPos, left: leftPos});
   fbdHelp.show();
 }
