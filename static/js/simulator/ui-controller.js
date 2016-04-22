@@ -288,12 +288,12 @@ function updatePropertyRedraw(body, property, value){
   
   // Master clamping location
   if(property == "mass")            value = clamp(0.1,value,1000);
-  if(property == "surfaceWidth")    value = clamp(1,value,500);
-  if(property == "surfaceHeight")   value = clamp(1,value,500);
+  if(property == "surfaceWidth")    value = clamp(1,value,100000);
+  if(property == "surfaceHeight")   value = clamp(1,value,100000);
   if(property == "surfaceFriction") value = clamp(0,value,1);
-  if(property == "rampWidth")       value = clamp(1,value,500);
-  if(property == "rampHeight")      value = clamp(1,value,500);
-  if(property == "rampAngle")       value = clamp(20,value,70);
+  if(property == "rampWidth")       value = clamp(1,value,50000);
+  if(property == "rampHeight")      value = clamp(1,value,50000);
+  if(property == "rampAngle")       value = clamp(10,value,80);
   if(property == "rampFriction")    value = clamp(0,value,1);
   if(property == "k")               value = clamp(0.001,value,0.05);
   
