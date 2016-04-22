@@ -763,6 +763,12 @@ function deleteBody(bodyIndex){
 
   // Make sure there is a valid index selected to attempt to delete
   if (bodyIndex > -1) {
+    // Update the origin if the body was the origin object
+    if (bodyIndex === Globals.originObject) {
+      Globals.originObject = false;
+      Globals.world.getBodies[0].visible = true;
+    }
+
     // Get the body constants to delete and remove it from bodyConstants
     var bodToDelete = Globals.bodyConstants[bodyIndex];
     Globals.bodyConstants.splice(bodyIndex, 1);
@@ -838,6 +844,16 @@ function deleteBody(bodyIndex){
       } else if (i >= startIndex && bod.ctype.indexOf("spring") !== -1) {
         bod.child -= decSize;
       } else if (bod.ctype.indexOf("mass") !== -1) {
+        if (deletedBodWasSpring || deletedBodWasSpringChild) {
+          var refToDelete = bodyIndex;
+          if (bodToDelete.child !== undefined) {
+            refToDelete = bodToDelete.child;
+          }
+          var removedAttachmentIndex = bod.attachedTo.indexOf(refToDelete);
+          if (removedAttachmentIndex !== -1) {
+            bod.attachedTo.splice(removedAttachmentIndex, removedAttachmentIndex + 1);
+          }
+        }
         for (var j = 0; j < bod.attachedTo.length; j++) {
           if (bod.attachedTo[j] >= startIndex)
             bod.attachedTo[j] -= decSize;
@@ -848,7 +864,7 @@ function deleteBody(bodyIndex){
     // If the component deleted was a spring or pulley, we need to loop through
     // any of the existing components to check if any of them were attached to
     // the spring or pulley. If they were we need to delete the reference
-    if (deletedBodWasSpring || deletedBodWasPulley) {
+    if (deletedBodWasSpring || deletedBodWasSpringChild || deletedBodWasPulley) {
       // For Springs get the actual reference if it was
       // the parent or child spring node that was deleted
       var refToDelete = bodyIndex;
