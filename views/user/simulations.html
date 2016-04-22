@@ -24,6 +24,12 @@
 
 <div class="pad-bottom"></div>
 <div class="container pad-top pad-bottom center-align">
-  <p>Back to <a href="/user/{{ .Data.user.KeyName }}">{{ .Data.user.DisplayName }}</a>'s profile</p>
+  {{ if .Data.userIsOwner }}
+    <p>Back to <a href="/user/{{ .Data.user.KeyName }}">my profile</a></p>
+  {{ else if .Data.user.DisplayName }}
+    <p>Back to <a href="/user/{{ .Data.user.KeyName }}">{{ .Data.user.DisplayName }}</a>'s profile</p>
+  {{ else }}
+    <p>Back to <a href="/user/{{ .Data.user.KeyName }}">Anonymous</a>' profile</p>
+  {{ end }}
 </div>
 {{ end }}
