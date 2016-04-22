@@ -938,9 +938,9 @@ function keyDown(e) {
   if ($(document.activeElement).is("input") || $(document.activeElement).is("textarea"))
     return;
 
-  if (e.keyCode == 86) Globals.vDown = true;
-  if (e.keyCode == 65) Globals.aDown = true;
-  if (e.keyCode == 70) {
+  if (e.keyCode == 86) Globals.vDown = true; // Holding v
+  if (e.keyCode == 65) Globals.aDown = true; // Holding a
+  if (e.keyCode == 70) {                     // Holding f
     Globals.fbdDown = true; 
     drawFBD();
   }
