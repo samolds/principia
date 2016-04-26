@@ -252,7 +252,6 @@ function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
   if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
-       
     // Convert from Polar input to Cartesian coordinate
     var point;
     
@@ -269,8 +268,7 @@ function updatePropertyRedraw(body, property, value){
       other = $('#pointmass-properties-velocity-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "vely") {
-      value *= -1; // Un-invert y vel. value because it's really an angle (only y vel/acc are inverted in base.js)
+    else if(property == "vely") {      
       other = $('#pointmass-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -279,8 +277,7 @@ function updatePropertyRedraw(body, property, value){
       other = $('#pointmass-properties-acceleration-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "accy") {
-      value *= -1; // Un-invert y acc. value because it's really an angle (only y vel/acc are inverted in base.js)
+    else if(property == "accy") {      
       other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -851,7 +848,7 @@ function populateOverview(e) {
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
        "<div class = 'col s4' onclick = 'centerBody(" + i + ");'>"+
-        consts[i].nickname +
+        escapeHtml(consts[i].nickname) +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
         "<i class='fa fa-trash' ></i>"+
