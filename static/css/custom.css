@@ -635,8 +635,34 @@ i.left-menu-item-close {
   z-index: 10;
 }
 
-/*----slide menus----*/
 
+/* Highlighting the prompt tab if there is a description */
+  @-webkit-keyframes prompt-tab-attention {
+    from, to {
+      background-color: transparent;
+    }
+    50% {
+      background-color: #ffff8d;
+    }
+  }
+
+  @keyframes prompt-tab-attention {
+    from, to {
+      background-color: transparent;
+    }
+    50% {
+      background-color: #ffff8d;
+    }
+  }
+
+  .prompt-tab-attention {
+    -webkit-animation: prompt-tab-attention 3s ease-in-out infinite;
+    animation: prompt-tab-attention 3s ease-in-out infinite;
+  }
+/* end prompt tab highlighting */
+
+
+/*----slide menus----*/
 #prompt-slide,
 #keyframes-slide,
 #graphs-slide,

@@ -46,7 +46,7 @@ var GlobalKeyNames = {
     </a>
   </li>
   {{ end }}
-  <li class="clickable" onclick="saveSimulation({{ .Data.imageUploadUrl }})"><i class="fa fa-save fa-size-small"></i> Save</li>
+  <li class="clickable" onclick="saveSimulation()"><i class="fa fa-save fa-size-small"></i> Save</li>
   <li class="clickable">
     <div class="switch">
       <label>
@@ -69,7 +69,7 @@ var GlobalKeyNames = {
     <input id="simulation-name" type="text" value="{{ .Data.simulation.Name }}" maxlength="50"></input>
     {{ end }}
   </li>
-  <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
+  <li class="clickable right"><a href="/help" target="_blank"><i class="fa fa-question fa-size-small"></i></a></li>
   {{ if not .Data.new }}
   <li class="clickable right">
     <span id="ratings" class="tooltipped" data-position="left" data-delay="50" data-tooltip="Loading Stars...">
@@ -95,7 +95,7 @@ var GlobalKeyNames = {
       <p>By: <a href="/user/{{ .Data.simulation.AuthorID }}">{{ .Data.simulation.AuthorName }}</a></p>
     </li>
     {{ end }}
-    <li class="clickable right"><a href="/help"><i class="fa fa-question fa-size-small"></i></a></li>
+    <li class="clickable right"><a href="/help" target="_blank"><i class="fa fa-question fa-size-small"></i></a></li>
     {{ if not .Data.new }}
     {{ if .IsLoggedIn }}
     <li class="right clickable">
@@ -175,12 +175,12 @@ var GlobalKeyNames = {
     {{ if and (.IsLoggedIn) (.Data.isOwner) }}
     <div class="clear"></div>
     <div class="input-field">
-      <textarea id="simulation-description" type="text" class="materialize-textarea" length="1000000">{{ .Data.simulation.Description }}</textarea>
+      <textarea id="simulation-description" type="text" class="materialize-textarea" length="1000000" tabindex="-1">{{ .Data.simulation.Description }}</textarea>
       <label for="simulation-description" id="simulation-description-label">Simulation Description</label>
     </div>
     {{ else if .Data.simulation.Description }}
     <h5 class="pad-sides">Simulation Description</h5>
-    <p class="preserve-newline">{{ .Data.simulation.Description }}</p>
+    <p id="simulation-description" class="preserve-newline">{{ .Data.simulation.Description }}</p>
     {{ else if and (not .IsLoggedIn) (.Data.new) }}
     <p>
       <a href="{{ .LoginUrl }}">{{ .LoginMessage }}!</a>
@@ -207,7 +207,7 @@ var GlobalKeyNames = {
           <h6>Frame 1: </h6>
           <canvas id="keyframe-0" class="keyframe" style="border:4px solid #0000cc"></canvas>
           <div class="input-field">
-            <input id="keyframe-0-dt" type="text" readonly value="0"></input>
+            <input id="keyframe-0-dt" type="text" readonly value="0" tabindex="-1"></input>
             <label for="keyframe-0-dt" class="active">dt</label>
           </div>
         </div>
@@ -336,333 +336,329 @@ var GlobalKeyNames = {
 
 
 
-    <!-- Properties window for each element -->
-    <div id="elementprops" class="z-depth-1">
-      <div class="center-align ">
-        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
-        <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
-        <div class="clear"></div>
+<!-- Properties window for each element -->
+<div id="elementprops" class="z-depth-1">
+  <div class="center-align">
+    <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
+    <h5 class="pad-sides"><span id="general-properties-nickname-title"></span>Element Properties</h5>
+    <div class="clear"></div>
 
-        <!-- Properties that apply to all components -->
-        <ul class="property-window-list hide" id="general-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="text" id="general-properties-nickname" placeholder=""></input>
-              <label for="general-properties-nickname" class="active">Nickname</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()"> <i class="fa fa-trash"></i></a>
-            </div>
-          </li>
-          <li class="property-item" principia-property="posx">
-            <div class="input-field">
-              <input type="number" id="general-properties-position-x" placeholder="" title="Enter a number"></input>
-              <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="posy">
-            <div class="input-field">
-              <input type="number" id="general-properties-position-y" placeholder="" title="Enter a number"></input>
-              <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
-            </div>            
-          </li>
-        </ul>
+    <!-- Properties that apply to all components -->
+    <ul class="property-window-list hide" id="general-properties">
+      <li class="property-item">
+        <div class="input-field">
+          <input type="text" id="general-properties-nickname" placeholder="" tabindex="-1"></input>
+          <label for="general-properties-nickname" class="active">Nickname</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <a class="waves-effect waves-light btn red darken-1" onclick="deleteBody()"> <i class="fa fa-trash"></i></a>
+        </div>
+      </li>
+      <li class="property-item" data-principia-property="posx">
+        <div class="input-field">
+          <input type="number" id="general-properties-position-x" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="general-properties-position-x" class="active" id="x-position-label">X Position</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="posy">
+        <div class="input-field">
+          <input type="number" id="general-properties-position-y" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="general-properties-position-y" class="active" id="y-position-label">Y Position</label>
+        </div>            
+      </li>
+    </ul>
 
-        <!-- Properties that apply to point mass components -->
-        <ul class="property-window-list hide" id="pointmass-properties">
-          <li class="property-item" principia-property="velx">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-x" placeholder="" title="Enter a number"></input>
-              <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="vely">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-velocity-y" placeholder="" title="Enter a number"></input>
-              <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="accx">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-x" placeholder="" title="Enter a number"></input>
-              <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Thrust</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="accy">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-y" placeholder="" title="Enter a number"></input>
-              <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Thrust</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="accx_total">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-x-total" placeholder="" readonly></input>
-              <label for="pointmass-properties-acceleration-x-total" class="active" id="x-acceleration-total-label">Total X Acc</label>
-            </div>            
-          </li>
-          <li class="property-item" principia-property="accy_total">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-acceleration-y-total" placeholder="" readonly></input>
-              <label for="pointmass-properties-acceleration-y-total" class="active" id="y-acceleration-total-label">Total Y Acc</label>
-            </div>            
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="pointmass-properties-mass" placeholder="" title="Enter a number"></input>
-              <label for="pointmass-properties-mass" class="active">Mass</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="text" id="pointmass-properties-size" placeholder=""></input>
-              <label for="pointmass-properties-size" class="active">Size</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <select id="pointmass-properties-img" class="browser-default img-select">
-                <option disabled>Display As:</option>
-                <option value="0" selected="selected">Mass Round</option>
-                <option value="1">Mass Square</option>
-                <option value="2">Weight</option>
-                <option value="3">Car</option>
-                <option value="4">Sail Boat</option>
-                <option value="5">Speed Boat</option>
-                <option value="6">Mascot</option>
-                <option value="7">Dart</option>
-                <option value="8">Jogger</option>
-                <option value="9">Rocket</option>
-                <option value="10">Dalton</option>
-                <option value="11">Danny</option>
-                <option value="12">Matthew</option>
-                <option value="13">Sam</option>
-                <option value="14">Logo</option>
-              </select>
-              <label for="pointmass-properties-img" class="active">Display As</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <span>Vectors</span>
-              <div class="switch">
-                <label>
-                  Off
-                  <input class="vector-toggle" id="pointmass-properties-vector" type="checkbox" checked="checked"></input>
-                  <span class="lever"></span>
-                  On
-                </label>
-              </div>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <span>Tip-to-Tail</span>
-              <div class="switch">
-                <label>
-                  Off
-                  <input class="ttt-toggle" id="pointmass-properties-vector-ttt" type="checkbox"></input>
-                  <span class="lever"></span>
-                  On
-                </label>
-              </div>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <span>PVA Graph</span>
-              <div class="switch">
-                <label class="toggle-label">
-                  Off
-                  <input class="pvagraph-toggle" id="pointmass-properties-pvagraph" type="checkbox"></input>
-                  <span class="lever"></span>
-                  On
-                </label>
-              </div>
-            </div>
-          </li>
-        </ul>
+    <!-- Properties that apply to point mass components -->
+    <ul class="property-window-list hide" id="pointmass-properties">
+      <li class="property-item" data-principia-property="velx">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-velocity-x" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-velocity-x" class="active" id="x-velocity-label">X Velocity</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="vely">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-velocity-y" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-velocity-y" class="active" id="y-velocity-label">Y Velocity</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="accx">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-acceleration-x" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-acceleration-x" class="active" id="x-acceleration-label">X Thrust</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="accy">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-acceleration-y" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-acceleration-y" class="active" id="y-acceleration-label">Y Thrust</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="accx_total">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-acceleration-x-total" placeholder="" tabindex="-1" readonly></input>
+          <label for="pointmass-properties-acceleration-x-total" class="active" id="x-acceleration-total-label">Total X Acc</label>
+        </div>            
+      </li>
+      <li class="property-item" data-principia-property="accy_total">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-acceleration-y-total" placeholder="" tabindex="-1" readonly></input>
+          <label for="pointmass-properties-acceleration-y-total" class="active" id="y-acceleration-total-label">Total Y Acc</label>
+        </div>            
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-mass" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-mass" class="active">Mass</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="pointmass-properties-size" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="pointmass-properties-size" class="active">Size</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <select id="pointmass-properties-img" class="browser-default img-select" tabindex="-1">
+            <option disabled>Display As:</option>
+            <option value="0" selected="selected">Mass Round</option>
+            <option value="1">Mass Square</option>
+            <option value="2">Weight</option>
+            <option value="3">Car</option>
+            <option value="4">Sail Boat</option>
+            <option value="5">Speed Boat</option>
+            <option value="6">Mascot</option>
+            <option value="7">Dart</option>
+            <option value="8">Jogger</option>
+            <option value="9">Rocket</option>
+            <option value="10">Dalton</option>
+            <option value="11">Danny</option>
+            <option value="12">Matthew</option>
+            <option value="13">Sam</option>
+            <option value="14">Logo</option>
+          </select>
+          <label for="pointmass-properties-img" class="active">Display As</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <span>Vectors</span>
+          <div class="switch">
+            <label>
+              Off
+              <input class="vector-toggle" id="pointmass-properties-vector" type="checkbox" checked="checked" tabindex="-1"></input>
+              <span class="lever"></span>
+              On
+            </label>
+          </div>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <span>Tip-to-Tail</span>
+          <div class="switch">
+            <label>
+              Off
+              <input class="ttt-toggle" id="pointmass-properties-vector-ttt" type="checkbox" tabindex="-1"></input>
+              <span class="lever"></span>
+              On
+            </label>
+          </div>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <span>PVA Graph</span>
+          <div class="switch">
+            <label>
+              Off
+              <input class="pvagraph-toggle" id="pointmass-properties-pvagraph" type="checkbox" tabindex="-1"></input>
+              <span class="lever"></span>
+              On
+            </label>
+          </div>
+        </div>
+      </li>
+    </ul>
 
-        <!-- Spring properties -->
-        <ul class="property-window-list hide" id="spring-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="spring-properties-k" placeholder="" title="Enter a number"></input>
-              <label for="spring-properties-k" class="active">K</label>
-            </div>
-          </li>
-        </ul>
-        
-        <!-- Surface properties! -->
-        <ul class="property-window-list hide" id="surface-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="surface-properties-width" placeholder="" title="Enter a number"></input>
-              <label for="surface-properties-width" class="active">Width</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="surface-properties-height" placeholder="" title="Enter a number"></input>
-              <label for="surface-properties-height" class="active">Height</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="surface-properties-friction" placeholder="" title="Enter a number"></input>
-              <label for="surface-properties-friction" class="active">Friction</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <a class="waves-effect waves-light btn blue" id="surface-properties-rotate">Rotate</a>
-            </div>
-          </li>          
-        </ul>
+    <!-- Spring properties -->
+    <ul class="property-window-list hide" id="spring-properties">
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="spring-properties-k" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="spring-properties-k" class="active">K</label>
+        </div>
+      </li>
+    </ul>
+    
+    <!-- Surface properties! -->
+    <ul class="property-window-list hide" id="surface-properties">
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="surface-properties-width" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="surface-properties-width" class="active">Width</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="surface-properties-height" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="surface-properties-height" class="active">Height</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="surface-properties-friction" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="surface-properties-friction" class="active">Friction</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <a class="waves-effect waves-light btn blue" id="surface-properties-rotate">Rotate</a>
+        </div>
+      </li>          
+    </ul>
 
-        <!-- Ramp properties! -->
-        <ul class="property-window-list hide" id="ramp-properties">
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-width" placeholder="" title="Enter a number"></input>
-              <label for="ramp-properties-width" class="active">Width</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-height" placeholder="" title="Enter a number"></input>
-              <label for="ramp-properties-height" class="active">Height</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-angle" placeholder="" title="Enter a number"></input>
-              <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <input type="number" id="ramp-properties-friction" placeholder="" title="Enter a number"></input>
-              <label for="ramp-properties-friction" class="active">Friction</label>
-            </div>
-          </li>
-          <li class="property-item">
-            <div class="input-field">
-              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz"><small>Flip <i class="fa fa-arrows-h fa-size-tiny"></i></small></a>
-            </div>
-          </li>          
-          <li class="property-item">
-            <div class="input-field">
-              <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert"><small>Flip <i class="fa fa-arrows-v fa-size-tiny"></i></small></a>
-            </div>
-          </li>
-        </ul>
+    <!-- Ramp properties! -->
+    <ul class="property-window-list hide" id="ramp-properties">
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="ramp-properties-width" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="ramp-properties-width" class="active">Width</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="ramp-properties-height" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="ramp-properties-height" class="active">Height</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="ramp-properties-angle" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="ramp-properties-angle" class="active">Slope as Angle º</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <input type="number" id="ramp-properties-friction" placeholder="" title="Enter a number" tabindex="-1"></input>
+          <label for="ramp-properties-friction" class="active">Friction</label>
+        </div>
+      </li>
+      <li class="property-item">
+        <div class="input-field">
+          <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-horz"><small>Flip <i class="fa fa-arrows-h fa-size-tiny"></i></small></a>
+        </div>
+      </li>          
+      <li class="property-item">
+        <div class="input-field">
+          <a class="waves-effect waves-light btn blue" id="ramp-properties-flip-vert"><small>Flip <i class="fa fa-arrows-v fa-size-tiny"></i></small></a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Hideable global properties window for each element -->
+<div id="globalprops" class="z-depth-1">
+  <div class="center-align ">
+    <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
+    <h5 class="pad-sides pad-title">Global Properties</h5>
+    <div class="clear"></div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="glob-xaccel" placeholder="" title="Enter a number" tabindex="-1"></input>
+        <label for="glob-xaccel" class="active">Horizontal Acc.</label>
+      </div>
+      <div class="input-field col s6">
+        <input type="number" id="glob-yaccel" placeholder="" title="Enter a number" tabindex="-1"></input>
+        <label for="glob-yaccel" class="active">Vertical Acc.</label>
       </div>
     </div>
-
-    <!-- Hideable global properties window for each element -->
-    <div id="globalprops" class="z-depth-1">
-      <div class="center-align ">
-        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
-        <h5 class="pad-sides pad-title">Global Properties</h5>
-        <div class="clear"></div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="glob-xaccel" placeholder="" title="Enter a number"></input>
-            <label for="glob-xaccel" class="active">Horizontal Acc.</label>
+    <div class="row">
+      <div class="col s12 center-align">
+        <h6>Origin:</h6>
+        <div class="toolbox-item-container card" title="Origin">
+          <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
+          <div class="valign-wrapper">
+            <img class="toolbox-item ui-draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
           </div>
-          <div class="input-field col s6">
-            <input type="number" id="glob-yaccel" placeholder="" title="Enter a number"></input>
-            <label for="glob-yaccel" class="active">Vertical Acc.</label>
+          <div class="card-reveal">
+            <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
+            <p>Drag this onto the simulator window to change the origin of the simulation!</p>
           </div>
         </div>
-        <div class="row">
-          <div class="col s12 center-align">
-            <h6>Origin:</h6>
-            <div class="toolbox-item-container card" title="Origin">
-              <span class="activator clickable toolbox-tooltip"><i class="fa fa-question-circle fa-size-tiny"></i></span>
-              <div class="valign-wrapper">
-                <img class="toolbox-item ui-draggable clickable responsive-img valign" width="100" src="/static/img/toolbox/target.png"/>
-              </div>
-              <div class="card-reveal">
-                <span class="card-title clickable left"><i class="fa fa-times fa-size-tiny"></i></span>
-                <p>Drag this onto the simulator window to change the origin of the simulation!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
-            <label for="glob-xorigin" class="active">Origin X</label>
-          </div>
-          <div class="input-field col s6">
-            <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
-            <label for="glob-yorigin" class="active">Origin Y</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <select id="coord-sys" class="browser-default">
-              <option disabled>Coordinate System:</option>
-              <option value="cartesian" selected="selected">Cartesian</option>
-              <option value="polar" >Polar</option>
-            </select>
-            <label for="coord-sys" class="active">Coordinate System</label>
-          </div>
-          <div class="input-field col s6">
-            <select id="glob-timestep-unit" class="browser-default">
-              <option disabled>dt per Frame (s)</option>
-              <option value="0.5" selected="selected">0.5</option>
-              <option value="1.0" >1.0</option>
-              <option value="2.0" >2.0</option>
-            </select>
-            <label for="glob-timestep-unit" class="active">dt per Frame (s)</label>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="input-field col s6">
-            <select id="glob-length-unit" class="browser-default">
-              <option disabled>Length Unit</option>
-              <option value="1000.0" >Millimeters</option>
-              <option value="100.0" >Centimeters</option>
-              <option value="1.0" selected="selected">Meters</option>
-              <option value="0.001" >Kilometers</option>
-              <option value="39.3701" >Inches</option>
-              <option value="3.28084" >Feet</option>
-              <option value="1.09361" >Yards</option>
-              <option value="0.000621371" >Miles</option>
-            </select>
-            <label for="glob-length-unit" class="active">Length Unit</label>
-          </div>
-          <div class="input-field col s6">
-            <select id="glob-time-unit" class="browser-default">
-              <option disabled>Time Unit</option>
-              <option value="1000.0" >Milliseconds</option>
-              <option value="1.0" selected="selected">Seconds</option>
-              <option value="0.01666666667" >Minutes</option>
-              <option value="0.00027777778" >Hours</option>
-            </select>
-            <label for="glob-time-unit" class="active">Time Unit</label>
-          </div>
-        </div>
-        
-        
       </div>
     </div>
-
-    <!-- Overview with a dynamically populated list of all active elements -->
-    <div id="overview" class="z-depth-1">
-      <div class="center-align ">
-        <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
-        <h5 class="pad-sides">Scene Overview</h5>
-        <div class="clear"></div>
-        <div class="row" >
-          <ul id ="overview-list"></ul>
-        </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="number" id="glob-xorigin" placeholder="" value="0" title="Enter a number"></input>
+        <label for="glob-xorigin" class="active">Origin X</label>
       </div>
+      <div class="input-field col s6">
+        <input type="number" id="glob-yorigin" placeholder="" value="0" title="Enter a number"></input>
+        <label for="glob-yorigin" class="active">Origin Y</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <select id="coord-sys" class="browser-default" tabindex="-1">
+          <option disabled>Coordinate System:</option>
+          <option value="cartesian" selected="selected">Cartesian</option>
+          <option value="polar" >Polar</option>
+        </select>
+        <label for="coord-sys" class="active">Coordinate System</label>
+      </div>
+      <div class="input-field col s6">
+        <select id="glob-timestep-unit" class="browser-default" tabindex="-1">
+          <option disabled>dt per Frame (s)</option>
+          <option value="0.5" selected="selected">0.5</option>
+          <option value="1.0" >1.0</option>
+          <option value="2.0" >2.0</option>
+        </select>
+        <label for="glob-timestep-unit" class="active">dt per Frame (s)</label>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="input-field col s6">
+        <select id="glob-length-unit" class="browser-default" tabindex="-1">
+          <option disabled>Length Unit</option>
+          <option value="1000.0" >Millimeters</option>
+          <option value="100.0" >Centimeters</option>
+          <option value="1.0" selected="selected">Meters</option>
+          <option value="0.001" >Kilometers</option>
+          <option value="39.3701" >Inches</option>
+          <option value="3.28084" >Feet</option>
+          <option value="1.09361" >Yards</option>
+          <option value="0.000621371" >Miles</option>
+        </select>
+        <label for="glob-length-unit" class="active">Length Unit</label>
+      </div>
+      <div class="input-field col s6">
+        <select id="glob-time-unit" class="browser-default" tabindex="-1">
+          <option disabled>Time Unit</option>
+          <option value="1000.0" >Milliseconds</option>
+          <option value="1.0" selected="selected">Seconds</option>
+          <option value="0.01666666667" >Minutes</option>
+          <option value="0.00027777778" >Hours</option>
+        </select>
+        <label for="glob-time-unit" class="active">Time Unit</label>
+      </div>
+    </div>  
+  </div>
+</div>
+
+<!-- Overview with a dynamically populated list of all active elements -->
+<div id="overview" class="z-depth-1">
+  <div class="center-align ">
+    <i class="right-menu-item-close clickable fa fa-times fa-size-large"></i>
+    <h5 class="pad-sides">Scene Overview</h5>
+    <div class="clear"></div>
+    <div class="row" >
+      <ul id ="overview-list"></ul>
     </div>
   </div>
 </div>
@@ -677,7 +673,7 @@ var GlobalKeyNames = {
       <div class="switch">
         <label>
           Off
-          <input class="vector-toggle" id="pointmass-properties-vector-cmenu" type="checkbox"></input>
+          <input class="vector-toggle" id="pointmass-properties-vector-cmenu" type="checkbox" tabindex="-1"></input>
           <span class="lever"></span>
           On
         </label>
@@ -688,7 +684,7 @@ var GlobalKeyNames = {
       <div class="switch">
         <label>
           Off
-          <input class="ttt-toggle" id="pointmass-properties-vector-ttt-cmenu" type="checkbox"></input>
+          <input class="ttt-toggle" id="pointmass-properties-vector-ttt-cmenu" type="checkbox" tabindex="-1"></input>
           <span class="lever"></span>
           On
         </label>
@@ -699,7 +695,7 @@ var GlobalKeyNames = {
       <div class="switch">
         <label>
           Off
-          <input class="pvagraph-toggle" id="pointmass-properties-pvagraph-cmenu" type="checkbox"></input>
+          <input class="pvagraph-toggle" id="pointmass-properties-pvagraph-cmenu" type="checkbox" tabindex="-1"></input>
           <span class="lever"></span>
           On
         </label>

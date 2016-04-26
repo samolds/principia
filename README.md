@@ -51,7 +51,7 @@ locally up to [Google App Engine](http://theprincipiaxyz.appspot.com), and ultim
 [principia.cc](http://principia.cc). For best practice, make sure to only deploy when on the `production`
 branch.
 
-To merge everything currently on `master` to `production` before deploying
+To merge everything currently on `master` to `production` after deploying
 * `git checkout master`
 * `git pull`
 * `git checkout production`
@@ -74,7 +74,6 @@ To merge everything currently on `master` to `production` before deploying
     misc/                  -    Random project files not actually necessary for web app
     models/                -    The schemas for the database
     routes.go              -    What urls point to which controllers
-    settings.go            -    Useful global app configurations
     static/                -    Static HTML resources
         css/               -    All CSS stuff goes here
         font/              -    All font related stuff goes here
