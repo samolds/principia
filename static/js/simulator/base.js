@@ -251,6 +251,7 @@ $(document).ready(function(){
 
   // Block the default mousedown event handler
   $('#viewport').on("mousedown", function(event){
+    Globals.mouseDown = new Date();
     event.preventDefault();
   });
   

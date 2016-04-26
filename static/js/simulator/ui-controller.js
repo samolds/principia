@@ -700,6 +700,7 @@ function bodyClickListener(e) {
   global translation
 */
 function panZoomUpdate(data) {
+  
   var bodies = Globals.world.getBodies();
   var mouseX = data.x;
   var mouseY = data.y;
@@ -875,7 +876,7 @@ function deleteBody(bodyIndex){
     // Update the origin if the body was the origin object
     if (bodyIndex === Globals.originObject) {
       Globals.originObject = false;
-      Globals.world.getBodies[0].visible = true;
+      Globals.world.getBodies()[0].hidden = false;
     }
 
     // Get the body constants to delete and remove it from bodyConstants
@@ -893,6 +894,7 @@ function deleteBody(bodyIndex){
     var len = Globals.keyframeStates.length;
     for (var i = 0; i < len; i++) {
       Globals.keyframeStates[i].splice(bodyIndex, 1);
+      Globals.variableMap[i].splice(bodyIndex, 1);
     }
 
     // Remove the body from the physicsjs world and deselect it

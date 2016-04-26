@@ -650,7 +650,7 @@ function onPropertyChanged(i, property, value, doTranslation){
       value = 0;
     if(property == "posx")
       value = getPulleySnapX(body) +
-    ((Globals.didMove && bodyType(Globals.selectedBody) == "kinematics1D-pulley")? Globals.translation.x: 0);
+    ((Globals.didMove && bodyType(Globals.selectedBody) == "kinematics1D-pulley")? (Globals.translation.x*getScaleFactor()): 0);
   }
   
   // Must be updating one of these properties to allow setting to NaN 

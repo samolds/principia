@@ -180,9 +180,21 @@ function Kinematics1DModule() {
         Handles moving an object within the canvas
       */
       world.on('interact:move', function( data ){        
-            
+        
+        // Prevent move events until 200 ms after canvas is clicked
+        if(!Globals.mouseDown) return;
+        var elapsed = new Date() - Globals.mouseDown;
+        if(elapsed < 200)
+          return;
+        
         if (Globals.isPanning)
           panZoomUpdate(data);  // Handle panning
+        
+        // Prevent non-panning move interactions on standard frames if multiple keyframes exist
+        if(Globals.numKeyframes > 1 && Globals.keyframe === false){
+          return;
+        }
+        
         if(Globals.vChanging){      
           updateVector(data);   // Handle vector hotkeys
         }
@@ -212,7 +224,16 @@ function Kinematics1DModule() {
       world.on('interact:release', function( data ){         
         $('body').css({cursor: "auto"});
         Globals.isPanning = false;
-
+        
+        // Delete the mouseDown time and wait for next click
+        if(Globals.mouseDown) 
+          delete Globals.mouseDown;
+        
+        // Prevent release interaction on standard frames if multiple keyframes exist
+        if(Globals.numKeyframes > 1 && Globals.keyframe === false){
+          return;
+        }
+        
         // Note that PhysicsJS adds to velocity vector upon release - commented out for our simulator
         if(data.body && Globals.didMove && !Globals.vChanging){
             
