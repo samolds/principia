@@ -489,7 +489,7 @@ function addKeyframe(){
   // If multiple keyframes just became available, add an input to mark unknowns to valid fields
   if(Globals.numKeyframes == 2)
   {
-    var variables = $("[principia-property]");
+    var variables = $("[data-principia-property]");
     for(var i=0; i<variables.length; i++)
     {
       var li = variables[i];
@@ -502,7 +502,7 @@ function addKeyframe(){
     
     // Register event for new input
     $('.input-field-unknown').on("click", function(event){
-      var property = $(event.target).parents().eq(2).attr("principia-property");
+      var property = $(event.target).parents().eq(2).attr("data-principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
     
@@ -549,7 +549,7 @@ function removeKeyframe(event){
     $(".input-field-variable").removeClass("input-field-variable");    
     $('.input-field-unknown').off();
     
-    var variables = $("[principia-property]");
+    var variables = $("[data-principia-property]");
     for(var i=0; i<variables.length; i++)
     {
       var li = variables[i];
@@ -1133,6 +1133,7 @@ function rightSlideMenuOpen(e){
   rightSlideMenuClose(e);
 
   if (check === "-280px") {
+    $("#" + selector + " :input").attr("tabindex", "0"); //:input selects all <input> <textarea> <select> <button> within div
     $("#" + selector).css("right", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
@@ -1142,6 +1143,11 @@ function rightSlideMenuOpen(e){
   Closes the right slide menu
 */
 function rightSlideMenuClose(e){
+  $("#toolbox :input").attr('tabindex', '-1'); //:input selects all <input> <textarea> <select> <button> within div
+  $("#elementprops :input").attr('tabindex', '-1');
+  $("#globalprops :input").attr('tabindex', '-1');
+  $("#overview :input").attr('tabindex', '-1');
+
   $("#toolbox").css("right", "-280px");
   $("#elementprops").css("right", "-280px");
   $("#globalprops").css("right", "-280px");
@@ -1176,8 +1182,8 @@ function leftSlideMenuOpen(e){
   check = $("#" + selector).css("left");
   leftSlideMenuClose(e);
 
-  if(check === "-600px")
-  {
+  if (check === "-600px") {
+    $("#" + selector + " :input").attr("tabindex", "0"); //:input selects all <input> <textarea> <select> <button> within div
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
@@ -1187,6 +1193,11 @@ function leftSlideMenuOpen(e){
   Closes the left slide menu
 */
 function leftSlideMenuClose(e) {
+  $("#prompt-slide :input").attr('tabindex', '-1'); //:input selects all <input> <textarea> <select> <button> within div
+  $("#keyframes-slide :input").attr('tabindex', '-1');
+  $("#graphs-slide :input").attr('tabindex', '-1');
+  $("#solution-slide :input").attr('tabindex', '-1');
+
   $("#prompt-slide").css("left", "-600px");
   $("#keyframes-slide").css("left", "-600px");
   $("#graphs-slide").css("left", "-600px");

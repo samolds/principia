@@ -1,6 +1,11 @@
 {{ define "title" }} - Profile{{ end }}
 
 {{ define "scripts" }}
+<script>
+var GlobalKeyNames = {
+  User: {{ .User.KeyName }},
+}
+</script>
 <script src="/static/js/forms.js"></script>
 {{ end }}
 
@@ -64,7 +69,7 @@
           {{ end }}
           {{ if .Data.userIsOwner }}
             <div class="file-path-wrapper">
-              <input id="user-profile-image" name="ProfileImage" type="file" onchange="validateUserImageSelection()">
+              <input id="user-profile-image" name="ProfileImage" type="file" onchange="validateUserImageSelection()" accept=".gif,.jpeg,.png">
             </div>
           {{ end }}
           {{ if .Data.userIsOwner }}
@@ -98,7 +103,7 @@
   {{ if .Data.userIsOwner }}
   <div class="row">
     <div class="center-align">
-      <a class="waves-effect waves-light btn-large blue darken-1" id="save-button" onclick="saveUser({{ .Data.imageUploadUrl }})"><i class="fa fa-floppy-o"></i> Update!</a>
+      <a class="waves-effect waves-light btn-large blue darken-1" id="save-button" onclick="saveUser()"><i class="fa fa-floppy-o"></i> Update!</a>
     </div>
   </div>
   {{ end }}

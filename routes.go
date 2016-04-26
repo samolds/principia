@@ -39,6 +39,9 @@ func init() {
 	router.HandleFunc("/api/simulator/{simulationID:[0-9]+}/comments", api.CommentHandler)
 	router.HandleFunc("/api/simulator/{simulationID:[0-9]+}/ratings", api.RatingHandler)
 	router.HandleFunc("/api/img/{blobKey}", api.BlobstoreFileServer)
+	router.HandleFunc("/api/simulator/blobpath", simulator.GetBlobstoreUploadPath)
+	router.HandleFunc("/api/simulator/{simulationID:[0-9]+}/blobpath", simulator.GetBlobstoreUploadPath)
+	router.HandleFunc("/api/user/{userID:[0-9]+}/blobpath", user.GetBlobstoreUploadPath)
 
 	// TODO: Make simulations returned in browse, the list of user simulations, the list
 	//       of user's ratings, and the list of user's comments be api calls
