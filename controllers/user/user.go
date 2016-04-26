@@ -4,13 +4,45 @@ import (
 	"appengine"
 	"appengine/blobstore"
 	"appengine/datastore"
+	"bytes"
 	"controllers"
 	"controllers/api"
 	"controllers/utils"
+	"io"
 	"lib/gorilla/mux"
 	"models"
 	"net/http"
 )
+
+// Generates an image upload url for the blobstore and returns it as a string
+func GetBlobstoreUploadPath(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userKeyName := vars["userID"]
+	ctx := appengine.NewContext(r)
+
+	// Check to see if the page user is the same as the logged in user
+	userIsOwner := utils.IsOwner(userKeyName, ctx)
+
+	if !userIsOwner {
+		api.ApiErrorResponse(w, "You cannot edit other profiles.", http.StatusInternalServerError)
+		return
+	}
+
+	returnPath := "/user/" + userKeyName
+
+	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
+	// Have to specify a path to return to after the post succeeds
+	imageUploadUrl, err := blobstore.UploadURL(ctx, returnPath, nil)
+	if err != nil {
+		api.ApiErrorResponse(w, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Need to return the uploadUrl to use to post the image to
+	uploadUrl := bytes.NewBufferString(imageUploadUrl.Path)
+	io.Copy(w, uploadUrl)
+	return
+}
 
 // Returns simulations tied to the user id passed in the url
 func SimulationsHandler(w http.ResponseWriter, r *http.Request) {

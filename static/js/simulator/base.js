@@ -389,6 +389,16 @@ $(document).ready(function(){
   $('#keyframe-0').on("click", function(event) { selectKeyframe(event); } );
   $('#add-keyframe').on("click", function(event) { addKeyframe(event); } );
 
+  // If a description exists, give the description tab an attention class that is remove once it's clicked on
+  if ($('#simulation-description').length !== 0) {
+    if ($('#simulation-description').val().length !== 0 || $('#simulation-description').text().length !== 0) {
+      $('#prompt-tab').addClass('prompt-tab-attention');
+      $('#prompt-tab').one("click", function(event) { // On click only once
+        $('#prompt-tab').removeClass('prompt-tab-attention');
+      });
+    }
+  }
+
   // Events for the slide-out menus
   $('.right-menu-item').on("click", function(event) { rightSlideMenuOpen(event); } );
   $('.left-menu-item').on("click", function(event) { leftSlideMenuOpen(event); } );

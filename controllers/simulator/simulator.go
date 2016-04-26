@@ -16,6 +16,56 @@ import (
 	"time"
 )
 
+// Generates an image upload url for the blobstore and returns it as a string
+func GetBlobstoreUploadPath(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	_, err := utils.GetCurrentUser(ctx)
+	if err != nil {
+		// No user found, need to be logged in to save a simulation
+		api.ApiErrorResponse(w, "You need to be logged in.", http.StatusInternalServerError)
+		return
+	}
+
+	vars := mux.Vars(r)
+	keyName, ok := vars["simulationID"]
+
+	returnPath := "/simulator/kinematics"
+	if ok { // Trying to save to an existing simulation
+		/* Is the security check worth the datastore query?
+		   simulationKey := datastore.NewKey(ctx, "Simulation", keyName, 0, nil)
+
+		   // Get the simulation from the datastore to check if the user is the owner
+		   var simulation models.Simulation
+		   err := datastore.Get(ctx, simulationKey, &simulation)
+		   if err != nil {
+		     api.ApiErrorResponse(w, "Simulation was not found: "+err.Error(), http.StatusNotFound)
+		     return
+		   }
+
+		   // Make sure the logged in user is the owner
+		   isOwner := utils.IsOwner(simulation.AuthorKeyName, ctx)
+		   if !isOwner {
+		     return;
+		   }
+		*/
+
+		returnPath = returnPath + "/" + keyName
+	}
+
+	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
+	// Have to specify a path to return to after the post succeeds
+	imageUploadUrl, err := blobstore.UploadURL(ctx, returnPath, nil)
+	if err != nil {
+		api.ApiErrorResponse(w, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Need to return the uploadUrl to use to post the image to
+	uploadUrl := bytes.NewBufferString(imageUploadUrl.Path)
+	io.Copy(w, uploadUrl)
+	return
+}
+
 // Returns simulations saved in the datastore
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 	q := datastore.NewQuery("Simulation").Filter("IsPrivate =", false).Order("-CreationDate").Limit(100)
@@ -96,20 +146,11 @@ func newGenericHandler(w http.ResponseWriter, r *http.Request, simType string, t
 		return
 	}
 
-	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
-	// Have to specify a path to return to after the post succeeds
-	imageUploadUrl, err := blobstore.UploadURL(ctx, r.URL.Path, nil)
-	if err != nil {
-		controllers.ErrorHandler(w, r, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	// If it's a new simulation, you're the owner
 	data := map[string]interface{}{
-		"simulation":     simulation,
-		"imageUploadUrl": imageUploadUrl.Path,
-		"new":            true,
-		"isOwner":        true,
+		"simulation": simulation,
+		"new":        true,
+		"isOwner":    true,
 	}
 
 	controllers.BaseHandler(w, r, template, data)
@@ -215,19 +256,10 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 		return
 	}
 
-	// The autosaved thumbnail images need to be POSTed to specific appengine blobstore "action" paths.
-	// Have to specify a path to return to after the post succeeds
-	imageUploadUrl, err := blobstore.UploadURL(ctx, r.URL.Path, nil)
-	if err != nil {
-		controllers.ErrorHandler(w, r, "Could not generate blobstore upload: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data := map[string]interface{}{
-		"simulation":     simulationData,
-		"imageUploadUrl": imageUploadUrl.Path,
-		"new":            false,
-		"isOwner":        isOwner,
+		"simulation": simulationData,
+		"new":        false,
+		"isOwner":    isOwner,
 	}
 
 	controllers.BaseHandler(w, r, template, data)

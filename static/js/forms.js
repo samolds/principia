@@ -70,22 +70,31 @@ function formPost(path, parameters, successMessage) {
 // Saves the simulation, whether new or existing
 // if a new simulation it does NOT use ajax to allow
 // for a page redirect to simulator/{simulatorId}
-function saveSimulation(postURL){
-  if (!postURL) {
-    postURL = window.location.href;
+function saveSimulation(){
+  var postURLRequestPath = "/api/simulator/blobpath";
+  if (GlobalKeyNames.Simulation) {
+    postURLRequestPath = "/api/simulator/" + GlobalKeyNames.Simulation + "/blobpath";
   }
 
-  simObject = [
-    {name: "Name",        value: $("#simulation-name").val(),                type: "text"},
-    {name: "Contents",    value: exportToJson(),                             type: "text"},
-    {name: "Description", value: $("#simulation-description").val(),         type: "text"},
-    {name: "IsPrivate",   value: $("#simulation-is-private").is(":checked"), type: "text"},
-    {name: "Thumbnail",   value: dataURItoBlob(canvasToImage()),             type: "file"},
-  ];
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function() {
+    var postURL = this.responseText;
 
-  formPost(postURL, simObject, "Simulation saved successfully!");
+    simObject = [
+      {name: "Name",        value: $("#simulation-name").val(),                type: "text"},
+      {name: "Contents",    value: exportToJson(),                             type: "text"},
+      {name: "Description", value: $("#simulation-description").val(),         type: "text"},
+      {name: "IsPrivate",   value: $("#simulation-is-private").is(":checked"), type: "text"},
+      {name: "Thumbnail",   value: dataURItoBlob(canvasToImage()),             type: "file"},
+    ];
 
-  losefocus();
+    formPost(postURL, simObject, "Simulation saved successfully!");
+
+    losefocus();
+  });
+
+  xhr.open("GET", postURLRequestPath);
+  xhr.send();
 }
 
 function deleteSimulation(simUrl, redirectUrl, element) {
@@ -123,32 +132,38 @@ function validateUserImageSelection() {
   }
 }
 
-function saveUser(postURL) {
-  if (!postURL) {
-    postURL = window.location.href;
-  }
+function saveUser() {
+  var postURLRequestPath = "/api/user/" + GlobalKeyNames.User + "/blobpath";
 
-  var imageFiles = document.getElementById("user-profile-image").files;
-  if (imageFiles && imageFiles[0]) {
-    if (imageFiles[0].size < 500000) { // 500KB
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function() {
+    var postURL = this.responseText;
+
+    var imageFiles = document.getElementById("user-profile-image").files;
+    if (imageFiles && imageFiles[0]) {
+      if (imageFiles[0].size < 500000) { // 500KB
+        userObject = [
+          {name: "DisplayName",  value: $("#user-display-name").val(), type: "text"},
+          {name: "Interests",    value: $("#user-interests").val(),    type: "text"},
+          {name: "ProfileImage", value: imageFiles[0],                 type: "file"},
+        ];
+
+        formPost(postURL, userObject, "Information saved successfully!");
+      } else {
+        failToast("This image might be too large! The max file size is 500KB");
+      }
+    } else {
       userObject = [
         {name: "DisplayName",  value: $("#user-display-name").val(), type: "text"},
         {name: "Interests",    value: $("#user-interests").val(),    type: "text"},
-        {name: "ProfileImage", value: imageFiles[0],                 type: "file"},
       ];
 
       formPost(postURL, userObject, "Information saved successfully!");
-    } else {
-      failToast("This image might be too large! The max file size is 500KB");
     }
-  } else {
-    userObject = [
-      {name: "DisplayName",  value: $("#user-display-name").val(), type: "text"},
-      {name: "Interests",    value: $("#user-interests").val(),    type: "text"},
-    ];
+  });
 
-    formPost(postURL, userObject, "Information saved successfully!");
-  }
+  xhr.open("GET", postURLRequestPath);
+  xhr.send();
 }
 
 // Save new comment to the datastore
