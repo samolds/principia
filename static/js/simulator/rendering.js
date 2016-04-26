@@ -915,7 +915,7 @@ function simulationZoom(zoom) {
   }
   
   // Resimulate using scaled values and redraw the first frame
-  attemptSimulation();
+  //attemptSimulation();
   drawMaster();
 }
 

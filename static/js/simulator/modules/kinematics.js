@@ -180,8 +180,16 @@ function Kinematics1DModule() {
         Handles moving an object within the canvas
       */
       world.on('interact:move', function( data ){        
+
+        if(Globals.vChanging){      
+          // Prevent non-panning move interactions on standard frames if multiple keyframes exist
+          if(Globals.numKeyframes > 1 && Globals.keyframe === false){
+            return;
+          }
+          updateVector(data);   // Handle vector hotkeys
+        }
         
-        // Prevent move events until 200 ms after canvas is clicked
+        // Prevent other move events until 200 ms after canvas is clicked
         if(!Globals.mouseDown) return;
         var elapsed = new Date() - Globals.mouseDown;
         if(elapsed < 200)
@@ -189,17 +197,11 @@ function Kinematics1DModule() {
         
         if (Globals.isPanning)
           panZoomUpdate(data);  // Handle panning
-        
-        // Prevent non-panning move interactions on standard frames if multiple keyframes exist
-        if(Globals.numKeyframes > 1 && Globals.keyframe === false){
-          return;
-        }
-        
-        if(Globals.vChanging){      
-          updateVector(data);   // Handle vector hotkeys
-        }
-        else if(data.body && !Globals.vChanging) {      
-
+        if(data.body && !Globals.vChanging && !Globals.isPanning) {
+          // Prevent non-panning move interactions on standard frames if multiple keyframes exist
+          if(Globals.numKeyframes > 1 && Globals.keyframe === false){
+            return;
+          }
           Globals.didMove = true;
           setNoSelect(true);
           var index = bIndex(data.body);       
