@@ -106,14 +106,6 @@ function displayElementValues(bod){
     
     // Special case: Handle image type for the two varying point masses
     if (constants.ctype === "kinematics1D-mass") {
-      if (constants.massType === "square") {
-        $('#pointmass-properties-img option')[1].setAttribute("value", 1);
-        if (selected === 0)
-          selected = 1;
-      } else {
-        $('#pointmass-properties-img option')[1].setAttribute("value", 0);
-      }
-
       $('#pointmass-properties-img option[value=' + selected +']').attr('selected', 'selected');
     }
     
@@ -881,6 +873,7 @@ function simulationZoom(zoom) {
   Globals.translation.y = 0;
 
   // Rescale and bias images
+  Globals.resizing = true;
   var factor = (zoom < 0)? 0.5: 2.0;
   var numBodies = Globals.world.getBodies().length;
   for(var i=0; i < numBodies; i++){
@@ -913,9 +906,9 @@ function simulationZoom(zoom) {
         state.pos.y = swapYpos(swapYpos(state.pos.y, false) * factor, false);
       }
   }
-  
+  delete Globals.resizing;
   // Resimulate using scaled values and redraw the first frame
-  attemptSimulation();
+  //attemptSimulation();
   drawMaster();
 }
 

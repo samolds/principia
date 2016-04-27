@@ -607,7 +607,7 @@ i.fa.fa-size-large {
   background-color: rgba(0, 0, 0, 0.1);
   
     margin: 0;
-    padding: 10px
+    padding: 10px;
 
 }
 
@@ -635,8 +635,39 @@ i.left-menu-item-close {
   z-index: 10;
 }
 
-/*----slide menus----*/
 
+/* Highlighting the prompt tab if there is a description */
+  @-webkit-keyframes prompt-tab-attention {
+    from, to {
+      background-color: transparent;
+    }
+    50% {
+      background-color: #ffff8d;
+    }
+  }
+
+  @keyframes prompt-tab-attention {
+    from, to {
+      background-color: transparent;
+    }
+    50% {
+      background-color: #ffff8d;
+    }
+  }
+
+  .prompt-tab-attention {
+    margin: 0;
+    -webkit-animation: prompt-tab-attention 3s ease-in-out infinite;
+    animation: prompt-tab-attention 3s ease-in-out infinite;
+  }
+
+  .prompt-tab-attention:hover .blue-text {
+    color: #222222 !important; /* because of materialize stupidness */
+  }
+/* end prompt tab highlighting */
+
+
+/*----slide menus----*/
 #prompt-slide,
 #keyframes-slide,
 #graphs-slide,

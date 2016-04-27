@@ -252,7 +252,6 @@ function updatePropertyRedraw(body, property, value){
 
   // Special case for Polar coordinates
   if(Globals.coordinateSystem == "polar" && $.inArray(property, ["posx","posy","velx","vely","accx","accy"]) !== -1){
-       
     // Convert from Polar input to Cartesian coordinate
     var point;
     
@@ -269,8 +268,7 @@ function updatePropertyRedraw(body, property, value){
       other = $('#pointmass-properties-velocity-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "vely") {
-      value *= -1; // Un-invert y vel. value because it's really an angle (only y vel/acc are inverted in base.js)
+    else if(property == "vely") {      
       other = $('#pointmass-properties-velocity-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -279,8 +277,7 @@ function updatePropertyRedraw(body, property, value){
       other = $('#pointmass-properties-acceleration-y').val();
       point = polar2Cartesian([value, other]);
     }
-    else if(property == "accy") {
-      value *= -1; // Un-invert y acc. value because it's really an angle (only y vel/acc are inverted in base.js)
+    else if(property == "accy") {      
       other = $('#pointmass-properties-acceleration-x').val();
       point = polar2Cartesian([other, value]);
     }
@@ -489,7 +486,7 @@ function addKeyframe(){
   // If multiple keyframes just became available, add an input to mark unknowns to valid fields
   if(Globals.numKeyframes == 2)
   {
-    var variables = $("[principia-property]");
+    var variables = $("[data-principia-property]");
     for(var i=0; i<variables.length; i++)
     {
       var li = variables[i];
@@ -502,7 +499,7 @@ function addKeyframe(){
     
     // Register event for new input
     $('.input-field-unknown').on("click", function(event){
-      var property = $(event.target).parents().eq(2).attr("principia-property");
+      var property = $(event.target).parents().eq(2).attr("data-principia-property");
       toggleUnknown(Globals.selectedBody, property);
     });
     
@@ -549,7 +546,7 @@ function removeKeyframe(event){
     $(".input-field-variable").removeClass("input-field-variable");    
     $('.input-field-unknown').off();
     
-    var variables = $("[principia-property]");
+    var variables = $("[data-principia-property]");
     for(var i=0; i<variables.length; i++)
     {
       var li = variables[i];
@@ -700,6 +697,7 @@ function bodyClickListener(e) {
   global translation
 */
 function panZoomUpdate(data) {
+  
   var bodies = Globals.world.getBodies();
   var mouseX = data.x;
   var mouseY = data.y;
@@ -850,7 +848,7 @@ function populateOverview(e) {
           "<img src='" + img + "' width='20' component='kinematics1D-mass'>"+
        "</div>"+
        "<div class = 'col s4' onclick = 'centerBody(" + i + ");'>"+
-        consts[i].nickname +
+        escapeHtml(consts[i].nickname) +
        "</div>"+
        "<div class = 'col s4' onclick = 'deleteBody(" + i + ")'>"+
         "<i class='fa fa-trash' ></i>"+
@@ -875,7 +873,7 @@ function deleteBody(bodyIndex){
     // Update the origin if the body was the origin object
     if (bodyIndex === Globals.originObject) {
       Globals.originObject = false;
-      Globals.world.getBodies[0].visible = true;
+      Globals.world.getBodies()[0].hidden = false;
     }
 
     // Get the body constants to delete and remove it from bodyConstants
@@ -893,6 +891,7 @@ function deleteBody(bodyIndex){
     var len = Globals.keyframeStates.length;
     for (var i = 0; i < len; i++) {
       Globals.keyframeStates[i].splice(bodyIndex, 1);
+      Globals.variableMap[i].splice(bodyIndex, 1);
     }
 
     // Remove the body from the physicsjs world and deselect it
@@ -1034,7 +1033,18 @@ function selectBody(bodyIndex){
   selectPropertyInputType(Globals.selectedBody, "vely");
   selectPropertyInputType(Globals.selectedBody, "accx");
   selectPropertyInputType(Globals.selectedBody, "accy");
-    
+
+  if(body2Constant(Globals.selectedBody).massType == "square"){
+    $("#mass-square-img").show();
+    $("#mass-round-img").hide();
+  }
+  
+  if(body2Constant(Globals.selectedBody).massType == "round"){
+    $("#mass-square-img").hide();
+    $("#mass-round-img").show();
+  }
+  
+   
   // Open the globals tab (origin was selected) or the properties tab (some other body was selected)
   if (bodyIndex === 0 && !$("#globalprops-tab").hasClass("active-side-menu-item"))
     $("#globalprops-tab").click();
@@ -1133,6 +1143,7 @@ function rightSlideMenuOpen(e){
   rightSlideMenuClose(e);
 
   if (check === "-280px") {
+    $("#" + selector + " :input").attr("tabindex", "0"); //:input selects all <input> <textarea> <select> <button> within div
     $("#" + selector).css("right", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
@@ -1142,6 +1153,11 @@ function rightSlideMenuOpen(e){
   Closes the right slide menu
 */
 function rightSlideMenuClose(e){
+  $("#toolbox :input").attr('tabindex', '-1'); //:input selects all <input> <textarea> <select> <button> within div
+  $("#elementprops :input").attr('tabindex', '-1');
+  $("#globalprops :input").attr('tabindex', '-1');
+  $("#overview :input").attr('tabindex', '-1');
+
   $("#toolbox").css("right", "-280px");
   $("#elementprops").css("right", "-280px");
   $("#globalprops").css("right", "-280px");
@@ -1176,8 +1192,8 @@ function leftSlideMenuOpen(e){
   check = $("#" + selector).css("left");
   leftSlideMenuClose(e);
 
-  if(check === "-600px")
-  {
+  if (check === "-600px") {
+    $("#" + selector + " :input").attr("tabindex", "0"); //:input selects all <input> <textarea> <select> <button> within div
     $("#" + selector).css("left", "80px");
     $("#" + id).addClass("active-side-menu-item");
   }
@@ -1187,6 +1203,11 @@ function leftSlideMenuOpen(e){
   Closes the left slide menu
 */
 function leftSlideMenuClose(e) {
+  $("#prompt-slide :input").attr('tabindex', '-1'); //:input selects all <input> <textarea> <select> <button> within div
+  $("#keyframes-slide :input").attr('tabindex', '-1');
+  $("#graphs-slide :input").attr('tabindex', '-1');
+  $("#solution-slide :input").attr('tabindex', '-1');
+
   $("#prompt-slide").css("left", "-600px");
   $("#keyframes-slide").css("left", "-600px");
   $("#graphs-slide").css("left", "-600px");

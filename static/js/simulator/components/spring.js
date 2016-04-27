@@ -116,7 +116,7 @@ function getSpringForce(body){
       // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m      
       var factor = getScaleFactor();
       var origin = {x:Globals.variableMap[getKF()][spring_idx].posx ,y:Globals.variableMap[getKF()][spring_idx].posy};
-      var attached = {x:attached.state.pos.x, y:swapYpos(attached.state.pos.y, false)};
+      var attached = canonicalTransformNT({x:attached.state.pos.x, y:attached.state.pos.y});
       var k = body2Constant(spring).k;
       
       springFx += (-k * (attached.x - origin.x));
@@ -146,14 +146,11 @@ function detachSpring(body){
       
       // Ignore attached pulleys
       if(bodyType(target) == "kinematics1D-pulley") continue;
-    
-      // Valid target:
-      if(distance(body.state.pos.x, body.state.pos.y, target.state.pos.x, target.state.pos.y) > delta){
-        remove.push(j);
+      
+      remove.push(j);
         
-        // Have the spring-child delete its reference to the mass
-        delete body2Constant(target).attachedBody;
-      }
+      // Have the spring-child delete its reference to the mass
+      delete body2Constant(target).attachedBody;      
     }
   
     // Splice out the spring index from the mass; careful when handling moving indices
@@ -166,8 +163,9 @@ function detachSpring(body){
   }
   
   // Handle detaching a mass from a spring child: just delete a single reference from each
-  if(bodyType(body) == "kinematics1D-sprint-child"){
+  if(bodyType(body) == "kinematics1D-spring-child"){    
     var target = body2Constant(body).attachedBody;
+    if(!target) return;
     delete body2Constant(body).attachedBody;
     body2Constant(Globals.world.getBodies()[target]).attachedTo.splice(bIndex(body), 1);
   }

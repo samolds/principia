@@ -367,7 +367,10 @@ function pushDuplicates(){
 function simulate(){
   var i;
   var j;
-
+  
+  // Prevent simulation while resizing
+  if(Globals.resizing) return;
+  
   // Hard-code simulating max frames if there is one keyframe
   if(Globals.numKeyframes == 1)
     Globals.totalFrames = Globals.maxFrames;
@@ -424,7 +427,7 @@ function simulate(){
       Globals.states[j].push(saveState);
       Globals.positionStates[j].push({ 
         x: i,
-        y: Math.sqrt(Math.pow(Globals.states[j][i].pos.y, 2) + Math.pow(Globals.states[j][i].pos.x, 2))
+        y: Math.sqrt(Math.pow(swapYpos(Globals.states[j][i].pos.y, true), 2) + Math.pow(Globals.states[j][i].pos.x, 2))
       });
       Globals.velocityStates[j].push({ 
         x: i,
@@ -635,6 +638,10 @@ function onPropertyChanged(i, property, value, doTranslation){
   var body = Globals.world.getBodies()[i];
   if(!body) return;
   
+  if(body2Constant(body).attachedBody){
+    onPropertyChanged(body2Constant(body).attachedBody, property, value, doTranslation);
+  }
+  
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
   var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
@@ -650,7 +657,7 @@ function onPropertyChanged(i, property, value, doTranslation){
       value = 0;
     if(property == "posx")
       value = getPulleySnapX(body) +
-    ((Globals.didMove && bodyType(Globals.selectedBody) == "kinematics1D-pulley")? Globals.translation.x: 0);
+    ((Globals.didMove && bodyType(Globals.selectedBody) == "kinematics1D-pulley")? (Globals.translation.x*getScaleFactor()): 0);
   }
   
   // Must be updating one of these properties to allow setting to NaN 
@@ -748,8 +755,8 @@ function totalAcceleration(body){
   var pulley_f = applyPulleyForces(body, dt);
   var pulley_a = getPulleyAcceleration(body, pulley_f);
   
-  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((body.treatment == "dynamic" || pulley)? Globals.gravity[0]: 0),
-          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((body.treatment == "dynamic" || pulley)? Globals.gravity[1]: 0)};
+  return {x:state.acc.x * dt + spring_a[0] + pulley_a[0] + ((bodyType(body) == "kinematics1D-mass" || pulley)? Globals.gravity[0]: 0),
+          y:state.acc.y * dt + spring_a[1] + pulley_a[1] + ((bodyType(body) == "kinematics1D-mass" || pulley)? Globals.gravity[1]: 0)};
 }
 
 /* 

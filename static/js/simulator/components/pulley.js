@@ -92,6 +92,8 @@ function movePulley(data)
   var bodies = Globals.world.getBodies();
   
   // Update the body on the left side of the pulley component
+  var modx = Globals.didMove? (Globals.translation.x * getScaleFactor()): 0;  
+  
   if(consts.attachedBodyLeft){
     onPropertyChanged(consts.attachedBodyLeft, "posx", consts.attach_left.x, false);
     
@@ -100,7 +102,7 @@ function movePulley(data)
     for(var i=0; i < attachedToLeft.length; i++){
       var body = bodies[attachedToLeft[i]];
       if(bodyType(body) == "kinematics1D-spring-child")
-        onPropertyChanged(bIndex(body), "posx", consts.attach_left.x, false);
+        onPropertyChanged(bIndex(body), "posx", consts.attach_left.x + modx, false);
     }
   }
   
@@ -113,7 +115,7 @@ function movePulley(data)
     for(var i=0; i < attachedToRight.length; i++){
       var body = bodies[attachedToRight[i]];
       if(bodyType(body) == "kinematics1D-spring-child")
-        onPropertyChanged(bIndex(body), "posx", consts.attach_right.x, false);
+        onPropertyChanged(bIndex(body), "posx", consts.attach_right.x + modx, false);
     }
   }
 }
