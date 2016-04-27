@@ -106,14 +106,6 @@ function displayElementValues(bod){
     
     // Special case: Handle image type for the two varying point masses
     if (constants.ctype === "kinematics1D-mass") {
-      if (constants.massType === "square") {
-        $('#pointmass-properties-img option')[1].setAttribute("value", 1);
-        if (selected === 0)
-          selected = 1;
-      } else {
-        $('#pointmass-properties-img option')[1].setAttribute("value", 0);
-      }
-
       $('#pointmass-properties-img option[value=' + selected +']').attr('selected', 'selected');
     }
     

@@ -1033,7 +1033,18 @@ function selectBody(bodyIndex){
   selectPropertyInputType(Globals.selectedBody, "vely");
   selectPropertyInputType(Globals.selectedBody, "accx");
   selectPropertyInputType(Globals.selectedBody, "accy");
-    
+
+  if(body2Constant(Globals.selectedBody).massType == "square"){
+    $("#mass-square-img").show();
+    $("#mass-round-img").hide();
+  }
+  
+  if(body2Constant(Globals.selectedBody).massType == "round"){
+    $("#mass-square-img").hide();
+    $("#mass-round-img").show();
+  }
+  
+   
   // Open the globals tab (origin was selected) or the properties tab (some other body was selected)
   if (bodyIndex === 0 && !$("#globalprops-tab").hasClass("active-side-menu-item"))
     $("#globalprops-tab").click();
