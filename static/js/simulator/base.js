@@ -391,7 +391,8 @@ $(document).ready(function(){
 
   // If a description exists, give the description tab an attention class that is remove once it's clicked on
   if ($('#simulation-description').length !== 0) {
-    if ($('#simulation-description').val().length !== 0 || $('#simulation-description').text().length !== 0) {
+    // Only want to highlight the description if it's not an input field, meaning it's someone else's simulation
+    if ($('#simulation-description').val().length === 0 && $('#simulation-description').text().length !== 0) {
       $('#prompt-tab').addClass('prompt-tab-attention');
       $('#prompt-tab').one("click", function(event) { // On click only once
         $('#prompt-tab').removeClass('prompt-tab-attention');

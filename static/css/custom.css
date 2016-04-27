@@ -607,7 +607,7 @@ i.fa.fa-size-large {
   background-color: rgba(0, 0, 0, 0.1);
   
     margin: 0;
-    padding: 10px
+    padding: 10px;
 
 }
 
@@ -656,8 +656,13 @@ i.left-menu-item-close {
   }
 
   .prompt-tab-attention {
+    margin: 0;
     -webkit-animation: prompt-tab-attention 3s ease-in-out infinite;
     animation: prompt-tab-attention 3s ease-in-out infinite;
+  }
+
+  .prompt-tab-attention:hover .blue-text {
+    color: #222222 !important; /* because of materialize stupidness */
   }
 /* end prompt tab highlighting */
 
