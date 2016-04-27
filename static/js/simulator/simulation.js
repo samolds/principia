@@ -367,7 +367,10 @@ function pushDuplicates(){
 function simulate(){
   var i;
   var j;
-
+  
+  // Prevent simulation while resizing
+  if(Globals.resizing) return;
+  
   // Hard-code simulating max frames if there is one keyframe
   if(Globals.numKeyframes == 1)
     Globals.totalFrames = Globals.maxFrames;

@@ -116,7 +116,7 @@ function getSpringForce(body){
       // Recall: F=m*a -> a = F/m and F =-k*x so a = -k*x/m      
       var factor = getScaleFactor();
       var origin = {x:Globals.variableMap[getKF()][spring_idx].posx ,y:Globals.variableMap[getKF()][spring_idx].posy};
-      var attached = {x:attached.state.pos.x, y:swapYpos(attached.state.pos.y, false)};
+      var attached = canonicalTransformNT({x:attached.state.pos.x, y:attached.state.pos.y});
       var k = body2Constant(spring).k;
       
       springFx += (-k * (attached.x - origin.x));
