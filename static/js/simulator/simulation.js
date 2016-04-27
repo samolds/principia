@@ -638,6 +638,10 @@ function onPropertyChanged(i, property, value, doTranslation){
   var body = Globals.world.getBodies()[i];
   if(!body) return;
   
+  if(body2Constant(body).attachedBody){
+    onPropertyChanged(body2Constant(body).attachedBody, property, value, doTranslation);
+  }
+  
   // If not on a keyframe, update the property within the previous keyframe (relative to current frame)
   var keyframe = getKF();
   var kState = Globals.keyframeStates[keyframe];
