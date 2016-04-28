@@ -244,6 +244,26 @@ func editGenericHandler(w http.ResponseWriter, r *http.Request, simType string, 
 			return
 		}
 
+		// Delete the simulation's comments in the datastore
+		var emptyCommentObjs []models.Comment
+		comQ := datastore.NewQuery("Comment").Ancestor(simulationKey).KeysOnly()
+		commentKeys, err := comQ.GetAll(ctx, &emptyCommentObjs)
+		err = datastore.DeleteMulti(ctx, commentKeys)
+		if err != nil {
+			api.ApiErrorResponse(w, "Could not delete simulations comments: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Delete the simulation's ratings in the datastore
+		var emptyRatingObjs []models.Rating
+		ratQ := datastore.NewQuery("Rating").Ancestor(simulationKey).KeysOnly()
+		ratingKeys, err := ratQ.GetAll(ctx, &emptyRatingObjs)
+		err = datastore.DeleteMulti(ctx, ratingKeys)
+		if err != nil {
+			api.ApiErrorResponse(w, "Could not delete simulations ratings: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// Delete the simulation in the datastore
 		err = datastore.Delete(ctx, simulationKey)
 
